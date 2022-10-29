@@ -11,6 +11,7 @@ import Profile from "./components/Auth/Profile";
 import ForgotPassword from "./components/Auth/ForgotPassword";
 
 const Router = () => {
+  // use PrivateRoute for protected routes
   return (
     <AuthProvider>
       <Switch>

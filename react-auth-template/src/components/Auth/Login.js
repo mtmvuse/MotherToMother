@@ -16,7 +16,7 @@ const Login = () => {
     setIsLoading(true);
     try {
       await login(email, password);
-      history.push("/");
+      history.push("/"); // Redirect to home page
     } catch (error) {
       setError(error.message);
     }
