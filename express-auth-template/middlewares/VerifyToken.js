@@ -5,18 +5,19 @@
 const auth = require("../config/firebase-config");
 
 const VerifyToken = async (req, res, next) => {
-    const token = req.headers.authorization.split(" ")[1];
-  
+
     try {
+        const token = req.headers.authorization.split(" ")[1];
+
         // Verifies the token and decodes it to get associated user data
-        // check if decoded value is same as the user sending the request
+        // and stores it in req.user to be accessed by other routes
         const decodeValue = await auth.verifyIdToken(token);
         if (decodeValue) {
             req.user = decodeValue;
             return next();
         }
     } catch (e) {
-        return res.json({ message: "Internal Error" });
+        return res.status(401).json({ message: "Unauthorized/invalid credentials" });
     }
 };
 
