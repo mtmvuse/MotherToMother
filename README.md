@@ -37,7 +37,7 @@ REACT_APP_FIREBASE_MESSAGING_SENDER_ID =
 REACT_APP_FIREBASE_APP_ID = 
 ```
 
-## Making a request to a protected route at the backend using the token from the frontend
+## Frontend and Backend interaction
 
 - In `react-auth-template/src/components/Home.js`, there's a writen sample code in the useEffect hook
 that makes a request to get a quote from a protected route/endpoint at the backend using the token from the frontend. You can use this as a reference to make requests to protected routes at the backend. After configuring the backend, you can test this by running the frontend and backend and navigating to the home page. You should see a quote displayed on the page.
@@ -53,20 +53,37 @@ At the backend, we will create a middleware that we will rely on for accessing f
 ## Running the project
 
 ### Running the backend
-- Navigate to `express-auth-template` and run `npm install` to install dependencies.
-- Run `npm start` to start the server.
+- Navigate to the backend folder 
+```
+express-auth-template
+``` 
+and run 
+```
+npm install
+``` 
+to install dependencies. Run 
+```
+npm start
+``` 
+to start the server.
+
 - The server should be running on port `3001`.
 
 ### Running the frontend (React)
 
-- Install dependencies
+- Navigate to the frontend directory
+```
+react-auth-template
+```
+and run
 ```
 npm i
 ```
-- Run the app
+to install dependencies. Run
 ```
 npm start
 ```
+to start the frontend app.
 - Choose register and provide your email and password to test the app. Once you submit, firebase will authenticate you and redirect you to the home page. Then you can click to go to your profile then logout. Now login with the same credentials, and you'll be redirected to the home page where you'll see a quote displayed from the backend.
 
 # Sources
