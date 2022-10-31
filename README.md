@@ -50,6 +50,12 @@ At the backend, we will create a middleware that we will rely on for accessing f
 - Click **Service Accounts** tab and click **Generate New Private Key**, and click **Generate Key** to confirm.
 - Navigate to `express-auth-template/config/serviceAccountKey.json` and replace the contents with the downloaded json file.
 
+Next, you'll also need to create a `.env` file in the root directory of the backend, `express-auth-template` and provide a port number for your backend. Since the frontend already assumes the port to be 3001, it's mandatory that you use the same port as follows. If you use a differenti port, make sure to make the same changes at the frontned where the backend is called.
+
+```
+PORT=3001
+```
+
 ## Running the project
 
 ### Running the backend
