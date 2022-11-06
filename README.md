@@ -36,6 +36,7 @@ REACT_APP_FIREBASE_STORAGE_BUCKET =
 REACT_APP_FIREBASE_MESSAGING_SENDER_ID = 
 REACT_APP_FIREBASE_APP_ID = 
 ```
+**NOTE:** Make sure that you `.env` files are added to `.gitignore`, so that your secrets won't be uploaded to github. I included them in the `.gitignore` file in the root directory, but if you restructure the project in anyway, you'll need to update the path.
 
 ## Frontend and Backend interaction
 
