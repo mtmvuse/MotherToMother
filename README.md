@@ -48,7 +48,13 @@ At the backend, we will create a middleware that we will rely on for accessing f
 - We will need to create a configuration file with our service account crednetials (created earlier). This will alow us to use the Firebase Admin SDK service account to communicate with Firebase when verifying a token.
 - Go to Frebase Dashboard and click the settings icon from the side panel and choose **Project Settings**
 - Click **Service Accounts** tab and click **Generate New Private Key**, and click **Generate Key** to confirm.
-- Navigate to `express-auth-template/config/serviceAccountKey.json` and replace the contents with the downloaded json file.
+- Navigate to `express-auth-template/config/serviceAccountKey.json` and replace the contents with the downloaded json file. **PLEASE do not upload your secrets to github, so make sure that this file isn't tracked by github, i.e add it to .gitignore. AGAIN, the contents of `serviceAccountKey.json` should not be pushed to github.**
+
+Next, you'll also need to create a `.env` file in the root directory of the backend, `express-auth-template` and provide a port number for your backend. Since the frontend already assumes the port to be 3001, it's mandatory that you use the same port as follows. If you use a differenti port, make sure to make the same changes at the frontned where the backend is called.
+
+```
+PORT=3001
+```
 
 ## Running the project
 
