@@ -1,4 +1,4 @@
 .DS_Store
 */node_modules/
 *.env
-./express-auth-template/config/serviceAccountKey.json
+/express-auth-template/config/serviceAccountKey.json
