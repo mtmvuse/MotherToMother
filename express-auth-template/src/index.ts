@@ -1,11 +1,11 @@
-const express = require("express");
-const dotenv = require("dotenv");
-const cors = require("cors");
-const VerifyToken = require("./middlewares/VerifyToken");
+import express, { Express, Request, Response } from 'express';
+import dotenv from 'dotenv';
+import cors from 'cors';
+import { VerifyToken } from './middlewares/VerifyToken';
 
 dotenv.config();
 
-const app = express();
+const app: Express = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors()); // Allow cross-origin requests (for frontend to communicate with backend on different ports/address)
@@ -18,10 +18,11 @@ app.use(express.urlencoded({ extended: true })); // Parses incoming requests wit
  */
 app.use("/data", VerifyToken, require("./routes/dataRoute"));
 
-app.get("/", (req, res) => { // Default route: Unprotected
-    res.send("Express Auth Temp!");
+app.get("/", (req: Request, res: Response) => {
+	// Default route: Unprotected
+	res.send("Express + Typescript Auth Server Temp!");
 });
 
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+	console.log(`Server is running on port ${PORT}`);
 });
