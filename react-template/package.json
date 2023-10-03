@@ -1,0 +1,31 @@
+{
+  "name": "react-ts-eslint-prettier",
+  "private": false,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint --fix --ext .js,.jsx,.ts,.tsx src",
+    "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|jsx|tsx|json)\"",
+    "lint-format": "yarn format && yarn lint-fix"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/eslint": "^8.44.2",
+    "@types/node": "^18.16.0",
+    "@types/react": "^18.2.20",
+    "@types/react-dom": "^18.2.7",
+    "@typescript-eslint/eslint-plugin": "^6.3.0",
+    "@typescript-eslint/parser": "^6.3.0",
+    "autoprefixer": "^10.4.14",
+    "eslint": "^8.47.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.1.6",
+    "vite": "^4.0.0"
+  }
+}
