@@ -1,7 +1,7 @@
-import React from 'react';
-import './App.css';
-import changePlusPlusLogo from './assets/changeplusplus.png';
-import reactLogo from './assets/react.svg';
+import React from "react";
+import "./App.css";
+import changePlusPlusLogo from "./assets/changeplusplus.png";
+import reactLogo from "./assets/react.svg";
 
 function App() {
   return (
@@ -37,15 +37,13 @@ function App() {
           Prettier
         </a>
       </div>
-      <p style={{ textAlign: 'center' }}>
+      <p style={{ textAlign: "center" }}>
         Change++ Template
         <br />
         Click on each technology to learn more
       </p>
       <p>
-        Start editing from
-        {' '}
-        <code>src/App.tsx</code>
+        Start editing from <code>src/App.tsx</code>
       </p>
     </div>
   );
