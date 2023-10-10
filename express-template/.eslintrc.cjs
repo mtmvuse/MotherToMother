@@ -2,12 +2,14 @@
 const config = {
   parser: "@typescript-eslint/parser",
   parserOptions: {
-    project: true, 
+    project: true,
   },
-  plugins: ["@typescript-eslint"],
+  plugins: ["@typescript-eslint", "prettier"],
   extends: [
     "plugin:@typescript-eslint/recommended-type-checked",
     "plugin:@typescript-eslint/stylistic-type-checked",
+    "prettier", // Turns off all rules that are unnecessary or might conflict with Prettier.
+    "plugin:prettier/recommended", // Enables eslint-plugin-prettier and eslint-config-prettier. Make sure this is always the last configuration in the extends array.
   ],
   rules: {
     // These opinionated rules are enabled in stylistic-type-checked above.
@@ -23,9 +25,9 @@ const config = {
     ],
     "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
     "@typescript-eslint/prefer-nullish-coalescing": "off",
+    "prettier/prettier": "error", // Indicates that Prettier issues are errors.
   },
-  ignorePatterns: [
-    '**.cjs'
-  ]
+  ignorePatterns: ["**.cjs"],
 };
+
 module.exports = config;

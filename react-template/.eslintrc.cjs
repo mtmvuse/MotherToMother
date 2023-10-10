@@ -22,8 +22,9 @@ const config = {
       },
     ],
     "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
-    "prettier/prettier": "warn", // Indicates that Prettier issues are warnings.
+    "prettier/prettier": "error", // Indicates that Prettier issues are errors.
   },
+  ignorePatterns: ["**.cjs"],
 };
 
 module.exports = config;
