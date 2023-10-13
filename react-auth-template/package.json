@@ -7,7 +7,7 @@
     "start": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "lint": "eslint --fix src/**/*.{ts,tsx}"
+    "lint": "eslint --ext .ts,.tsx . --fix"
   },
   "dependencies": {
     "react": "^18.2.0",

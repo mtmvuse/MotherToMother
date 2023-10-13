@@ -4,10 +4,9 @@
   "description": " A basic starter for an express.js with Typescript",
   "main": "src/index.ts",
   "scripts": {
-    "start": "ts-node src/index.ts",
-    "dev": "nodemon src/index.ts",
+    "start": "nodemon src/index.ts",
     "build": "tsc",
-    "lint": "eslint --fix src/**/*.ts",
+    "lint": "eslint --ext .ts . --fix",
     "test": "jest",
     "typecheck": "tsc --noEmit"
   },
@@ -18,7 +17,8 @@
     "dotenv": "^16.1.4",
     "express": "^4.18.2",
     "helmet": "^7.0.0",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "firebase-admin": "^11.2.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.13",

@@ -1,23 +1,22 @@
-//firebase-config.js
+//firebase-config.ts
 // Description: Imports the Firebase configurations and uses it to initialize the Firebase SDK.
 // Exports auth to be used in other files.
 
-import dotenv from 'dotenv';
-import { initializeApp, cert } from 'firebase-admin/app';
-import { getAuth } from 'firebase-admin/auth';
-import { ServiceAccount } from 'firebase-admin/app';
+import dotenv from "dotenv";
+import { initializeApp, cert } from "firebase-admin/app";
+import { getAuth } from "firebase-admin/auth";
+import { type ServiceAccount } from "firebase-admin/app";
 
 dotenv.config();
 
-const serviceAccount: ServiceAccount = 
-{
+const serviceAccount: ServiceAccount = {
   clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-  privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+  privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
   projectId: process.env.FIREBASE_PROJECT_ID,
 };
 
-const app = initializeApp({ 
-    credential: cert(serviceAccount as ServiceAccount),
+const app = initializeApp({
+  credential: cert(serviceAccount),
 });
 
 const auth = getAuth(app);
