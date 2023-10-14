@@ -1,52 +1,36 @@
 import React from "react";
-import "./App.css";
-import changePlusPlusLogo from "./assets/changeplusplus.png";
-import reactLogo from "./assets/react.svg";
 
-function App() {
-  return (
-    <div className="app">
-      <div>
-        <a
-          href="https://www.changeplusplus.org"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <img src={changePlusPlusLogo} className="logo" alt="Change++ logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank" rel="noreferrer">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>ChangePlusPlus + React = ❤️</h1>
-      <div className="logoRow">
-        <a
-          href="https://eslint.org"
-          className="textLogo"
-          target="_blank"
-          rel="noreferrer"
-        >
-          ESLint
-        </a>
-        <a
-          href="https://prettier.io"
-          className="textLogo"
-          target="_blank"
-          rel="noreferrer"
-        >
-          Prettier
-        </a>
-      </div>
-      <p style={{ textAlign: "center" }}>
-        Change++ Template
-        <br />
-        Click on each technology to learn more
-      </p>
-      <p>
-        Start editing from <code>src/App.tsx</code>
-      </p>
-    </div>
-  );
-}
+import {
+  createBrowserRouter,
+  createRoutesFromElements,
+  Route,
+  RouterProvider,
+} from "react-router-dom";
+import { AuthProvider } from "./AuthContext";
+// Routes
+import ForgotPassword from "./pages/Auth/ForgotPassword";
+import Login from "./pages/Auth/Login";
+import PrivateRoute from "./pages/Auth/PrivateRoute";
+import Register from "./pages/Auth/Register";
+import Home from "./pages/Home";
+import Profile from "./pages/Profile";
+
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <>
+      <Route path="/" element={<PrivateRoute element={<Home />} />} />
+      <Route path="/profile" element={<PrivateRoute element={<Profile />} />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+    </>,
+  ),
+);
+
+const App: React.FC = () => (
+  <AuthProvider>
+    <RouterProvider router={router} />
+  </AuthProvider>
+);
 
 export default App;
