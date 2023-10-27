@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../AuthContext";
+import Button from "@mui/material/Button";
 
 type User = {
   displayName: string | null;
@@ -40,7 +41,9 @@ const Profile: React.FC = () => {
           <p>
             <strong>Email:</strong> {user?.email}
           </p>
-          <button onClick={handleLogout}>Logout</button>
+          <Button variant="contained" onClick={handleLogout}>
+            Logout
+          </Button>
         </div>
       )}
     </div>

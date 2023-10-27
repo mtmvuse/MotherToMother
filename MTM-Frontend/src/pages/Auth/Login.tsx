@@ -1,10 +1,11 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import Button from "@mui/material/Button";
+import { useForm, Controller } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { useAuth } from "../../AuthContext";
-import FormError from "./FormError";
+import TextField from "@mui/material/TextField";
 
 interface FormValues {
   email: string;
@@ -23,7 +24,7 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
 
   const {
-    register,
+    control,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
@@ -42,8 +43,7 @@ const Login: React.FC = () => {
     try {
       setError("");
       const alal = await login(values.email, values.password);
-      console.log(alal);
-      navigate("/"); // Redirect to home page
+      navigate("/home"); // Redirect to home page
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
       setError(err.message);
@@ -54,24 +54,43 @@ const Login: React.FC = () => {
     <div>
       <h1>Login</h1>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <label htmlFor="email">Email</label>
-          <input type="email" id="email" {...register("email")} />
-          {errors.email != null && (
-            <FormError>{errors.email.message}</FormError>
+        <Controller
+          name="email"
+          control={control}
+          defaultValue=""
+          rules={{ required: "Email is required" }}
+          render={({ field }) => (
+            <TextField
+              label="Email"
+              fullWidth
+              variant="outlined"
+              error={!!errors.email}
+              helperText={errors.email?.message}
+              {...field}
+            />
           )}
-        </div>
-        <div>
-          <label htmlFor="password">Password</label>
-          <input type="password" id="password" {...register("password")} />
-          {errors.password != null && (
-            <FormError>{errors.password.message}</FormError>
+        />
+
+        <Controller
+          name="password"
+          control={control}
+          defaultValue=""
+          rules={{ required: "Password is required" }}
+          render={({ field }) => (
+            <TextField
+              type="password"
+              label="Password"
+              fullWidth
+              variant="outlined"
+              error={!!errors.password}
+              helperText={errors.password?.message}
+              {...field}
+            />
           )}
-          {errors && <FormError>{error}</FormError>}
-        </div>
-        <button disabled={isSubmitting} type="submit">
+        />
+        <Button type="submit" variant="contained" color="primary">
           {isSubmitting ? "Submitting" : "Login"}
-        </button>
+        </Button>
       </form>
       <p>
         Don&apos;t have an account? <Link to="/register">Register</Link>

@@ -6,6 +6,7 @@ import helmet from "helmet";
 import { exampleRoute } from "./routes/exampleRoute";
 import { verifyToken } from "./middlewares/verifyToken";
 import { notFound, errorHandler } from "./middlewares/errors";
+import "@shopify/shopify-api/adapters/node";
 
 dotenv.config();
 
@@ -24,6 +25,7 @@ app.use(helmet());
  * Use the verifyToken to protect all the routes that require authentication
  */
 app.use("/example", verifyToken, exampleRoute);
+// app.use("/example", exampleRoute);
 
 // Default route: Unprotected
 app.get("/", (_req: Request, res: Response) => {
