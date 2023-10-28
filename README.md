@@ -52,8 +52,6 @@ npm start
 
 to start the frontend app.
 
-- Choose register and provide your email and password to test the app. Once you submit, firebase will authenticate you and redirect you to the home page. Then you can click to go to your profile then logout. Now login with the same credentials, and you'll be redirected to the home page where you'll see a quote displayed from the backend.
-
 # Sources
 
 For a more detailed guide on how to set up firebase, and an explanation of all involved steps and files, check out the guide below.
