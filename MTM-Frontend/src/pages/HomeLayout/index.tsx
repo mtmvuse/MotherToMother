@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../../AuthContext";
 import { Outlet } from "react-router-dom";
 import { Container, Typography } from "@mui/material";
+import { constructPayloadHeaders } from "../../lib/utils";
 
 export const HomeLayout: React.FC = () => {
   const [fact, setFact] = useState<string>("");
@@ -12,15 +13,7 @@ export const HomeLayout: React.FC = () => {
     const fetchFact = async () => {
       try {
         const token = await currentUser?.getIdToken();
-
-        const payloadHeader = {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        };
-
-        const res = await fetch("/api/example", payloadHeader);
+        const res = await fetch("/api/example", constructPayloadHeaders(token));
         setFact(await res.text());
       } catch (err) {
         console.log(err);
