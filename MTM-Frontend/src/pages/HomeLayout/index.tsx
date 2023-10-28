@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../AuthContext";
 import { Outlet } from "react-router-dom";
-import styles from "./index.module.css";
-import { Container, Typography, Box } from "@mui/material";
+import { Container, Typography } from "@mui/material";
 
 export const HomeLayout: React.FC = () => {
   const [fact, setFact] = useState<string>("");

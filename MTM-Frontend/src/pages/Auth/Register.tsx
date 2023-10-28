@@ -5,14 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { useAuth } from "../../AuthContext";
 import FormError from "./FormError";
-import {
-  TextField,
-  Button,
-  Typography,
-  Container,
-  CssBaseline,
-  Box,
-} from "@mui/material";
+import { TextField, Button, Typography, Box } from "@mui/material";
 
 interface FormValues {
   name: string;
@@ -58,7 +51,7 @@ const Register: React.FC = () => {
     try {
       setError("");
       await registerUser(values.name, values.email, values.password);
-      navigate("/home"); // Redirect to home page
+      navigate("/home");
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
       setError(err.message);

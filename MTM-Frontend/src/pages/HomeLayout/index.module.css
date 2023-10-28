@@ -1,71 +1,7 @@
 @media screen and (max-width: 767px) {
   /* Your mobile-specific styles go here */
-  .page {
-    height: 97vh;
-    min-height: 97vh;
-    margin: 0;
-    width: 100%;
-    display: flex;
-  }
-  .control {
-    width: 40px;
-  }
-  .wrapper {
-    left: 40px;
-  }
-  .main {
-    max-width: 400px;
-  }
-  .container {
-    padding: 30px 10px 30px 20px;
-  }
 }
 
 @media screen and (min-width: 768px) {
   /* Your desktop-specific styles go here */
-  .page {
-    height: 97vh;
-    width: 100%;
-    display: flex;
-  }
-  .control {
-    min-height: 97%;
-    width: 68px;
-    background-color: #ffe6a6;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  .wrapper {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    left: 68px;
-    display: flex;
-  }
-  .main {
-    flex-grow: 1;
-    height: 100%;
-    background-color: #f1f1f1;
-    min-width: 500px;
-  }
-  .container {
-    height: 100%;
-    width: 100%;
-    box-sizing: border-box;
-    padding: 70px 40px 80px 40px;
-  }
-  .block {
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    padding: 27px 19px;
-    position: relative;
-    max-width: 100%;
-  }
 }

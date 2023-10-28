@@ -1,13 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../AuthContext";
-import {
-  Container,
-  Typography,
-  CircularProgress,
-  Button,
-  Box,
-} from "@mui/material";
+import { Typography, CircularProgress, Button, Box } from "@mui/material";
 
 type User = {
   displayName: string | null;
