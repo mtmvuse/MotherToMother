@@ -1,7 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../AuthContext";
-import Button from "@mui/material/Button";
+import {
+  Container,
+  Typography,
+  CircularProgress,
+  Button,
+  Box,
+} from "@mui/material";
 
 type User = {
   displayName: string | null;
@@ -25,26 +31,26 @@ const Profile: React.FC = () => {
 
   const handleLogout = () => {
     void logout();
-    navigate("/login");
+    navigate("/");
   };
 
   return (
     <div>
-      <h1>Profile</h1>
+      <Typography variant="h3">Profile</Typography>
       {isLoading ? (
-        <p>Loading...</p>
+        <CircularProgress />
       ) : (
-        <div>
-          <p>
+        <Box>
+          <Typography>
             <strong>Name:</strong> {user?.displayName}
-          </p>
-          <p>
+          </Typography>
+          <Typography>
             <strong>Email:</strong> {user?.email}
-          </p>
+          </Typography>
           <Button variant="contained" onClick={handleLogout}>
             Logout
           </Button>
-        </div>
+        </Box>
       )}
     </div>
   );

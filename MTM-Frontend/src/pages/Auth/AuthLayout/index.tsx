@@ -6,9 +6,7 @@ export const AuthLayout = () => {
     <div className={styles.page}>
       <div className={styles.container}>
         <div className={styles.inputsContainer}>
-          <div className={styles.inputsWrapper}>
-            <Outlet />
-          </div>
+          <Outlet />
         </div>
       </div>
     </div>

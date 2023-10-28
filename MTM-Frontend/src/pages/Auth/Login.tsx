@@ -1,11 +1,11 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import React, { useEffect, useState } from "react";
-import Button from "@mui/material/Button";
 import { useForm, Controller } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { useAuth } from "../../AuthContext";
-import TextField from "@mui/material/TextField";
+import { Typography, TextField, Button, Box } from "@mui/material";
+import FormError from "./FormError";
 
 interface FormValues {
   email: string;
@@ -52,21 +52,23 @@ const Login: React.FC = () => {
 
   return (
     <div>
-      <h1>Login</h1>
+      <Typography component="h2" variant="h6">
+        Log In
+      </Typography>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Controller
           name="email"
           control={control}
           defaultValue=""
-          rules={{ required: "Email is required" }}
           render={({ field }) => (
             <TextField
               label="Email"
+              type="email"
               fullWidth
-              variant="outlined"
-              error={!!errors.email}
-              helperText={errors.email?.message}
+              margin="normal"
               {...field}
+              error={!!errors.email}
+              helperText={errors.email ? errors.email.message : ""}
             />
           )}
         />
@@ -75,29 +77,31 @@ const Login: React.FC = () => {
           name="password"
           control={control}
           defaultValue=""
-          rules={{ required: "Password is required" }}
           render={({ field }) => (
             <TextField
-              type="password"
               label="Password"
+              type="password"
               fullWidth
-              variant="outlined"
-              error={!!errors.password}
-              helperText={errors.password?.message}
+              margin="normal"
               {...field}
+              error={!!errors.password}
+              helperText={errors.password ? errors.password.message : ""}
             />
           )}
         />
-        <Button type="submit" variant="contained" color="primary">
+        {error && <FormError>{error}</FormError>}
+        <Button type="submit" variant="contained" color="primary" fullWidth>
           {isSubmitting ? "Submitting" : "Login"}
         </Button>
       </form>
-      <p>
-        Don&apos;t have an account? <Link to="/register">Register</Link>
-      </p>
-      <p>
-        Forgot your password? <Link to="/forgot-password">Reset</Link>
-      </p>
+      <Box mt={2}>
+        <Typography>
+          Don't have an account? <Link to="/register">Register</Link>
+        </Typography>
+        <Typography>
+          Forgot your password? <Link to="/forgotPassword">Reset</Link>
+        </Typography>
+      </Box>
     </div>
   );
 };

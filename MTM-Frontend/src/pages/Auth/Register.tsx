@@ -1,10 +1,18 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { useAuth } from "../../AuthContext";
 import FormError from "./FormError";
+import {
+  TextField,
+  Button,
+  Typography,
+  Container,
+  CssBaseline,
+  Box,
+} from "@mui/material";
 
 interface FormValues {
   name: string;
@@ -19,7 +27,7 @@ const schema = Yup.object().shape({
     .email("Invalid email address")
     .required("Email is required"),
   password: Yup.string()
-    .min(5, "Password must be at least 5 characters")
+    .min(8, "Password must be at least 8 characters")
     .required("Password is required"),
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password")], "Passwords do not match")
@@ -32,12 +40,12 @@ const Register: React.FC = () => {
 
   useEffect(() => {
     if (currentUser) {
-      navigate("/");
+      navigate("/home");
     }
   }, [currentUser, navigate]);
 
   const {
-    register,
+    control,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
@@ -50,7 +58,7 @@ const Register: React.FC = () => {
     try {
       setError("");
       await registerUser(values.name, values.email, values.password);
-      navigate("/"); // Redirect to home page
+      navigate("/home"); // Redirect to home page
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
       setError(err.message);
@@ -59,47 +67,88 @@ const Register: React.FC = () => {
 
   return (
     <div>
-      <h1>Welcome to the React Firebase Auth template project</h1>
-      <h1>Register</h1>
+      <Typography component="h2" variant="h6">
+        Register
+      </Typography>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <label htmlFor="name">Name</label>
-          <input type="text" id="name" {...register("name")} />
-          {errors.name != null && <FormError>{errors.name.message}</FormError>}
-        </div>
-        <div>
-          <label htmlFor="email">Email</label>
-          <input type="email" id="email" {...register("email")} />
-          {errors.email != null && (
-            <FormError>{errors.email.message}</FormError>
+        <Controller
+          name="name"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              label="Name"
+              type="text"
+              fullWidth
+              margin="normal"
+              {...field}
+              error={!!errors.name}
+              helperText={errors.name ? errors.name.message : ""}
+            />
           )}
-        </div>
-        <div>
-          <label htmlFor="password">Password</label>
-          <input type="password" id="password" {...register("password")} />
-          {errors.password != null && (
-            <FormError>{errors.password.message}</FormError>
+        />
+        <Controller
+          name="email"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              label="Email"
+              type="email"
+              fullWidth
+              margin="normal"
+              {...field}
+              error={!!errors.email}
+              helperText={errors.email ? errors.email.message : ""}
+            />
           )}
-        </div>
-        <div>
-          <label htmlFor="confirmPassword">Confirm Password</label>
-          <input
-            type="password"
-            id="confirmPassword"
-            {...register("confirmPassword")}
-          />
-          {errors.confirmPassword != null && (
-            <FormError>{errors.confirmPassword.message}</FormError>
+        />
+        <Controller
+          name="password"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              label="Password"
+              type="password"
+              fullWidth
+              margin="normal"
+              {...field}
+              error={!!errors.password}
+              helperText={errors.password ? errors.password.message : ""}
+            />
           )}
-        </div>
+        />
+        <Controller
+          name="confirmPassword"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              label="Confirm Password"
+              type="password"
+              fullWidth
+              margin="normal"
+              {...field}
+              error={!!errors.confirmPassword}
+              helperText={
+                errors.confirmPassword ? errors.confirmPassword.message : ""
+              }
+            />
+          )}
+        />
         {error && <FormError>{error}</FormError>}
-        <button disabled={isSubmitting} type="submit">
+        <Button
+          disabled={isSubmitting}
+          type="submit"
+          variant="contained"
+          color="primary"
+          fullWidth
+        >
           {isSubmitting ? "Submitting" : "Register"}
-        </button>
+        </Button>
       </form>
-      <p>
-        Already have an account? <Link to="/login">Login</Link>
-      </p>
+      <Box mt={2}>
+        <Typography>
+          Already have an account? <Link to="/">Login</Link>
+        </Typography>
+      </Box>
     </div>
   );
 };

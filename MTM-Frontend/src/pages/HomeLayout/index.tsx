@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../../AuthContext";
 import { Outlet } from "react-router-dom";
 import styles from "./index.module.css";
+import { Container, Typography, Box } from "@mui/material";
 
 export const HomeLayout: React.FC = () => {
   const [fact, setFact] = useState<string>("");
@@ -31,10 +32,14 @@ export const HomeLayout: React.FC = () => {
   }, [currentUser]);
 
   return (
-    <div className={styles.page}>
-      <Link to="/home/profile">Profile</Link>
-      {<Outlet />}
-      <p>{fact}</p>
-    </div>
+    <Container
+      style={{ display: "flex", flexDirection: "column", minHeight: "95vh" }}
+    >
+      <Outlet />
+      <div style={{ marginTop: "auto" }}>
+        <Link to="/home/profile">Profile</Link>
+        <Typography variant="body1">{fact}</Typography>
+      </div>
+    </Container>
   );
 };

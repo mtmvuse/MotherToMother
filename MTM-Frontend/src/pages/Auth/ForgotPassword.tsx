@@ -1,10 +1,11 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { useAuth } from "../../AuthContext";
 import FormError from "./FormError";
+import { Typography, TextField, Button, Box } from "@mui/material";
 
 interface FormValues {
   email: string;
@@ -22,11 +23,12 @@ const ForgotPassword: React.FC = () => {
 
   useEffect(() => {
     if (currentUser) {
-      navigate("/");
+      navigate("/home");
     }
   }, [currentUser, navigate]);
 
   const {
+    control,
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
@@ -50,24 +52,39 @@ const ForgotPassword: React.FC = () => {
 
   return (
     <div>
-      <h1>Forgot Password</h1>
+      <Typography component="h2" variant="h6">
+        Forgot Password
+      </Typography>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <label htmlFor="email">Email</label>
-          <input type="email" id="email" {...register("email")} />
-          {errors.email != null && (
-            <FormError>{errors.email.message}</FormError>
+        <Controller
+          name="email"
+          control={control}
+          defaultValue=""
+          render={({ field }) => (
+            <TextField
+              label="Email"
+              type="email"
+              fullWidth
+              margin="normal"
+              {...field}
+              error={!!errors.email}
+              helperText={errors.email ? errors.email.message : ""}
+            />
           )}
-        </div>
+        />
         {error && <FormError>{error}</FormError>}
-        <button disabled={isSubmitting} type="submit">
-          {isSubmitting ? "Submitting" : "Login"}
-        </button>
-        {message && <p>{message}</p>}
+        <Button type="submit" variant="contained" color="primary" fullWidth>
+          {isSubmitting ? "Submitting" : "Reset Password"}
+        </Button>
       </form>
-      <p>
-        <Link to="/login">Back to login</Link>
-      </p>
+      <Box mt={2}>
+        <Typography>
+          Remember your password? <Link to="/">Login</Link>
+        </Typography>
+        <Typography>
+          Don't have an account? <Link to="/register">Register</Link>
+        </Typography>
+      </Box>
     </div>
   );
 };

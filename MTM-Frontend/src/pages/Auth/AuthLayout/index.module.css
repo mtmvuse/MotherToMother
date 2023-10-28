@@ -1,4 +1,11 @@
 @media screen and (max-width: 767px) {
+  .page {
+    height: 97vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
   .container {
     height: 50%;
     width: 70%;
@@ -10,9 +17,6 @@
   .page {
     height: 97vh;
     width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
   }
   .container {
     width: 70%;
@@ -20,12 +24,4 @@
     display: flex;
     min-height: 400px;
   }
-}
-.inputsWrapper {
-  height: fit-content;
-  width: 65%;
-}
-
-.inputBlock {
-  margin-bottom: 12px;
 }
