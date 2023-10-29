@@ -24,7 +24,6 @@ app.use(helmet());
  * Use the verifyToken to protect all the routes that require authentication
  */
 app.use("/example", verifyToken, exampleRoute);
-// app.use("/example", exampleRoute);
 
 // Default route: Unprotected
 app.get("/", (_req: Request, res: Response) => {
