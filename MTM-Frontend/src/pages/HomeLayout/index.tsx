@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
+import styles from "./index.module.css";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../AuthContext";
 import { Outlet } from "react-router-dom";
-import { Container, Typography } from "@mui/material";
+import { Container, Box, Grid } from "@mui/material";
 import { constructPayloadHeaders } from "../../lib/utils";
 
 export const HomeLayout: React.FC = () => {
@@ -24,14 +25,23 @@ export const HomeLayout: React.FC = () => {
   }, [currentUser]);
 
   return (
-    <Container
-      style={{ display: "flex", flexDirection: "column", minHeight: "95vh" }}
-    >
-      <Outlet />
-      <div style={{ marginTop: "auto" }}>
-        <Link to="/home/profile">Profile</Link>
-        <Typography variant="body1">{fact}</Typography>
-      </div>
+    <Container className={styles.container}>
+      <Container className={styles.content}>
+        <Outlet />
+      </Container>
+      <Container className={styles.navbar}>
+        <Grid container style={{ justifyContent: "space-around" }}>
+          <Grid item>
+            <Link to="/home/profile">Profile</Link>
+          </Grid>
+          <Grid item>
+            <Link to="/home/form">Form</Link>
+          </Grid>
+          <Grid item>
+            <Box>{fact}</Box>
+          </Grid>
+        </Grid>
+      </Container>
     </Container>
   );
 };

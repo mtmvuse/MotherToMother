@@ -1,7 +1,29 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+.content {
+  min-height: 90vh;
+  padding-top: 5vh;
+}
 @media screen and (max-width: 767px) {
-  /* Your mobile-specific styles go here */
+  .navbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+    transform: translateY(0);
+  }
 }
 
 @media screen and (min-width: 768px) {
-  /* Your desktop-specific styles go here */
+  .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    transform: translateX(0);
+  }
 }

@@ -15,6 +15,7 @@ import Register from "./pages/Auth/Register";
 import { HomeLayout } from "./pages/HomeLayout";
 import { AuthLayout } from "./pages/Auth/AuthLayout";
 import Profile from "./pages/Profile";
+import Form from "./pages/Form";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -29,6 +30,7 @@ const router = createBrowserRouter(
           path="profile"
           element={<PrivateRoute element={<Profile />} />}
         />
+        <Route path="form" element={<PrivateRoute element={<Form />} />} />
       </Route>
     </>,
   ),
