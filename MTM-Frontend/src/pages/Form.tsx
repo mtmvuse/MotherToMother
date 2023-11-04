@@ -18,7 +18,7 @@ const Profile: React.FC = () => {
             alignItems="center"
             spacing={2}
         >
-            <Typography variant="h3">Outgoing Donations</Typography>
+            <Typography variant="h4" fontWeight="bold">Outgoing Donations</Typography>
             <Typography variant="body1">
                 Select the categories and item types of resources that you would like to
                 donate

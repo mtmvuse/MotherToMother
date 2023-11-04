@@ -1,6 +1,7 @@
-import Typography from "@mui/material/Typography";
-import Stack from "@mui/material/Stack";
+import { Container, CssBaseline, ThemeProvider, Typography, Stack, Button, Box, Grid } from "@mui/material";
+import { PrimaryMainTheme } from "./Theme";
 import "./ReviewSection.css";
+
 
 type itemType = {
     [key: string]: {
@@ -56,13 +57,13 @@ const items: itemType = {
     },
     "Bath and Changing": {
         "Baby Bath": [5, 5],
-        "Baby Bath Seat": [3, 2],
+        "Baby Bath Seat": [0, 0],
         "Baby Bath Towels": [0, 0],
         "Baby Bath Wash Cloths": [0, 0],
         "Changing Table": [0, 0],
         "Changing Table Pad": [0, 0],
         "Changing Table Pad Cover/Sheet": [0, 0],
-        "Diaper Bag": [0, 0],
+        "Diaper Bag": [3, 2],
         "Diaper Genie": [0, 0],
         "Diaper Genie Refills": [0, 0],
         Diapers: [0, 0],
@@ -144,41 +145,49 @@ const getSubCategoryCount = () => {
     return count;
 }
 
-
 const getSubCategories = (subCategory: string, subCategoryValues: [number, number]) => {
     if (isSubCategoryNotEmpty(subCategoryValues)) {
-        return <Stack key={subCategory} direction="row" spacing={3} justifyContent="space-between" >
-            <div className="subcategory-status"> {subCategory} </div>
-            <div className="subcategory-status"> Used: {subCategoryValues[0]} </div>
-            <div className="subcategory-status"> New: {subCategoryValues[1]}</div>
+        return <Stack key={subCategory} direction="row" justifyContent="space-between" marginY="10px" width="90%"  >
+            <Typography className="subcategory-status"> {subCategory} </Typography>
+            <Typography className="subcategory-status"> Used: {subCategoryValues[0]} </Typography>
+            <Typography className="subcategory-status"> New: {subCategoryValues[1]}</Typography>
         </Stack>
     }
 }
 
 const getCategories = (category: string) => {
     if (isCategoryNotEmpty(items[category] as itemType[string])) {
-        return <div key={category}>
-            <div className="category-wrapper" key={category}>
-                <div className="category-wrapper-2">  {category}</div>
-            </div>
-            {Object.keys(items[category] as itemType[string]).map((subCategory) => (
-                getSubCategories(subCategory, items[category]![subCategory]!)
-            ))}
-        </div>
+        return <Box key={category}>
+            <Container key={category} sx={{ backgroundColor: 'primary.main', borderRadius: "5px", height: "29px", display: "flex" }}>
+                <Typography color="white" alignSelf="center">  {category}</Typography>
+            </Container>
+
+            <Grid container alignItems="center" justifyContent="center">
+                {Object.keys(items[category] as itemType[string]).map((subCategory) => (
+                    getSubCategories(subCategory, items[category]![subCategory]!)
+                ))}
+            </Grid>
+        </Box>
     }
     return <div></div>
 }
 
 const ReviewSection = () => {
     return (
-        <div>
-            {/* Count */}
-            <div> {getSubCategoryCount()} items are in your form </div>
-            {Object.keys(items).map((category) => (
-                getCategories(category)
-            ))}
+        <>
+            <CssBaseline />
+            <ThemeProvider theme={PrimaryMainTheme}>
+                <Box width="85%">
+                    <div> {getSubCategoryCount()} items are in your form </div>
+                    {Object.keys(items).map((category) => (
+                        getCategories(category)
+                    ))}
+                </Box>
+                <Button variant="contained">Edit</Button>
+            </ThemeProvider>
 
-        </div>
+        </>
+
     );
 }
 
