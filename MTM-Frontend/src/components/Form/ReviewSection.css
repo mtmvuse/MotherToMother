@@ -1,0 +1,27 @@
+.category-wrapper {
+    background-color: #a3a3a3;
+    border-radius: 5px;
+    height: 29px;
+}
+
+
+.category-wrapper-2 {
+    color: #ffffff;
+    font-family: "Inter-Regular", Helvetica;
+    font-size: 16px;
+    font-weight: 400;
+    height: 19px;
+    letter-spacing: 0;
+    line-height: normal;
+    white-space: nowrap;
+}
+
+.subcategory-status {
+    color: #6d6d6d;
+    font-family: "Inter-Regular", Helvetica;
+    font-size: 14px;
+    font-weight: 400;
+    height: 17px;
+    letter-spacing: 0;
+    line-height: normal;
+}

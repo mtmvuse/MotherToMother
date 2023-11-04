@@ -27,7 +27,7 @@ app.use("/example", verifyToken, exampleRoute);
 
 // Default route: Unprotected
 app.get("/", (_req: Request, res: Response) => {
-  res.send("Express + Typescript Auth Server Temp!");
+    res.send("Express + Typescript Auth Server Temp!");
 });
 
 // error handling route
@@ -35,5 +35,5 @@ app.use(notFound);
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+    console.log(`Server is running on port ${PORT}`);
 });
