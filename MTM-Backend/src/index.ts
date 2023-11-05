@@ -3,7 +3,8 @@ import dotenv from "dotenv";
 import cors from "cors";
 import morgan from "morgan";
 import helmet from "helmet";
-import { exampleRoute } from "./routes/v1/exampleRoute";
+import { exampleRoute } from "./routes/exampleRoute";
+import { userRouter } from "./routes/v1/user/user.router";
 import { verifyToken } from "./middlewares/verifyToken";
 import { notFound, errorHandler } from "./middlewares/errors";
 
@@ -24,13 +25,16 @@ app.use(helmet());
  * Use the verifyToken to protect all the routes that require authentication
  */
 app.use("/example", verifyToken, exampleRoute);
+// app.use("/example", exampleRoute);
+app.use("/users", verifyToken, userRouter);
+// app.use("/users", userRouter);
 
 // Default route: Unprotected
 app.get("/", (_req: Request, res: Response) => {
-  res.send("Express + Typescript Auth Server Temp!");
+  res.send("MTM Server");
 });
 
-// error handling route
+// error handling middleware
 app.use(notFound);
 app.use(errorHandler);
 

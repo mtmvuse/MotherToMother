@@ -11,5 +11,11 @@
     "skipLibCheck": true,
     "resolveJsonModule": true
   },
-  "include": ["./*.js", "src/**/*.ts", "test/**/*.ts", "./.eslintrc.cjs"]
+  "include": [
+    "./*.js",
+    "prisma/*.ts",
+    "src/**/*.ts",
+    "test/**/*.ts",
+    "./.eslintrc.cjs"
+  ]
 }
