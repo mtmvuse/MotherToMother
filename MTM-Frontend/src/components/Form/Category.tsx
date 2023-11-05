@@ -6,16 +6,16 @@ type categoryType = {
     [key: string]: [number, number];
 };
 
-const getCategories = (category: string) => {
+const getCategories = (category: string, editMode: boolean) => {
     if (isCategoryNotEmpty(items[category] as itemType[string])) {
         return <Box key={category}>
             <Container key={category} sx={{ backgroundColor: 'primary.main', borderRadius: "5px", height: "29px", display: "flex" }}>
                 <Typography color="white" alignSelf="center">  {category}</Typography>
             </Container>
 
-            <Grid container alignItems="center" justifyContent="center">
+            <Grid container alignItems="center" justifyContent="right">
                 {Object.keys(items[category] as itemType[string]).map((subCategory) => (
-                    SubCategory({ subCategoryName: subCategory, subCategoryValues: items[category]![subCategory]! })
+                    <SubCategory key={subCategory} subCategoryName={subCategory} subCategoryValues={items[category]![subCategory]!} editMode={editMode} />
                 ))}
             </Grid>
         </Box>
@@ -34,11 +34,12 @@ const isCategoryNotEmpty = (category: categoryType) => {
 
 type CategoryProps = {
     categoryName: string;
+    editMode: boolean;
 }
 
 const Category = (props: CategoryProps) => {
     return (
-        getCategories(props.categoryName)
+        getCategories(props.categoryName, props.editMode)
     )
 };
 

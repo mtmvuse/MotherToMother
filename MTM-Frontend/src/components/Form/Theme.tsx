@@ -6,13 +6,14 @@ const PrimaryMainTheme = createTheme({
             main: "#A4A4A4",
         },
         secondary: {
-            main: "#FFFFFF",
+            main: "#6D6D6D",
         },
+
     },
     typography: {
         button: {
             textTransform: 'none'
-        }
+        },
     }
 });
 

@@ -1,5 +1,6 @@
 import { CssBaseline, ThemeProvider, Typography, Stack, Button, Box, Grid } from "@mui/material";
 import { NorthSharp, SouthSharp } from '@mui/icons-material';
+import { useState } from 'react';
 import { PrimaryMainTheme } from "./Theme";
 import { items, itemType } from "./Items";
 import { Category } from "./Category";
@@ -19,6 +20,21 @@ const getSubCategoryCount = () => {
 }
 
 const ReviewSection = () => {
+    const [editMode, setEditMode] = useState(false);
+
+    const handleEdit = () => {
+        setEditMode(true);
+    }
+
+    const handleSave = () => {
+        setEditMode(false);
+        // TODO: Save the changes to the database
+    }
+
+    const handleCancel = () => {
+        setEditMode(false);
+    }
+
     return (
         <>
             <CssBaseline />
@@ -46,15 +62,18 @@ const ReviewSection = () => {
                         <Typography variant="body1"> items are in your form </Typography>
                     </Stack>
                     {Object.keys(items).map((category) => (
-                        <Category key={category} categoryName={category} />
+                        <Category key={category} categoryName={category} editMode={editMode} />
                     ))}
                 </Box>
-                <Button variant="outlined" sx={{ fontSize: 15 }}>Edit</Button>
+                {!editMode && <Button variant="outlined" sx={{ fontSize: 15 }} onClick={handleEdit}>Edit</Button>}
+                {editMode &&
+                    <Stack direction="row" spacing={3}>
+                        <Button variant="contained" sx={{ fontSize: 15, height: "33px" }} color="primary" onClick={handleSave}>Save</Button>
+                        <Button variant="outlined" sx={{ fontSize: 15, height: "33px" }} onClick={handleCancel}>Cancel</Button>
+                    </Stack>}
             </ThemeProvider>
-
         </>
-
-    );
+    )
 }
 
 export default ReviewSection;
