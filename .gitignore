@@ -3,3 +3,4 @@
 *.env
 MTM-Backend/config/serviceAccountKey.json
 MotherToMother.code-workspace
+.idea/*
