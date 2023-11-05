@@ -1,0 +1,165 @@
+/* Login.css */
+
+@font-face
+{
+    font-family: Raleway;
+    src: url("../assets/Inter-VariableFont_slnt,wght.ttf");
+}
+
+.login-container
+{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.logo-image {
+    margin-top: 60px;
+}
+
+.animal-image
+{
+    position: absolute; /* Position this element absolutely */
+    bottom: 0; /* Align it to the bottom of the login-container */
+}
+
+.login-container .heading
+{
+    margin-top: 60px;
+    font-family: Inter, sans-serif;
+    font-size: 30px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+.login-form-container
+{
+    background-color: #ffffff;
+    border-radius: 8px;
+    width: 300px;
+}
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+
+.signup-container
+{
+    margin-top: 0;
+    text-align: right;
+}
+
+.login-form-container .user-input
+{
+    border-radius: 40px;
+    width: 100%;
+    height: 35px;
+    font-family: Inter, sans-serif;
+    font-size: 15px;
+    font-weight: 400;
+    text-indent: 15px;
+    border-width: 1px;
+}
+
+.input-container
+{
+    text-align: center;
+    margin-bottom: 15px
+}
+.link
+{
+    font-family: Inter, sans-serif;
+    font-size: 15px;
+    font-weight: 400;
+    color: #6D6D6D;
+    text-decoration: none;
+    text-align: left;
+}
+
+.line-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.horizontal-line {
+    flex: 1;
+    height: 2px;
+    background-color: #6D6D6D;
+;
+    width: 70px;
+}
+
+.socials-container
+{
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+
+.socials-buttons-container
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.socials-buttons-container button
+{
+    margin-left: 10px;
+    margin-right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.text
+{
+    font-size: 16px;
+    margin: 0 10px;
+    color: #6D6D6D;
+;
+}
+
+.login-container .login-button
+{
+    margin-top: 50px;
+    border-radius: 30px;
+    width: 210px;
+    height: 43px;
+    align-items: center;
+    background: #D9D9D9;
+    font-family: Inter, sans-serif;
+    font-size: 20px;
+    font-weight: 400;
+    text-align: center;
+    border: none;
+    cursor: pointer;
+
+}
+
+@media (max-height: 750px)
+{
+    .animal-image
+    {
+        display: none;
+    }
+}
+
+
+@media (max-width: 400px)
+{
+    .logo-image
+    {
+        width: 70%;
+    }
+
+    .login-form-container
+    {
+        width: 70%;
+
+    }
+    .login-container .login-button
+    {
+        width: 70%;
+    }
+}
