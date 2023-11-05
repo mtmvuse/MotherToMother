@@ -2,7 +2,7 @@ import { Stack, Typography } from "@mui/material";
 
 const getSubCategories = (subCategory: string, subCategoryValues: [number, number]) => {
     if (isSubCategoryNotEmpty(subCategoryValues)) {
-        return <Stack key={subCategory} direction="row" justifyContent="space-between" marginY="10px" width="90%"  >
+        return <Stack key={subCategory} direction="row" justifyContent="space-between" marginY="7px" width="90%"  >
             <Typography className="subcategory-status"> {subCategory} </Typography>
             <Typography className="subcategory-status"> Used: {subCategoryValues[0]} </Typography>
             <Typography className="subcategory-status"> New: {subCategoryValues[1]}</Typography>
