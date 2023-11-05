@@ -23,6 +23,7 @@ export const verifyToken = async (
     if (!decodeValue) {
       throw new Error("Token verification failed");
     }
+    console.log(decodeValue);
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     req.body.user = decodeValue;
