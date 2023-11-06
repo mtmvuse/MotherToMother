@@ -4,21 +4,15 @@ import express, {
   type NextFunction,
 } from "express";
 import type { UserInput } from "../../../types/user";
-import Joi from "joi";
 import { auth } from "../../../../config/firebase-config";
 
 const sessionRouter = express.Router();
 
 const setUserType = async (uid: string, userType: string) => {
-  return auth
-    .setCustomUserClaims(uid, { userType })
-    .then(() => {
-      console.log(`User type set to ${userType} for user ${uid}`);
-    })
-    .catch((e) => {
-      console.error("Error setting custom claims", e);
-      throw e;
-    });
+  return auth.setCustomUserClaims(uid, { userType }).catch((e) => {
+    console.error("Error setting custom claims", e);
+    throw e;
+  });
 };
 
 sessionRouter.put(

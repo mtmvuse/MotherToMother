@@ -1,7 +1,7 @@
 {
-  "name": "express-ts-template",
+  "name": "mtm-backend",
   "version": "1.0.0",
-  "description": " A basic starter for an express.js with Typescript",
+  "description": " The backend for the MTM user and admin app",
   "main": "src/index.ts",
   "prisma": {
     "seed": "node --require esbuild-register prisma/seed.ts"

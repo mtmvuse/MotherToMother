@@ -38,7 +38,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   async function login(email: string, password: string) {
-    return await signInWithEmailAndPassword(auth, email, password);
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password,
+    );
+    // refresh token
+    await userCredential.user.getIdToken(true);
+
+    return userCredential;
   }
 
   async function registerUser(
@@ -53,6 +61,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           displayName: name,
         });
         await setUserType(userCredential.user.uid, userType);
+        // refresh token
         await userCredential.user.getIdToken(true);
       },
     );

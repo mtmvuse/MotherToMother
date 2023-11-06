@@ -3,10 +3,19 @@
 // into an array and takes the second element, which is the token
 import { type Request, type Response, type NextFunction } from "express";
 import type { SessionUser } from "../types/session";
+import type { DecodedIdToken } from "firebase-admin/auth";
 import { auth } from "../../config/firebase-config";
 
+interface VerifyTokenRequest extends Request {
+  body: {
+    sessionUser: SessionUser;
+  };
+}
+interface DecodedIdWithUserType extends DecodedIdToken {
+  userType: string;
+}
 export const verifyToken = async (
-  req: Request,
+  req: VerifyTokenRequest,
   _res: Response,
   next: NextFunction,
 ) => {
@@ -19,19 +28,18 @@ export const verifyToken = async (
 
     // Verifies the token and decodes it to get associated user data
     // and stores it in req.body.user to be accessed by other routes
-    const decodeValue = await auth.verifyIdToken(token);
+    const decodeValue = (await auth.verifyIdToken(
+      token,
+    )) as DecodedIdWithUserType;
 
     if (!decodeValue) {
       throw new Error("Token verification failed");
     }
-    console.log(decodeValue);
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    req.body.user = {
+    req.body.sessionUser = {
       uid: decodeValue.uid,
       email: decodeValue.email,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      userType: decodeValue.userType, // Accessing custom claim
+      userType: decodeValue.userType,
     } as SessionUser;
     next();
   } catch (e) {
