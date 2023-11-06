@@ -14,7 +14,10 @@ export const HomeLayout: React.FC = () => {
     const fetchFact = async () => {
       try {
         const token = await currentUser?.getIdToken();
-        const res = await fetch("/api/example", constructPayloadHeaders(token));
+        const res = await fetch(
+          "/api/example/",
+          constructPayloadHeaders(token),
+        );
         setFact(await res.text());
       } catch (err) {
         console.log(err);
