@@ -12,8 +12,12 @@ import auth from "./firebase";
 import type { UserCredential, User } from "firebase/auth";
 import { setUserType } from "./lib/services";
 
+interface SessionUser extends User {
+  userType?: string;
+}
+
 interface AuthContextData {
-  currentUser: User | null;
+  currentUser: SessionUser | null;
   login: (email: string, password: string) => Promise<UserCredential>;
   registerUser: (
     name: string,
@@ -22,7 +26,7 @@ interface AuthContextData {
     userType: string,
   ) => Promise<void>;
   logout: () => Promise<void>;
-  getUser: () => User | null;
+  getUser: () => SessionUser | null;
   forgotPassword: (email: string) => Promise<void>;
   confirmReset: (code: string, password: string) => Promise<void>;
 }
@@ -34,8 +38,19 @@ export function useAuth(): AuthContextData {
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [currentUser, setCurrentUser] = useState<SessionUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  async function fetchUserType(): Promise<string | undefined> {
+    const user = auth.currentUser;
+
+    if (user) {
+      const idTokenResult = await user.getIdTokenResult();
+      return idTokenResult.claims.userType as string;
+    }
+
+    return undefined;
+  }
 
   async function login(email: string, password: string) {
     const userCredential = await signInWithEmailAndPassword(
@@ -84,8 +99,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user);
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      const userType = await fetchUserType();
+      setCurrentUser({ ...user, userType } as SessionUser | null);
       setIsLoading(false);
     });
     return unsubscribe;

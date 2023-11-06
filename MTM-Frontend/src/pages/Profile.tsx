@@ -8,6 +8,7 @@ import editButton from "./assets/edit_button.png";
 type User = {
   displayName: string | null;
   email: string | null;
+  userType?: string | null;
 };
 
 const Profile: React.FC = () => {
@@ -60,9 +61,13 @@ const Profile: React.FC = () => {
             <p className={"value"}>{user?.email}</p>
           </div>
           <div className={"inline"}>
+            <strong>Type:</strong>
+            <p className={"value"}>{user?.userType}</p>
+          </div>
+          <div className={"inline"}>
             <strong>Address:</strong>
             <p className={"value wrap"}>
-              478 Allied DriveSuite 104 & 105Nashville, TN 37211
+              478 Allied DriveSuite 104 105 Nashville, TN 37211
             </p>
           </div>
         </div>
