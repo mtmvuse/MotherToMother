@@ -10,11 +10,12 @@ export const TopBar: React.FC = () => {
     return (
         <div className="TopBar">
             <Box sx={{flexGrow: 1, width:1, maxHeight:'50px'}}>
-                <AppBar color='inherit' sx={{flexDirection: 'row'}} position="static">
+                <AppBar elevation={0} color='inherit' sx={{flexDirection: 'row'}} position="static">
                     <IconButton
                         size="large"
                         edge="start"
                         color="inherit"
+                        style={{ color: "gray" }}
                         onClick={() => navigate(-1)}
                         sx={{ ml:1, mr:2 }}
                         >
@@ -25,6 +26,7 @@ export const TopBar: React.FC = () => {
                         noWrap
                         component="div"
                         align="center"
+                        style={{ color: "gray" }}
                         sx={{display: 'flex', alignItems: 'center'}}>
                         return back
                     </Typography>
