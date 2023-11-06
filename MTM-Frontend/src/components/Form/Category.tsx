@@ -15,7 +15,7 @@ const getCategories = (category: string, editMode: boolean) => {
 
             <Grid container alignItems="center" justifyContent="right">
                 {Object.keys(items[category] as itemType[string]).map((subCategory) => (
-                    <SubCategory key={subCategory} subCategoryName={subCategory} subCategoryValues={items[category]![subCategory]!} editMode={editMode} />
+                    <SubCategory key={subCategory} category={category} subCategoryName={subCategory} subCategoryValues={items[category]![subCategory]!} editMode={editMode} />
                 ))}
             </Grid>
         </Box>
