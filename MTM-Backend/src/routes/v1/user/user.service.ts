@@ -30,8 +30,7 @@ export const getUsers = async (): Promise<ResponseUser[]> => {
     select: {
       id: true,
       email: true,
-      firstName: true,
-      lastName: true,
+      userType: true,
     },
   });
 };
@@ -49,8 +48,7 @@ export const getUser = async (id: number): Promise<ResponseUser | null> => {
     select: {
       id: true,
       email: true,
-      firstName: true,
-      lastName: true,
+      userType: true,
     },
   });
 };
@@ -61,7 +59,7 @@ export const getUser = async (id: number): Promise<ResponseUser | null> => {
  * @returns the id and email of the user
  */
 export const createUser = async (user: UserInput): Promise<ResponseUser> => {
-  const { password, ...userInfo } = user;
+  const { password, uid, ...userInfo } = user;
   const { hash, salt } = await hashPassword(password);
 
   return db.user.create({
@@ -69,6 +67,7 @@ export const createUser = async (user: UserInput): Promise<ResponseUser> => {
     select: {
       id: true,
       email: true,
+      userType: true,
     },
   });
 };
@@ -85,8 +84,7 @@ export const updateUser = async (
     select: {
       id: true,
       email: true,
-      firstName: true,
-      lastName: true,
+      userType: true,
     },
   });
 };

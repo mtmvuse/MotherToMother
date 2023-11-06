@@ -10,6 +10,7 @@ import {
 import React, { useContext, useState, useEffect, createContext } from "react";
 import auth from "./firebase";
 import type { UserCredential, User } from "firebase/auth";
+import { setUserType } from "./lib/services";
 
 interface AuthContextData {
   currentUser: User | null;
@@ -18,6 +19,7 @@ interface AuthContextData {
     name: string,
     email: string,
     password: string,
+    userType: string,
   ) => Promise<void>;
   logout: () => Promise<void>;
   getUser: () => User | null;
@@ -39,12 +41,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return await signInWithEmailAndPassword(auth, email, password);
   }
 
-  async function registerUser(name: string, email: string, password: string) {
+  async function registerUser(
+    name: string,
+    email: string,
+    password: string,
+    userType: string,
+  ) {
     return await createUserWithEmailAndPassword(auth, email, password).then(
-      (userCredential) => {
+      async (userCredential) => {
         void updateProfile(userCredential.user, {
           displayName: name,
         });
+        await setUserType(userCredential.user.uid, userType);
+        await userCredential.user.getIdToken(true);
       },
     );
   }
