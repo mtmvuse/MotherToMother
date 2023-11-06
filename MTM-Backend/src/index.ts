@@ -5,6 +5,7 @@ import morgan from "morgan";
 import helmet from "helmet";
 import { exampleRoute } from "./routes/exampleRoute";
 import { userRouter } from "./routes/v1/user/user.router";
+import { sessionRouter } from "./routes/v1/session/session.router";
 import { verifyToken } from "./middlewares/verifyToken";
 import { notFound, errorHandler } from "./middlewares/errors";
 
@@ -24,6 +25,7 @@ app.use(helmet());
  * Uses the verifyToken middleware to protect the "/data" route
  * Use the verifyToken to protect all the routes that require authentication
  */
+app.use("/sessions", sessionRouter);
 app.use("/example", verifyToken, exampleRoute);
 // app.use("/example", exampleRoute);
 app.use("/users", verifyToken, userRouter);
@@ -39,5 +41,5 @@ app.use(notFound);
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
