@@ -73,7 +73,7 @@ const Profile: React.FC = () => {
         </div>
       )}
       <div className={"logout"}>
-        <button className="logout-button" onClick={handleLogout}>
+        <button className="logout-button" style={{marginTop:'2px', marginBottom:'100px'}} onClick={handleLogout}>
           Logout
         </button>
       </div>
