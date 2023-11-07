@@ -11,8 +11,6 @@ import "./Login.css";
 import m2m_logo from "../assets/m2m_logo.png";
 import animal_logo from "../assets/animal_logo.png";
 
-
-
 interface FormValues {
     email: string;
     password: string;
@@ -68,7 +66,9 @@ const Login: React.FC = () => {
                             {...register("email")}
                             className={`user-input ${errors.email ? "error" : ""}`}
                         />
-                        {errors.email && <p className="error-message">{errors.email.message}</p>}
+                        {errors.email && (
+                            <p className="error-message">{errors.email.message}</p>
+                        )}
                     </div>
 
                     <div className={"input-container"}>
@@ -78,7 +78,9 @@ const Login: React.FC = () => {
                             {...register("password")}
                             className={`user-input ${errors.password ? "error" : ""}`}
                         />
-                        {errors.password && <p className="error-message">{errors.password.message}</p>}
+                        {errors.password && (
+                            <p className="error-message">{errors.password.message}</p>
+                        )}
                     </div>
                     {error && <FormError>{error}</FormError>}
 
@@ -88,21 +90,17 @@ const Login: React.FC = () => {
                                 Forgot Password?
                             </Link>
                         </Typography>
-                        <Typography>
-                            <Link to="/register" className={"link"}>
-                                Register
-                            </Link>
-                        </Typography>
                     </div>
 
                     <div className={"input-container"}>
-                    <button
-                        className="login-button"
-                        type="submit"
-                        color="primary"
-                    >
-                        {isSubmitting ? "Submitting" : "Login"}
-                    </button>
+                        <button className="login-button" type="submit" color="primary">
+                            {isSubmitting ? "Submitting" : "Login"}
+                        </button>
+                        <Typography>
+                            <Link to="/register" className={"link-bold"}>
+                                Don't have an account? Sign up
+                            </Link>
+                        </Typography>
                     </div>
                 </form>
             </div>
