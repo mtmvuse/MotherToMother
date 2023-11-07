@@ -1,11 +1,12 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import React, { useEffect, useState } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { useAuth } from "../../AuthContext";
 import FormError from "./FormError";
-import { Typography, TextField, Button, Box } from "@mui/material";
+import { Box, Button, TextField, Typography } from "@mui/material";
+import "./ForgotPassword.css";
 
 interface FormValues {
   email: string;
@@ -50,40 +51,40 @@ const ForgotPassword: React.FC = () => {
   };
 
   return (
-    <div>
-      <Typography component="h2" variant="h6">
-        Forgot Password
-      </Typography>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Controller
-          name="email"
-          control={control}
-          defaultValue=""
-          render={({ field }) => (
-            <TextField
-              label="Email"
+    <div className={"forgot-password-container"}>
+      <Typography className="heading">Forgot Password</Typography>
+      <div className={"forgot-password-form"}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className={"input-container"}>
+            <input
               type="email"
-              fullWidth
-              margin="normal"
-              {...field}
-              error={!!errors.email}
-              helperText={errors.email ? errors.email.message : ""}
+              placeholder="Email"
+              className={`user-input ${errors.email ? "error" : ""}`}
             />
-          )}
-        />
-        {error && <FormError>{error}</FormError>}
-        <Button type="submit" variant="contained" color="primary" fullWidth>
-          {isSubmitting ? "Submitting" : "Reset Password"}
-        </Button>
-      </form>
-      <Box mt={2}>
+            {errors.email && (
+              <p className="error-message">{errors.email.message}</p>
+            )}
+
+            {error && <FormError>{error}</FormError>}
+            <button className="reset-button">
+              {isSubmitting ? "Submitting" : "Reset Password"}
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div className={"signup-container"}>
         <Typography>
-          Remember your password? <Link to="/">Login</Link>
+          <Link to="/" className={"link"}>
+            Remember your password?
+          </Link>
         </Typography>
         <Typography>
-          Don't have an account? <Link to="/register">Register</Link>
+          <Link to="/register" className={"link"}>
+            Don't have an account?
+          </Link>
         </Typography>
-      </Box>
+      </div>
     </div>
   );
 };
