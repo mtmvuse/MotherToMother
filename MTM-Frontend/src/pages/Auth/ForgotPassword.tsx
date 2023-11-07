@@ -24,6 +24,7 @@ const ForgotPassword: React.FC = () => {
 
   useEffect(() => {
     if (currentUser) {
+      console.log("forgetpassword", currentUser);
       navigate("/home");
     }
   }, [currentUser, navigate]);
