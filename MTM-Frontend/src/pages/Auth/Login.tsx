@@ -1,11 +1,15 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import React, { useEffect, useState } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { useAuth } from "../../AuthContext";
-import { Typography, TextField, Button, Box } from "@mui/material";
+import { Typography, Button } from "@mui/material";
 import FormError from "./FormError";
+
+import "./Login.css";
+import m2m_logo from "../assets/m2m_logo.png";
+import animal_logo from "../assets/animal_logo.png";
 
 interface FormValues {
   email: string;
@@ -24,8 +28,8 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
 
   const {
-    control,
     handleSubmit,
+    register,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     resolver: yupResolver(schema),
@@ -39,69 +43,68 @@ const Login: React.FC = () => {
     }
   }, [currentUser, navigate]);
 
-  const onSubmit = async (values: FormValues) => {
+  const onSubmit = async (data: FormValues) => {
     try {
       setError("");
-      await login(values.email, values.password);
+      await login(data.email, data.password);
       navigate("/home");
     } catch (err: any) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
       setError(err.message);
     }
   };
 
   return (
-    <div>
-      <Typography component="h2" variant="h6">
-        Log In
-      </Typography>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Controller
-          name="email"
-          control={control}
-          defaultValue=""
-          render={({ field }) => (
-            <TextField
-              label="Email"
+    <div className={"login-container"}>
+      <img className="logo-image" src={m2m_logo} alt="Image1" />
+      <Typography className={"heading"}>Log In</Typography>
+      <div className="login-form-container">
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className={"input-container"}>
+            <input
               type="email"
-              fullWidth
-              margin="normal"
-              {...field}
-              error={!!errors.email}
-              helperText={errors.email ? errors.email.message : ""}
+              placeholder="Email or Username"
+              {...register("email")}
+              className={`user-input ${errors.email ? "error" : ""}`}
             />
-          )}
-        />
+            {errors.email && (
+              <p className="error-message">{errors.email.message}</p>
+            )}
+          </div>
 
-        <Controller
-          name="password"
-          control={control}
-          defaultValue=""
-          render={({ field }) => (
-            <TextField
-              label="Password"
+          <div className={"input-container"}>
+            <input
               type="password"
-              fullWidth
-              margin="normal"
-              {...field}
-              error={!!errors.password}
-              helperText={errors.password ? errors.password.message : ""}
+              placeholder="Password"
+              {...register("password")}
+              className={`user-input ${errors.password ? "error" : ""}`}
             />
-          )}
-        />
-        {error && <FormError>{error}</FormError>}
-        <Button type="submit" variant="contained" color="primary" fullWidth>
-          {isSubmitting ? "Submitting" : "Login"}
-        </Button>
-      </form>
-      <Box mt={2}>
-        <Typography>
-          Don't have an account? <Link to="/register">Register</Link>
-        </Typography>
-        <Typography>
-          Forgot your password? <Link to="/forgotPassword">Reset</Link>
-        </Typography>
-      </Box>
+            {errors.password && (
+              <p className="error-message">{errors.password.message}</p>
+            )}
+          </div>
+          {error && <FormError>{error}</FormError>}
+
+          <div className={"signup-container"}>
+            <Typography>
+              <Link to="/forgotPassword" className={"link"}>
+                Forgot Password?
+              </Link>
+            </Typography>
+            <Typography>
+              <Link to="/register" className={"link"}>
+                Register
+              </Link>
+            </Typography>
+          </div>
+
+          <div className={"input-container"}>
+            <button className="login-button" type="submit" color="primary">
+              {isSubmitting ? "Submitting" : "Login"}
+            </button>
+          </div>
+        </form>
+      </div>
+      <img className="animal-image" src={animal_logo} alt="Image1" />
     </div>
   );
 };

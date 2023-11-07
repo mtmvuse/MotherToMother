@@ -1,11 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../AuthContext";
-import { Typography, CircularProgress, Button, Box } from "@mui/material";
+import { Typography, CircularProgress } from "@mui/material";
+import "./Profile.css";
+import editButton from "./assets/edit_button.png";
 
 type User = {
   displayName: string | null;
   email: string | null;
+  userType?: string | null;
 };
 
 const Profile: React.FC = () => {
@@ -29,23 +32,51 @@ const Profile: React.FC = () => {
   };
 
   return (
-    <div>
-      <Typography variant="h3">Profile</Typography>
+    <div className={"profile-container"}>
+      <div className={"profile-heading"}>
+        <div className={"name-container"}>
+          <Typography className={"heading"}>{user?.displayName}</Typography>
+          <button>
+            <img
+              className="name-container-button"
+              src={editButton}
+              alt="Image1"
+            />
+          </button>
+        </div>
+        <Typography className={"subheading"}>
+          Organization/ Affiliation
+        </Typography>
+      </div>
       {isLoading ? (
         <CircularProgress />
       ) : (
-        <Box>
-          <Typography>
-            <strong>Name:</strong> {user?.displayName}
-          </Typography>
-          <Typography>
-            <strong>Email:</strong> {user?.email}
-          </Typography>
-          <Button variant="contained" onClick={handleLogout}>
-            Logout
-          </Button>
-        </Box>
+        <div className={"profile-info"}>
+          <div className={"inline"}>
+            <strong>Phone:</strong>
+            <p className={"value"}>720-520-3566</p>
+          </div>
+          <div className={"inline"}>
+            <strong>Email:</strong>
+            <p className={"value"}>{user?.email}</p>
+          </div>
+          <div className={"inline"}>
+            <strong>Type:</strong>
+            <p className={"value"}>{user?.userType}</p>
+          </div>
+          <div className={"inline"}>
+            <strong>Address:</strong>
+            <p className={"value wrap"}>
+              478 Allied DriveSuite 104 105 Nashville, TN 37211
+            </p>
+          </div>
+        </div>
       )}
+      <div className={"logout"}>
+        <button className="logout-button" onClick={handleLogout}>
+          Logout
+        </button>
+      </div>
     </div>
   );
 };

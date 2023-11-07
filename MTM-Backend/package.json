@@ -1,8 +1,11 @@
 {
-  "name": "express-ts-template",
+  "name": "mtm-backend",
   "version": "1.0.0",
-  "description": " A basic starter for an express.js with Typescript",
+  "description": " The backend for the MTM user and admin app",
   "main": "src/index.ts",
+  "prisma": {
+    "seed": "node --require esbuild-register prisma/seed.ts"
+  },
   "scripts": {
     "start": "nodemon src/index.ts",
     "build": "tsc",
@@ -13,16 +16,23 @@
   "keywords": [],
   "license": "MIT",
   "dependencies": {
+    "@prisma/client": "^5.5.2",
+    "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "dotenv": "^16.1.4",
+    "esbuild-register": "^3.5.0",
     "express": "^4.18.2",
+    "express-validator": "^7.0.1",
+    "firebase-admin": "^11.2.0",
     "helmet": "^7.0.0",
-    "morgan": "^1.10.0",
-    "firebase-admin": "^11.2.0"
+    "joi": "^17.11.0",
+    "morgan": "^1.10.0"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.1",
     "@types/cors": "^2.8.13",
     "@types/express": "^4.17.17",
+    "@types/joi": "^17.2.3",
     "@types/morgan": "^1.9.4",
     "@types/node": "^20.2.5",
     "@typescript-eslint/eslint-plugin": "^6.7.4",
@@ -36,6 +46,7 @@
     "eslint-plugin-promise": "^6.1.1",
     "nodemon": "^3.0.1",
     "prettier": "^3.0.3",
+    "prisma": "^5.5.2",
     "ts-jest": "^29.1.0",
     "ts-node": "^10.9.1",
     "typescript": "<5.1.0"

@@ -1,12 +1,29 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable prettier/prettier */
+// TODO: REMOVE THIS DISABLE
 import React from "react";
-import { Typography } from "@mui/material";
+import { Typography, Stack, Button } from "@mui/material";
+import ReviewSection from "../components/Form/ReviewSection";
 
 const Profile: React.FC = () => {
-  return (
-    <div>
-      <Typography variant="h3">Form</Typography>
-    </div>
-  );
+    return (
+        <Stack
+            direction="column"
+            justifyContent="center"
+            alignItems="center"
+            spacing={2}
+        >
+            <Typography variant="h4" fontWeight="bold">Outgoing Donations</Typography>
+            <Typography variant="body1">
+                Select the categories and item types of resources that you would like to
+                donate
+            </Typography>
+
+            <ReviewSection />
+        </Stack>
+    );
 };
+
 
 export default Profile;
