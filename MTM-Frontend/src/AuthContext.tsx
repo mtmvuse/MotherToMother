@@ -41,7 +41,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [currentUser, setCurrentUser] = useState<SessionUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  async function fetchUserType(): Promise<string | undefined> {
+  async function fetchUserType(): Promise<string | null> {
     const user = auth.currentUser;
 
     if (user) {
@@ -49,7 +49,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return idTokenResult.claims.userType as string;
     }
 
-    return undefined;
+    return null;
   }
 
   async function login(email: string, password: string) {
@@ -101,7 +101,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       const userType = await fetchUserType();
-      setCurrentUser({ ...user, userType } as SessionUser | null);
+      if (user) {
+        setCurrentUser({ ...user, userType } as SessionUser);
+      } else {
+        setCurrentUser(null);
+      }
       setIsLoading(false);
     });
     return unsubscribe;
