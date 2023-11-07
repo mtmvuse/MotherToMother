@@ -11,7 +11,7 @@ export const Navbar: React.FC = () => {
     const navigate = useNavigate();
  
     return (
-        <div className="BottomNavbar">
+        <div className="BottomNavbar" style={{ position: 'fixed', bottom: 0, width: '100%' }}>
             <Box>
                 <BottomNavigation
                     showLabels

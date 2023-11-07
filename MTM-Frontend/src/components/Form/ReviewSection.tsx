@@ -41,7 +41,7 @@ const ReviewSection = () => {
             <ThemeProvider theme={PrimaryMainTheme}>
                 <Box width="85%">
                     {/* Header of Review Section */}
-                    <Grid container spacing={2}>
+                    <Grid container spacing={2} style={{marginTop: '5px', marginBottom: '20px' }}>
                         <Grid item xs={8}>
                             <Stack direction="row" spacing={1}>
                                 <NumberInCircle num={2} borderRaduis="50%" />
@@ -65,10 +65,10 @@ const ReviewSection = () => {
                         <Category key={category} categoryName={category} editMode={editMode} />
                     ))}
                 </Box>
-                {!editMode && <Button variant="outlined" sx={{ fontSize: 15 }} onClick={handleEdit}>Edit</Button>}
+                {!editMode && <Button variant="outlined" sx={{ fontSize: 15 }} onClick={handleEdit} style={{marginBottom: '80px' }}>Edit</Button>}
                 {editMode &&
                     <Stack direction="row" spacing={3}>
-                        <Button variant="contained" sx={{ fontSize: 15, height: "33px" }} color="primary" onClick={handleSave}>Save</Button>
+                        <Button variant="contained" sx={{ fontSize: 15, height: "33px" }} color="primary" onClick={handleSave} style={{marginBottom: '80px' }}>Save</Button>
                         <Button variant="outlined" sx={{ fontSize: 15, height: "33px" }} onClick={handleCancel}>Cancel</Button>
                     </Stack>}
             </ThemeProvider>

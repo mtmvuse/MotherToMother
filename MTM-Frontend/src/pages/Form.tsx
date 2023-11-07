@@ -5,6 +5,7 @@
 import React from "react";
 import { Typography, Stack, Button } from "@mui/material";
 import ReviewSection from "../components/Form/ReviewSection";
+import GeneralSection from "../components/Form/GeneralSection";
 
 const Profile: React.FC = () => {
     return (
@@ -14,13 +15,15 @@ const Profile: React.FC = () => {
             alignItems="center"
             spacing={2}
         >
-            <Typography variant="h4" fontWeight="bold">Outgoing Donations</Typography>
-            <Typography variant="body1">
+            <Typography variant="h4" fontWeight="bold" style={{marginTop: '20px'}}>Outgoing Donations</Typography>
+            <Typography variant="body1" style={{textAlign: 'center'}}>
                 Select the categories and item types of resources that you would like to
                 donate
             </Typography>
 
-            <ReviewSection />
+            <GeneralSection/>
+
+            <ReviewSection/>
         </Stack>
     );
 };
