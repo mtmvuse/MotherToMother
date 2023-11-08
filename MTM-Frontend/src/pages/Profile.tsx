@@ -44,13 +44,6 @@ const Profile: React.FC = () => {
       <div className={"profile-heading"}>
         <div className={"name-container"}>
           <Typography className={"heading"}>{user?.displayName}</Typography>
-          <button onClick={handleEditProfile}>
-            <img
-              className="name-container-button"
-              src={editButton}
-              alt="Image1"
-            />
-          </button>
         </div>
         <Typography className={"subheading"}>
           Organization/ Affiliation
@@ -80,9 +73,12 @@ const Profile: React.FC = () => {
           </div>
         </div>
       )}
-      <div className={"logout"}>
+      <div className={"buttons-conatiner"}>
         <button className="logout-button" onClick={handleLogout}>
           Logout
+        </button>
+        <button className="edit-button" onClick = {handleEditProfile}>
+          Edit
         </button>
       </div>
     </div>
