@@ -32,7 +32,7 @@ export const HomeLayout: React.FC = () => {
   return (
     <Container className={styles.container}>
       {/* testcode */}
-      <TopBar/>
+      <TopBar />
       {/* testcode */}
       <Container className={styles.content}>
         <Outlet />
@@ -51,7 +51,7 @@ export const HomeLayout: React.FC = () => {
         </Grid>
       </Container>
       {/* testcode to be deleted */}
-      <Navbar/>   
+      <Navbar />
       {/* testcode to be deleted */}
     </Container>
   );

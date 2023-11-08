@@ -49,7 +49,7 @@ const ReviewSection = () => {
       <ThemeProvider theme={PrimaryMainTheme}>
         <Box width="85%">
           {/* Header of Review Section */}
-          <FormHeader number={2}/>
+          <FormHeader number={2} />
 
           {/* Main Content of Review Section */}
           <Stack
@@ -78,10 +78,12 @@ const ReviewSection = () => {
           ))}
         </Box>
         {!editMode && (
-          <Button variant="outlined" 
-                sx={{ fontSize: 15 }} 
-                onClick={handleEdit} 
-                style={{marginBottom: '20%'}}>
+          <Button
+            variant="outlined"
+            sx={{ fontSize: 15 }}
+            onClick={handleEdit}
+            style={{ marginBottom: "20%" }}
+          >
             Edit
           </Button>
         )}
@@ -92,7 +94,7 @@ const ReviewSection = () => {
               sx={{ fontSize: 15, height: "33px" }}
               color="primary"
               onClick={handleSave}
-              style={{marginBottom: '35%'}}
+              style={{ marginBottom: "35%" }}
             >
               Save
             </Button>
