@@ -50,7 +50,7 @@
     background-color: #fcfcfc;
     border: 0;
     border-bottom: 2px solid lightgrey;
-    padding-left: 0;
+    padding-left: 2px;
     padding-top: 5px;
     padding-bottom: 5px;
     margin-bottom: 10px
@@ -92,5 +92,6 @@
     text-align: center;
     border: 1px solid #C1C1C1;
     cursor: pointer;
+    margin-left: 10px;
 }
 
