@@ -5,7 +5,22 @@ import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { useAuth } from "../../AuthContext";
 import FormError from "./FormError";
-import { TextField, Button, Typography, Box } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Typography,
+  Box,
+  MenuItem,
+  FormControl,
+  Select,
+  InputLabel,
+} from "@mui/material";
+
+import { RegisterTextField } from "../../../src/components/RegisterForms/ui/RegisterTextField";
+import m2mLogo from "../assets/m2m_logo.png";
+import m2mAnimalLogo from "../assets/animal_logo.png";
+import { SocialSignInIcons } from "../../../src/components/RegisterForms/ui/SocialSignInIcons";
+import { FilePresent } from "@mui/icons-material";
 
 interface FormValues {
   firstName: string;
@@ -68,119 +83,133 @@ const Register: React.FC = () => {
   };
 
   return (
-    <div>
-      <Typography component="h2" variant="h6">
-        Register
+    <div className="m-10 flex flex-col items-center">
+      <img
+        className="mb-6 mt-3"
+        src={m2mLogo}
+        alt="Mother to Mother Logo"
+        title="mother to mother"
+      />
+      <Typography fontWeight="bold" component="h2" variant="h6">
+        Create an account
       </Typography>
+
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Controller
-          name="firstName"
-          control={control}
-          render={({ field }) => (
-            <TextField
-              label="First Name"
-              type="text"
-              fullWidth
-              margin="normal"
-              {...field}
-              error={!!errors.firstName}
-              helperText={errors.firstName ? errors.firstName.message : ""}
+        <div>
+          <Typography variant="subtitle2">
+            Name<span className="text-red-500">*</span>
+          </Typography>
+
+          <div className="flex flex-row gap-x-2 -mt-3">
+            <RegisterTextField
+              name="firstName"
+              placeHolder="First Name"
+              control={control}
+              errors={errors.firstName}
             />
-          )}
-        />
-        <Controller
-          name="lastName"
-          control={control}
-          render={({ field }) => (
-            <TextField
-              label="Last Name"
-              type="text"
-              fullWidth
-              margin="normal"
-              {...field}
-              error={!!errors.lastName}
-              helperText={errors.lastName ? errors.lastName.message : ""}
+
+            <RegisterTextField
+              name="lastName"
+              placeHolder="Last Name"
+              control={control}
+              errors={errors.lastName}
             />
-          )}
-        />
-        <Controller
-          name="userType"
-          control={control}
-          render={({ field }) => (
-            <TextField
-              label="User Type"
-              type="text"
-              fullWidth
-              margin="normal"
-              {...field}
-              error={!!errors.userType}
-              helperText={errors.userType ? errors.userType.message : ""}
+          </div>
+        </div>
+        <div>
+          <Typography variant="subtitle2">
+            User Type<span className="text-red-500">*</span>
+          </Typography>
+          <div className="-mt-3">
+            <Controller
+              name="userType"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <FormControl fullWidth variant="outlined" margin="normal">
+                  <Select
+                    value={value || ""} // Use the value from the field prop
+                    onChange={onChange} // Use the onChange from the field prop
+                    style={{ border: "none", borderRadius: "100px" }}
+                  >
+                    <MenuItem value="Donor">Donor</MenuItem>
+                    <MenuItem value="Receiver">Receiver</MenuItem>
+                  </Select>
+                </FormControl>
+              )}
             />
-          )}
-        />
-        <Controller
-          name="email"
-          control={control}
-          render={({ field }) => (
-            <TextField
-              label="Email"
-              type="email"
-              fullWidth
-              margin="normal"
-              {...field}
-              error={!!errors.email}
-              helperText={errors.email ? errors.email.message : ""}
+          </div>
+        </div>
+
+        <div>
+          <Typography variant="subtitle2">
+            Email<span className="text-red-500">*</span>
+          </Typography>
+          <div className="-mt-3">
+            <RegisterTextField
+              name="email"
+              placeHolder="Enter your email"
+              control={control}
+              errors={errors.email}
             />
-          )}
-        />
-        <Controller
-          name="password"
-          control={control}
-          render={({ field }) => (
-            <TextField
-              label="Password"
-              type="password"
-              fullWidth
-              margin="normal"
-              {...field}
-              error={!!errors.password}
-              helperText={errors.password ? errors.password.message : ""}
+          </div>
+        </div>
+        <div>
+          <Typography variant="subtitle2">
+            Password<span className="text-red-500">*</span>
+          </Typography>
+          <div className="-mt-3">
+            <RegisterTextField
+              name="password"
+              placeHolder="Create a password"
+              control={control}
+              errors={errors.password}
             />
-          )}
-        />
-        <Controller
-          name="confirmPassword"
-          control={control}
-          render={({ field }) => (
-            <TextField
-              label="Confirm Password"
-              type="password"
-              fullWidth
-              margin="normal"
-              {...field}
-              error={!!errors.confirmPassword}
-              helperText={
-                errors.confirmPassword ? errors.confirmPassword.message : ""
-              }
+          </div>
+          <div className="-mt-3">
+            <RegisterTextField
+              name="confirmPassword"
+              placeHolder="Confirm password"
+              control={control}
+              errors={errors.confirmPassword}
             />
-          )}
-        />
+          </div>
+        </div>
         {error && <FormError>{error}</FormError>}
-        <Button
-          disabled={isSubmitting}
-          type="submit"
-          variant="contained"
-          color="primary"
-          fullWidth
-        >
-          {isSubmitting ? "Submitting" : "Register"}
-        </Button>
+
+        <div className="flex flex-row w-full justify-center gap-x-4 text-gray-600 my-6">
+          <div className="">_________</div>
+          <p className="py-2"> Or sign up with </p>
+          <div className="">_________</div>
+        </div>
+
+        <div className="flex flex-row w-full gap-4 justify-center align-center mb-10">
+          <SocialSignInIcons />
+        </div>
+
+        <div className="flex w-full justify-center">
+          <Button
+            disabled={isSubmitting}
+            type="submit"
+            variant="contained"
+            color="primary"
+            style={{ borderRadius: "100px", width: "75%", fontSize: "1.1rem" }}
+          >
+            Sign Up
+            {/* {isSubmitting ? "Submitting" : "Register"} */}
+          </Button>
+        </div>
       </form>
+
       <Box mt={2}>
         <Typography>
-          Already have an account? <Link to="/">Login</Link>
+          Already have an account?{" "}
+          <Link className="font-bold" to="/">
+            Log in
+          </Link>
         </Typography>
       </Box>
+
+      <img src={m2mAnimalLogo} alt="mother to mother animal logo" />
     </div>
   );
 };
