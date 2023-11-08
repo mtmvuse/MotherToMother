@@ -90,17 +90,17 @@ const Login: React.FC = () => {
                 Forgot Password?
               </Link>
             </Typography>
-            <Typography>
-              <Link to="/register" className={"link"}>
-                Register
-              </Link>
-            </Typography>
           </div>
 
           <div className={"input-container"}>
             <button className="login-button" type="submit" color="primary">
               {isSubmitting ? "Submitting" : "Login"}
             </button>
+            <Typography>
+              <Link to="/register" className={"link-bold"}>
+                Don't have an account? Sign up
+              </Link>
+            </Typography>
           </div>
         </form>
       </div>
