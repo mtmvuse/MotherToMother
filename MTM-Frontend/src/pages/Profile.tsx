@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "../AuthContext";
-import { Typography, CircularProgress } from "@mui/material";
+import { CircularProgress, Typography } from "@mui/material";
 import "./Profile.css";
 import editButton from "./assets/edit_button.png";
 import profile_logo from "../pages/assets/profile_logo.png";
@@ -9,7 +9,6 @@ import profile_logo from "../pages/assets/profile_logo.png";
 type User = {
   displayName: string | null;
   email: string | null;
-  userType?: string | null;
 };
 
 const Profile: React.FC = () => {
@@ -46,7 +45,7 @@ const Profile: React.FC = () => {
           <Typography className={"heading"}>{user?.displayName}</Typography>
         </div>
         <Typography className={"subheading"}>
-          Organization/ Affiliation
+          Organization / Affiliation
         </Typography>
       </div>
       {isLoading ? (
@@ -55,20 +54,16 @@ const Profile: React.FC = () => {
         <div className={"profile-info"}>
           <div className={"inline"}>
             <strong>Phone:</strong>
-            <p className={"value"}>720-520-3566</p>
+            <p className={"value"}>xxx-xxx-xxx</p>
           </div>
           <div className={"inline"}>
             <strong>Email:</strong>
             <p className={"value"}>{user?.email}</p>
           </div>
           <div className={"inline"}>
-            <strong>Type:</strong>
-            <p className={"value"}>{user?.userType}</p>
-          </div>
-          <div className={"inline"}>
             <strong>Address:</strong>
             <p className={"value wrap"}>
-              478 Allied DriveSuite 104 105 Nashville, TN 37211
+              478 Allied DriveSuite 104 & 105Nashville, TN 37211
             </p>
           </div>
         </div>
