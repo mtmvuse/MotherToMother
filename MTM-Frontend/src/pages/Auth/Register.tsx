@@ -14,12 +14,12 @@ import {
   FormControl,
   Select,
   InputLabel,
+  Tooltip,
 } from "@mui/material";
 
 import { RegisterTextField } from "../../../src/components/RegisterForms/ui/RegisterTextField";
 import m2mLogo from "../assets/m2m_logo.png";
 import m2mAnimalLogo from "../assets/animal_logo.png";
-import { SocialSignInIcons } from "../../../src/components/RegisterForms/ui/SocialSignInIcons";
 import { FilePresent } from "@mui/icons-material";
 
 interface FormValues {
@@ -85,7 +85,7 @@ const Register: React.FC = () => {
   return (
     <div className="m-10 flex flex-col items-center">
       <img
-        className="mb-6 mt-3"
+        className="mb-8 mt-3"
         src={m2mLogo}
         alt="Mother to Mother Logo"
         title="mother to mother"
@@ -130,9 +130,19 @@ const Register: React.FC = () => {
                     value={value || ""} // Use the value from the field prop
                     onChange={onChange} // Use the onChange from the field prop
                     style={{ border: "none", borderRadius: "100px" }}
+                    required
                   >
-                    <MenuItem value="Donor">Donor</MenuItem>
-                    <MenuItem value="Receiver">Receiver</MenuItem>
+                    <Tooltip title="Information about what an Agency Partner means">
+                      <MenuItem value="Agency Partner">Agency Partner</MenuItem>
+                    </Tooltip>
+                    <Tooltip title="Information about what a Corporation Donor means">
+                      <MenuItem value="Corporation/Foundation Donor">
+                        Corporation/Foundation Donor
+                      </MenuItem>
+                    </Tooltip>
+                    <Tooltip title="Information about what a Public Donor means">
+                      <MenuItem value="Public Donor">Public Donor</MenuItem>
+                    </Tooltip>
                   </Select>
                 </FormControl>
               )}
@@ -176,17 +186,7 @@ const Register: React.FC = () => {
         </div>
         {error && <FormError>{error}</FormError>}
 
-        <div className="flex flex-row w-full justify-center gap-x-4 text-gray-600 my-6">
-          <div className="">_________</div>
-          <p className="py-2"> Or sign up with </p>
-          <div className="">_________</div>
-        </div>
-
-        <div className="flex flex-row w-full gap-4 justify-center align-center mb-10">
-          <SocialSignInIcons />
-        </div>
-
-        <div className="flex w-full justify-center">
+        <div className="mt-6 flex w-full justify-center">
           <Button
             disabled={isSubmitting}
             type="submit"
