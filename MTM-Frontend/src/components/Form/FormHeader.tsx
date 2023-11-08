@@ -11,7 +11,7 @@ import {
   import NumberInCircle from "./NumberInCircle";
   
   interface FormHeaderNum {
-    number: number; // Define the type for the 'number' prop
+    number: number;
 }
 
 const FormHeader: React.FC<FormHeaderNum> = (num) => {
