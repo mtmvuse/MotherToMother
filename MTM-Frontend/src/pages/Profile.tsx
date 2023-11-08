@@ -4,6 +4,7 @@ import { useAuth } from "../AuthContext";
 import { Typography, CircularProgress } from "@mui/material";
 import "./Profile.css";
 import editButton from "./assets/edit_button.png";
+import profile_logo from "../pages/assets/profile_logo.png";
 
 type User = {
   displayName: string | null;
@@ -31,12 +32,19 @@ const Profile: React.FC = () => {
     navigate("/");
   };
 
+  const handleEditProfile = () => {
+    navigate("edit");
+  };
+
   return (
     <div className={"profile-container"}>
+      <div className={"profile-image"}>
+        <img className="profile-logo" src={profile_logo} alt="Image1" />
+      </div>
       <div className={"profile-heading"}>
         <div className={"name-container"}>
           <Typography className={"heading"}>{user?.displayName}</Typography>
-          <button>
+          <button onClick={handleEditProfile}>
             <img
               className="name-container-button"
               src={editButton}
