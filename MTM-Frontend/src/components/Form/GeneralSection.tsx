@@ -1,8 +1,6 @@
 import { CssBaseline, ThemeProvider, Typography, Stack, Button, Box, Grid } from "@mui/material";
-import { NorthSharp, SouthSharp } from '@mui/icons-material';
-import { useState } from 'react';
 import { PrimaryMainTheme } from "./Theme";
-import NumberInCircle from "./NumberInCircle";
+import FormHeader from "./FormHeader";
 
 const buttonStyles = {
     button: {
@@ -11,11 +9,50 @@ const buttonStyles = {
         height: '80px',
         padding: '20px',
         borderRadius: '20px',
+        border: 'outlined',
         fontSize: '22px',
         color: '#333',
         borderColor: '#333',
     },
 };
+
+const buttonRows: Record<string, string[]> = {
+    row1: ['Travel', 'Sleep'],
+    row2: ['Bath & Changing', 'Clothing'],
+    row3: ['Feeding', 'Play'],
+    row4: ['Safety', 'Other']
+};
+
+
+interface CategoryGenProps{
+    rowName: string[];
+};
+
+function CategoryGen(props: CategoryGenProps) {
+    return (
+        <Box width="95%" justifyContent="align-items">
+            <Grid>
+                <Stack direction="row" spacing={2}>
+                    <Button 
+                        style={buttonStyles.button}
+                        fullWidth={true}
+                        variant="outlined"
+                    >
+                        {props.rowName[0]}
+                    </Button>
+                    <Button 
+                        style={buttonStyles.button}
+                        fullWidth={true}
+                        variant="outlined"
+                    >
+                        {props.rowName[1]}
+                    </Button>
+                </Stack>
+            </Grid>
+        </Box>
+    );
+};
+
 
 const GeneralSection = () => {
     return(
@@ -23,77 +60,14 @@ const GeneralSection = () => {
             <CssBaseline />
             <ThemeProvider theme={PrimaryMainTheme}>
                 <Box width="85%">
-                    <Grid container spacing={2} style={{marginTop: '5px'}}>
-                        <Grid item xs={8}>
-                            <Stack direction="row" spacing={1}>
-                                <NumberInCircle num={1} borderRaduis="50%" />
-                                <Typography variant="h6" >Review </Typography>
-                            </Stack>
-                        </Grid>
-                        <Grid item xs={4}>
-                            <Stack direction="row" spacing={1} justifyContent="flex-end">
-                                <NorthSharp sx={{ fontSize: 30 }} color="primary" />
-                                <SouthSharp sx={{ fontSize: 30 }} color="primary" />
-                            </Stack>
-                        </Grid>
-                    </Grid>
+                    <FormHeader number={1}/>
                 </Box>
-
-                <Box width="95%">
-                    <Grid>
-                        <Stack direction="row" spacing={2} justifyContent="center">
-                            <Button
-                                style={buttonStyles.button}
-                                fullWidth={true}
-                                variant="outlined"
-                            >Sleep </Button>
-                            <Button
-                                style={buttonStyles.button}
-                                fullWidth={true}
-                                variant="outlined"
-                            >Travel </Button>
-                        </Stack>
-                        <Stack direction="row" spacing={2} justifyContent="center">
-                            <Button
-                                style={buttonStyles.button}
-                                fullWidth={true}
-                                variant="outlined"
-                            >Bath & Changing </Button>
-                            <Button
-                                style={buttonStyles.button}
-                                fullWidth={true}
-                                variant="outlined"
-                            >Clothing </Button>
-                        </Stack>
-                        <Stack direction="row" spacing={2} justifyContent="center">
-                        <Button
-                                style={buttonStyles.button}
-                                fullWidth={true}
-                                variant="outlined"
-                            >Feeding </Button>
-                            <Button
-                                style={buttonStyles.button}
-                                fullWidth={true}
-                                variant="outlined"
-                            >Play </Button>
-                        </Stack>
-                        <Stack direction="row" spacing={2} justifyContent="center">
-                            <Button
-                                style={buttonStyles.button}
-                                fullWidth={true}
-                                variant="outlined"
-                            >Safety </Button>
-                            <Button
-                                style={buttonStyles.button}
-                                fullWidth={true}
-                                variant="outlined"
-                            >Other </Button>
-                        </Stack>
-                    </Grid>
-                </Box>                    
+                    {Object.keys(buttonRows).map((category) => (
+                        <CategoryGen key={category} rowName={buttonRows[category]!} />
+                    ))}            
             </ThemeProvider>
         </>
     )
-}
+};
 
 export default GeneralSection;
