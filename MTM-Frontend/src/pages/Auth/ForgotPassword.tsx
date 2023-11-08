@@ -7,6 +7,7 @@ import { useAuth } from "../../AuthContext";
 import FormError from "./FormError";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import "./ForgotPassword.css";
+import forgotpasswordlogo from "../assets/forgotpassword-logo.png";
 
 interface FormValues {
   email: string;
@@ -53,10 +54,14 @@ const ForgotPassword: React.FC = () => {
 
   return (
     <div className={"forgot-password-container"}>
-      <Typography className="heading">Forgot Password</Typography>
+      <img className="forgot-logo-image" src={forgotpasswordlogo} alt="Image1" />
+      <Typography className="heading">Forgot your password?</Typography>
       <div className={"forgot-password-form"}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className={"input-container"}>
+            <p className={"info-text"}>
+              Enter your email below and receive your password reset instructions
+            </p>
             <input
               type="email"
               placeholder="Email"
@@ -77,7 +82,7 @@ const ForgotPassword: React.FC = () => {
       <div className={"signup-container"}>
         <Typography>
           <Link to="/" className={"link"}>
-            Remember your password?
+            Already have an account? Log in
           </Link>
         </Typography>
         <Typography>
