@@ -66,7 +66,7 @@ const GeneralSection = () => {
       <CssBaseline />
       <ThemeProvider theme={PrimaryMainTheme}>
         <Box width="85%">
-        <FormHeader number={1} header="Choose a category"/>
+          <FormHeader number={1} header="Choose a category" />
         </Box>
         {Object.keys(buttonRows).map((category) => (
           <CategoryGen key={category} rowName={buttonRows[category]!} />

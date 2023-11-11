@@ -22,9 +22,9 @@ interface UpArrow {
   north: boolean;
 }
 
-type props = FormHeaderNum|FormHeaderText|UpArrow
+type props = FormHeaderNum | FormHeaderText | UpArrow;
 
-const FormHeader: React.FC <props> = props => {
+const FormHeader: React.FC<props> = (props) => {
   const { number } = props as FormHeaderNum;
   const { header } = props as FormHeaderText;
   const { north } = props as UpArrow;
@@ -32,8 +32,13 @@ const FormHeader: React.FC <props> = props => {
     <Grid container spacing={2} style={{ marginTop: "5px" }}>
       <Grid item xs={8}>
         <Stack direction="row" spacing={1}>
-          <span><NumberInCircle num={number} borderRaduis="50%"/></span>
-          <Typography variant="h6" fontSize={"18px"} whiteSpace={"nowrap"} > {header} </Typography>
+          <span>
+            <NumberInCircle num={number} borderRaduis="50%" />
+          </span>
+          <Typography variant="h6" fontSize={"18px"} whiteSpace={"nowrap"}>
+            {" "}
+            {header}{" "}
+          </Typography>
         </Stack>
       </Grid>
       <Grid item xs={4}>
