@@ -137,7 +137,7 @@ const Categories = () => {
             <Button
               variant="outlined"
               onClick={() => {
-                alert("clicked");
+                console.log("clicked");
               }}
             >
               {category}
