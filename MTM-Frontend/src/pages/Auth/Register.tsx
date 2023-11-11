@@ -73,6 +73,9 @@ const Register: React.FC = () => {
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     resolver: yupResolver(schema),
+    defaultValues: {
+      userType: "public donor",
+    },
   });
 
   const [error, setError] = useState<string>("");
