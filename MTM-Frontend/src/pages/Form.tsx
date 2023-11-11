@@ -26,6 +26,7 @@ const Profile: React.FC = () => {
       <GeneralSection />
 
       <ReviewSection />
+
     </Stack>
   );
 };
