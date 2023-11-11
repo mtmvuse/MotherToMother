@@ -15,10 +15,10 @@ const Profile: React.FC = () => {
       alignItems="center"
       spacing={2}
     >
-      <Typography variant="h4" fontWeight="bold" style={{ marginTop: "20px" }}>
-        Outgoing Donations
+      <Typography variant="h4" fontWeight="bold" style={{fontSize:"25px", textAlign:"center", marginTop: "20px" }}>
+        Outgoing Donations 
       </Typography>
-      <Typography variant="body1" style={{ textAlign: "center" }}>
+      <Typography variant="body1" style={{ textAlign: "center", marginTop: "5px"  }}>
         Select the categories and item types of resources that you would like to
         donate
       </Typography>

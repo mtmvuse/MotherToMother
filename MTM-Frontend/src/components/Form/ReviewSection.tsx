@@ -49,7 +49,7 @@ const ReviewSection = () => {
       <ThemeProvider theme={PrimaryMainTheme}>
         <Box width="85%">
           {/* Header of Review Section */}
-          <FormHeader number={2} />
+          <FormHeader number={1} header="Review"/>
 
           {/* Main Content of Review Section */}
           <Stack
