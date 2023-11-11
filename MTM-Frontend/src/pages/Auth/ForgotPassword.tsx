@@ -80,6 +80,7 @@ const ForgotPassword: React.FC = () => {
             <button className="reset-button" type = "submit">
               {isSubmitting ? "Submitting" : "Reset Password"}
             </button>
+            {/*Button to test popup Modal /!*<button onClick={()=> setOpen(true)}>Modal Test</button>*!/*/}
           </div>
         </form>
       </div>
@@ -90,7 +91,6 @@ const ForgotPassword: React.FC = () => {
             Already have an account? Log in
           </Link>
         </Typography>
-        <button onClick={()=> setOpen(true)}>Modal Test</button>
       </div>
       <ForgotPasswordModal open={open} onClose={() => setOpen(false)}>
         <div className={"popup"}>
