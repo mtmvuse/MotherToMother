@@ -1,27 +1,19 @@
-export interface OutgoingDonationType {
-    id?: number;
-    requesterID: number;       
-    date: Date;                
-    numberServed: number;      
-    whiteNum: number;          
-    latinoNum: number;      
-    blackNum: number;          
-    nativeNum: number;         
-    asianNum: number;
-    otherNum: number;          
-  }
-  
-export interface IncomingDonationType {
+export interface DonationType{
+    id: number;
+    userID: number;
+    date: Date;
 }
 
-export interface DonationDetailsType {
-    itemID: number;                
-    quantityOld: number;         
-    quantityNew: number;         
-    outgoingDonationId: number;
+export interface DonationDetailsType{
+    id: number;
+    itemID: number;
+    donationID: number;
+    quantityUsed: number;
+    quantityNew: number;
 }
 
-export interface ItemType {
-    id?: number;
-    name: string;             
+export interface DonationDetailType{
+    itemId: number;
+    quantityUsed: number;
+    quantityNew: number;
 }

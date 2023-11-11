@@ -2,35 +2,35 @@ import express, {
     type Request,
     type Response,
     type NextFunction,
-  } from "express";
-import {db} from "../../../utils/db.server"
+} from "express";
+import * as DonationService from "./donation.service";
+import {DonationDetailType} from "../../../types/donation";
 
 const donationRouter = express.Router();
 
-const createOutgoingDonation = async (req: Request, res: Response, next: NextFunction) => {
-    // Date String to Date Object Conversion
-    const {date, ...otherReqBody} = req.body;
-    const [month, day, year] = date.split("-");
-    const dateNew = new Date();
-    dateNew.setFullYear(parseInt(year));
-    dateNew.setMonth(parseInt(month) - 1);
-    dateNew.setDate(parseInt(day));
-
+const createOutgoingDonation = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+) => {
     try {
-        const newOutgoingDonation = await db.outgoingDonation.create({
-            data: {
-                date: dateNew,
-                ...otherReqBody,
-            },
+        console.log(req.body.userId);
+        const newDonation = await DonationService.createDonation(req.body.userId);
+
+        req.body.donationDetails.forEach(async (donationDetail: DonationDetailType) => {
+            const newDonationDetail = await DonationService.createDonationDetails(donationDetail.itemId, newDonation.id, donationDetail);
         });
-        return res.status(200).json(newOutgoingDonation);
-    }
-    catch (e) {
-        console.log("Error in createOutgoingDonation");
+
+        console.log(newDonation.id, req.body.numberServed, req.body.whiteNum, req.body.latinoNum, req.body.blackNum, req.body.nativeNum, req.body.asianNum, req.body.otherNum);
+        const newOutgoingDonationStats = await DonationService.createOutgoingDonationStats(newDonation.id, req.body.numberServed, req.body.whiteNum, req.body.latinoNum, req.body.blackNum, req.body.nativeNum, req.body.asianNum, req.body.otherNum);
+
+    return res.status(200).json(newOutgoingDonationStats);
+
+    } catch (e) {
         next(e);
     }
-}
+};
 
-donationRouter.post('/createOutgoingDonation', createOutgoingDonation);
+donationRouter.post("/createOutgoingDonation", createOutgoingDonation);
 
-export {donationRouter};
+export { donationRouter };

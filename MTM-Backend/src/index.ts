@@ -29,7 +29,7 @@ app.use(helmet());
 app.use("/sessions", sessionRouter);
 app.use("/example", verifyToken, exampleRoute);
 // app.use("/example", exampleRoute);
-app.use("/users", verifyToken, userRouter);
+// app.use("/users", verifyToken, userRouter); 
 // app.use("/users", userRouter);
 
 app.use("/donation", donationRouter); // Unprotected, Removed verifyToken
