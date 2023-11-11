@@ -3,12 +3,11 @@
 /* eslint-disable prettier/prettier */
 // TODO: REMOVE THIS DISABLE
 import React from "react";
-import { Typography } from "@mui/material";
-import { Stack } from "@mui/material";
-import {Button} from "@mui/material";
+import { Typography, Stack, Button } from "@mui/material";
 import Badge from "@mui/material/Badge";
 
 import Categories from "../components/Form/Categories";
+import ReviewSection from "../components/Form/ReviewSection";
 
 const Profile: React.FC = () => {
   return (
@@ -36,6 +35,22 @@ const Profile: React.FC = () => {
       <Categories />
     </Stack>
   );
+    return (
+        <Stack
+            direction="column"
+            justifyContent="center"
+            alignItems="center"
+            spacing={2}
+        >
+            <Typography variant="h4" fontWeight="bold">Outgoing Donations</Typography>
+            <Typography variant="body1">
+                Select the categories and item types of resources that you would like to
+                donate
+            </Typography>
+
+            <ReviewSection />
+        </Stack>
+    );
 };
 
 

@@ -5,6 +5,8 @@ import { useAuth } from "../../AuthContext";
 import { Outlet } from "react-router-dom";
 import { Container, Box, Grid } from "@mui/material";
 import { constructPayloadHeaders } from "../../lib/utils";
+import Navbar from "../../components/NavigationBar/BottomNavbar";
+import { TopBar } from "../../components/NavigationBar/TopBar";
 
 export const HomeLayout: React.FC = () => {
   const [fact, setFact] = useState<string>("");
@@ -14,7 +16,10 @@ export const HomeLayout: React.FC = () => {
     const fetchFact = async () => {
       try {
         const token = await currentUser?.getIdToken();
-        const res = await fetch("/api/example", constructPayloadHeaders(token));
+        const res = await fetch(
+          "/api/example/",
+          constructPayloadHeaders(token),
+        );
         setFact(await res.text());
       } catch (err) {
         console.log(err);
@@ -26,6 +31,9 @@ export const HomeLayout: React.FC = () => {
 
   return (
     <Container className={styles.container}>
+      {/* testcode */}
+      <TopBar/>
+      {/* testcode */}
       <Container className={styles.content}>
         <Outlet />
       </Container>
@@ -42,6 +50,9 @@ export const HomeLayout: React.FC = () => {
           </Grid>
         </Grid>
       </Container>
+      {/* testcode to be deleted */}
+      <Navbar/>   
+      {/* testcode to be deleted */}
     </Container>
   );
 };

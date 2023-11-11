@@ -8,20 +8,24 @@ import FormError from "./FormError";
 import { TextField, Button, Typography, Box } from "@mui/material";
 
 interface FormValues {
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
   confirmPassword: string;
+  userType: string;
 }
 
 const schema = Yup.object().shape({
-  name: Yup.string().required("Name is required"),
+  firstName: Yup.string().required("First Name is required"),
+  lastName: Yup.string().required("Last Name is required"),
   email: Yup.string()
     .email("Invalid email address")
     .required("Email is required"),
   password: Yup.string()
     .min(8, "Password must be at least 8 characters")
     .required("Password is required"),
+  userType: Yup.string().required("Type is required"),
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password")], "Passwords do not match")
     .required("Confirm password is required"),
@@ -50,7 +54,12 @@ const Register: React.FC = () => {
   const onSubmit = async (values: FormValues) => {
     try {
       setError("");
-      await registerUser(values.name, values.email, values.password);
+      await registerUser(
+        values.lastName,
+        values.email,
+        values.password,
+        values.userType,
+      );
       navigate("/home");
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
@@ -65,17 +74,47 @@ const Register: React.FC = () => {
       </Typography>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Controller
-          name="name"
+          name="firstName"
           control={control}
           render={({ field }) => (
             <TextField
-              label="Name"
+              label="First Name"
               type="text"
               fullWidth
               margin="normal"
               {...field}
-              error={!!errors.name}
-              helperText={errors.name ? errors.name.message : ""}
+              error={!!errors.firstName}
+              helperText={errors.firstName ? errors.firstName.message : ""}
+            />
+          )}
+        />
+        <Controller
+          name="lastName"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              label="Last Name"
+              type="text"
+              fullWidth
+              margin="normal"
+              {...field}
+              error={!!errors.lastName}
+              helperText={errors.lastName ? errors.lastName.message : ""}
+            />
+          )}
+        />
+        <Controller
+          name="userType"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              label="User Type"
+              type="text"
+              fullWidth
+              margin="normal"
+              {...field}
+              error={!!errors.userType}
+              helperText={errors.userType ? errors.userType.message : ""}
             />
           )}
         />
