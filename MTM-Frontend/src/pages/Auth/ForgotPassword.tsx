@@ -8,6 +8,10 @@ import FormError from "./FormError";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import "./ForgotPassword.css";
 import forgotpasswordlogo from "../assets/forgotpassword-logo.png";
+import paperAirplane from "../assets/paperPlanelogo.png";
+import ForgotPasswordModal from "../../components/Auth/ForgotPasswordModal";
+import "../../components/Auth/ForgotPasswordModal.css"
+
 
 interface FormValues {
   email: string;
@@ -31,7 +35,6 @@ const ForgotPassword: React.FC = () => {
   }, [currentUser, navigate]);
 
   const {
-    control,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
@@ -41,13 +44,14 @@ const ForgotPassword: React.FC = () => {
   const [message, setMessage] = useState<string>("");
   const [error, setError] = useState<string>("");
 
+  const[open, setOpen] = useState<boolean>(false);
+
   const onSubmit = async (values: FormValues) => {
     try {
       setError("");
       await forgotPassword(values.email);
-      setMessage("Check your email for further instructions");
+      setOpen(true)
     } catch (err: any) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
       setError(err.message);
     }
   };
@@ -65,6 +69,7 @@ const ForgotPassword: React.FC = () => {
             <input
               type="email"
               placeholder="Email"
+              {...forgotPassword("email")}
               className={`user-input ${errors.email ? "error" : ""}`}
             />
             {errors.email && (
@@ -72,7 +77,7 @@ const ForgotPassword: React.FC = () => {
             )}
 
             {error && <FormError>{error}</FormError>}
-            <button className="reset-button">
+            <button className="reset-button" type = "submit">
               {isSubmitting ? "Submitting" : "Reset Password"}
             </button>
           </div>
@@ -85,12 +90,24 @@ const ForgotPassword: React.FC = () => {
             Already have an account? Log in
           </Link>
         </Typography>
-        <Typography>
-          <Link to="/register" className={"link"}>
-            Don't have an account?
-          </Link>
-        </Typography>
+        <button onClick={()=> setOpen(true)}>Modal Test</button>
       </div>
+      <ForgotPasswordModal open={open} onClose={() => setOpen(false)}>
+        <div className={"popup"}>
+          <img src={paperAirplane} alt="Image1" />
+          <h2 className={"heading"}>
+            Reset Instructions sent!
+          </h2>
+          <p className={"instructions-text"}>
+            An email with instructions to reset your email was sent to you inbox
+          </p>
+          <Typography>
+            <Link to="/" className={"link"}>
+              back to login
+            </Link>
+          </Typography>
+        </div>
+      </ForgotPasswordModal>
     </div>
   );
 };
