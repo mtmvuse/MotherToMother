@@ -5,45 +5,56 @@ import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { useAuth } from "../../AuthContext";
 import FormError from "./FormError";
-import {
-  TextField,
-  Button,
-  Typography,
-  Box,
-  MenuItem,
-  FormControl,
-  Select,
-  InputLabel,
-  Tooltip,
-} from "@mui/material";
+import { Button, Typography, Box, FormHelperText } from "@mui/material";
 
-import { RegisterTextField } from "../../../src/components/RegisterForms/ui/RegisterTextField";
-import m2mLogo from "../assets/m2m_logo.png";
-import m2mAnimalLogo from "../assets/animal_logo.png";
-import { FilePresent } from "@mui/icons-material";
-
+// Register components
+import { RegisterTextField } from "../../components/RegisterForms/RegisterTextField";
+import { RegisterTextFieldPassword } from "../../components/RegisterForms/RegisterTextFieldPassword";
+import { AccountTypeButton } from "../../components/RegisterForms/AccountTypeButton";
 interface FormValues {
-  firstName: string;
-  lastName: string;
+  name: string;
   email: string;
   password: string;
   confirmPassword: string;
   userType: string;
+
+  phone: string;
+  address: string;
+  zip: string;
+  state: string;
+  agency?: string;
 }
 
 const schema = Yup.object().shape({
-  firstName: Yup.string().required("First Name is required"),
-  lastName: Yup.string().required("Last Name is required"),
+  name: Yup.string()
+    .matches(/^([A-Za-z]+\s[A-Za-z]+)$/, "First and Last name")
+    .required("First and Last name is required"),
   email: Yup.string()
     .email("Invalid email address")
     .required("Email is required"),
   password: Yup.string()
+    .matches(
+      /^(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{8,}$/,
+      "Invalid password",
+    )
     .min(8, "Password must be at least 8 characters")
     .required("Password is required"),
   userType: Yup.string().required("Type is required"),
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password")], "Passwords do not match")
     .required("Confirm password is required"),
+
+  phone: Yup.string()
+    .matches(/^[0-9]{10}$/, "Phone number is not valid")
+    .required("Phone number is required"),
+  address: Yup.string().required("Address is required"),
+  zip: Yup.string()
+    .matches(/^\d{5}(-\d{4})?$/, "Invalid Zip code")
+    .required("Zip code is required"),
+  state: Yup.string()
+    .matches(/^[A-Za-z]{2}$/, "State initials")
+    .required("State is required"),
+  agency: Yup.string(),
 });
 
 const Register: React.FC = () => {
@@ -70,7 +81,7 @@ const Register: React.FC = () => {
     try {
       setError("");
       await registerUser(
-        values.lastName,
+        values.name,
         values.email,
         values.password,
         values.userType,
@@ -83,100 +94,78 @@ const Register: React.FC = () => {
   };
 
   return (
-    <div className="m-10 flex flex-col items-center">
-      <img
-        className="mb-8 mt-3"
-        src={m2mLogo}
-        alt="Mother to Mother Logo"
-        title="mother to mother"
-      />
-      <Typography fontWeight="bold" component="h2" variant="h6">
+    <div className="mt-10 flex flex-col items-center w-full">
+      <Typography
+        fontWeight="bold"
+        component="h2"
+        variant="h6"
+        style={{ margin: "1rem 0rem 1rem 0rem" }}
+      >
         Create an account
       </Typography>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} className="w-9/12">
         <div>
-          <Typography variant="subtitle2">
+          <Typography className="text-base">
             Name<span className="text-red-500">*</span>
           </Typography>
-
-          <div className="flex flex-row gap-x-2 -mt-3">
+          <div className="-mt-4 mb-4">
             <RegisterTextField
-              name="firstName"
-              placeHolder="First Name"
+              name="name"
+              placeHolder="Name"
               control={control}
-              errors={errors.firstName}
-            />
-
-            <RegisterTextField
-              name="lastName"
-              placeHolder="Last Name"
-              control={control}
-              errors={errors.lastName}
-            />
-          </div>
-        </div>
-        <div>
-          <Typography variant="subtitle2">
-            User Type<span className="text-red-500">*</span>
-          </Typography>
-          <div className="-mt-3">
-            <Controller
-              name="userType"
-              control={control}
-              render={({ field: { onChange, value } }) => (
-                <FormControl fullWidth variant="outlined" margin="normal">
-                  <Select
-                    value={value || ""} // Use the value from the field prop
-                    onChange={onChange} // Use the onChange from the field prop
-                    style={{ border: "none", borderRadius: "100px" }}
-                    required
-                  >
-                    <Tooltip title="Information about what an Agency Partner means">
-                      <MenuItem value="Agency Partner">Agency Partner</MenuItem>
-                    </Tooltip>
-                    <Tooltip title="Information about what a Corporation Donor means">
-                      <MenuItem value="Corporation/Foundation Donor">
-                        Corporation/Foundation Donor
-                      </MenuItem>
-                    </Tooltip>
-                    <Tooltip title="Information about what a Public Donor means">
-                      <MenuItem value="Public Donor">Public Donor</MenuItem>
-                    </Tooltip>
-                  </Select>
-                </FormControl>
-              )}
+              errors={errors.name}
             />
           </div>
         </div>
 
         <div>
-          <Typography variant="subtitle2">
-            Email<span className="text-red-500">*</span>
+          <Typography className="text-base">
+            Contact<span className="text-red-500">*</span>
           </Typography>
-          <div className="-mt-3">
+          <div className="-mt-4">
             <RegisterTextField
               name="email"
-              placeHolder="Enter your email"
+              placeHolder="Email address"
               control={control}
               errors={errors.email}
             />
           </div>
+          <div className="-mt-3 mb-4">
+            <RegisterTextField
+              name="phone"
+              placeHolder="Phone number"
+              control={control}
+              errors={errors.phone}
+            />
+          </div>
         </div>
+
         <div>
-          <Typography variant="subtitle2">
+          <Typography className="text-base">
             Password<span className="text-red-500">*</span>
           </Typography>
-          <div className="-mt-3">
-            <RegisterTextField
+          <div className="-mt-4">
+            <RegisterTextFieldPassword
               name="password"
               placeHolder="Create a password"
               control={control}
               errors={errors.password}
             />
           </div>
-          <div className="-mt-3">
-            <RegisterTextField
+          <FormHelperText
+            sx={{
+              fontWeight: "bold",
+              marginTop: "-0.05rem",
+              color: "grey",
+              opacity: "50%",
+              fontSize: "0.6rem",
+            }}
+          >
+            at least one number and one special character
+          </FormHelperText>
+          <div className="-mt-3 mb-4">
+            <RegisterTextFieldPassword
               name="confirmPassword"
               placeHolder="Confirm password"
               control={control}
@@ -184,32 +173,115 @@ const Register: React.FC = () => {
             />
           </div>
         </div>
+
+        <div>
+          <Typography className="text-base">
+            Address<span className="text-red-500">*</span>
+          </Typography>
+          <div className="-mt-4 mb-3">
+            <RegisterTextField
+              name="address"
+              placeHolder="Street Address"
+              control={control}
+              errors={errors.address}
+            />
+          </div>
+          <div className="flex flex-row w-full gap-x-8 -mt-5 mb-4">
+            <div className="w-full">
+              <RegisterTextField
+                name="zip"
+                placeHolder="Zip"
+                control={control}
+                errors={errors.zip}
+              />
+            </div>
+            <div className="w-full">
+              <RegisterTextField
+                name="state"
+                placeHolder="State"
+                control={control}
+                errors={errors.state}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <Typography className="text-base">Agency (optional)</Typography>
+          <div className="-mt-4 mb-4">
+            <RegisterTextField
+              name="agency"
+              placeHolder="Organization/Affiliation"
+              control={control}
+              errors={errors.agency}
+            />
+          </div>
+        </div>
+
+        <div>
+          <Typography className="text-base">
+            Account Type<span className="text-red-500">*</span>
+          </Typography>
+          <Typography className="text-base text-gray-500">
+            Choose the account type that most aligns with your needs and
+            interactions
+          </Typography>
+
+          <Controller
+            name="userType"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <div className="flex flex-col gap-y-3 mt-3 items-center">
+                <AccountTypeButton
+                  userType={value}
+                  onClick={() => onChange("public donor")}
+                  value="public donor"
+                />
+                <AccountTypeButton
+                  userType={value}
+                  onClick={() => onChange("corporate donor")}
+                  value="corporate donor"
+                />
+                <AccountTypeButton
+                  userType={value}
+                  onClick={() => onChange("agency partner")}
+                  value="agency partner"
+                />
+              </div>
+            )}
+          />
+        </div>
+
         {error && <FormError>{error}</FormError>}
 
-        <div className="mt-6 flex w-full justify-center">
+        <div className="mt-14 flex w-full justify-center">
           <Button
             disabled={isSubmitting}
             type="submit"
             variant="contained"
-            color="primary"
-            style={{ borderRadius: "100px", width: "75%", fontSize: "1.1rem" }}
+            size="small"
+            style={{
+              borderRadius: "100px",
+              width: "70%",
+              fontSize: "1.3rem",
+              textTransform: "none",
+              backgroundColor: "rgb(229 231 235)",
+              color: "black",
+            }}
           >
-            Sign Up
-            {/* {isSubmitting ? "Submitting" : "Register"} */}
+            {isSubmitting ? "Signing in" : "Sign up"}
           </Button>
         </div>
       </form>
 
       <Box mt={2}>
         <Typography>
-          Already have an account?{" "}
+          Already have an account?<span> </span>
           <Link className="font-bold" to="/">
             Log in
           </Link>
         </Typography>
       </Box>
-
-      <img src={m2mAnimalLogo} alt="mother to mother animal logo" />
     </div>
   );
 };

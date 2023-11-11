@@ -20,14 +20,18 @@ export const RegisterTextField: React.FC<InputProps> = ({
       control={control}
       render={({ field }) => (
         <TextField
-          label={placeHolder}
+          placeholder={placeHolder}
           type="text"
           fullWidth
-          margin="normal"
-          variant="outlined"
+          variant="standard"
+          size="small"
+          margin="none"
           InputProps={{
-            style: {
-              borderRadius: "100px",
+            inputProps: {
+              style: {
+                padding: "0px",
+                margin: "1rem 0rem 0rem 0rem",
+              },
             },
           }}
           {...field}
