@@ -12,32 +12,16 @@ datasource db {
 
 model User {
     id               Int                @id @default(autoincrement())
-    organizationID   Int
+    email            String
     firstName        String
     lastName         String
-    email            String             @unique
+    userType         String
     hash             String
     salt             String
-    phone            Int
-    address          String
-    city             String
-    stateZip         Int?
-    role             String?
-    household        String?
-    type             String
-    organization     Organization       @relation(fields: [organizationID], references: [id])
-    incomingDonation IncomingDonation[]
     outgoingDonation OutgoingDonation[]
 }
 
-model Organization {
-    id    Int    @id @default(autoincrement())
-    name  String
-    type  String
-    users User[]
-}
-
-model DonationDetail {
+model DonationDetails {
     id                 Int              @id @default(autoincrement())
     itemID             Int
     quantityOld        Int
@@ -45,14 +29,12 @@ model DonationDetail {
     item               Item             @relation(fields: [itemID], references: [id])
     OutgoingDonation   OutgoingDonation @relation(fields: [outgoingDonationId], references: [id])
     outgoingDonationId Int
-    IncomingDonation   IncomingDonation @relation(fields: [incomingDonationId], references: [id])
-    incomingDonationId Int
 }
 
 model OutgoingDonation {
-    id           Int              @id @default(autoincrement())
+    id           Int               @id @default(autoincrement())
     requesterID  Int
-    requester    User             @relation(fields: [requesterID], references: [id])
+    requester    User              @relation(fields: [requesterID], references: [id])
     date         DateTime
     numberServed Int
     whiteNum     Int
@@ -61,24 +43,11 @@ model OutgoingDonation {
     nativeNum    Int
     asianNum     Int
     otherNum     Int
-    details      DonationDetail[]
-}
-
-model IncomingDonation {
-    id      Int              @id @default(autoincrement())
-    donorID Int
-    date    DateTime
-    donor   User             @relation(fields: [donorID], references: [id])
-    details DonationDetail[]
+    details      DonationDetails[]
 }
 
 model Item {
-    id       Int              @id @default(autoincrement())
-    category String
-    name     String
-    stockNew Int
-    stockOld Int
-    valueNew Int
-    valueOld Float
-    details  DonationDetail[]
+    id      Int               @id @default(autoincrement())
+    name    String
+    details DonationDetails[]
 }

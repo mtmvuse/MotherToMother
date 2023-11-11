@@ -8,6 +8,7 @@ import { userRouter } from "./routes/v1/user/user.router";
 import { sessionRouter } from "./routes/v1/session/session.router";
 import { verifyToken } from "./middlewares/verifyToken";
 import { notFound, errorHandler } from "./middlewares/errors";
+import { donationRouter } from "./routes/v1/donation/donation.router";
 
 dotenv.config();
 
@@ -31,6 +32,8 @@ app.use("/example", verifyToken, exampleRoute);
 app.use("/users", verifyToken, userRouter);
 // app.use("/users", userRouter);
 
+app.use("/donation", donationRouter); // Unprotected, Removed verifyToken
+
 // Default route: Unprotected
 app.get("/", (_req: Request, res: Response) => {
   res.send("MTM Server");
@@ -43,3 +46,4 @@ app.use(errorHandler);
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
