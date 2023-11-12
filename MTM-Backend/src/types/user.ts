@@ -12,6 +12,7 @@ export interface ResponseUser {
 }
 
 export interface UserInput {
+  id: number;
   uid: string;
   email: string;
   password: string;
