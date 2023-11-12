@@ -4,6 +4,7 @@ import { useAuth } from "../AuthContext";
 import { CircularProgress, Typography } from "@mui/material";
 import "./Profile.css";
 import editButton from "./assets/edit_button.png";
+import profile_logo from "../pages/assets/profile_logo.png";
 
 type User = {
   displayName: string | null;
@@ -30,18 +31,18 @@ const Profile: React.FC = () => {
     navigate("/");
   };
 
+  const handleEditProfile = () => {
+    navigate("edit");
+  };
+
   return (
     <div className={"profile-container"}>
+      <div className={"profile-image"}>
+        <img className="profile-logo" src={profile_logo} alt="Image1" />
+      </div>
       <div className={"profile-heading"}>
         <div className={"name-container"}>
           <Typography className={"heading"}>{user?.displayName}</Typography>
-          <button>
-            <img
-              className="name-container-button"
-              src={editButton}
-              alt="Image1"
-            />
-          </button>
         </div>
         <Typography className={"subheading"}>
           Organization / Affiliation
@@ -67,13 +68,12 @@ const Profile: React.FC = () => {
           </div>
         </div>
       )}
-      <div className={"logout"}>
-        <button
-          className="logout-button"
-          style={{ marginTop: "2px", marginBottom: "100px" }}
-          onClick={handleLogout}
-        >
+      <div className={"buttons-conatiner"}>
+        <button className="logout-button" onClick={handleLogout}>
           Logout
+        </button>
+        <button className="edit-button" onClick = {handleEditProfile}>
+          Edit
         </button>
       </div>
     </div>

@@ -1,0 +1,97 @@
+/* EditProfile.css */
+
+@font-face {
+    font-family: Inter;
+    src: url("assets/Inter-VariableFont_slnt,wght.ttf");
+}
+
+.edit-profile-container
+{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.profile-logo {
+    position: relative;
+    width: 200px;
+    margin-top: 50px;
+}
+
+
+.edit-form
+{
+    background-color: #ffffff;
+    border-radius: 8px;
+    width: 300px;
+}
+
+.text-label{
+
+    font-family: Inter, sans-serif;
+    font-size: 15px;
+    font-weight: 350;
+    line-height: 18px;
+    text-align: left;
+    margin-bottom: 5px;
+}
+
+.placeholder-text
+{
+    font-family: Inter, sans-serif;
+    color: #C1C1C1;
+    font-size: 15px;
+    font-weight: 350;
+    line-height: 18px;
+    text-align: left;
+}
+
+.form-input{
+    width: 100%;
+    background-color: #fcfcfc;
+    border: 0;
+    border-bottom: 2px solid lightgrey;
+    padding-left: 2px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-bottom: 10px
+}
+
+.vertical-input-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.save-button {
+    margin-top: 50px;
+    border-radius: 10px;
+    width: 70px;
+    height: 30px;
+    align-items: center;
+    background: #C1C1C1;
+    font-family: Inter, sans-serif;
+    font-size: 15px;
+    font-weight: 400;
+    color: white;
+    text-align: center;
+    border: none;
+    cursor: pointer;
+
+}
+
+.cancel-button {
+    margin-top: 50px;
+    border-radius: 10px;
+    width: 70px;
+    height: 30px;
+    align-items: center;
+    background: white;
+    font-family: Inter, sans-serif;
+    font-size: 15px;
+    font-weight: 400;
+    color: #C1C1C1;
+    text-align: center;
+    border: 1px solid #C1C1C1;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
