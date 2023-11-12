@@ -79,13 +79,13 @@ const getDonationDetails = (): Array<DonationDetailsType> => {
   return [
     {
       itemID: 1,
-      quantityOld: 100,
+      quantityUsed: 100,
       quantityNew: 150,
       outgoingDonationId: 1,
     },
     {
       itemID: 2,
-      quantityOld: 150,
+      quantityUsed: 150,
       quantityNew: 200,
       outgoingDonationId: 2,
     },
@@ -94,9 +94,9 @@ const getDonationDetails = (): Array<DonationDetailsType> => {
 
 async function clearData() {
   await db.user.deleteMany({});
-  await db.outgoingDonation.deleteMany({});
+  await db.OutgoingDonationStats.deleteMany({});
   await db.item.deleteMany({});
-  await db.donationDetails.deleteMany({});
+  await db.DonationDetail.deleteMany({});
 }
 
 const seed = async () => {
