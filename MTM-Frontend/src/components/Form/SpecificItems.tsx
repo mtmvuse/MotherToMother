@@ -42,6 +42,17 @@ const SpecificItems = ({
     handleClose();
     handleClose();
   };
+  const handleCancelDetails = () => {
+    // TODO: SAVE THE DETAILS IN THE LOWER COMPONENTS
+    // Prepare the updated data
+    const updatedData = { newItemCount, usedItemCount };
+    // Invoke the callback
+    // props.onUpdate(updatedData);
+    setNewItemCount(0);
+    setUsedItemCount(0);
+    handleClose();
+    handleClose();
+  };
 
   const handleClose = () => {
     if (onClose) onClose();
@@ -50,20 +61,15 @@ const SpecificItems = ({
   return (
     <div>
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle variant="h6">{subCategory}</DialogTitle>
-        <IconButton
-          aria-label="close"
-          onClick={handleClose}
-          sx={{
-            position: "absolute",
-            right: 8,
-            top: 8,
-            color: (theme) => theme.palette.grey[500],
-          }}
-        >
-          <CloseIcon />
-        </IconButton>
+        <DialogTitle>
+          <Typography variant="h6" align="center" sx={{ fontWeight: "bold" }}>
+            {category} - {subCategory}
+          </Typography>
+        </DialogTitle>
         <DialogContent>
+          <Typography variant="body1" align="center" sx={{ pb: "16px" }}>
+            Enter the number of new or used {category} you will donate.
+          </Typography>
           <Stack
             direction="row"
             justifyContent="center"
@@ -77,7 +83,7 @@ const SpecificItems = ({
             >
               <RemoveIcon />
             </IconButton>
-            <Typography variant="body1">{newItemCount}</Typography>
+            <Typography variant="h6">{newItemCount}</Typography>
             <IconButton onClick={() => setNewItemCount((prev) => prev + 1)}>
               <AddIcon />
             </IconButton>
@@ -95,14 +101,32 @@ const SpecificItems = ({
             >
               <RemoveIcon />
             </IconButton>
-            <Typography variant="body1">{usedItemCount}</Typography>
+            <Typography variant="h6">{usedItemCount}</Typography>
             <IconButton onClick={() => setUsedItemCount((prev) => prev + 1)}>
               <AddIcon />
             </IconButton>
           </Stack>
-          <Button onClick={handleSaveDetails} color="primary">
-            Save
-          </Button>
+          <Stack
+            direction="row"
+            justifyContent="center"
+            alignItems="center"
+            spacing={0.5}
+          >
+            <Button
+              variant="outlined"
+              onClick={handleCancelDetails}
+              color="primary"
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="outlined"
+              onClick={handleSaveDetails}
+              color="primary"
+            >
+              Save
+            </Button>
+          </Stack>
         </DialogContent>
       </Dialog>
     </div>
