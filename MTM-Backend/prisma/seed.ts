@@ -79,13 +79,13 @@ const getDonationDetails = (): Array<DonationDetailsType> => {
   return [
     {
       itemID: 1,
-      quantityOld: 100,
+      quantityUsed: 100,
       quantityNew: 150,
       outgoingDonationId: 1,
     },
     {
       itemID: 2,
-      quantityOld: 150,
+      quantityUsed: 150,
       quantityNew: 200,
       outgoingDonationId: 2,
     },
