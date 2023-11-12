@@ -5,12 +5,19 @@ import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { useAuth } from "../../AuthContext";
 import FormError from "./FormError";
-import { Button, Typography, Box, FormHelperText } from "@mui/material";
+import {
+  Button,
+  Typography,
+  Box,
+  FormHelperText,
+  FormControl,
+  Select,
+  MenuItem,
+} from "@mui/material";
 
 // Register components
 import { RegisterTextField } from "../../components/RegisterForms/RegisterTextField";
 import { RegisterTextFieldPassword } from "../../components/RegisterForms/RegisterTextFieldPassword";
-import { AccountTypeButton } from "../../components/RegisterForms/AccountTypeButton";
 interface FormValues {
   name: string;
   email: string;
@@ -21,7 +28,7 @@ interface FormValues {
   phone: string;
   address: string;
   zip: string;
-  state: string;
+  city: string;
   agency?: string;
 }
 
@@ -51,9 +58,7 @@ const schema = Yup.object().shape({
   zip: Yup.string()
     .matches(/^\d{5}(-\d{4})?$/, "Invalid Zip code")
     .required("Zip code is required"),
-  state: Yup.string()
-    .matches(/^[A-Za-z]{2}$/, "State initials")
-    .required("State is required"),
+  city: Yup.string().required("City is required"),
   agency: Yup.string(),
 });
 
@@ -73,9 +78,6 @@ const Register: React.FC = () => {
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     resolver: yupResolver(schema),
-    defaultValues: {
-      userType: "public donor",
-    },
   });
 
   const [error, setError] = useState<string>("");
@@ -192,18 +194,19 @@ const Register: React.FC = () => {
           <div className="flex flex-row w-full gap-x-8 -mt-5 mb-4">
             <div className="w-full">
               <RegisterTextField
+                name="city"
+                placeHolder="City"
+                control={control}
+                errors={errors.city}
+              />
+            </div>
+
+            <div className="w-full">
+              <RegisterTextField
                 name="zip"
                 placeHolder="Zip"
                 control={control}
                 errors={errors.zip}
-              />
-            </div>
-            <div className="w-full">
-              <RegisterTextField
-                name="state"
-                placeHolder="State"
-                control={control}
-                errors={errors.state}
               />
             </div>
           </div>
@@ -234,23 +237,35 @@ const Register: React.FC = () => {
             name="userType"
             control={control}
             render={({ field: { onChange, value } }) => (
-              <div className="flex flex-col gap-y-3 mt-3 items-center">
-                <AccountTypeButton
-                  userType={value}
-                  onClick={() => onChange("public donor")}
-                  value="public donor"
-                />
-                <AccountTypeButton
-                  userType={value}
-                  onClick={() => onChange("corporate donor")}
-                  value="corporate donor"
-                />
-                <AccountTypeButton
-                  userType={value}
-                  onClick={() => onChange("agency partner")}
-                  value="agency partner"
-                />
-              </div>
+              <FormControl fullWidth variant="standard" margin="normal">
+                <Select
+                  value={value || ""}
+                  onChange={onChange}
+                  style={{
+                    border: "none",
+                    borderRadius: "100px",
+                    color: "black",
+                  }}
+                  error={!!errors.userType}
+                >
+                  <MenuItem value="Public Donor">Public Donor</MenuItem>
+
+                  <MenuItem value="Corporation/Foundation Donor">
+                    Corporation/Foundation Donor
+                  </MenuItem>
+
+                  <MenuItem value="Agency Partner">Agency Partner</MenuItem>
+                </Select>
+                <FormHelperText>
+                  {errors.userType ? (
+                    <span className="text-[#d32f2f]">
+                      {errors.userType.message}
+                    </span>
+                  ) : (
+                    ""
+                  )}
+                </FormHelperText>
+              </FormControl>
             )}
           />
         </div>
