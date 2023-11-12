@@ -56,6 +56,35 @@
     margin-bottom: 10px
 }
 
+.side-input {
+    display: flex;
+}
+
+.form-input-left-half
+{
+    width: 130px;
+    background-color: #fcfcfc;
+    border: 0;
+    border-bottom: 2px solid lightgrey;
+    padding-left: 2px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+}
+
+.form-input-right-half
+{
+    width: 130px;
+    background-color: #fcfcfc;
+    border: 0;
+    border-bottom: 2px solid lightgrey;
+    padding-left: 2px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+    margin-left: 32px;
+}
+
 .vertical-input-container {
     display: flex;
     flex-direction: column;

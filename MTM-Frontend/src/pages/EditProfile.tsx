@@ -78,6 +78,10 @@ const EditProfile: React.FC = () => {
           </div>
         <p className="text-label">Address</p>
         <input className="form-input" placeholder={"Street Address"}></input>
+          <div className={"side-inputs"}>
+              <input className="form-input-left-half" placeholder={"City"}></input>
+              <input className="form-input-right-half" placeholder={"Zip    "}></input>
+          </div>
           <p className="text-label">Agency (optional)</p>
           <input className="form-input" placeholder={"Organization/Affiliation"}></input>
       </div>
