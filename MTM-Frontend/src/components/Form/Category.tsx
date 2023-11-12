@@ -20,7 +20,6 @@ const getCategories = (category: string, editMode: boolean) => {
           }}
         >
           <Typography color="white" alignSelf="center">
-            {" "}
             {category}
           </Typography>
         </Container>

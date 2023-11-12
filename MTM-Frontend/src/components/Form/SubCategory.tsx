@@ -24,16 +24,13 @@ const getSubCategories = (
           width="95%"
         >
           <Typography className="subcategory-status">
-            {" "}
-            {subCategory}{" "}
+            {subCategory}
           </Typography>
           <Typography className="subcategory-status">
-            {" "}
-            Used: {subCategoryValues[0]}{" "}
+            Used: {subCategoryValues[0]}
           </Typography>
           <Stack direction="row">
             <Typography className="subcategory-status" marginRight="15px">
-              {" "}
               New: {subCategoryValues[1]}
             </Typography>
             {editMode && (

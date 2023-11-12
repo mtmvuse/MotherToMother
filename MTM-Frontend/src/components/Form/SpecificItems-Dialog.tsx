@@ -78,7 +78,6 @@ const SpecificItems_Dialog = ({
             alignItems="center"
             spacing={2}
           >
-            {" "}
             <Typography variant="h6">New</Typography>
             <IconButton
               onClick={() => setNewItemCount((prev) => Math.max(prev - 1, 0))}
@@ -96,7 +95,6 @@ const SpecificItems_Dialog = ({
             alignItems="center"
             spacing={2}
           >
-            {" "}
             <Typography variant="h6">Used</Typography>
             <IconButton
               onClick={() => setUsedItemCount((prev) => Math.max(prev - 1, 0))}
