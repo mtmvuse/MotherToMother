@@ -25,4 +25,3 @@ export interface PasswordCombo {
   hash: string;
   salt: string;
 }
-
