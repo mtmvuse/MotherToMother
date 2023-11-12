@@ -31,13 +31,11 @@ export const HomeLayout: React.FC = () => {
 
   return (
     <Container className={styles.container}>
-      {/* testcode */}
       <TopBar />
-      {/* testcode */}
       <Container className={styles.content}>
         <Outlet />
       </Container>
-      <Container className={styles.navbar}>
+      {/* <Container className={styles.navbar}>
         <Grid container style={{ justifyContent: "space-around" }}>
           <Grid item>
             <Link to="/home/profile">Profile</Link>
@@ -49,10 +47,10 @@ export const HomeLayout: React.FC = () => {
             <Box>{fact}</Box>
           </Grid>
         </Grid>
-      </Container>
-      {/* testcode to be deleted */}
+      </Container> */}
       <Navbar />
-      {/* testcode to be deleted */}
     </Container>
   );
 };
+
+// font for return click function for return fix top bar

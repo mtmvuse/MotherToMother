@@ -18,6 +18,7 @@ import Profile from "./pages/Profile";
 import Form from "./pages/Form";
 import EditProfile from "./pages/EditProfile";
 import {ProfileLayout} from "./pages/ProfileLayout";
+import SpecificItemPage from "./pages/SpecificItemPage";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -33,6 +34,12 @@ const router = createBrowserRouter(
               <Route path="edit" element={<EditProfile/>}/>
           </Route>
           <Route path="form" element={<PrivateRoute element={<Form />} />} />
+        <Route
+          path="profile"
+          element={<PrivateRoute element={<Profile />} />}
+        />
+        <Route path="form" element={<PrivateRoute element={<Form />} />} />
+        <Route path="specificitem" element={<PrivateRoute element={<SpecificItemPage />} />} />
       </Route>
     </>,
   ),

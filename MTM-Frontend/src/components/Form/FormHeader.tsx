@@ -36,8 +36,7 @@ const FormHeader: React.FC<props> = (props) => {
             <NumberInCircle num={number} borderRaduis="50%" />
           </span>
           <Typography variant="h6" fontSize={"18px"} whiteSpace={"nowrap"}>
-            {" "}
-            {header}{" "}
+            {header}
           </Typography>
         </Stack>
       </Grid>
