@@ -2,70 +2,79 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+    provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+}
+
+model Organization {
+    id   Int    @id @default(autoincrement())
+    name String
+    type String
+    user User[]
 }
 
 model User {
-  id        Int        @id @default(autoincrement())
-  firstName String
-  lastName  String
-  email     String
-  hash      String
-  salt      String
-  phone     String
-  address   String
-  city      String
-  state     String
-  zip       Int
-  Role      String?
-  Household String?
-  Type      String
-  Donation  Donation[]
+    id             Int           @id @default(autoincrement())
+    Organization   Organization? @relation(fields: [organizationId], references: [id])
+    organizationId Int?
+    firstName      String
+    lastName       String
+    email          String        @unique
+    hash           String
+    salt           String
+    phone          String
+    address        String
+    city           String
+    state          String
+    zip            Int
+    role           String?
+    household      String?
+    userType       String
+    donation       Donation[]
 }
 
 model Donation {
-  id                    Int                     @id @default(autoincrement())
-  userID                Int
-  user                  User                    @relation(fields: [userID], references: [id])
-  date                  DateTime                @default(now())
-  DonationDetail        DonationDetail[]
-  OutgoingDonationStats OutgoingDonationStats[]
+    id                    Int                     @id @default(autoincrement())
+    userID                Int
+    user                  User                    @relation(fields: [userID], references: [id])
+    date                  DateTime                @default(now())
+    DonationDetail        DonationDetail[]
+    OutgoingDonationStats OutgoingDonationStats[]
 }
 
 model DonationDetail {
-  id           Int      @id @default(autoincrement())
-  donationID   Int
-  donation     Donation @relation(fields: [donationID], references: [id])
-  itemID       Int
-  item         Item     @relation(fields: [itemID], references: [id])
-  quantityUsed Int
-  quantityNew  Int
+    id           Int      @id @default(autoincrement())
+    donationID   Int
+    donation     Donation @relation(fields: [donationID], references: [id])
+    itemID       Int
+    item         Item     @relation(fields: [itemID], references: [id])
+    quantityUsed Int
+    quantityNew  Int
 }
 
 model OutgoingDonationStats {
-  id           Int      @id @default(autoincrement())
-  donationID   Int      @unique
-  donation     Donation @relation(fields: [donationID], references: [id])
-  numberServed Int
-  whiteNum     Int
-  latinoNum    Int
-  blackNum     Int
-  nativeNum    Int
-  asianNum     Int
-  otherNum     Int
+    id           Int      @id @default(autoincrement())
+    donationID   Int      @unique
+    donation     Donation @relation(fields: [donationID], references: [id])
+    numberServed Int
+    whiteNum     Int
+    latinoNum    Int
+    blackNum     Int
+    nativeNum    Int
+    asianNum     Int
+    otherNum     Int
 }
 
 model Item {
-  id             Int              @id @default(autoincrement())
-  name           String
-  quantityUsed   Int
-  quantityNew    Int
-  valueUsed      Float
-  valueOld       Float
-  DonationDetail DonationDetail[]
+    id             Int              @id @default(autoincrement())
+    name           String
+    quantityUsed   Int
+    quantityNew    Int
+    valueUsed      Float
+    valueOld       Float
+    DonationDetail DonationDetail[]
 }

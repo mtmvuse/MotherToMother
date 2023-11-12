@@ -18,7 +18,13 @@ export interface UserInput {
   password: string;
   firstName: string;
   lastName: string;
+  // agency: string;
   userType: string;
+  phone: string;
+  address: string;
+  city: string;
+  state: string;
+  zip: number;
 }
 
 export interface PasswordCombo {

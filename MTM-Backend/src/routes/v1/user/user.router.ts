@@ -55,6 +55,12 @@ userRouter.post(
       email: Joi.string().email().required(),
       firstName: Joi.string(),
       lastName: Joi.string(),
+      userType: Joi.string(),
+      phone: Joi.string(),
+      address: Joi.string(),
+      city: Joi.string(),
+      state: Joi.string(),
+      zip: Joi.number().integer().positive(),
     });
     try {
       const data = (await schema.validateAsync(req.body)) as UserInput;
