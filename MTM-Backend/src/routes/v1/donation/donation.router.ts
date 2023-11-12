@@ -14,7 +14,6 @@ const createOutgoingDonation = async (
   next: NextFunction,
 ) => {
   try {
-    console.log(req.body.userId);
     const newDonation = await DonationService.createDonation(req.body.userId);
 
     req.body.donationDetails.forEach(
@@ -27,16 +26,6 @@ const createOutgoingDonation = async (
       },
     );
 
-    console.log(
-      newDonation.id,
-      req.body.numberServed,
-      req.body.whiteNum,
-      req.body.latinoNum,
-      req.body.blackNum,
-      req.body.nativeNum,
-      req.body.asianNum,
-      req.body.otherNum,
-    );
     const newOutgoingDonationStats =
       await DonationService.createOutgoingDonationStats(
         newDonation.id,
