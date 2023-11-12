@@ -94,9 +94,9 @@ const getDonationDetails = (): Array<DonationDetailsType> => {
 
 async function clearData() {
   await db.user.deleteMany({});
-  await db.outgoingDonation.deleteMany({});
+  await db.OutgoingDonationStats.deleteMany({});
   await db.item.deleteMany({});
-  await db.donationDetails.deleteMany({});
+  await db.DonationDetail.deleteMany({});
 }
 
 const seed = async () => {
