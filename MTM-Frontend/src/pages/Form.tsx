@@ -11,49 +11,49 @@ import ReviewSection from "../components/Form/ReviewSection";
 
 const Profile: React.FC = () => {
   return (
-    <Stack
-      direction="column"
-      justifyContent="center"
-      alignItems="center"
-      spacing={2}
-    >
-      <Typography variant="h3">Outgoing Donations</Typography>
-      <Typography variant="body1">
-        Select the categories and item types of resources that you would like to
-        donate
-      </Typography>
-      
-      <Stack
-        direction="row"
+    <div>
+      {/* <Stack
+        direction="column"
         justifyContent="center"
         alignItems="center"
         spacing={2}
       >
-        <NumberInCircle num={1} />
-        <Typography variant="h5">Choose a category</Typography>
-      </Stack>
-      <Categories />
-    </Stack>
-  );
-    return (
+        <Typography variant="h3">Outgoing Donations</Typography>
+        <Typography variant="body1">
+          Select the categories and item types of resources that you would like
+          to donate
+        </Typography>
+
         <Stack
-            direction="column"
-            justifyContent="center"
-            alignItems="center"
-            spacing={2}
+          direction="row"
+          justifyContent="center"
+          alignItems="center"
+          spacing={2}
         >
-            <Typography variant="h4" fontWeight="bold">Outgoing Donations</Typography>
-            <Typography variant="body1">
-                Select the categories and item types of resources that you would like to
-                donate
-            </Typography>
-
-            <ReviewSection />
+          <NumberInCircle num={1} />
+          <Typography variant="h5">Choose a category</Typography>
         </Stack>
-    );
+        <Categories />
+      </Stack> */}
+      <Stack
+        direction="column"
+        justifyContent="center"
+        alignItems="center"
+        spacing={2}
+      >
+        <Typography variant="h4" fontWeight="bold">
+          Outgoing Donations
+        </Typography>
+        <Typography variant="body1">
+          Select the categories and item types of resources that you would like
+          to donate
+        </Typography>
+
+        <ReviewSection />
+      </Stack>
+    </div>
+  );
 };
-
-
 
 function NumberInCircle({ num }: any) {
   return (

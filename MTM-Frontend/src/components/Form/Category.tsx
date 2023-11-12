@@ -25,7 +25,12 @@ const getCategories = (category: string, editMode: boolean) => {
           </Typography>
         </Container>
 
-        <Grid container alignItems="center" justifyContent="right">
+        <Stack
+          direction="column"
+          justifyContent="center"
+          alignItems="center"
+          spacing={0.5}
+        >
           {Object.keys(items[category] as itemType[string]).map(
             (subCategory) => (
               <SubCategory
@@ -37,7 +42,7 @@ const getCategories = (category: string, editMode: boolean) => {
               />
             ),
           )}
-        </Grid>
+        </Stack>
       </Box>
     );
   }

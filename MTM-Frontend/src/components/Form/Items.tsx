@@ -8,9 +8,9 @@ type itemType = {
 // [0, 0] = [New, Used]
 const items: itemType = {
   Sleep: {
-    Bassinet: [5, 5],
-    Blanket: [3, 2],
-    "Bed Rail": [10, 5],
+    Bassinet: [0, 0],
+    Blanket: [0, 0],
+    "Bed Rail": [0, 0],
     Crib: [0, 0],
     "Crib Bedding": [0, 0],
     "Crib Mattress": [0, 0],
