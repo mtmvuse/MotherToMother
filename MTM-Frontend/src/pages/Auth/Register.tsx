@@ -237,7 +237,7 @@ const Register: React.FC = () => {
             name="userType"
             control={control}
             render={({ field: { onChange, value } }) => (
-              <FormControl fullWidth variant="standard" margin="normal">
+              <FormControl fullWidth variant="standard">
                 <Select
                   value={value || ""}
                   onChange={onChange}
