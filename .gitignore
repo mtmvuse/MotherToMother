@@ -4,3 +4,4 @@
 MTM-Backend/config/serviceAccountKey.json
 MotherToMother.code-workspace
 .idea/*
+MTM-Backend/prisma/migrations
