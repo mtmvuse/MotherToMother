@@ -8,6 +8,7 @@ import Badge from "@mui/material/Badge";
 
 import Categories from "../components/Form/Categories";
 import ReviewSection from "../components/Form/ReviewSection";
+import GeneralSection from "../components/Form/GeneralSection";
 
 const Profile: React.FC = () => {
   return (

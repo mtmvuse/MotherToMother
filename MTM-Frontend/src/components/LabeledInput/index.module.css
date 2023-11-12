@@ -1,7 +1,6 @@
 .inputBlock {
   width: 100%;
   height: fit-content;
-  composes: font;
 }
 
 .label {
