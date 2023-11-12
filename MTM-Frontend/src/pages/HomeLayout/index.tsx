@@ -31,7 +31,9 @@ export const HomeLayout: React.FC = () => {
 
   return (
     <Container className={styles.container}>
+      {/* testcode */}
       <TopBar/>
+      {/* testcode */}
       <Container className={styles.content}>
         <Outlet />
       </Container>
@@ -48,9 +50,9 @@ export const HomeLayout: React.FC = () => {
           </Grid>
         </Grid>
       </Container>
+      {/* testcode to be deleted */}
       <Navbar/>   
+      {/* testcode to be deleted */}
     </Container>
   );
 };
-
-// font for return click function for return fix top bar
