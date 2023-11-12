@@ -35,7 +35,7 @@ export const HomeLayout: React.FC = () => {
       <Container className={styles.content}>
         <Outlet />
       </Container>
-      <Container className={styles.navbar}>
+      {/* <Container className={styles.navbar}>
         <Grid container style={{ justifyContent: "space-around" }}>
           <Grid item>
             <Link to="/home/profile">Profile</Link>
@@ -47,7 +47,7 @@ export const HomeLayout: React.FC = () => {
             <Box>{fact}</Box>
           </Grid>
         </Grid>
-      </Container>
+      </Container> */}
       <Navbar />
     </Container>
   );
