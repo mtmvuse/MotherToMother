@@ -5,25 +5,30 @@
 import React from "react";
 import { Typography, Stack, Button } from "@mui/material";
 import ReviewSection from "../components/Form/ReviewSection";
+import GeneralSection from "../components/Form/GeneralSection";
 
 const Profile: React.FC = () => {
-    return (
-        <Stack
-            direction="column"
-            justifyContent="center"
-            alignItems="center"
-            spacing={2}
-        >
-            <Typography variant="h4" fontWeight="bold">Outgoing Donations</Typography>
-            <Typography variant="body1">
-                Select the categories and item types of resources that you would like to
-                donate
-            </Typography>
+  return (
+    <Stack
+      direction="column"
+      justifyContent="center"
+      alignItems="center"
+      spacing={2}
+    >
+      <Typography variant="h4" fontWeight="bold" style={{fontSize:"25px", textAlign:"center", marginTop: "20px" }}>
+        Outgoing Donations 
+      </Typography>
+      <Typography variant="body1" style={{ textAlign: "center", marginTop: "5px"  }}>
+        Select the categories and item types of resources that you would like to
+        donate
+      </Typography>
 
-            <ReviewSection />
-        </Stack>
-    );
+      <GeneralSection />
+
+      <ReviewSection />
+
+    </Stack>
+  );
 };
-
 
 export default Profile;

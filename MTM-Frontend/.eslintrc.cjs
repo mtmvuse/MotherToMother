@@ -29,5 +29,4 @@ const config = {
   },
   ignorePatterns: ["**/*.cjs", "**/*.js"],
 };
-
 module.exports = config;
