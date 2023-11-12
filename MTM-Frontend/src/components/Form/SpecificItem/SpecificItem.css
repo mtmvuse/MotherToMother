@@ -7,8 +7,8 @@
   
   .category-name {
     font-weight: bold;
-    font-size: 24px;
-    margin: 10px;
+    font-size: 30px;
+    margin: 30px 0;
   }
   
   .product-list {
@@ -16,13 +16,7 @@
     flex-direction: column;
     align-items: center;
   }
+
   
-  .product-box {
-    width: 250px; /* Set a fixed width */
-    height: 30px; /* Set a fixed height */
-    border: 1px solid #000;
-    border-radius: 10px;
-    padding: 5px;
-    margin: 10px;
-  }
+  
   

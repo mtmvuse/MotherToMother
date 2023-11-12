@@ -14,6 +14,9 @@ export const TopBar: React.FC = () => {
           elevation={0}
           color="inherit"
           sx={{ flexDirection: "row" }}
+          onClick={() => {
+            navigate(-1);
+          }}
           position="static"
         >
           <IconButton
@@ -21,7 +24,6 @@ export const TopBar: React.FC = () => {
             edge="start"
             color="inherit"
             style={{ color: "gray" }}
-            onClick={() => navigate(-1)}
             sx={{ ml: 1, mr: 2 }}
           >
             <ArrowBackIosNewIcon />
@@ -31,7 +33,7 @@ export const TopBar: React.FC = () => {
             noWrap
             component="div"
             align="center"
-            style={{ color: "gray" }}
+            style={{ color: "#A4A4A4", fontFamily: "Roboto", fontWeight: 400 }}
             sx={{ display: "flex", alignItems: "center" }}
           >
             return back

@@ -4,28 +4,28 @@ import {
   BottomNavigationAction,
   SvgIcon,
 } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import DonationIcon from "./DonationIcon";
 import "./Navbar.css";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export const Navbar: React.FC = () => {
-  const [value, setValue] = React.useState("");
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    console.log("inside navbar", location.pathname);
+  }, [location.pathname]);
 
   return (
-    <div
-      className="BottomNavbar"
-      style={{ position: "fixed", bottom: 0, width: "100%" }}
-    >
+    <div className="BottomNavbar">
       <Box>
         <BottomNavigation
           showLabels
-          value={value}
+          value={location.pathname}
           onChange={(event, newValue) => {
-            setValue(newValue);
             navigate(newValue);
           }}
           sx={{
