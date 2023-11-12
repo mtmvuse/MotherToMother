@@ -3,4 +3,4 @@ dist/
 */node_modules/
 *.env
 *.rest
-prisma/migrations/*
+*/prisma/migration/
