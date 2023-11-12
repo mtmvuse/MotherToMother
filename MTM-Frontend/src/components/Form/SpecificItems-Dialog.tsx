@@ -6,12 +6,14 @@ import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import Button from "@mui/material/Button";
-import CloseIcon from "@mui/icons-material/Close";
 import IconButton from "@mui/material/IconButton";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import Stack from "@mui/material/Stack";
+import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
+
+import "./SpecificItems-Dialog.css";
 
 type SpecificItemsProps = {
   open: boolean;
@@ -21,7 +23,7 @@ type SpecificItemsProps = {
   subCategoryValues: [number, number];
 };
 
-const SpecificItems = ({
+const SpecificItems_Dialog = ({
   open,
   onClose,
   category,
@@ -59,7 +61,7 @@ const SpecificItems = ({
   };
 
   return (
-    <div>
+    <div id="SpecificItems-Dialog">
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>
           <Typography variant="h6" align="center" sx={{ fontWeight: "bold" }}>
@@ -106,31 +108,36 @@ const SpecificItems = ({
               <AddIcon />
             </IconButton>
           </Stack>
-          <Stack
-            direction="row"
+          <Grid
+            container
+            spacing={1}
+            direction={{ xs: "column", sm: "row" }}
             justifyContent="center"
             alignItems="center"
-            spacing={0.5}
           >
-            <Button
-              variant="outlined"
-              onClick={handleCancelDetails}
-              color="primary"
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="outlined"
-              onClick={handleSaveDetails}
-              color="primary"
-            >
-              Save
-            </Button>
-          </Stack>
+            <Grid item>
+              <Button
+                variant="outlined"
+                onClick={handleCancelDetails}
+                color="primary"
+              >
+                Cancel
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button
+                variant="outlined"
+                onClick={handleSaveDetails}
+                color="primary"
+              >
+                Save
+              </Button>
+            </Grid>
+          </Grid>
         </DialogContent>
       </Dialog>
     </div>
   );
 };
 
-export default SpecificItems;
+export default SpecificItems_Dialog;

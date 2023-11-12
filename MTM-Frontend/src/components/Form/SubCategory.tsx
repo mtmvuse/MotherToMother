@@ -3,7 +3,7 @@ import { Stack, Typography, Box, IconButton, Icon } from "@mui/material";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import { items } from "./Items";
-import SpecificItems from "./SpecificItems";
+import SpecificItems_Dialog from "./SpecificItems-Dialog";
 import { useState } from "react";
 
 const getSubCategories = (
@@ -85,7 +85,7 @@ const SubCategory = (props: SubCategoryProps) => {
         props.editMode,
         handleOpenDialog,
       )}
-      <SpecificItems
+      <SpecificItems_Dialog
         open={openDialog}
         onClose={handleCloseDialog}
         category={props.category}
