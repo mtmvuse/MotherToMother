@@ -20,7 +20,7 @@ export interface DonationDetailsType {
   quantityNew: number;
 }
 
-export interface reqBodyType {
+export interface DonationRequestBodyType {
   userId: number;
   numberServed: number;
   whiteNum: number;

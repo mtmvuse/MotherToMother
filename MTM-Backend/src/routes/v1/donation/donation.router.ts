@@ -4,12 +4,12 @@ import express, {
   type NextFunction,
 } from "express";
 import * as DonationService from "./donation.service";
-import { DonationDetailType, reqBodyType } from "../../../types/donation";
+import { DonationRequestBodyType } from "../../../types/donation";
 
 const donationRouter = express.Router();
 
 const createOutgoingDonation = async (
-  req: Request<{}, {}, reqBodyType>,
+  req: Request<{}, {}, DonationRequestBodyType>,
   res: Response,
   next: NextFunction,
 ) => {
