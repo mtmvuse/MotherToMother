@@ -22,10 +22,10 @@ model User {
   city      String
   state     String
   zip       Int
-  Role      String?
-  Household String?
-  Type      String
-  Donation  Donation[]
+  role      String?
+  household String?
+  type      String
+  donation  Donation[]
 }
 
 model Donation {
