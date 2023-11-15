@@ -24,53 +24,50 @@ type SubCategoryProps = {
 };
 
 const SubCategory = (props: SubCategoryProps) => {
+  if (!isSubCategoryNotEmpty(props.subCategoryValues)) {
+    return null;
+  }
   const [openDialog, setOpenDialog] = useState(false);
 
   const handleOpenDialog = () => setOpenDialog(true);
   const handleCloseDialog = () => setOpenDialog(false);
 
   return (
-    <>
-      {isSubCategoryNotEmpty(props.subCategoryValues) && (
-        <Stack
-          key={props.subCategoryName}
-          direction="row"
-          justifyContent="space-between"
-          marginY="7px"
-          width="95%"
-          height="25px"
-        >
-          <Typography>{props.subCategoryName}</Typography>
-          <Typography className="subcategory-status">
-            Used: {props.subCategoryValues[0]}
-          </Typography>
-          <Typography marginRight="15px">
-            New: {props.subCategoryValues[1]}
-          </Typography>
-          {props.editMode && (
-            <>
-              <IconButton onClick={handleOpenDialog}>
-                <EditOutlinedIcon sx={{ fontSize: 20 }} color="primary" />
-              </IconButton>
-              <IconButton
-                onClick={() =>
-                  handleDelete(props.category, props.subCategoryName)
-                }
-              >
-                <DeleteOutlinedIcon sx={{ fontSize: 20 }} color="primary" />
-              </IconButton>
-            </>
-          )}
-          <SpecificItems_Dialog
-            open={openDialog}
-            onClose={handleCloseDialog}
-            category={props.category}
-            subCategory={props.subCategoryName}
-            subCategoryValues={props.subCategoryValues}
-          />
-        </Stack>
+    <Stack
+      key={props.subCategoryName}
+      direction="row"
+      justifyContent="space-between"
+      marginY="7px"
+      width="95%"
+      height="25px"
+    >
+      <Typography>{props.subCategoryName}</Typography>
+      <Typography className="subcategory-status">
+        Used: {props.subCategoryValues[0]}
+      </Typography>
+      <Typography marginRight="15px">
+        New: {props.subCategoryValues[1]}
+      </Typography>
+      {props.editMode && (
+        <>
+          <IconButton onClick={handleOpenDialog}>
+            <EditOutlinedIcon sx={{ fontSize: 20 }} color="primary" />
+          </IconButton>
+          <IconButton
+            onClick={() => handleDelete(props.category, props.subCategoryName)}
+          >
+            <DeleteOutlinedIcon sx={{ fontSize: 20 }} color="primary" />
+          </IconButton>
+        </>
       )}
-    </>
+      <SpecificItems_Dialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        category={props.category}
+        subCategory={props.subCategoryName}
+        subCategoryValues={props.subCategoryValues}
+      />
+    </Stack>
   );
 };
 
