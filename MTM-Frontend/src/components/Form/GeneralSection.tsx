@@ -35,7 +35,7 @@ interface CategoryGenProps {
   rowName: string[];
 }
 
-function CategoryGen(props: CategoryGenProps) {
+const CategoryGen = (props: CategoryGenProps) => {
   return (
     <Box width="95%" justifyContent="align-items">
       <Grid>
@@ -58,15 +58,19 @@ function CategoryGen(props: CategoryGenProps) {
       </Grid>
     </Box>
   );
+};
+
+interface GeneralSectionProps {
+  step: number;
 }
 
-const GeneralSection = () => {
+const GeneralSection = (props: GeneralSectionProps) => {
   return (
     <>
       <CssBaseline />
       <ThemeProvider theme={PrimaryMainTheme}>
         <Box width="85%">
-          <FormHeader number={1} header="Choose a category" />
+          <FormHeader number={props.step} header="Choose a category" />
         </Box>
         {Object.keys(buttonRows).map((category) => (
           <CategoryGen key={category} rowName={buttonRows[category]!} />

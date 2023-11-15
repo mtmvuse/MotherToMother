@@ -30,15 +30,12 @@ const SpecificItems_Dialog = ({
   const [newItemCount, setNewItemCount] = useState(subCategoryValues[0]);
   const [usedItemCount, setUsedItemCount] = useState(subCategoryValues[1]);
 
-  console.log(open, category, subCategory, subCategoryValues);
-
   const handleSaveDetails = () => {
     // TODO: SAVE THE DETAILS IN THE LOWER COMPONENTS
     // Prepare the updated data
     const updatedData = { newItemCount, usedItemCount };
     // Invoke the callback
     // props.onUpdate(updatedData);
-    handleClose();
     handleClose();
   };
   const handleCancelDetails = () => {
@@ -49,7 +46,6 @@ const SpecificItems_Dialog = ({
     // props.onUpdate(updatedData);
     setNewItemCount(0);
     setUsedItemCount(0);
-    handleClose();
     handleClose();
   };
 

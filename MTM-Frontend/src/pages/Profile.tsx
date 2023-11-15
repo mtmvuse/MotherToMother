@@ -72,7 +72,7 @@ const Profile: React.FC = () => {
         <button className="logout-button" onClick={handleLogout}>
           Logout
         </button>
-        <button className="edit-button" onClick = {handleEditProfile}>
+        <button className="edit-button" onClick={handleEditProfile}>
           Edit
         </button>
       </div>

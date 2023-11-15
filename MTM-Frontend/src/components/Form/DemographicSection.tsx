@@ -75,6 +75,7 @@ const DemographicSection: React.FC = () => {
               <Stack spacing={1}>
                 {Object.entries(question).map(([question, value]) => (
                   <QuestionField
+                    key={question}
                     question={question}
                     value={value}
                     onInputChange={handleInputChange}
