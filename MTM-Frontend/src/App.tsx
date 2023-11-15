@@ -16,6 +16,9 @@ import { HomeLayout } from "./pages/HomeLayout";
 import { AuthLayout } from "./pages/Auth/AuthLayout";
 import Profile from "./pages/Profile";
 import Form from "./pages/Form";
+import EditProfile from "./pages/EditProfile";
+import {ProfileLayout} from "./pages/ProfileLayout";
+import SpecificItemPage from "./pages/SpecificItemPage";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -26,11 +29,17 @@ const router = createBrowserRouter(
         <Route path="forgotPassword" element={<ForgotPassword />} />
       </Route>
       <Route path="home" element={<PrivateRoute element={<HomeLayout />} />}>
+          <Route path="profile" element={<ProfileLayout />}>
+              <Route index element={<Profile/>}/>
+              <Route path="edit" element={<EditProfile/>}/>
+          </Route>
+          <Route path="form" element={<PrivateRoute element={<Form />} />} />
         <Route
           path="profile"
           element={<PrivateRoute element={<Profile />} />}
         />
         <Route path="form" element={<PrivateRoute element={<Form />} />} />
+        <Route path="specificitem" element={<PrivateRoute element={<SpecificItemPage />} />} />
       </Route>
     </>,
   ),

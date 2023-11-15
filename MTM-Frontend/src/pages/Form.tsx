@@ -3,7 +3,8 @@
 /* eslint-disable prettier/prettier */
 // TODO: REMOVE THIS DISABLE
 import React from "react";
-import { Typography, Stack, Button } from "@mui/material";
+import { Typography, Stack } from "@mui/material";
+
 import ReviewSection from "../components/Form/ReviewSection";
 import DemographicSection from "../components/Form/DemographicSection";
 
