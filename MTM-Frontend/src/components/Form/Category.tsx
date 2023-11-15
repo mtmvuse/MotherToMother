@@ -1,60 +1,16 @@
-import { Box, Container, Grid, Stack, Typography } from "@mui/material";
+import { Box, Container, Stack, Typography } from "@mui/material";
 import { items, itemType } from "./Items";
 import { SubCategory } from "./SubCategory";
+import React from "react";
 
 type categoryType = {
   [key: string]: [number, number];
 };
 
-const getCategories = (category: string, editMode: boolean) => {
-  if (isCategoryNotEmpty(items[category] as itemType[string])) {
-    return (
-      <Box key={category}>
-        <Container
-          key={category}
-          sx={{
-            backgroundColor: "primary.main",
-            borderRadius: "5px",
-            height: "29px",
-            display: "flex",
-          }}
-        >
-          <Typography color="white" alignSelf="center">
-            {category}
-          </Typography>
-        </Container>
-
-        <Stack
-          direction="column"
-          justifyContent="center"
-          alignItems="center"
-          spacing={0.5}
-        >
-          {Object.keys(items[category] as itemType[string]).map(
-            (subCategory) => (
-              <SubCategory
-                key={subCategory}
-                category={category}
-                subCategoryName={subCategory}
-                subCategoryValues={items[category]![subCategory]!}
-                editMode={editMode}
-              />
-            ),
-          )}
-        </Stack>
-      </Box>
-    );
-  }
-  return <div></div>;
-};
-
 const isCategoryNotEmpty = (category: categoryType) => {
-  for (const key in category) {
-    if (category[key]![0] !== 0 || category[key]![1] !== 0) {
-      return true;
-    }
-  }
-  return false;
+  return Object.values(category).some(
+    ([used, newCount]) => used !== 0 || newCount !== 0,
+  );
 };
 
 type CategoryProps = {
@@ -62,8 +18,46 @@ type CategoryProps = {
   editMode: boolean;
 };
 
-const Category = (props: CategoryProps) => {
-  return getCategories(props.categoryName, props.editMode);
+const Category: React.FC<CategoryProps> = ({ categoryName, editMode }) => {
+  const categoryData = items[categoryName] as itemType[string];
+
+  if (!isCategoryNotEmpty(categoryData)) {
+    return null;
+  }
+
+  return (
+    <Box key={categoryName}>
+      <Container
+        sx={{
+          backgroundColor: "primary.main",
+          borderRadius: "5px",
+          height: "25px",
+          display: "flex",
+          alignItems: "center",
+          marginBottom: "5px",
+        }}
+      >
+        <Typography color="white">{categoryName}</Typography>
+      </Container>
+
+      <Stack
+        direction="column"
+        justifyContent="center"
+        alignItems="center"
+        spacing={0.5}
+      >
+        {Object.keys(categoryData).map((subCategory) => (
+          <SubCategory
+            key={subCategory}
+            category={categoryName}
+            subCategoryName={subCategory}
+            subCategoryValues={categoryData[subCategory]}
+            editMode={editMode}
+          />
+        ))}
+      </Stack>
+    </Box>
+  );
 };
 
 export { Category };

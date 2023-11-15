@@ -7,8 +7,9 @@ import { Typography, Stack } from "@mui/material";
 
 import ReviewSection from "../components/Form/ReviewSection";
 import DemographicSection from "../components/Form/DemographicSection";
+import GeneralSection from "../components/Form/GeneralSection";
 
-const Profile: React.FC = () => {
+const Form: React.FC = () => {
   return (
     <Stack
       direction="column"
@@ -23,12 +24,13 @@ const Profile: React.FC = () => {
         Select the categories and item types of resources that you would like to
         donate
       </Typography>
+      <GeneralSection step={1} />
 
-      <ReviewSection />
+      <ReviewSection step={2} />
 
       <DemographicSection />
     </Stack>
   );
 };
 
-export default Profile;
+export default Form;

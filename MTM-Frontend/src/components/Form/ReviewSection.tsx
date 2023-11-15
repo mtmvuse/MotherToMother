@@ -5,7 +5,6 @@ import {
   Stack,
   Button,
   Box,
-  Grid,
 } from "@mui/material";
 import { useState } from "react";
 import { PrimaryMainTheme } from "./Theme";
@@ -14,6 +13,10 @@ import { Category } from "./Category";
 import { isSubCategoryNotEmpty } from "./SubCategory";
 import NumberInCircle from "./NumberInCircle";
 import FormHeader from "./FormHeader";
+
+interface ReviewSectionProps {
+  step: number;
+}
 
 const getSubCategoryCount = () => {
   let count = 0;
@@ -27,7 +30,7 @@ const getSubCategoryCount = () => {
   return count;
 };
 
-const ReviewSection = () => {
+const ReviewSection = (props: ReviewSectionProps) => {
   const [editMode, setEditMode] = useState(false);
 
   const handleEdit = () => {
@@ -49,7 +52,7 @@ const ReviewSection = () => {
       <ThemeProvider theme={PrimaryMainTheme}>
         <Box width="85%">
           {/* Header of Review Section */}
-          <FormHeader number={1} header="Review"/>
+          <FormHeader number={props.step} header="Review" />
 
           {/* Main Content of Review Section */}
           <Stack
@@ -80,9 +83,9 @@ const ReviewSection = () => {
         {!editMode && (
           <Button
             variant="outlined"
-            sx={{ fontSize: 15 }}
+            sx={{ fontSize: 15, height: "33px" }}
             onClick={handleEdit}
-            style={{ marginBottom: "20%" }}
+            style={{ marginTop: "5%" }}
           >
             Edit
           </Button>
@@ -94,7 +97,7 @@ const ReviewSection = () => {
               sx={{ fontSize: 15, height: "33px" }}
               color="primary"
               onClick={handleSave}
-              style={{ marginBottom: "35%" }}
+              style={{ marginTop: "0" }}
             >
               Save
             </Button>
@@ -102,6 +105,7 @@ const ReviewSection = () => {
               variant="outlined"
               sx={{ fontSize: 15, height: "33px" }}
               onClick={handleCancel}
+              style={{ marginTop: "0" }}
             >
               Cancel
             </Button>

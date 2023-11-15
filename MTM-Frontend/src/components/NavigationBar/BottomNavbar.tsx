@@ -4,7 +4,7 @@ import {
   BottomNavigationAction,
   SvgIcon,
 } from "@mui/material";
-import React, { useEffect } from "react";
+import React from "react";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import DonationIcon from "./DonationIcon";
@@ -14,10 +14,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 export const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-
-  useEffect(() => {
-    console.log("inside navbar", location.pathname);
-  }, [location.pathname]);
 
   return (
     <div className="BottomNavbar">
