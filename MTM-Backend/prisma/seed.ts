@@ -20,6 +20,11 @@ const getUsers = (): Array<UserInput> => {
       email: "sap@gmail.com",
       password: "123owidc!jJ5",
       userType: "donor",
+      phone: "123456",
+      address: 'westend',
+      city: 'Nashville',
+      state: 'TN',
+      zip: 37235,
     },
     {
       id: 6,
@@ -29,6 +34,11 @@ const getUsers = (): Array<UserInput> => {
       email: "jod@gmail.com",
       password: "123owidc!jJ8",
       userType: "requester",
+      phone: "78901",
+      address: '21st',
+      city: 'Atlanta',
+      state: 'GA',
+      zip: 30313,
     },
   ];
 };

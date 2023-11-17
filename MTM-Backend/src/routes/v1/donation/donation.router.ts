@@ -16,6 +16,10 @@ const createOutgoingDonation = async (
   try {
     const newDonation = await DonationService.createDonation(req.body.userId);
 
+    if (!newDonation) {
+      return res.status(400).json({ message: "Donation failed" });
+    }
+
     req.body.donationDetails.forEach(
       async (donationDetail: DonationDetailType) => {
         const newDonationDetail = await DonationService.createDonationDetails(
