@@ -50,7 +50,6 @@ userRouter.get(
 userRouter.put(
   "/v1/forgetPassword/",
   async (req: Request, res: Response, next: NextFunction) => {
-    const id = parseInt(req.params.id, 10);
     const schema = Joi.object({
       email: Joi.string().email().required(),
       password: Joi.string().min(8).required(),
