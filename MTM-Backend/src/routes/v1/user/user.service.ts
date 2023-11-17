@@ -102,10 +102,16 @@ export const updateUser = async (
  */
 export const resetPassword = async (user: UserInput): Promise<ResponseUser> => {
   const { hash, salt } = await hashPassword(user.password);
-  const id = user.id;
+  const email = user.email;
+  const result = await db.user.findFirst({
+    where: {
+      email: email,
+    },
+  });
+
   return db.user.update({
     where: {
-      id,
+      id: result?.id,
     },
     data: { hash: hash, salt: salt },
     select: {

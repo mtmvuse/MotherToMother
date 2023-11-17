@@ -49,18 +49,15 @@ userRouter.get(
  * Reset user Password
  */
 userRouter.put(
-  "/v1/reset/:id",
+  "/v1/forgetPassword/",
   async (req: Request, res: Response, next: NextFunction) => {
     const id = parseInt(req.params.id, 10);
     const schema = Joi.object({
-      id: Joi.number().required(),
+      email: Joi.string().email().required(),
       password: Joi.string().min(8).required(),
     });
     try {
-      const data = (await schema.validateAsync({
-        ...req.body,
-        id,
-      })) as UserInput;
+      const data = (await schema.validateAsync(req.body)) as UserInput;
       const user = await UserService.resetPassword(data);
       return res.status(201).json(user);
     } catch (e) {
