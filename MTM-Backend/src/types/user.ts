@@ -14,17 +14,19 @@ export interface ResponseUser {
 export interface UserInput {
   id: number;
   uid: string;
-  email: string;
+  organizationId: number;
   password: string;
   firstName: string;
   lastName: string;
-  // agency: string;
-  userType: string;
+  email: string;
   phone: string;
   address: string;
   city: string;
   state: string;
   zip: number;
+  role: string;
+  household: string;
+  userType: string;
 }
 
 export interface PasswordCombo {

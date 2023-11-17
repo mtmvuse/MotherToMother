@@ -72,6 +72,12 @@ export const createUser = async (user: UserInput): Promise<ResponseUser> => {
   });
 };
 
+/**
+ * Update any user information that is new
+ * @param user
+ * @param id
+ * @returns the id and email of the user
+ */
 export const updateUser = async (
   user: UserInput,
   id: number,
@@ -81,6 +87,27 @@ export const updateUser = async (
       id,
     },
     data: user,
+    select: {
+      id: true,
+      email: true,
+      userType: true,
+    },
+  });
+};
+
+/**
+ * Update user password
+ * @param user
+ * @returns the id and email of the user
+ */
+export const resetPassword = async (user: UserInput): Promise<ResponseUser> => {
+  const { hash, salt } = await hashPassword(user.password);
+  const id = user.id;
+  return db.user.update({
+    where: {
+      id,
+    },
+    data: { hash: hash, salt: salt },
     select: {
       id: true,
       email: true,
