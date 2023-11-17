@@ -103,7 +103,7 @@ export const updateUser = async (
 export const resetPassword = async (user: UserInput): Promise<ResponseUser> => {
   const { hash, salt } = await hashPassword(user.password);
   const email = user.email;
-  const result = await db.user.findFirst({
+  const result = await db.user.findUnique({
     where: {
       email: email,
     },
