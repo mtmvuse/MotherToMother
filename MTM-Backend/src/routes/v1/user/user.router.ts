@@ -31,7 +31,6 @@ userRouter.get(
   "/v1/:id",
   async (req: Request, res: Response, next: NextFunction) => {
     const id = parseInt(req.params.id, 10);
-    console.log(id);
     try {
       const user = await UserService.getUser(id);
       if (user) {
@@ -123,7 +122,6 @@ userRouter.post(
       const user = await UserService.createUser(data);
       return res.status(201).json(user);
     } catch (e) {
-      console.log(e);
       next(e);
     }
   },
