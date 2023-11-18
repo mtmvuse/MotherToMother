@@ -281,10 +281,13 @@ const Register: React.FC = () => {
             style={{
               borderRadius: "100px",
               width: "70%",
-              fontSize: "1.3rem",
+              fontSize: "20px",
               textTransform: "none",
-              backgroundColor: "rgb(229 231 235)",
+              backgroundColor: "#d9d9d9",
               color: "black",
+              boxShadow: "none",
+              fontFamily: "Inter, sans-serif",
+              fontWeight: 400,
             }}
           >
             {isSubmitting ? "Signing in" : "Sign up"}
@@ -293,12 +296,10 @@ const Register: React.FC = () => {
       </form>
 
       <Box mt={2}>
-        <Typography>
-          Already have an account?<span> </span>
-          <Link className="font-bold" to="/">
-            Log in
+          <Link to="/" style={{ color: "gray", textDecoration: "none" }}>
+            <span style={{ fontWeight: "normal" }}>Already have an account? </span> {/* Ensures the space doesn't inherit bold */}
+            <span style={{ fontWeight: "bold" }}>Log in</span>
           </Link>
-        </Typography>
       </Box>
     </div>
   );
