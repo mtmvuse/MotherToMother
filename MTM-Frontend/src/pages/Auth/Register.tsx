@@ -18,6 +18,7 @@ import {
 // Register components
 import { RegisterTextField } from "../../components/RegisterForms/RegisterTextField";
 import { RegisterTextFieldPassword } from "../../components/RegisterForms/RegisterTextFieldPassword";
+
 interface FormValues {
   name: string;
   email: string;
@@ -296,10 +297,13 @@ const Register: React.FC = () => {
       </form>
 
       <Box mt={2}>
-          <Link to="/" style={{ color: "gray", textDecoration: "none" }}>
-            <span style={{ fontWeight: "normal" }}>Already have an account? </span> {/* Ensures the space doesn't inherit bold */}
-            <span style={{ fontWeight: "bold" }}>Log in</span>
-          </Link>
+        <Link to="/" style={{ color: "gray", textDecoration: "none" }}>
+          <span style={{ fontWeight: "normal" }}>
+            Already have an account?{" "}
+          </span>{" "}
+          {/* Ensures the space doesn't inherit bold */}
+          <span style={{ fontWeight: "bold" }}>Log in</span>
+        </Link>
       </Box>
     </div>
   );
