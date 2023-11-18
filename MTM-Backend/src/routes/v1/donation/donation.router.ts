@@ -4,31 +4,25 @@ import express, {
   type NextFunction,
 } from "express";
 import * as DonationService from "./donation.service";
-import { DonationDetailType } from "../../../types/donation";
+import { DonationRequestBodyType } from "../../../types/donation";
 
 const donationRouter = express.Router();
 
 const createOutgoingDonation = async (
-  req: Request,
+  req: Request<{}, {}, DonationRequestBodyType>,
   res: Response,
   next: NextFunction,
 ) => {
   try {
     const newDonation = await DonationService.createDonation(req.body.userId);
 
-    if (!newDonation) {
-      return res.status(400).json({ message: "Donation failed" });
-    }
-
-    req.body.donationDetails.forEach(
-      async (donationDetail: DonationDetailType) => {
-        const newDonationDetail = await DonationService.createDonationDetails(
-          donationDetail.itemId,
-          newDonation.id,
-          donationDetail,
-        );
-      },
-    );
+    req.body.donationDetails.forEach(async (donationDetail) => {
+      const newDonationDetail = await DonationService.createDonationDetails(
+        donationDetail.itemId,
+        newDonation.id,
+        donationDetail,
+      );
+    });
 
     const newOutgoingDonationStats =
       await DonationService.createOutgoingDonationStats(

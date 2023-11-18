@@ -19,3 +19,15 @@ export interface DonationDetailsType {
   quantityUsed: number;
   quantityNew: number;
 }
+
+export interface DonationRequestBodyType {
+  userId: number;
+  numberServed: number;
+  whiteNum: number;
+  latinoNum: number;
+  blackNum: number;
+  nativeNum: number;
+  asianNum: number;
+  otherNum: number;
+  donationDetails: Array<DonationDetailType>;
+}
