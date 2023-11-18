@@ -301,7 +301,6 @@ const Register: React.FC = () => {
           <span style={{ fontWeight: "normal" }}>
             Already have an account?{" "}
           </span>{" "}
-          {/* Ensures the space doesn't inherit bold */}
           <span style={{ fontWeight: "bold" }}>Log in</span>
         </Link>
       </Box>
