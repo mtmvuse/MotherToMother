@@ -1,7 +1,8 @@
 import { db } from "../../../utils/db.server";
 import type {
   DonationType,
-  DonationDetailsType,
+  DonationDetailType,
+  OutgoingDonationStatsType,
 } from "../../../types/donation";
 
 export const createDonation = async (userID: number): Promise<DonationType> => {
@@ -19,8 +20,8 @@ export const createDonation = async (userID: number): Promise<DonationType> => {
 export const createDonationDetails = async (
   itemID: number,
   donationID: number,
-  donationDetails: any,
-): Promise<DonationDetailsType> => {
+  donationDetails: DonationDetailType,
+): Promise<DonationDetailType> => {
   return db.donationDetail.create({
     data: {
       item: {
@@ -33,8 +34,8 @@ export const createDonationDetails = async (
           id: donationID,
         },
       },
-      quantityUsed: donationDetails.usedQuantity,
-      quantityNew: donationDetails.newQuantity,
+      usedQuantity: donationDetails.usedQuantity,
+      newQuantity: donationDetails.newQuantity,
     },
   });
 };
@@ -48,7 +49,7 @@ export const createOutgoingDonationStats = async (
   nativeNum: number,
   asianNum: number,
   otherNum: number,
-): Promise<any> => {
+): Promise<OutgoingDonationStatsType> => {
   return db.outgoingDonationStats.create({
     data: {
       donation: {

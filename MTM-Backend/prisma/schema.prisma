@@ -39,8 +39,8 @@ model User {
 
 model Donation {
   id                    Int                     @id @default(autoincrement())
-  userID                Int
-  user                  User                    @relation(fields: [userID], references: [id])
+  userId                Int
+  user                  User                    @relation(fields: [userId], references: [id])
   date                  DateTime                @default(now())
   DonationDetail        DonationDetail[]
   OutgoingDonationStats OutgoingDonationStats[]
@@ -48,18 +48,18 @@ model Donation {
 
 model DonationDetail {
   id           Int      @id @default(autoincrement())
-  donationID   Int
-  donation     Donation @relation(fields: [donationID], references: [id])
-  itemID       Int
-  item         Item     @relation(fields: [itemID], references: [id])
-  quantityUsed Int
-  quantityNew  Int
+  donationId   Int
+  donation     Donation @relation(fields: [donationId], references: [id])
+  itemId       Int
+  item         Item     @relation(fields: [itemId], references: [id])
+  usedQuantity Int
+  newQuantity  Int
 }
 
 model OutgoingDonationStats {
   id           Int      @id @default(autoincrement())
-  donationID   Int      @unique
-  donation     Donation @relation(fields: [donationID], references: [id])
+  donationId   Int      @unique
+  donation     Donation @relation(fields: [donationId], references: [id])
   numberServed Int
   whiteNum     Int
   latinoNum    Int

@@ -10,6 +10,7 @@ async function main() {
   // Seeding User
   const user = await db.user.create({
     data: {
+      id: 777,
       firstName: "John",
       lastName: "Doe",
       email: "john.doe@example.com",
@@ -29,6 +30,7 @@ async function main() {
   // Seeding Item
   const item = await db.item.create({
     data: {
+      id: 123,
       name: "Sample Item",
       quantityUsed: 10,
       quantityNew: 5,
@@ -40,24 +42,24 @@ async function main() {
   // Seeding Donation
   const donation = await db.donation.create({
     data: {
-      userID: user.id,
+      userId: user.id,
     },
   });
 
   // Seeding DonationDetail
   const donationDetail = await db.donationDetail.create({
     data: {
-      donationID: donation.id,
-      itemID: item.id,
-      quantityUsed: 3,
-      quantityNew: 2,
+      donationId: donation.id,
+      itemId: item.id,
+      usedQuantity: 3,
+      newQuantity: 2,
     },
   });
 
   // Seeding OutgoingDonationStats
   const outgoingDonationStats = await db.outgoingDonationStats.create({
     data: {
-      donationID: donation.id,
+      donationId: donation.id,
       numberServed: 100,
       whiteNum: 20,
       latinoNum: 25,
@@ -81,4 +83,8 @@ async function clearData() {
   console.log("Data cleared");
 }
 
-main();
+main()
+  .catch((e) => console.error(e))
+  .finally(async () => {
+    await db.$disconnect();
+  });

@@ -1,23 +1,15 @@
 export interface DonationType {
   id: number;
-  userID: number;
+  userId: number;
   date: Date;
 }
 
-// Type for detail for each items when calling createDonationDetails
 export interface DonationDetailType {
-  itemId: number;
-  quantityUsed: number;
-  quantityNew: number;
-}
-
-// Type for the details for the whole donation
-export interface DonationDetailsType {
   id: number;
-  itemID: number;
-  donationID: number;
-  quantityUsed: number;
-  quantityNew: number;
+  itemId: number;
+  donationId: number;
+  usedQuantity: number;
+  newQuantity: number;
 }
 
 export interface DonationRequestBodyType {
@@ -30,4 +22,16 @@ export interface DonationRequestBodyType {
   asianNum: number;
   otherNum: number;
   donationDetails: Array<DonationDetailType>;
+}
+
+export interface OutgoingDonationStatsType {
+  id: number;
+  donationId: number;
+  numberServed: number;
+  whiteNum: number;
+  latinoNum: number;
+  blackNum: number;
+  nativeNum: number;
+  asianNum: number;
+  otherNum: number;
 }
