@@ -26,7 +26,7 @@ export const QuestionField: React.FC<InputProps> = ({
             width: "4.5rem",
             height: "2rem",
             borderRadius: "7px",
-            padding: "5px 8px 5px 8px",
+            padding: "5px 8px 5px 20px",
             border: "1px solid #ccc",
             textAlign: "center",
           }}

@@ -99,7 +99,13 @@ const Register: React.FC = () => {
   };
 
   return (
-    <div className="mt-10 flex flex-col items-center w-full">
+    <Box
+      mt={10}
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      width="100%"
+    >
       <Typography
         fontWeight="bold"
         component="h2"
@@ -109,198 +115,214 @@ const Register: React.FC = () => {
         Create an account
       </Typography>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="w-9/12">
-        <div>
-          <Typography className="text-base">
-            Name<span className="text-red-500">*</span>
-          </Typography>
-          <div className="-mt-4 mb-4">
-            <RegisterTextField
-              name="name"
-              placeHolder="Name"
-              control={control}
-              errors={errors.name}
-            />
-          </div>
-        </div>
-
-        <div>
-          <Typography className="text-base">
-            Contact<span className="text-red-500">*</span>
-          </Typography>
-          <div className="-mt-4">
-            <RegisterTextField
-              name="email"
-              placeHolder="Email address"
-              control={control}
-              errors={errors.email}
-            />
-          </div>
-          <div className="-mt-3 mb-4">
-            <RegisterTextField
-              name="phone"
-              placeHolder="Phone number"
-              control={control}
-              errors={errors.phone}
-            />
-          </div>
-        </div>
-
-        <div>
-          <Typography className="text-base">
-            Password<span className="text-red-500">*</span>
-          </Typography>
-          <div className="-mt-4">
-            <RegisterTextFieldPassword
-              name="password"
-              placeHolder="Create a password"
-              control={control}
-              errors={errors.password}
-            />
-          </div>
-          <FormHelperText
-            sx={{
-              fontWeight: "bold",
-              marginTop: "-0.05rem",
-              color: "grey",
-              opacity: "50%",
-              fontSize: "0.6rem",
-            }}
-          >
-            at least one number and one special character
-          </FormHelperText>
-          <div className="-mt-3 mb-4">
-            <RegisterTextFieldPassword
-              name="confirmPassword"
-              placeHolder="Confirm password"
-              control={control}
-              errors={errors.confirmPassword}
-            />
-          </div>
-        </div>
-
-        <div>
-          <Typography className="text-base">
-            Address<span className="text-red-500">*</span>
-          </Typography>
-          <div className="-mt-4 mb-3">
-            <RegisterTextField
-              name="address"
-              placeHolder="Street Address"
-              control={control}
-              errors={errors.address}
-            />
-          </div>
-          <div className="flex flex-row w-full gap-x-8 -mt-5 mb-4">
-            <div className="w-full">
+      <Box width="75%">
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Box>
+            <Typography variant="body1">
+              Name<span style={{ color: "#EF4444" }}>*</span>
+            </Typography>
+            <Box mt={-2} mb={2}>
               <RegisterTextField
-                name="city"
-                placeHolder="City"
+                name="name"
+                placeHolder="Name"
                 control={control}
-                errors={errors.city}
+                errors={errors.name}
               />
-            </div>
+            </Box>
+          </Box>
 
-            <div className="w-full">
+          <Box>
+            <Typography variant="body1">
+              Contact<span style={{ color: "#EF4444" }}>*</span>
+            </Typography>
+            <Box mt={-2}>
               <RegisterTextField
-                name="zip"
-                placeHolder="Zip"
+                name="email"
+                placeHolder="Email address"
                 control={control}
-                errors={errors.zip}
+                errors={errors.email}
               />
-            </div>
-          </div>
-        </div>
+            </Box>
+            <Box mt={-1.5} mb={2}>
+              <RegisterTextField
+                name="phone"
+                placeHolder="Phone number"
+                control={control}
+                errors={errors.phone}
+              />
+            </Box>
+          </Box>
 
-        <div>
-          <Typography className="text-base">Agency (optional)</Typography>
-          <div className="-mt-4 mb-4">
-            <RegisterTextField
-              name="agency"
-              placeHolder="Organization/Affiliation"
+          <Box>
+            <Typography variant="body1">
+              Password<span style={{ color: "#EF4444" }}>*</span>
+            </Typography>
+            <Box mt={-2}>
+              <RegisterTextFieldPassword
+                name="password"
+                placeHolder="Create a password"
+                control={control}
+                errors={errors.password}
+              />
+            </Box>
+            <FormHelperText
+              sx={{
+                fontWeight: "bold",
+                marginTop: "-0.05rem",
+                color: "grey",
+                opacity: "50%",
+                fontSize: "0.6rem",
+              }}
+            >
+              at least one number and one special character
+            </FormHelperText>
+            <Box mt={-1.5} mb={2}>
+              <RegisterTextFieldPassword
+                name="confirmPassword"
+                placeHolder="Confirm password"
+                control={control}
+                errors={errors.confirmPassword}
+              />
+            </Box>
+          </Box>
+
+          <Box>
+            <Typography variant="body1">
+              {" "}
+              Address<span style={{ color: "#EF4444" }}>*</span>
+            </Typography>
+            <Box mt={-2} mb={1.5}>
+              <RegisterTextField
+                name="address"
+                placeHolder="Street Address"
+                control={control}
+                errors={errors.address}
+              />
+            </Box>
+            <Box
+              mt={-2.5}
+              mb={2}
+              display="flex"
+              flexDirection="row"
+              width="100%"
+              gap={4}
+            >
+              <Box width="100%">
+                <RegisterTextField
+                  name="city"
+                  placeHolder="City"
+                  control={control}
+                  errors={errors.city}
+                />
+              </Box>
+
+              <Box width="100%">
+                <RegisterTextField
+                  name="zip"
+                  placeHolder="Zip"
+                  control={control}
+                  errors={errors.zip}
+                />
+              </Box>
+            </Box>
+          </Box>
+
+          <Box>
+            <Typography variant="body1">Agency (optional)</Typography>
+            <Box mt={-2} mb={2}>
+              <RegisterTextField
+                name="agency"
+                placeHolder="Organization/Affiliation"
+                control={control}
+                errors={errors.agency}
+              />
+            </Box>
+          </Box>
+
+          <Box>
+            <Typography variant="body1">
+              Account Type<span style={{ color: "#EF4444" }}>*</span>
+            </Typography>
+            <Typography variant="body1" color="grey.500">
+              Choose the account type that most aligns with your needs and
+              interactions
+            </Typography>
+
+            <Controller
+              name="userType"
               control={control}
-              errors={errors.agency}
+              render={({ field: { onChange, value } }) => (
+                <FormControl fullWidth variant="standard">
+                  <Select
+                    value={value || ""}
+                    onChange={onChange}
+                    style={{
+                      border: "none",
+                      borderRadius: "100px",
+                      color: "black",
+                    }}
+                    error={!!errors.userType}
+                  >
+                    <MenuItem value="Public Donor">Public Donor</MenuItem>
+
+                    <MenuItem value="Corporation/Foundation Donor">
+                      Corporation/Foundation Donor
+                    </MenuItem>
+
+                    <MenuItem value="Agency Partner">Agency Partner</MenuItem>
+                  </Select>
+                  <FormHelperText>
+                    {errors.userType ? (
+                      <span style={{ color: "#d32f2f" }}>
+                        {errors.userType.message}
+                      </span>
+                    ) : (
+                      ""
+                    )}
+                  </FormHelperText>
+                </FormControl>
+              )}
             />
-          </div>
-        </div>
+          </Box>
 
-        <div>
-          <Typography className="text-base">
-            Account Type<span className="text-red-500">*</span>
-          </Typography>
-          <Typography className="text-base text-gray-500">
-            Choose the account type that most aligns with your needs and
-            interactions
-          </Typography>
+          {error && <FormError>{error}</FormError>}
 
-          <Controller
-            name="userType"
-            control={control}
-            render={({ field: { onChange, value } }) => (
-              <FormControl fullWidth variant="standard">
-                <Select
-                  value={value || ""}
-                  onChange={onChange}
-                  style={{
-                    border: "none",
-                    borderRadius: "100px",
-                    color: "black",
-                  }}
-                  error={!!errors.userType}
-                >
-                  <MenuItem value="Public Donor">Public Donor</MenuItem>
-
-                  <MenuItem value="Corporation/Foundation Donor">
-                    Corporation/Foundation Donor
-                  </MenuItem>
-
-                  <MenuItem value="Agency Partner">Agency Partner</MenuItem>
-                </Select>
-                <FormHelperText>
-                  {errors.userType ? (
-                    <span className="text-[#d32f2f]">
-                      {errors.userType.message}
-                    </span>
-                  ) : (
-                    ""
-                  )}
-                </FormHelperText>
-              </FormControl>
-            )}
-          />
-        </div>
-
-        {error && <FormError>{error}</FormError>}
-
-        <div className="mt-14 flex w-full justify-center">
-          <Button
-            disabled={isSubmitting}
-            type="submit"
-            variant="contained"
-            size="small"
-            style={{
-              borderRadius: "100px",
-              width: "70%",
-              fontSize: "1.3rem",
-              textTransform: "none",
-              backgroundColor: "rgb(229 231 235)",
-              color: "black",
-            }}
+          <Box
+            mt={7}
+            display="flex"
+            flexDirection="column"
+            width="100%"
+            alignItems="center"
           >
-            {isSubmitting ? "Signing in" : "Sign up"}
-          </Button>
-        </div>
-      </form>
+            <Button
+              disabled={isSubmitting}
+              type="submit"
+              variant="contained"
+              size="small"
+              style={{
+                borderRadius: "100px",
+                width: "70%",
+                fontSize: "1.3rem",
+                textTransform: "none",
+                backgroundColor: "rgb(229 231 235)",
+                color: "black",
+              }}
+            >
+              {isSubmitting ? "Signing in" : "Sign up"}
+            </Button>
+          </Box>
+        </form>
+      </Box>
 
       <Box mt={2}>
         <Typography>
           Already have an account?<span> </span>
-          <Link className="font-bold" to="/">
+          <Link style={{ fontWeight: "bold" }} to="/">
             Log in
           </Link>
         </Typography>
       </Box>
-    </div>
+    </Box>
   );
 };
 
