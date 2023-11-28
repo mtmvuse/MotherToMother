@@ -5,12 +5,12 @@ import type {
   OutgoingDonationStatsType,
 } from "../../../types/donation";
 
-export const createDonation = async (userID: number): Promise<DonationType> => {
+export const createDonation = async (userId: number): Promise<DonationType> => {
   return db.donation.create({
     data: {
       user: {
         connect: {
-          id: userID,
+          id: userId,
         },
       },
     },
@@ -18,20 +18,20 @@ export const createDonation = async (userID: number): Promise<DonationType> => {
 };
 
 export const createDonationDetails = async (
-  itemID: number,
-  donationID: number,
+  itemId: number,
+  donationId: number,
   donationDetails: DonationDetailType,
 ): Promise<DonationDetailType> => {
   return db.donationDetail.create({
     data: {
       item: {
         connect: {
-          id: itemID,
+          id: itemId,
         },
       },
       donation: {
         connect: {
-          id: donationID,
+          id: donationId,
         },
       },
       usedQuantity: donationDetails.usedQuantity,
@@ -41,7 +41,7 @@ export const createDonationDetails = async (
 };
 
 export const createOutgoingDonationStats = async (
-  donationID: number,
+  donationId: number,
   numberServed: number,
   whiteNum: number,
   latinoNum: number,
@@ -54,7 +54,7 @@ export const createOutgoingDonationStats = async (
     data: {
       donation: {
         connect: {
-          id: donationID,
+          id: donationId,
         },
       },
       numberServed: numberServed,
