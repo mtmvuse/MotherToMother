@@ -298,9 +298,7 @@ const Register: React.FC = () => {
 
       <Box mt={2}>
         <Link to="/" style={{ color: "gray", textDecoration: "none" }}>
-          <span style={{ fontWeight: "normal" }}>
-            Already have an account?{" "}
-          </span>{" "}
+          <span style={{ fontWeight: "normal" }}>Already have an account?</span>{" "}
           <span style={{ fontWeight: "bold" }}>Log in</span>
         </Link>
       </Box>
