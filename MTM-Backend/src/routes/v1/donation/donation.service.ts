@@ -1,15 +1,16 @@
 import { db } from "../../../utils/db.server";
 import type {
   DonationType,
-  DonationDetailsType,
+  DonationDetailType,
+  OutgoingDonationStatsType,
 } from "../../../types/donation";
 
-export const createDonation = async (userID: number): Promise<DonationType> => {
+export const createDonation = async (userId: number): Promise<DonationType> => {
   return db.donation.create({
     data: {
       user: {
         connect: {
-          id: userID,
+          id: userId,
         },
       },
     },
@@ -17,30 +18,30 @@ export const createDonation = async (userID: number): Promise<DonationType> => {
 };
 
 export const createDonationDetails = async (
-  itemID: number,
-  donationID: number,
-  donationDetails: any,
-): Promise<DonationDetailsType> => {
+  itemId: number,
+  donationId: number,
+  donationDetails: DonationDetailType,
+): Promise<DonationDetailType> => {
   return db.donationDetail.create({
     data: {
       item: {
         connect: {
-          id: itemID,
+          id: itemId,
         },
       },
       donation: {
         connect: {
-          id: donationID,
+          id: donationId,
         },
       },
-      quantityUsed: donationDetails.usedQuantity,
-      quantityNew: donationDetails.newQuantity,
+      usedQuantity: donationDetails.usedQuantity,
+      newQuantity: donationDetails.newQuantity,
     },
   });
 };
 
 export const createOutgoingDonationStats = async (
-  donationID: number,
+  donationId: number,
   numberServed: number,
   whiteNum: number,
   latinoNum: number,
@@ -48,12 +49,12 @@ export const createOutgoingDonationStats = async (
   nativeNum: number,
   asianNum: number,
   otherNum: number,
-): Promise<any> => {
+): Promise<OutgoingDonationStatsType> => {
   return db.outgoingDonationStats.create({
     data: {
       donation: {
         connect: {
-          id: donationID,
+          id: donationId,
         },
       },
       numberServed: numberServed,

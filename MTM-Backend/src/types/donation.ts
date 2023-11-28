@@ -1,21 +1,37 @@
 export interface DonationType {
   id: number;
-  userID: number;
+  userId: number;
   date: Date;
 }
 
-// Type for detail for each items when calling createDonationDetails
 export interface DonationDetailType {
+  id: number;
   itemId: number;
-  quantityUsed: number;
-  quantityNew: number;
+  donationId: number;
+  usedQuantity: number;
+  newQuantity: number;
 }
 
-// Type for the details for the whole donation
-export interface DonationDetailsType {
+export interface DonationRequestBodyType {
+  userId: number;
+  numberServed: number;
+  whiteNum: number;
+  latinoNum: number;
+  blackNum: number;
+  nativeNum: number;
+  asianNum: number;
+  otherNum: number;
+  donationDetails: Array<DonationDetailType>;
+}
+
+export interface OutgoingDonationStatsType {
   id: number;
-  itemID: number;
-  donationID: number;
-  quantityUsed: number;
-  quantityNew: number;
+  donationId: number;
+  numberServed: number;
+  whiteNum: number;
+  latinoNum: number;
+  blackNum: number;
+  nativeNum: number;
+  asianNum: number;
+  otherNum: number;
 }

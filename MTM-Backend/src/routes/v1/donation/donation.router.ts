@@ -4,7 +4,11 @@ import express, {
   type NextFunction,
 } from "express";
 import * as DonationService from "./donation.service";
-import { DonationDetailType } from "../../../types/donation";
+import {
+  type DonationRequestBodyType,
+  type DonationDetailType,
+  type OutgoingDonationStatsType,
+} from "../../../types/donation";
 
 const donationRouter = express.Router();
 
@@ -14,32 +18,34 @@ const createOutgoingDonation = async (
   next: NextFunction,
 ) => {
   try {
-    const newDonation = await DonationService.createDonation(req.body.userId);
+    // Setting type of req.body to DonationRequestBodyType
+    const donationReqBody = req.body as DonationRequestBodyType;
 
-    if (!newDonation) {
-      return res.status(400).json({ message: "Donation failed" });
-    }
+    const newDonation = await DonationService.createDonation(
+      donationReqBody.userId,
+    );
 
-    req.body.donationDetails.forEach(
+    donationReqBody.donationDetails.forEach(
       async (donationDetail: DonationDetailType) => {
-        const newDonationDetail = await DonationService.createDonationDetails(
-          donationDetail.itemId,
-          newDonation.id,
-          donationDetail,
-        );
+        const newDonationDetail: DonationDetailType =
+          await DonationService.createDonationDetails(
+            donationDetail.itemId,
+            newDonation.id,
+            donationDetail,
+          );
       },
     );
 
-    const newOutgoingDonationStats =
+    const newOutgoingDonationStats: OutgoingDonationStatsType =
       await DonationService.createOutgoingDonationStats(
         newDonation.id,
-        req.body.numberServed,
-        req.body.whiteNum,
-        req.body.latinoNum,
-        req.body.blackNum,
-        req.body.nativeNum,
-        req.body.asianNum,
-        req.body.otherNum,
+        donationReqBody.numberServed,
+        donationReqBody.whiteNum,
+        donationReqBody.latinoNum,
+        donationReqBody.blackNum,
+        donationReqBody.nativeNum,
+        donationReqBody.asianNum,
+        donationReqBody.otherNum,
       );
 
     return res.status(200).json(newOutgoingDonationStats);
