@@ -52,13 +52,13 @@ const DemographicSection: React.FC = () => {
           </Grid>
           {/* Main Content of Demographic Section */}
           <Container
-            className="mb-3"
             sx={{
               backgroundColor: "primary.main",
               borderRadius: "5px",
               height: "29px",
               display: "flex",
               marginTop: "1rem",
+              marginBottom: "0.75rem",
             }}
           >
             <Typography color="white" alignSelf="center">
