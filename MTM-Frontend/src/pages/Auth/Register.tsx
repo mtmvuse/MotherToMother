@@ -297,7 +297,7 @@ const Register: React.FC = () => {
                 render={({ field: { value, onChange } }) => (
                   <FormControl fullWidth variant="standard">
                     <Select
-                      value={value || ""}
+                      value={value ?? ""}
                       onChange={onChange}
                       style={{
                         border: "none",
