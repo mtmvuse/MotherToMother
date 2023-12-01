@@ -50,7 +50,6 @@ const schema = Yup.object().shape({
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password")], "Passwords do not match")
     .required("Confirm password is required"),
-
   phone: Yup.string()
     .matches(/^[0-9]{10}$/, "Phone number is not valid")
     .required("Phone number is required"),
@@ -59,10 +58,16 @@ const schema = Yup.object().shape({
     .matches(/^\d{5}(-\d{4})?$/, "Invalid Zip code")
     .required("Zip code is required"),
   city: Yup.string().required("City is required"),
-  agency: Yup.string(),
+  agency: Yup.string().when("userType", ([userType], s) => {
+    if (userType !== "Public Donor" && userType !== "") {
+      return s.required("Agency is required");
+    }
+    return s;
+  }),
 });
 
 const Register: React.FC = () => {
+  const [userType, setUserType] = useState<string>("");
   const { registerUser, currentUser } = useAuth();
   const navigate = useNavigate();
 
@@ -83,6 +88,7 @@ const Register: React.FC = () => {
   const [error, setError] = useState<string>("");
 
   const onSubmit = async (values: FormValues) => {
+    console.log("submit");
     try {
       setError("");
       await registerUser(
@@ -227,19 +233,7 @@ const Register: React.FC = () => {
             </Box>
           </Box>
 
-          <Box>
-            <Typography variant="body1">Agency (optional)</Typography>
-            <Box mt={-2} mb={2}>
-              <RegisterTextField
-                name="agency"
-                placeHolder="Organization/Affiliation"
-                control={control}
-                errors={errors.agency}
-              />
-            </Box>
-          </Box>
-
-          <Box>
+          <Box mb={2}>
             <Typography variant="body1">
               Account Type<span style={{ color: "#EF4444" }}>*</span>
             </Typography>
@@ -251,11 +245,14 @@ const Register: React.FC = () => {
             <Controller
               name="userType"
               control={control}
-              render={({ field: { onChange, value } }) => (
+              render={({ field: { value, onChange } }) => (
                 <FormControl fullWidth variant="standard">
                   <Select
                     value={value || ""}
-                    onChange={onChange}
+                    onChange={(e) => {
+                      onChange(e);
+                      setUserType(e.target.value);
+                    }}
                     style={{
                       border: "none",
                       borderRadius: "100px",
@@ -284,6 +281,51 @@ const Register: React.FC = () => {
               )}
             />
           </Box>
+
+          {userType != "Public Donor" && userType != "" && (
+            <Box>
+              <Typography variant="body1">
+                Agency<span style={{ color: "#EF4444" }}>*</span>
+              </Typography>
+              <Typography variant="body1" color="grey.500">
+                Choose the agency you belong with
+              </Typography>
+
+              <Controller
+                name="agency"
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <FormControl fullWidth variant="standard">
+                    <Select
+                      value={value || ""}
+                      onChange={onChange}
+                      style={{
+                        border: "none",
+                        borderRadius: "100px",
+                        color: "black",
+                      }}
+                      error={!!errors.agency}
+                    >
+                      <MenuItem value="Agency 1">Agency 1</MenuItem>
+
+                      <MenuItem value="Agency 2">Agency 2</MenuItem>
+
+                      <MenuItem value="Agency 3">Agency 3</MenuItem>
+                    </Select>
+                    <FormHelperText>
+                      {errors.agency ? (
+                        <span style={{ color: "#d32f2f" }}>
+                          {errors.agency.message}
+                        </span>
+                      ) : (
+                        ""
+                      )}
+                    </FormHelperText>
+                  </FormControl>
+                )}
+              />
+            </Box>
+          )}
 
           {error && <FormError>{error}</FormError>}
 
