@@ -88,7 +88,6 @@ const Register: React.FC = () => {
   const [error, setError] = useState<string>("");
 
   const onSubmit = async (values: FormValues) => {
-    console.log("submit");
     try {
       setError("");
       await registerUser(
