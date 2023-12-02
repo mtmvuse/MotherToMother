@@ -265,9 +265,7 @@ const Register: React.FC = () => {
                       Corporation/Foundation Donor
                     </MenuItem>
 
-                    <MenuItem value="affiliation Partner">
-                      affiliation Partner
-                    </MenuItem>
+                    <MenuItem value="Agency Partner">Agency Partner</MenuItem>
                   </Select>
                   <FormHelperText>
                     {errors.userType ? (
