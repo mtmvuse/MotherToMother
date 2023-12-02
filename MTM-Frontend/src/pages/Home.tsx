@@ -32,7 +32,7 @@ const Home: React.FC = () => {
         </a>
 
         <button className="square-button" onClick={toggleContact}>
-          CONTACT US
+          CONNECT
         </button>
 
         {showContact && (
