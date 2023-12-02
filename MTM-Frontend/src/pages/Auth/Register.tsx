@@ -13,6 +13,7 @@ import {
   FormControl,
   Select,
   MenuItem,
+  SelectChangeEvent,
 } from "@mui/material";
 
 // Register components
@@ -29,7 +30,7 @@ interface FormValues {
   address: string;
   zip: string;
   city: string;
-  agency?: string;
+  affiliation?: string;
 }
 
 const schema = Yup.object().shape({
@@ -58,9 +59,9 @@ const schema = Yup.object().shape({
     .matches(/^\d{5}(-\d{4})?$/, "Invalid Zip code")
     .required("Zip code is required"),
   city: Yup.string().required("City is required"),
-  agency: Yup.string().when("userType", ([userType], s) => {
+  affiliation: Yup.string().when("userType", ([userType], s) => {
     if (userType !== "Public Donor" && userType !== "") {
-      return s.required("Agency is required");
+      return s.required("affiliation is required");
     }
     return s;
   }),
@@ -88,7 +89,6 @@ const Register: React.FC = () => {
   const [error, setError] = useState<string>("");
 
   const onSubmit = async (values: FormValues) => {
-    console.log("submit");
     try {
       setError("");
       await registerUser(
@@ -194,7 +194,6 @@ const Register: React.FC = () => {
 
           <Box>
             <Typography variant="body1">
-              {" "}
               Address<span style={{ color: "#EF4444" }}>*</span>
             </Typography>
             <Box mt={-2} mb={1.5}>
@@ -248,8 +247,8 @@ const Register: React.FC = () => {
               render={({ field: { value, onChange } }) => (
                 <FormControl fullWidth variant="standard">
                   <Select
-                    value={value || ""}
-                    onChange={(e) => {
+                    value={value ?? ""}
+                    onChange={(e: SelectChangeEvent) => {
                       onChange(e);
                       setUserType(e.target.value);
                     }}
@@ -266,7 +265,9 @@ const Register: React.FC = () => {
                       Corporation/Foundation Donor
                     </MenuItem>
 
-                    <MenuItem value="Agency Partner">Agency Partner</MenuItem>
+                    <MenuItem value="affiliation Partner">
+                      affiliation Partner
+                    </MenuItem>
                   </Select>
                   <FormHelperText>
                     {errors.userType ? (
@@ -285,37 +286,37 @@ const Register: React.FC = () => {
           {userType != "Public Donor" && userType != "" && (
             <Box>
               <Typography variant="body1">
-                Agency<span style={{ color: "#EF4444" }}>*</span>
+                Affiliation<span style={{ color: "#EF4444" }}>*</span>
               </Typography>
               <Typography variant="body1" color="grey.500">
-                Choose the agency you belong with
+                Choose the affiliation you belong with
               </Typography>
 
               <Controller
-                name="agency"
+                name="affiliation"
                 control={control}
                 render={({ field: { value, onChange } }) => (
                   <FormControl fullWidth variant="standard">
                     <Select
-                      value={value || ""}
+                      value={value ?? ""}
                       onChange={onChange}
                       style={{
                         border: "none",
                         borderRadius: "100px",
                         color: "black",
                       }}
-                      error={!!errors.agency}
+                      error={!!errors.affiliation}
                     >
-                      <MenuItem value="Agency 1">Agency 1</MenuItem>
+                      <MenuItem value="affiliation 1">affiliation 1</MenuItem>
 
-                      <MenuItem value="Agency 2">Agency 2</MenuItem>
+                      <MenuItem value="affiliation 2">affiliation 2</MenuItem>
 
-                      <MenuItem value="Agency 3">Agency 3</MenuItem>
+                      <MenuItem value="affiliation 3">affiliation 3</MenuItem>
                     </Select>
                     <FormHelperText>
-                      {errors.agency ? (
+                      {errors.affiliation ? (
                         <span style={{ color: "#d32f2f" }}>
-                          {errors.agency.message}
+                          {errors.affiliation.message}
                         </span>
                       ) : (
                         ""
