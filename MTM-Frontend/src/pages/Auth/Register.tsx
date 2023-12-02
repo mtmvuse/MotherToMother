@@ -13,6 +13,7 @@ import {
   FormControl,
   Select,
   MenuItem,
+  SelectChangeEvent,
 } from "@mui/material";
 
 // Register components
@@ -29,7 +30,7 @@ interface FormValues {
   address: string;
   zip: string;
   city: string;
-  agency?: string;
+  affiliation?: string;
 }
 
 const schema = Yup.object().shape({
@@ -50,7 +51,6 @@ const schema = Yup.object().shape({
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password")], "Passwords do not match")
     .required("Confirm password is required"),
-
   phone: Yup.string()
     .matches(/^[0-9]{10}$/, "Phone number is not valid")
     .required("Phone number is required"),
@@ -59,10 +59,16 @@ const schema = Yup.object().shape({
     .matches(/^\d{5}(-\d{4})?$/, "Invalid Zip code")
     .required("Zip code is required"),
   city: Yup.string().required("City is required"),
-  agency: Yup.string(),
+  affiliation: Yup.string().when("userType", ([userType], s) => {
+    if (userType !== "Public Donor" && userType !== "") {
+      return s.required("affiliation is required");
+    }
+    return s;
+  }),
 });
 
 const Register: React.FC = () => {
+  const [userType, setUserType] = useState<string>("");
   const { registerUser, currentUser } = useAuth();
   const navigate = useNavigate();
 
@@ -188,7 +194,6 @@ const Register: React.FC = () => {
 
           <Box>
             <Typography variant="body1">
-              {" "}
               Address<span style={{ color: "#EF4444" }}>*</span>
             </Typography>
             <Box mt={-2} mb={1.5}>
@@ -227,19 +232,7 @@ const Register: React.FC = () => {
             </Box>
           </Box>
 
-          <Box>
-            <Typography variant="body1">Agency (optional)</Typography>
-            <Box mt={-2} mb={2}>
-              <RegisterTextField
-                name="agency"
-                placeHolder="Organization/Affiliation"
-                control={control}
-                errors={errors.agency}
-              />
-            </Box>
-          </Box>
-
-          <Box>
+          <Box mb={2}>
             <Typography variant="body1">
               Account Type<span style={{ color: "#EF4444" }}>*</span>
             </Typography>
@@ -251,11 +244,14 @@ const Register: React.FC = () => {
             <Controller
               name="userType"
               control={control}
-              render={({ field: { onChange, value } }) => (
+              render={({ field: { value, onChange } }) => (
                 <FormControl fullWidth variant="standard">
                   <Select
-                    value={value || ""}
-                    onChange={onChange}
+                    value={value ?? ""}
+                    onChange={(e: SelectChangeEvent) => {
+                      onChange(e);
+                      setUserType(e.target.value);
+                    }}
                     style={{
                       border: "none",
                       borderRadius: "100px",
@@ -264,10 +260,6 @@ const Register: React.FC = () => {
                     error={!!errors.userType}
                   >
                     <MenuItem value="Public Donor">Public Donor</MenuItem>
-
-                    <MenuItem value="Corporation/Foundation Donor">
-                      Corporation/Foundation Donor
-                    </MenuItem>
 
                     <MenuItem value="Agency Partner">Agency Partner</MenuItem>
                   </Select>
@@ -284,6 +276,51 @@ const Register: React.FC = () => {
               )}
             />
           </Box>
+
+          {userType != "Public Donor" && userType != "" && (
+            <Box>
+              <Typography variant="body1">
+                Affiliation<span style={{ color: "#EF4444" }}>*</span>
+              </Typography>
+              <Typography variant="body1" color="grey.500">
+                Choose the affiliation you belong with
+              </Typography>
+
+              <Controller
+                name="affiliation"
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <FormControl fullWidth variant="standard">
+                    <Select
+                      value={value ?? ""}
+                      onChange={onChange}
+                      style={{
+                        border: "none",
+                        borderRadius: "100px",
+                        color: "black",
+                      }}
+                      error={!!errors.affiliation}
+                    >
+                      <MenuItem value="affiliation 1">affiliation 1</MenuItem>
+
+                      <MenuItem value="affiliation 2">affiliation 2</MenuItem>
+
+                      <MenuItem value="affiliation 3">affiliation 3</MenuItem>
+                    </Select>
+                    <FormHelperText>
+                      {errors.affiliation ? (
+                        <span style={{ color: "#d32f2f" }}>
+                          {errors.affiliation.message}
+                        </span>
+                      ) : (
+                        ""
+                      )}
+                    </FormHelperText>
+                  </FormControl>
+                )}
+              />
+            </Box>
+          )}
 
           {error && <FormError>{error}</FormError>}
 
