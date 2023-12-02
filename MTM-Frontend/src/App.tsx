@@ -19,6 +19,7 @@ import Form from "./pages/Form";
 import EditProfile from "./pages/EditProfile";
 import { ProfileLayout } from "./pages/ProfileLayout";
 import SpecificItemPage from "./pages/SpecificItemPage";
+import Home from "./pages/Home";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -29,6 +30,7 @@ const router = createBrowserRouter(
         <Route path="forgotPassword" element={<ForgotPassword />} />
       </Route>
       <Route path="home" element={<PrivateRoute element={<HomeLayout />} />}>
+        <Route index element={<Home />} />
         <Route path="profile" element={<ProfileLayout />}>
           <Route index element={<Profile />} />
           <Route path="edit" element={<EditProfile />} />
