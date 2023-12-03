@@ -11,7 +11,12 @@ body {
 }
 
 .logo-image {
-  margin-top: 40px;
+  display: flex;
+  margin-top: 90px;
+}
+.logo-image img {
+  max-width: 100%; 
+  height: auto; 
 }
 
 .button-column {
@@ -38,7 +43,7 @@ body {
   font-family: Inter, sans-serif;
   font-weight: 700;
   cursor: pointer;
-  border-radius: 5px;
+  margin: 0;
   color: black;
 }
 
