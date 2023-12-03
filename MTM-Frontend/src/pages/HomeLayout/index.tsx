@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import styles from "./index.module.css";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../AuthContext";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { Container, Box, Grid } from "@mui/material";
 import { constructPayloadHeaders } from "../../lib/utils";
 import Navbar from "../../components/NavigationBar/BottomNavbar";
@@ -11,6 +11,8 @@ import { TopBar } from "../../components/NavigationBar/TopBar";
 export const HomeLayout: React.FC = () => {
   const [fact, setFact] = useState<string>("");
   const { currentUser } = useAuth();
+  const location = useLocation();
+  const isHomeIndex = location.pathname === "/home";
 
   useEffect(() => {
     const fetchFact = async () => {
@@ -30,9 +32,9 @@ export const HomeLayout: React.FC = () => {
   }, [currentUser]);
 
   return (
-    <Container className={styles.container}>
+    <Container className={styles.container} sx={isHomeIndex ? { px: 0 } : {}}>
       <TopBar />
-      <Container className={styles.content}>
+      <Container className={styles.container} sx={isHomeIndex ? { px: 0 } : {}}>
         <Outlet />
       </Container>
       <Navbar />
