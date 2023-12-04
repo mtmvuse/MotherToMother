@@ -32,3 +32,17 @@ export const getOrganizationsByType = async (
     },
   });
 };
+
+export const createOrganization = async (
+  inputName: string,
+  inputType: string,
+): Promise<Organization> => {
+  return db.organization.create({
+    data: { name: inputName, type: inputType },
+    select: {
+      id: true,
+      name: true,
+      type: true,
+    },
+  });
+};

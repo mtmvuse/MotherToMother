@@ -4,6 +4,8 @@ import express, {
   type NextFunction,
 } from "express";
 import * as OrganizationService from "./organization.service";
+import Joi from "joi";
+
 const organizationRouter = express.Router();
 
 interface QueryType {
@@ -32,6 +34,27 @@ organizationRouter.get(
           await OrganizationService.getOrganizationsByType(organizationType);
         return res.status(200).json(organizations);
       }
+    } catch (e) {
+      next(e);
+    }
+  },
+);
+
+organizationRouter.post(
+  "/v1",
+  async (req: Request, res: Response, next: NextFunction) => {
+    const schema = Joi.object({
+      name: Joi.string(),
+      type: Joi.string(),
+    });
+
+    try {
+      const input = await schema.validateAsync(req.body);
+      const organization = await OrganizationService.createOrganization(
+        input.name,
+        input.type,
+      );
+      return res.status(201).json(organization);
     } catch (e) {
       next(e);
     }
