@@ -54,6 +54,26 @@ export const getUser = async (id: number): Promise<ResponseUser | null> => {
 };
 
 /**
+ * Get a user by email
+ * @param email
+ * @returns a user given id or null if not found
+ */
+export const getUserByEmail = async (
+  userEmail: string,
+): Promise<ResponseUser | null> => {
+  return db.user.findUnique({
+    where: {
+      email: userEmail,
+    },
+    select: {
+      id: true,
+      email: true,
+      userType: true,
+    },
+  });
+};
+
+/**
  * Create a user
  * @param user
  * @returns the id and email of the user
@@ -85,6 +105,29 @@ export const updateUser = async (
   return db.user.update({
     where: {
       id,
+    },
+    data: user,
+    select: {
+      id: true,
+      email: true,
+      userType: true,
+    },
+  });
+};
+
+/**
+ * Update any user information that is new
+ * @param user
+ * @param email
+ * @returns the id and email of the user
+ */
+export const updateUserByEmail = async (
+  user: UserInput,
+  email: string,
+): Promise<ResponseUser> => {
+  return db.user.update({
+    where: {
+      email: email,
     },
     data: user,
     select: {
