@@ -1,23 +1,43 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable prettier/prettier */
-// TODO: REMOVE THIS DISABLE
-import React from "react";
-import { Typography, Stack } from "@mui/material";
+import React, { useState } from "react";
+import { Typography, Stack, Button } from "@mui/material";
 
 import ReviewSection from "../components/Form/ReviewSection";
 import DemographicSection from "../components/Form/DemographicSection";
 import GeneralSection from "../components/Form/GeneralSection";
+import type { DemographicDetailType } from "../types/FormTypes";
+import type { DonationDetailType } from "../types/FormTypes";
 
 const Form: React.FC = () => {
+  const [donationDetails, setDonationDetails] = useState<DonationDetailType[]>(
+    [],
+  );
+  const [demographicDetails, setDemographicDetails] =
+    useState<DemographicDetailType>({
+      numberServed: 0,
+      whiteNum: 0,
+      latinoNum: 0,
+      blackNum: 0,
+      nativeNum: 0,
+      asianNum: 0,
+      otherNum: 0,
+    });
+  const onSubmit = () => {
+    const sum =
+      demographicDetails.whiteNum +
+      demographicDetails.latinoNum +
+      demographicDetails.blackNum +
+      demographicDetails.nativeNum +
+      demographicDetails.asianNum +
+      demographicDetails.otherNum;
+
+    const submitDemographics = {
+      ...demographicDetails,
+      numberServed: sum,
+    };
+  };
   return (
     // Top of Outgoing Donations Form
-    <Stack
-      direction="column"
-      alignItems="center"
-      spacing={2}
-      style={{ marginTop: "20px" }}
-    >
+    <Stack direction="column" alignItems="center" spacing={2}>
       <Typography fontSize="25px" fontWeight="700">
         Outgoing Donations
       </Typography>
@@ -41,7 +61,20 @@ const Form: React.FC = () => {
         {/* All form components */}
         <GeneralSection step={1} />
         <ReviewSection step={2} />
-        <DemographicSection />
+        <DemographicSection setDemographicDetails={setDemographicDetails} />
+        <Stack justifyContent="center" direction="row" spacing={3}>
+          <Button
+            onClick={onSubmit}
+            type="submit"
+            variant="outlined"
+            sx={{ fontSize: 15 }}
+          >
+            Submit
+          </Button>
+          <Button type="button" variant="outlined" sx={{ fontSize: 15 }}>
+            Save
+          </Button>
+        </Stack>
       </Stack>
     </Stack>
   );

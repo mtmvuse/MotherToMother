@@ -5,7 +5,7 @@
 }
 .content {
   min-height: 90vh;
-  padding-top: 5vh;
+  padding-top: 50px;
 }
 @media screen and (max-width: 767px) {
   .navbar {
