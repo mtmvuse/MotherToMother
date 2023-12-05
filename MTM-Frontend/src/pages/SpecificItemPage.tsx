@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { useForm } from "../contexts/FormContext";
 import SpecificItem from "../components/Form/SpecificItem/SpecificItem";
 import categoryToProductNames from "./categoris";
 
 const SpecificItemPage: React.FC = () => {
   const location = useLocation();
+  const { setDonationDetails } = useForm();
   const [categoryInfo, setCategoryInfo] = useState<{
     categoryName: string;
     productNames: string[];
@@ -21,12 +23,12 @@ const SpecificItemPage: React.FC = () => {
 
     // Use category information to dynamically define productNames
     const productNames = getProductNamesForCategory(categoryParam);
-    setCategoryInfo({ categoryName: categoryParam || "", productNames });
+    setCategoryInfo({ categoryName: categoryParam ?? "", productNames });
   };
 
   const getProductNamesForCategory = (category: string | null): string[] => {
     // Use the imported categoryToProductNames
-    return category ? categoryToProductNames[category] || [] : [];
+    return category ? categoryToProductNames[category] ?? [] : [];
   };
 
   return (

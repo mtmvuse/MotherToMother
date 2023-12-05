@@ -3,7 +3,7 @@ import { Grid, Typography } from "@mui/material";
 interface InputProps {
   question: string;
   value: number;
-  onInputChange: any;
+  onInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export const QuestionField: React.FC<InputProps> = ({

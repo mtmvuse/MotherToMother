@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   CssBaseline,
   ThemeProvider,
@@ -6,12 +6,10 @@ import {
   Box,
   Grid,
   Stack,
-  BottomNavigation,
-  BottomNavigationAction,
 } from "@mui/material";
 import { PrimaryMainTheme } from "./Theme";
 import FormHeader from "./FormHeader";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 // the rows for each button on the form page
 const BroadCategories = {
@@ -19,20 +17,7 @@ const BroadCategories = {
   row2: ["Bath & Changing", "Clothing"],
   row3: ["Feeding", "Play"],
   row4: ["Safety", "Other"],
-} as const;
-
-// used to map the appropriate broad category
-// to the specific items array
-const ProductNames = {
-  Travel: [],
-  Sleep: [],
-  "Bath & Changing": [],
-  Clothing: [],
-  Feeding: [],
-  Play: [],
-  Safety: [],
-  Other: [],
-} as const;
+};
 
 const buttonStyles = {
   width: "100%",
@@ -46,22 +31,17 @@ const buttonStyles = {
 } as const;
 
 const getBottomNavActionValue = (category: string) =>
-  `/home/specificitem?category=${encodeURIComponent(
-    category,
-  )}&products=${encodeURIComponent(JSON.stringify(ProductNames[category]))}`;
+  `/home/form/specificItem?category=${encodeURIComponent(category)}`;
 
 interface CategoryGenProps {
   rowName: string[];
 }
 
 const CategoryGen: React.FC<CategoryGenProps> = ({ rowName }) => {
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const navigate = useNavigate();
-  const location = useLocation();
 
   const handleClick = (index: number) => {
-    setSelectedIndex(index);
-    const categoryName = rowName[index];
+    const categoryName = rowName[index]!;
     navigate(getBottomNavActionValue(categoryName));
   };
 
@@ -82,20 +62,6 @@ const CategoryGen: React.FC<CategoryGenProps> = ({ rowName }) => {
           ))}
         </Stack>
       </Grid>
-      {selectedIndex !== null && ProductNames[rowName[selectedIndex]] && (
-        <BottomNavigation
-          showLabels
-          value={location.pathname}
-          onChange={(event, newValue) => {
-            navigate(newValue);
-          }}
-        >
-          <BottomNavigationAction
-            sx={{ flexGrow: 1 }}
-            value={getBottomNavActionValue(rowName[selectedIndex])}
-          />
-        </BottomNavigation>
-      )}
     </Box>
   );
 };

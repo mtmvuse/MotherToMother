@@ -11,7 +11,7 @@ export const HomeLayout: React.FC = () => {
   return (
     <Container className={styles.container} sx={isHomeIndex ? { px: 0 } : {}}>
       <TopBar />
-      <Container className={styles.container} sx={isHomeIndex ? { px: 0 } : {}}>
+      <Container className={styles.content} sx={isHomeIndex ? { px: 0 } : {}}>
         <Outlet />
       </Container>
       <Navbar />

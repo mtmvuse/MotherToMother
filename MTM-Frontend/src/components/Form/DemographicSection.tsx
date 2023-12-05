@@ -8,25 +8,33 @@ import {
   Box,
   CssBaseline,
   Container,
-  Button,
 } from "@mui/material";
 import { PrimaryMainTheme } from "./Theme";
-import { question, questionType } from "./Questionaire";
+import { question } from "./Questionaire";
 import { QuestionField } from "./QuestionField";
+import { useForm } from "../../contexts/FormContext";
 
-const DemographicSection: React.FC = () => {
-  const handleInputChange = (event: any) => {
-    event.preventDefault();
-  };
+// Fields in the demographic details object. Corresponding to the questionaire, order matters
+const demographicDetailFields: string[] = [
+  "whiteNum",
+  "blackNum",
+  "latinoNum",
+  "asianNum",
+  "nativeNum",
+  "otherNum",
+];
 
-  const handleSubmit = (event: any) => {
+const DemographicSection: React.FC = ({}) => {
+  const { setDemographicDetails } = useForm();
+  const handleInputChange = (event: React.FormEvent, index: number) => {
     event.preventDefault();
-    // information is in event.target[i].value from 0-4
-    // 0 : White , 1: Black , 2: Latino , 3: Asian , 4: Native American
-    console.log("handleSubmit API");
-  };
-  const handleSave = (event: any) => {
-    console.log("handleSave API");
+    const target = event.target as HTMLInputElement;
+    const value = parseInt(target.value, 10);
+    const name = demographicDetailFields[index]!;
+    setDemographicDetails((prevDetails) => ({
+      ...prevDetails,
+      [name]: value,
+    }));
   };
 
   return (
@@ -66,37 +74,28 @@ const DemographicSection: React.FC = () => {
             </Typography>
           </Container>
 
-          <form onSubmit={handleSubmit}>
-            <Grid
-              alignItems="center"
-              justifyContent="space-between"
-              marginBottom={2}
-            >
-              <Stack spacing={1}>
-                {Object.entries(question).map(([question, value]) => (
-                  <QuestionField
-                    key={question}
-                    question={question}
-                    value={value}
-                    onInputChange={handleInputChange}
-                  />
-                ))}
-              </Stack>
-            </Grid>
-            <Stack justifyContent="center" direction="row" spacing={3}>
-              <Button type="submit" variant="outlined" sx={{ fontSize: 15 }}>
-                Submit
-              </Button>
-              <Button
-                type="button"
-                onClick={handleSave}
-                variant="outlined"
-                sx={{ fontSize: 15 }}
-              >
-                Save
-              </Button>
+          <Grid
+            alignItems="center"
+            justifyContent="space-between"
+            marginBottom={2}
+          >
+            <Stack spacing={1}>
+              {Object.entries(question).map(([question, value], i) => (
+                <QuestionField
+                  key={question}
+                  question={question}
+                  value={value}
+                  onInputChange={(
+                    event: React.FormEvent<Element> | undefined,
+                  ) => {
+                    if (event) {
+                      handleInputChange(event, i);
+                    }
+                  }}
+                />
+              ))}
             </Stack>
-          </form>
+          </Grid>
         </Box>
       </ThemeProvider>
     </>

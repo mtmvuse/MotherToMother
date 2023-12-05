@@ -3,8 +3,8 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
-import { useAuth } from "../../AuthContext";
-import { Typography, Button } from "@mui/material";
+import { useAuth } from "../../contexts/AuthContext";
+import { Typography } from "@mui/material";
 import FormError from "./FormError";
 
 import "./Login.css";

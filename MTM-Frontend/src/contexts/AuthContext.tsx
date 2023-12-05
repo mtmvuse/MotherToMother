@@ -8,9 +8,9 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 import React, { useContext, useState, useEffect, createContext } from "react";
-import auth from "./firebase";
+import auth from "../firebase";
 import type { UserCredential, User } from "firebase/auth";
-import { setUserType } from "./lib/services";
+import { setUserType } from "../lib/services";
 
 interface SessionUser extends User {
   userType?: string;
