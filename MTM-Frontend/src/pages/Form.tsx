@@ -11,24 +11,38 @@ import GeneralSection from "../components/Form/GeneralSection";
 
 const Form: React.FC = () => {
   return (
+    // Top of Outgoing Donations Form
     <Stack
       direction="column"
-      justifyContent="center"
       alignItems="center"
       spacing={2}
+      style={{ marginTop: "20px" }}
     >
-      <Typography variant="h4" fontWeight="bold">
+      <Typography fontSize="25px" fontWeight="700">
         Outgoing Donations
       </Typography>
-      <Typography variant="body1">
+      <Typography fontSize="15px" style={{ textAlign: "center" }}>
         Select the categories and item types of resources that you would like to
         donate
       </Typography>
-      <GeneralSection step={1} />
 
-      <ReviewSection step={2} />
-
-      <DemographicSection />
+      {/* body of the form calls each component, general section,
+      review section and demographic */}
+      <Stack
+        style={{
+          display: "flex",
+          alignItems: "center",
+          width: "100%",
+          height: "max-content",
+          paddingBottom: "25%",
+          backgroundColor: "white",
+        }}
+      >
+        {/* All form components */}
+        <GeneralSection step={1} />
+        <ReviewSection step={2} />
+        <DemographicSection />
+      </Stack>
     </Stack>
   );
 };
