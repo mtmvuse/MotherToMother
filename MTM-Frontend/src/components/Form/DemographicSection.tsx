@@ -12,13 +12,7 @@ import {
 import { PrimaryMainTheme } from "./Theme";
 import { question } from "./Questionaire";
 import { QuestionField } from "./QuestionField";
-import type { DemographicDetailType } from "../../types/FormTypes";
-
-type DemographicSectionProps = {
-  setDemographicDetails: React.Dispatch<
-    React.SetStateAction<DemographicDetailType>
-  >;
-};
+import { useForm } from "../../contexts/FormContext";
 
 // Fields in the demographic details object. Corresponding to the questionaire, order matters
 const demographicDetailFields: string[] = [
@@ -30,9 +24,8 @@ const demographicDetailFields: string[] = [
   "otherNum",
 ];
 
-const DemographicSection: React.FC<DemographicSectionProps> = ({
-  setDemographicDetails,
-}) => {
+const DemographicSection: React.FC = ({}) => {
+  const { setDemographicDetails } = useForm();
   const handleInputChange = (event: React.FormEvent, index: number) => {
     event.preventDefault();
     const target = event.target as HTMLInputElement;

@@ -55,7 +55,7 @@ const Form: React.FC = () => {
         {/* All form components */}
         <GeneralSection step={1} />
         <ReviewSection step={2} />
-        <DemographicSection setDemographicDetails={setDemographicDetails} />
+        <DemographicSection />
         <Stack justifyContent="center" direction="row" spacing={3}>
           <Button
             onClick={onSubmit}

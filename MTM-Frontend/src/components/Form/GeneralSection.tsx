@@ -46,9 +46,7 @@ const buttonStyles = {
 } as const;
 
 const getBottomNavActionValue = (category: string) =>
-  `/home/form/specificItem?category=${encodeURIComponent(
-    category,
-  )}&products=${encodeURIComponent(JSON.stringify(ProductNames[category]))}`;
+  `/home/form/specificItem?category=${encodeURIComponent(category)}`;
 
 interface CategoryGenProps {
   rowName: string[];
