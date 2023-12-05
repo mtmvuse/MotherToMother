@@ -28,31 +28,11 @@ userRouter.get(
  * get a user by email
  */
 userRouter.get(
-  "/v1/getUserByEmail",
+  "/v1/:email",
   async (req: Request, res: Response, next: NextFunction) => {
-    const email = req.body.email;
+    const email = req.params.email;
     try {
       const user = await UserService.getUserByEmail(email);
-      if (user) {
-        return res.status(200).json(user);
-      } else {
-        return res.status(404).json({ message: "User not found" });
-      }
-    } catch (e) {
-      next(e);
-    }
-  },
-);
-
-/**
- * get a user by email
- */
-userRouter.get(
-  "/v1/:id",
-  async (req: Request, res: Response, next: NextFunction) => {
-    const id = parseInt(req.params.id, 10);
-    try {
-      const user = await UserService.getUser(id);
       if (user) {
         return res.status(200).json(user);
       } else {
@@ -88,7 +68,7 @@ userRouter.put(
  * Update User
  */
 userRouter.put(
-  "/v1/update/:id",
+  "/v1/update/:email",
   async (req: Request, res: Response, next: NextFunction) => {
     const schema = Joi.object({
       organizationId: Joi.number(),
@@ -104,43 +84,10 @@ userRouter.put(
       household: Joi.string(),
       userType: Joi.string(),
     });
-    const id = parseInt(req.params.id, 10);
+    const userEmail = req.params.email;
     try {
       const data = (await schema.validateAsync(req.body)) as UserInput;
-      data.id = id;
-      const user = await UserService.updateUser(data, id);
-      return res.status(201).json(user);
-    } catch (e) {
-      next(e);
-    }
-  },
-);
-
-/**
- * Update User by email
- */
-userRouter.put(
-  "/v1/updateByEmail/",
-  async (req: Request, res: Response, next: NextFunction) => {
-    const schema = Joi.object({
-      organizationId: Joi.number(),
-      firstName: Joi.string(),
-      lastName: Joi.string(),
-      email: Joi.string().email().required(),
-      phone: Joi.string(),
-      address: Joi.string(),
-      city: Joi.string(),
-      state: Joi.string(),
-      zip: Joi.number().integer().positive(),
-      role: Joi.string(),
-      household: Joi.string(),
-      userType: Joi.string(),
-    });
-    const email = req.body.email;
-    try {
-      const data = (await schema.validateAsync(req.body)) as UserInput;
-      // data.email = email;
-      const user = await UserService.updateUserByEmail(data, email);
+      const user = await UserService.updateUserByEmail(data, userEmail);
       return res.status(201).json(user);
     } catch (e) {
       next(e);
