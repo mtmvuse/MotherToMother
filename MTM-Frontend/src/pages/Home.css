@@ -1,0 +1,89 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.main-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.logo-image {
+  display: flex;
+  margin-top: 90px;
+}
+.logo-image img {
+  max-width: 100%; 
+  height: auto; 
+}
+
+.button-column {
+  margin-top: 50px;
+  margin-bottom: 50px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.square-button {
+  display: flex;
+  justify-content: center;
+  text-decoration: none;
+  align-items: center;
+
+  width: 100%;
+  height: 84px;
+  margin-bottom: 10px;
+  border: none;
+  background-color: gray;
+  color: #fff;
+  font-size: 16px;
+  font-family: Inter, sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+  margin: 0;
+  color: black;
+}
+
+.square-button:hover {
+  background-color: #2980b9;
+}
+
+.contact-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border: 1px solid #ccc;
+  z-index: 999;
+  text-align: center;
+  width: 300px;
+}
+
+.close-btn {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  cursor: pointer;
+  font-size: 30px;
+}
+
+.hours-container {
+  text-align: center;
+}
+.hours-section h2,
+.hours-section p {
+  margin-bottom: 10px;
+}
+
+.contact-content h4 {
+  margin-bottom: 5px;
+}
+.contact-content p {
+  margin-bottom: 1px;
+  margin-top: 1px;
+}
