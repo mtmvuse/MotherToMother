@@ -1,26 +1,19 @@
-import React, { useState } from "react";
+import React from "react";
 import { Typography, Stack, Button } from "@mui/material";
 
 import ReviewSection from "../components/Form/ReviewSection";
 import DemographicSection from "../components/Form/DemographicSection";
 import GeneralSection from "../components/Form/GeneralSection";
-import type { DemographicDetailType } from "../types/FormTypes";
-import type { DonationDetailType } from "../types/FormTypes";
+import { useForm } from "../contexts/FormContext";
 
 const Form: React.FC = () => {
-  const [donationDetails, setDonationDetails] = useState<DonationDetailType[]>(
-    [],
-  );
-  const [demographicDetails, setDemographicDetails] =
-    useState<DemographicDetailType>({
-      numberServed: 0,
-      whiteNum: 0,
-      latinoNum: 0,
-      blackNum: 0,
-      nativeNum: 0,
-      asianNum: 0,
-      otherNum: 0,
-    });
+  const {
+    demographicDetails,
+    setDemographicDetails,
+    donationDetails,
+    setDonationDetails,
+  } = useForm();
+
   const onSubmit = () => {
     const sum =
       demographicDetails.whiteNum +
@@ -34,6 +27,7 @@ const Form: React.FC = () => {
       ...demographicDetails,
       numberServed: sum,
     };
+    console.log(submitDemographics);
   };
   return (
     // Top of Outgoing Donations Form

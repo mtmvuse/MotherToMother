@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
-import { useAuth } from "../AuthContext";
+import { useAuth } from "../contexts/AuthContext";
 import { CircularProgress, Typography } from "@mui/material";
 import "./Profile.css";
 import profile_logo from "../pages/assets/profile_logo.png";

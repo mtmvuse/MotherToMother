@@ -36,7 +36,7 @@ const DemographicSection: React.FC<DemographicSectionProps> = ({
   const handleInputChange = (event: React.FormEvent, index: number) => {
     event.preventDefault();
     const target = event.target as HTMLInputElement;
-    const value = parseInt(target.value, 10); // Parse the value into an integer
+    const value = parseInt(target.value, 10);
     const name = demographicDetailFields[index]!;
     setDemographicDetails((prevDetails) => ({
       ...prevDetails,

@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
-import { useAuth } from "../AuthContext";
+import { useAuth } from "../contexts/AuthContext";
 import * as Yup from "yup";
 import "./EditProfile.css";
 import { useForm } from "react-hook-form";
@@ -71,24 +71,32 @@ const EditProfile: React.FC = () => {
       <div className={"edit-form"}>
         <p className="text-label">Basic Information</p>
         <input className="form-input" placeholder="Name"></input>
-          <p className="text-label">Contact</p>
-          <div className="vertical-input-container">
-              <input className="form-input" placeholder={"Email address"} />
-              <input className="form-input" placeholder={"Phone Number"}/>
-          </div>
+        <p className="text-label">Contact</p>
+        <div className="vertical-input-container">
+          <input className="form-input" placeholder={"Email address"} />
+          <input className="form-input" placeholder={"Phone Number"} />
+        </div>
         <p className="text-label">Address</p>
         <input className="form-input" placeholder={"Street Address"}></input>
-          <div className={"side-inputs"}>
-              <input className="form-input-left-half" placeholder={"City"}></input>
-              <input className="form-input-right-half" placeholder={"Zip    "}></input>
-          </div>
-          <p className="text-label">Agency (optional)</p>
-          <input className="form-input" placeholder={"Organization/Affiliation"}></input>
+        <div className={"side-inputs"}>
+          <input className="form-input-left-half" placeholder={"City"}></input>
+          <input
+            className="form-input-right-half"
+            placeholder={"Zip    "}
+          ></input>
+        </div>
+        <p className="text-label">Agency (optional)</p>
+        <input
+          className="form-input"
+          placeholder={"Organization/Affiliation"}
+        ></input>
       </div>
 
       <div className={"buttons-container"}>
-          <button className={"save-button"}>Save</button>
-          <button className={"cancel-button"} onClick={handleProfile}>Cancel</button>
+        <button className={"save-button"}>Save</button>
+        <button className={"cancel-button"} onClick={handleProfile}>
+          Cancel
+        </button>
       </div>
     </div>
   );

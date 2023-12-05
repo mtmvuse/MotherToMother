@@ -46,7 +46,7 @@ const buttonStyles = {
 } as const;
 
 const getBottomNavActionValue = (category: string) =>
-  `/home/specificitem?category=${encodeURIComponent(
+  `/home/form/specificItem?category=${encodeURIComponent(
     category,
   )}&products=${encodeURIComponent(JSON.stringify(ProductNames[category]))}`;
 

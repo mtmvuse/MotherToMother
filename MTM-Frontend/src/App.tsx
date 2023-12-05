@@ -4,9 +4,11 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
   Route,
+  Routes,
   RouterProvider,
 } from "react-router-dom";
-import { AuthProvider } from "./AuthContext";
+import { AuthProvider } from "./contexts/AuthContext";
+import { FormProvider } from "./contexts/FormContext";
 // Routes
 import ForgotPassword from "./pages/Auth/ForgotPassword";
 import Login from "./pages/Auth/Login";
@@ -35,10 +37,20 @@ const router = createBrowserRouter(
           <Route index element={<Profile />} />
           <Route path="edit" element={<EditProfile />} />
         </Route>
-        <Route path="form" element={<PrivateRoute element={<Form />} />} />
+
         <Route
-          path="specificitem"
-          element={<PrivateRoute element={<SpecificItemPage />} />}
+          path="form/*"
+          element={
+            <FormProvider>
+              <Routes>
+                <Route index element={<Form />} />
+                <Route
+                  path="specificItem"
+                  element={<PrivateRoute element={<SpecificItemPage />} />}
+                />
+              </Routes>
+            </FormProvider>
+          }
         />
       </Route>
     </>,
