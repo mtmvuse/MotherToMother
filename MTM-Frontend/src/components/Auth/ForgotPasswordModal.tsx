@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal } from "@mui/material";
+import { Modal, Backdrop } from "@mui/material";
 import "./ForgotPasswordModal.css";
 
 type propTypes = {
@@ -13,6 +13,8 @@ const ForgotPasswordModal: React.FC<propTypes> = ({ open, onClose, children }) =
         <Modal
             open={open}
             onClose={onClose}
+            BackdropComponent={Backdrop}
+            BackdropProps={{ onClick: () => {} }}
         >
             <div className="modal">
                 {children}
