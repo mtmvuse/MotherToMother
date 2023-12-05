@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../AuthContext";
 import { CircularProgress, Typography } from "@mui/material";
 import "./Profile.css";
-import editButton from "./assets/edit_button.png";
 import profile_logo from "../pages/assets/profile_logo.png";
 
 type User = {

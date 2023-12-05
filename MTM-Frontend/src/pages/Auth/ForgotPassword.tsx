@@ -1,10 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { yupResolver } from "@hookform/resolvers/yup";
 import React, { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { useAuth } from "../../AuthContext";
-import { Box, Button, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import "./ForgotPassword.css";
 import forgotpasswordlogo from "../assets/forgotpassword-logo.png";
 import paperAirplane from "../assets/paperPlanelogo.png";
@@ -35,12 +37,10 @@ const ForgotPassword: React.FC = () => {
     handleSubmit,
     register,
     formState: { errors, isSubmitting },
-    control,
   } = useForm<FormValues>({
     resolver: yupResolver(schema),
   });
 
-  const [message, setMessage] = useState<string>("");
   const [error, setError] = useState<string>("");
 
   const [open, setOpen] = useState<boolean>(false);
