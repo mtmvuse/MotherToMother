@@ -1,16 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { useForm } from "../contexts/FormContext";
 import SpecificItem from "../components/Form/SpecificItem/SpecificItem";
 import categoryToProductNames from "./categoris";
 
 const SpecificItemPage: React.FC = () => {
   const location = useLocation();
-  const { setDonationDetails } = useForm();
-  const [categoryInfo, setCategoryInfo] = useState<{
-    categoryName: string;
-    productNames: string[];
-  } | null>(null);
+  const [category, setCategory] = useState<string>("");
+  const [items, setItems] = useState<string[]>();
 
   useEffect(() => {
     updateCategoryInfo(location.search);
@@ -20,25 +16,20 @@ const SpecificItemPage: React.FC = () => {
     // Parse the query parameter from the URL
     const searchParams = new URLSearchParams(search);
     const categoryParam = searchParams.get("category");
-
+    setCategory(categoryParam ?? "");
     // Use category information to dynamically define productNames
-    const productNames = getProductNamesForCategory(categoryParam);
-    setCategoryInfo({ categoryName: categoryParam ?? "", productNames });
+    const items = getItemsForCategory(categoryParam);
+    setItems(items);
   };
 
-  const getProductNamesForCategory = (category: string | null): string[] => {
+  const getItemsForCategory = (category: string | null): string[] => {
     // Use the imported categoryToProductNames
     return category ? categoryToProductNames[category] ?? [] : [];
   };
 
   return (
     <div>
-      {categoryInfo && (
-        <SpecificItem
-          categoryName={categoryInfo.categoryName}
-          productNames={categoryInfo.productNames}
-        />
-      )}
+      {category && items && <SpecificItem category={category} items={items} />}
     </div>
   );
 };
