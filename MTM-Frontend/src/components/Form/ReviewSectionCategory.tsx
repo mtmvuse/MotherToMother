@@ -1,25 +1,26 @@
 import { Box, Container, Stack, Typography } from "@mui/material";
-import { items, itemType } from "./Items";
-import { SubCategory } from "./SubCategory";
+import { mockItems } from "./ReviewSectionMockItems";
+import { ReviewSectionItemEntry } from "./ReviewSectionItemEntry";
 import React from "react";
+import type { itemType } from "../../types/FormTypes";
 
-type categoryType = {
-  [key: string]: [number, number];
-};
-
-const isCategoryNotEmpty = (category: categoryType) => {
+const isCategoryNotEmpty = (category: itemType) => {
   return Object.values(category).some(
     ([used, newCount]) => used !== 0 || newCount !== 0,
   );
 };
 
-type CategoryProps = {
+type ReviewSectionCategoryProps = {
   categoryName: string;
-  editMode: boolean;
+  isEditMode: boolean;
 };
 
-const Category: React.FC<CategoryProps> = ({ categoryName, editMode }) => {
-  const categoryData = items[categoryName] as itemType[string];
+const ReviewSectionCategory: React.FC<ReviewSectionCategoryProps> = ({
+  categoryName,
+  isEditMode,
+}) => {
+  // TODO update this to context state
+  const categoryData = mockItems[categoryName]!;
 
   if (!isCategoryNotEmpty(categoryData)) {
     return null;
@@ -46,13 +47,13 @@ const Category: React.FC<CategoryProps> = ({ categoryName, editMode }) => {
         alignItems="center"
         spacing={0.5}
       >
-        {Object.keys(categoryData).map((subCategory) => (
-          <SubCategory
-            key={subCategory}
+        {Object.keys(categoryData).map((item) => (
+          <ReviewSectionItemEntry
+            key={item}
             category={categoryName}
-            subCategoryName={subCategory}
-            subCategoryValues={categoryData[subCategory]}
-            editMode={editMode}
+            item={item}
+            itemValues={categoryData[item]!}
+            isEditMode={isEditMode}
           />
         ))}
       </Stack>
@@ -60,4 +61,4 @@ const Category: React.FC<CategoryProps> = ({ categoryName, editMode }) => {
   );
 };
 
-export { Category };
+export { ReviewSectionCategory };

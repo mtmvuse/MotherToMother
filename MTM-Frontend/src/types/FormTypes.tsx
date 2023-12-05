@@ -1,6 +1,7 @@
 export interface DonationDetailType {
   item: string;
-  newQuantitiy: number;
+  category: string;
+  newQuantity: number;
   usedQuantity: number;
 }
 
@@ -13,3 +14,6 @@ export interface DemographicDetailType {
   asianNum: number;
   otherNum: number;
 }
+
+export type itemType = Record<string, [number, number]>;
+export type categoryType = Record<string, itemType>;

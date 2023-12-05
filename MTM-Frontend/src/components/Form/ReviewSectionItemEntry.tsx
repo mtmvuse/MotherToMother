@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { Stack, Typography, Box, IconButton, Icon } from "@mui/material";
+import { Stack, Typography, IconButton } from "@mui/material";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
-import { items } from "./Items";
-import SpecificItems_Dialog from "./SpecificItems-Dialog";
+import { mockItems } from "./ReviewSectionMockItems";
+import { SpecificItemsDialog } from "./SpecificItemsDialog";
 import { useState } from "react";
 
 const isSubCategoryNotEmpty = (subCategory: [number, number]) => {
@@ -13,62 +13,61 @@ const isSubCategoryNotEmpty = (subCategory: [number, number]) => {
 const handleDelete = (category: string, subCategory: string) => {
   // TODO - Delete from DB
   console.log("Delete " + subCategory + " from " + category);
-  items[category]![subCategory] = [0, 0];
+  mockItems[category]![subCategory] = [0, 0];
 };
 
-type SubCategoryProps = {
+type ReviewSectionItemEntryProps = {
   category: string;
-  subCategoryName: string;
-  subCategoryValues: [number, number];
-  editMode: boolean;
+  item: string;
+  itemValues: [number, number];
+  isEditMode: boolean;
 };
 
-const SubCategory = (props: SubCategoryProps) => {
-  if (!isSubCategoryNotEmpty(props.subCategoryValues)) {
+const ReviewSectionItemEntry = (props: ReviewSectionItemEntryProps) => {
+  const { category, item, itemValues, isEditMode } = props;
+  if (!isSubCategoryNotEmpty(itemValues)) {
     return null;
   }
   const [openDialog, setOpenDialog] = useState(false);
+  const [itemValuesState, setItemValuesState] = useState(itemValues);
 
   const handleOpenDialog = () => setOpenDialog(true);
   const handleCloseDialog = () => setOpenDialog(false);
 
   return (
     <Stack
-      key={props.subCategoryName}
+      key={item}
       direction="row"
       justifyContent="space-between"
       marginY="7px"
       width="95%"
       height="25px"
     >
-      <Typography>{props.subCategoryName}</Typography>
+      <Typography>{item}</Typography>
       <Typography className="subcategory-status">
-        Used: {props.subCategoryValues[0]}
+        Used: {itemValues[0]}
       </Typography>
-      <Typography marginRight="15px">
-        New: {props.subCategoryValues[1]}
-      </Typography>
-      {props.editMode && (
+      <Typography marginRight="15px">New: {itemValues[1]}</Typography>
+      {isEditMode && (
         <>
           <IconButton onClick={handleOpenDialog}>
             <EditOutlinedIcon sx={{ fontSize: 20 }} color="primary" />
           </IconButton>
-          <IconButton
-            onClick={() => handleDelete(props.category, props.subCategoryName)}
-          >
+          <IconButton onClick={() => handleDelete(category, item)}>
             <DeleteOutlinedIcon sx={{ fontSize: 20 }} color="primary" />
           </IconButton>
         </>
       )}
-      <SpecificItems_Dialog
+      <SpecificItemsDialog
         open={openDialog}
         onClose={handleCloseDialog}
-        category={props.category}
-        subCategory={props.subCategoryName}
-        subCategoryValues={props.subCategoryValues}
+        category={category}
+        item={item}
+        itemValues={itemValuesState}
+        setItemValues={setItemValuesState}
       />
     </Stack>
   );
 };
 
-export { SubCategory, isSubCategoryNotEmpty };
+export { ReviewSectionItemEntry, isSubCategoryNotEmpty };

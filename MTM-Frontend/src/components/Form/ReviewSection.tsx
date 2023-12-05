@@ -8,9 +8,9 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { PrimaryMainTheme } from "./Theme";
-import { items, itemType } from "./Items";
-import { Category } from "./Category";
-import { isSubCategoryNotEmpty } from "./SubCategory";
+import { mockItems } from "./ReviewSectionMockItems";
+import { ReviewSectionCategory } from "./ReviewSectionCategory";
+import { isSubCategoryNotEmpty } from "./ReviewSectionItemEntry";
 import NumberInCircle from "./NumberInCircle";
 import FormHeader from "./FormHeader";
 
@@ -20,9 +20,9 @@ interface ReviewSectionProps {
 
 const getSubCategoryCount = () => {
   let count = 0;
-  for (const category in items) {
-    for (const subCategory in items[category]) {
-      if (isSubCategoryNotEmpty(items[category]![subCategory]!)) {
+  for (const category in mockItems) {
+    for (const subCategory in mockItems[category]) {
+      if (isSubCategoryNotEmpty(mockItems[category]![subCategory]!)) {
         count++;
       }
     }
@@ -31,19 +31,19 @@ const getSubCategoryCount = () => {
 };
 
 const ReviewSection = (props: ReviewSectionProps) => {
-  const [editMode, setEditMode] = useState(false);
+  const [isEditMode, setisEditMode] = useState(false);
 
   const handleEdit = () => {
-    setEditMode(true);
+    setisEditMode(true);
   };
 
   const handleSave = () => {
-    setEditMode(false);
+    setisEditMode(false);
     // TODO: Save the changes to the database
   };
 
   const handleCancel = () => {
-    setEditMode(false);
+    setisEditMode(false);
   };
 
   return (
@@ -72,15 +72,15 @@ const ReviewSection = (props: ReviewSectionProps) => {
             />
             <Typography variant="body1"> items are in your form </Typography>
           </Stack>
-          {Object.keys(items).map((category) => (
-            <Category
+          {Object.keys(mockItems).map((category) => (
+            <ReviewSectionCategory
               key={category}
               categoryName={category}
-              editMode={editMode}
+              isEditMode={isEditMode}
             />
           ))}
         </Box>
-        {!editMode && (
+        {!isEditMode && (
           <Button
             variant="outlined"
             sx={{ fontSize: 15, height: "33px" }}
@@ -90,7 +90,7 @@ const ReviewSection = (props: ReviewSectionProps) => {
             Edit
           </Button>
         )}
-        {editMode && (
+        {isEditMode && (
           <Stack direction="row" spacing={3}>
             <Button
               variant="contained"
