@@ -28,7 +28,6 @@ interface SpecificItemProps {
 const SpecificItem: React.FC<SpecificItemProps> = ({ category, items }) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [curItem, setCurItem] = useState("");
-  const [itemValues, setItemValues] = useState<[number, number]>([0, 0]);
   const onItemClick = (item: string) => {
     setCurItem(item);
     setOpenDialog(true);
@@ -36,7 +35,6 @@ const SpecificItem: React.FC<SpecificItemProps> = ({ category, items }) => {
 
   const onCloseDialog = () => {
     setCurItem("");
-    setItemValues([0, 0]);
     setOpenDialog(false);
   };
   return (
@@ -61,10 +59,12 @@ const SpecificItem: React.FC<SpecificItemProps> = ({ category, items }) => {
         <SpecificItemsDialog
           open={openDialog}
           onClose={onCloseDialog}
-          category={category}
-          item={curItem}
-          itemValues={itemValues}
-          setItemValues={setItemValues}
+          donationDetail={{
+            category: category,
+            item: curItem,
+            newQuantity: 0,
+            usedQuantity: 0,
+          }}
         />
       </ThemeProvider>
     </div>

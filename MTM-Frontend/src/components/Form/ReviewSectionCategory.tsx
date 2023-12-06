@@ -1,14 +1,7 @@
 import { Box, Container, Stack, Typography } from "@mui/material";
-import { mockItems } from "./ReviewSectionMockItems";
 import { ReviewSectionItemEntry } from "./ReviewSectionItemEntry";
 import React from "react";
-import type { itemType } from "../../types/FormTypes";
-
-const isCategoryNotEmpty = (category: itemType) => {
-  return Object.values(category).some(
-    ([used, newCount]) => used !== 0 || newCount !== 0,
-  );
-};
+import { useForm } from "../../contexts/FormContext";
 
 type ReviewSectionCategoryProps = {
   categoryName: string;
@@ -20,9 +13,12 @@ const ReviewSectionCategory: React.FC<ReviewSectionCategoryProps> = ({
   isEditMode,
 }) => {
   // TODO update this to context state
-  const categoryData = mockItems[categoryName]!;
+  const { donationDetails } = useForm();
+  const categoryData = donationDetails.filter(
+    (item) => item.category === categoryName,
+  );
 
-  if (!isCategoryNotEmpty(categoryData)) {
+  if (categoryData.length === 0) {
     return null;
   }
 
@@ -47,12 +43,10 @@ const ReviewSectionCategory: React.FC<ReviewSectionCategoryProps> = ({
         alignItems="center"
         spacing={0.5}
       >
-        {Object.keys(categoryData).map((item) => (
+        {categoryData.map((item, i) => (
           <ReviewSectionItemEntry
-            key={item}
-            category={categoryName}
-            item={item}
-            itemValues={categoryData[item]!}
+            key={i}
+            donationDetail={item}
             isEditMode={isEditMode}
           />
         ))}

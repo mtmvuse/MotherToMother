@@ -8,29 +8,18 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { PrimaryMainTheme } from "./Theme";
-import { mockItems } from "./ReviewSectionMockItems";
 import { ReviewSectionCategory } from "./ReviewSectionCategory";
-import { isSubCategoryNotEmpty } from "./ReviewSectionItemEntry";
 import NumberInCircle from "./NumberInCircle";
 import FormHeader from "./FormHeader";
+import { useForm } from "../../contexts/FormContext";
+import { GeneralCategories } from "../../lib/constants";
 
 interface ReviewSectionProps {
   step: number;
 }
 
-const getSubCategoryCount = () => {
-  let count = 0;
-  for (const category in mockItems) {
-    for (const subCategory in mockItems[category]) {
-      if (isSubCategoryNotEmpty(mockItems[category]![subCategory]!)) {
-        count++;
-      }
-    }
-  }
-  return count;
-};
-
 const ReviewSection = (props: ReviewSectionProps) => {
+  const { donationDetails } = useForm();
   const [isEditMode, setisEditMode] = useState(false);
 
   const handleEdit = () => {
@@ -39,7 +28,6 @@ const ReviewSection = (props: ReviewSectionProps) => {
 
   const handleSave = () => {
     setisEditMode(false);
-    // TODO: Save the changes to the database
   };
 
   const handleCancel = () => {
@@ -62,7 +50,7 @@ const ReviewSection = (props: ReviewSectionProps) => {
             justifyContent="center"
           >
             <NumberInCircle
-              num={getSubCategoryCount()}
+              num={donationDetails.length}
               backgroundColor="#6D6D6D"
               color="white"
               borderRaduis="10px"
@@ -72,9 +60,9 @@ const ReviewSection = (props: ReviewSectionProps) => {
             />
             <Typography variant="body1"> items are in your form </Typography>
           </Stack>
-          {Object.keys(mockItems).map((category) => (
+          {GeneralCategories.map((category, i) => (
             <ReviewSectionCategory
-              key={category}
+              key={i}
               categoryName={category}
               isEditMode={isEditMode}
             />

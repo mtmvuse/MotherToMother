@@ -1,38 +1,32 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Stack, Typography, IconButton } from "@mui/material";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
-import { mockItems } from "./ReviewSectionMockItems";
 import { SpecificItemsDialog } from "./SpecificItemsDialog";
 import { useState } from "react";
-
-const isSubCategoryNotEmpty = (subCategory: [number, number]) => {
-  return subCategory[0] !== 0 || subCategory[1] !== 0;
-};
-
-const handleDelete = (category: string, subCategory: string) => {
-  // TODO - Delete from DB
-  console.log("Delete " + subCategory + " from " + category);
-  mockItems[category]![subCategory] = [0, 0];
-};
+import type { DonationDetailType } from "../../types/FormTypes";
+import { useForm } from "../../contexts/FormContext";
 
 type ReviewSectionItemEntryProps = {
-  category: string;
-  item: string;
-  itemValues: [number, number];
+  donationDetail: DonationDetailType;
   isEditMode: boolean;
 };
 
 const ReviewSectionItemEntry = (props: ReviewSectionItemEntryProps) => {
-  const { category, item, itemValues, isEditMode } = props;
-  if (!isSubCategoryNotEmpty(itemValues)) {
-    return null;
-  }
+  const { donationDetail, isEditMode } = props;
+  const { item, newQuantity, usedQuantity } = donationDetail;
+  const { setDonationDetails } = useForm();
   const [openDialog, setOpenDialog] = useState(false);
-  const [itemValuesState, setItemValuesState] = useState(itemValues);
 
   const handleOpenDialog = () => setOpenDialog(true);
   const handleCloseDialog = () => setOpenDialog(false);
+  const handleDelete = () => {
+    setDonationDetails((prev) => {
+      const updatedDonationDetails = prev.filter(
+        (detail) => !(detail.item === item),
+      );
+      return updatedDonationDetails;
+    });
+  };
 
   return (
     <Stack
@@ -45,15 +39,15 @@ const ReviewSectionItemEntry = (props: ReviewSectionItemEntryProps) => {
     >
       <Typography>{item}</Typography>
       <Typography className="subcategory-status">
-        Used: {itemValues[0]}
+        Used: {usedQuantity}
       </Typography>
-      <Typography marginRight="15px">New: {itemValues[1]}</Typography>
+      <Typography marginRight="15px">New: {newQuantity}</Typography>
       {isEditMode && (
         <>
           <IconButton onClick={handleOpenDialog}>
             <EditOutlinedIcon sx={{ fontSize: 20 }} color="primary" />
           </IconButton>
-          <IconButton onClick={() => handleDelete(category, item)}>
+          <IconButton onClick={handleDelete}>
             <DeleteOutlinedIcon sx={{ fontSize: 20 }} color="primary" />
           </IconButton>
         </>
@@ -61,13 +55,10 @@ const ReviewSectionItemEntry = (props: ReviewSectionItemEntryProps) => {
       <SpecificItemsDialog
         open={openDialog}
         onClose={handleCloseDialog}
-        category={category}
-        item={item}
-        itemValues={itemValuesState}
-        setItemValues={setItemValuesState}
+        donationDetail={donationDetail}
       />
     </Stack>
   );
 };
 
-export { ReviewSectionItemEntry, isSubCategoryNotEmpty };
+export { ReviewSectionItemEntry };

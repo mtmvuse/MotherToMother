@@ -11,40 +11,33 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { useForm } from "../../contexts/FormContext";
 import type { DonationDetailType } from "../../types/FormTypes";
-
 import "./SpecificItemsDialog.css";
 
 type SpecificItemsProps = {
   open: boolean;
   onClose: () => void;
-  category: string;
-  item: string;
-  itemValues: [number, number];
-  setItemValues: (values: [number, number]) => void;
+  donationDetail: DonationDetailType;
 };
 
 export const SpecificItemsDialog = ({
   open,
   onClose,
-  category,
-  item,
-  itemValues,
-  setItemValues,
+  donationDetail,
 }: SpecificItemsProps) => {
-  const [newQuantity, setNewQuantity] = useState(itemValues[0]);
-  const [usedQuantity, setUsedQuantity] = useState(itemValues[1]);
+  const { category, item, newQuantity, usedQuantity } = donationDetail;
   const { setDonationDetails } = useForm();
+  const [tempNewQuantity, setTempNewQuantity] = useState(newQuantity);
+  const [tempUsedQuantity, setTempUsedQuantity] = useState(usedQuantity);
 
   useEffect(() => {
     if (!open) {
       // Reset the state when the dialog is closed
-      setNewQuantity(itemValues[0]);
-      setUsedQuantity(itemValues[1]);
+      setTempNewQuantity(newQuantity);
+      setTempUsedQuantity(usedQuantity);
     }
-  }, [open, itemValues]);
+  }, [open, tempNewQuantity, tempUsedQuantity]);
 
   const handleSaveDetails = () => {
-    setItemValues([newQuantity, usedQuantity]);
     setDonationDetails((prev) => {
       const updatedDonationDetails = [...prev];
       const existingItemIndex = updatedDonationDetails.findIndex(
@@ -56,27 +49,25 @@ export const SpecificItemsDialog = ({
         updatedDonationDetails[existingItemIndex] = {
           item,
           category,
-          newQuantity,
-          usedQuantity,
+          newQuantity: tempNewQuantity,
+          usedQuantity: tempUsedQuantity,
         } as DonationDetailType;
       } else {
         // Item doesn't exist, add it
         updatedDonationDetails.push({
           item,
           category,
-          newQuantity,
-          usedQuantity,
+          newQuantity: tempNewQuantity,
+          usedQuantity: tempUsedQuantity,
         } as DonationDetailType);
       }
-
-      console.log(updatedDonationDetails);
       return updatedDonationDetails;
     });
     handleClose();
   };
   const handleCancelDetails = () => {
-    setNewQuantity(itemValues[0]);
-    setUsedQuantity(itemValues[1]);
+    setTempNewQuantity(newQuantity);
+    setTempUsedQuantity(usedQuantity);
     handleClose();
   };
 
@@ -104,12 +95,14 @@ export const SpecificItemsDialog = ({
           >
             <Typography>New</Typography>
             <IconButton
-              onClick={() => setNewQuantity((prev) => Math.max(prev - 1, 0))}
+              onClick={() =>
+                setTempNewQuantity((prev) => Math.max(prev - 1, 0))
+              }
             >
               <RemoveIcon />
             </IconButton>
-            <Typography>{newQuantity}</Typography>
-            <IconButton onClick={() => setNewQuantity((prev) => prev + 1)}>
+            <Typography>{tempNewQuantity}</Typography>
+            <IconButton onClick={() => setTempNewQuantity((prev) => prev + 1)}>
               <AddIcon />
             </IconButton>
           </Stack>
@@ -121,12 +114,14 @@ export const SpecificItemsDialog = ({
           >
             <Typography>Used</Typography>
             <IconButton
-              onClick={() => setUsedQuantity((prev) => Math.max(prev - 1, 0))}
+              onClick={() =>
+                setTempUsedQuantity((prev) => Math.max(prev - 1, 0))
+              }
             >
               <RemoveIcon />
             </IconButton>
-            <Typography>{usedQuantity}</Typography>
-            <IconButton onClick={() => setUsedQuantity((prev) => prev + 1)}>
+            <Typography>{tempUsedQuantity}</Typography>
+            <IconButton onClick={() => setTempUsedQuantity((prev) => prev + 1)}>
               <AddIcon />
             </IconButton>
           </Stack>
