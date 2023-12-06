@@ -9,8 +9,8 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import Stack from "@mui/material/Stack";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import { useForm } from "../../contexts/FormContext";
-import type { DonationDetailType } from "../../types/FormTypes";
+import { useForm } from "../../../contexts/FormContext";
+import type { DonationDetailType } from "../../../types/FormTypes";
 import "./SpecificItemsDialog.css";
 
 type SpecificItemsProps = {

@@ -1,17 +1,14 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { yupResolver } from "@hookform/resolvers/yup";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuth } from "../../../contexts/AuthContext";
 import { Typography } from "@mui/material";
 import "./ForgotPassword.css";
-import forgotpasswordlogo from "../assets/forgotpassword-logo.png";
-import paperAirplane from "../assets/paperPlanelogo.png";
-import ForgotPasswordModal from "../../components/Auth/ForgotPasswordModal";
-import "../../components/Auth/ForgotPasswordModal.css";
+import forgotpasswordlogo from "../../assets/forgotpassword-logo.png";
+import paperAirplane from "../../assets/paperPlanelogo.png";
+import ForgotPasswordModal from "../../../components/Auth/ForgotPasswordModal/ForgotPasswordModal";
 
 interface FormValues {
   email: string;

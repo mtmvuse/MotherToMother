@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./SpecificItem.css";
 import { CssBaseline, ThemeProvider, Button, Box } from "@mui/material";
 import { PrimaryMainTheme } from "../Theme";
-import { SpecificItemsDialog } from "../SpecificItemsDialog";
+import { SpecificItemsDialog } from "../SpecificItemDialog/SpecificItemsDialog";
 
 const buttonStyles = {
   button: {

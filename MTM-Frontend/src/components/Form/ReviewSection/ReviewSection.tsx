@@ -7,12 +7,12 @@ import {
   Box,
 } from "@mui/material";
 import { useState } from "react";
-import { PrimaryMainTheme } from "./Theme";
+import { PrimaryMainTheme } from "../Theme";
 import { ReviewSectionCategory } from "./ReviewSectionCategory";
 import NumberInCircle from "./NumberInCircle";
-import FormHeader from "./FormHeader";
-import { useForm } from "../../contexts/FormContext";
-import { GeneralCategories } from "../../lib/constants";
+import FormHeader from "../FormHeader";
+import { useForm } from "../../../contexts/FormContext";
+import { GeneralCategories } from "../../../lib/constants";
 
 interface ReviewSectionProps {
   step: number;

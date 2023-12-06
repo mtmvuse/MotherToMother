@@ -1,10 +1,10 @@
 import { Stack, Typography, IconButton } from "@mui/material";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
-import { SpecificItemsDialog } from "./SpecificItemsDialog";
+import { SpecificItemsDialog } from "../SpecificItemDialog/SpecificItemsDialog";
 import { useState } from "react";
-import type { DonationDetailType } from "../../types/FormTypes";
-import { useForm } from "../../contexts/FormContext";
+import type { DonationDetailType } from "../../../types/FormTypes";
+import { useForm } from "../../../contexts/FormContext";
 
 type ReviewSectionItemEntryProps = {
   donationDetail: DonationDetailType;

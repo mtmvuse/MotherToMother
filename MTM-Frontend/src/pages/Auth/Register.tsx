@@ -17,8 +17,8 @@ import {
 } from "@mui/material";
 
 // Register components
-import { RegisterTextField } from "../../components/RegisterForms/RegisterTextField";
-import { RegisterTextFieldPassword } from "../../components/RegisterForms/RegisterTextFieldPassword";
+import { RegisterTextField } from "../../components/Auth/RegisterForms/RegisterTextField";
+import { RegisterTextFieldPassword } from "../../components/Auth/RegisterForms/RegisterTextFieldPassword";
 interface FormValues {
   name: string;
   email: string;

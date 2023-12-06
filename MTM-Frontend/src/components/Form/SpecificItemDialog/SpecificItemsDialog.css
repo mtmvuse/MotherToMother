@@ -1,0 +1,9 @@
+@font-face {
+  font-family: Raleway;
+  src: url("../../pages/assets/Raleway-VariableFont_wght.ttf");
+}
+
+#SpecificItems-Dialog {
+  font-family: Raleway;
+  color: rebeccapurple;
+}
