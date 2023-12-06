@@ -1,7 +1,7 @@
 import { Box, Container, Stack, Typography } from "@mui/material";
 import { ReviewSectionItemEntry } from "./ReviewSectionItemEntry";
 import React from "react";
-import { useForm } from "../../contexts/FormContext";
+import { useForm } from "../../../contexts/FormContext";
 
 type ReviewSectionCategoryProps = {
   categoryName: string;

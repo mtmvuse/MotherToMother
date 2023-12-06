@@ -10,18 +10,18 @@ import {
 import { AuthProvider } from "./contexts/AuthContext";
 import { FormProvider } from "./contexts/FormContext";
 // Routes
-import ForgotPassword from "./pages/Auth/ForgotPassword";
-import Login from "./pages/Auth/Login";
+import ForgotPassword from "./pages/Auth/ForgotPassword/ForgotPassword";
+import Login from "./pages/Auth/Login/Login";
 import PrivateRoute from "./pages/Auth/PrivateRoute";
 import Register from "./pages/Auth/Register";
 import { HomeLayout } from "./pages/HomeLayout";
 import { AuthLayout } from "./pages/Auth/AuthLayout";
-import Profile from "./pages/Profile";
+import Profile from "./pages/Profile/Profile";
 import Form from "./pages/Form";
-import EditProfile from "./pages/EditProfile";
-import { ProfileLayout } from "./pages/ProfileLayout";
+import EditProfile from "./pages/EditProfile/EditProfile";
+import { ProfileLayout } from "./pages/Profile/ProfileLayout";
 import SpecificItemPage from "./pages/SpecificItemPage";
-import Home from "./pages/Home";
+import Home from "./pages/Home/Home";
 
 const router = createBrowserRouter(
   createRoutesFromElements(

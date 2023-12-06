@@ -1,11 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../../contexts/AuthContext";
 import * as Yup from "yup";
 import "./EditProfile.css";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import profile_logo from "../pages/assets/profile_logo.png";
+import profile_logo from "../../pages/assets/profile_logo.png";
 
 interface FormValues {
   firstName: string;

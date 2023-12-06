@@ -15,7 +15,6 @@ function NumberInCircle(props: NumberInCircleProps) {
     ? props.backgroundColor
     : "white";
   const color = props.color ? props.color : "black";
-  const borderRaduis = props.borderRaduis ? props.borderRaduis : "50%";
   const width = props.width ? props.width : "34px";
   const borderWidth = props.borderWidth ? props.borderWidth : "1.5px";
   const height = props.height ? props.height : "34px";

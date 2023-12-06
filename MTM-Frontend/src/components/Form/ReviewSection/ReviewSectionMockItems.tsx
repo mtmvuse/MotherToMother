@@ -1,4 +1,4 @@
-import type { categoryType } from "../../types/FormTypes";
+import type { categoryType } from "../../../types/FormTypes";
 // TODO: Replace this with API call
 // [0, 0] = [New, Used]
 export const mockItems: categoryType = {
