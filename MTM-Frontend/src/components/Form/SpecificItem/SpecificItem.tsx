@@ -28,7 +28,6 @@ interface SpecificItemProps {
 const SpecificItem: React.FC<SpecificItemProps> = ({ category, items }) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [curItem, setCurItem] = useState("");
-  // const [itemValues, setItemValues] = useState<[number, number]>([0, 0]);
   const onItemClick = (item: string) => {
     setCurItem(item);
     setOpenDialog(true);
@@ -36,7 +35,6 @@ const SpecificItem: React.FC<SpecificItemProps> = ({ category, items }) => {
 
   const onCloseDialog = () => {
     setCurItem("");
-    // setItemValues([0, 0]);
     setOpenDialog(false);
   };
   return (
