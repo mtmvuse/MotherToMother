@@ -9,34 +9,57 @@ import Joi from "joi";
 
 const userRouter = express.Router();
 
+interface QueryType {
+  email: string;
+  organization: string;
+}
+
 /**
- * get all users in the database
+ * get user based on query parameter supplied
+ * if no parameter is supplied return all users
+ *
+ * if email is supplied return one user with matching email
+ *
+ * if organization type (donor/agency) is supplied, return a list of users whose
+ * organizations have the corresponding organization type
+ *
+ * if both parameters are supplied return a user whose organization have the
+ * corresponding organization type and whose email matches the email queried
  */
 userRouter.get(
   "/v1",
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (
+    req: Request<any, any, any, QueryType>,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    const email = req.query.email;
+    const organizationType = req.query.organization;
+    console.log("email: " + email + "\n OrganizationType: " + organizationType);
     try {
-      const users = await UserService.getUsers();
-      return res.status(200).json(users);
-    } catch (e) {
-      next(e);
-    }
-  },
-);
-
-/**
- * get a user by id
- */
-userRouter.get(
-  "/v1/:id",
-  async (req: Request, res: Response, next: NextFunction) => {
-    const id = parseInt(req.params.id, 10);
-    try {
-      const user = await UserService.getUser(id);
-      if (user) {
-        return res.status(200).json(user);
+      if (email == undefined && organizationType == undefined) {
+        const users = await UserService.getUsers();
+        return res.status(200).json(users);
+      } else if (organizationType == undefined) {
+        const user = await UserService.getUserByEmail(email);
+        if (user) {
+          return res.status(200).json(user);
+        } else {
+          return res.status(404).json({ message: "User not found" });
+        }
+      } else if (email == undefined) {
+        const users = await UserService.getUserByOrganization(organizationType);
+        return res.status(200).json(users);
       } else {
-        return res.status(404).json({ message: "User not found" });
+        const user = await UserService.getUserByOrganizationAndEmail(
+          organizationType,
+          email,
+        );
+        if (user) {
+          return res.status(200).json(user);
+        } else {
+          return res.status(404).json({ message: "User not found" });
+        }
       }
     } catch (e) {
       next(e);
@@ -68,7 +91,7 @@ userRouter.put(
  * Update User
  */
 userRouter.put(
-  "/v1/:id",
+  "/v1/update/:email",
   async (req: Request, res: Response, next: NextFunction) => {
     const schema = Joi.object({
       organizationId: Joi.number(),
@@ -84,41 +107,10 @@ userRouter.put(
       household: Joi.string(),
       userType: Joi.string(),
     });
-    const id = parseInt(req.params.id, 10);
+    const userEmail = req.params.email;
     try {
       const data = (await schema.validateAsync(req.body)) as UserInput;
-      data.id = id;
-      const user = await UserService.updateUser(data, id);
-      return res.status(201).json(user);
-    } catch (e) {
-      next(e);
-    }
-  },
-);
-
-/**
- * create a user
- */
-userRouter.post(
-  "/v1",
-  async (req: Request, res: Response, next: NextFunction) => {
-    const schema = Joi.object({
-      password: Joi.string().min(8).required(),
-      email: Joi.string().email().required(),
-      firstName: Joi.string(),
-      lastName: Joi.string(),
-      phone: Joi.string(),
-      address: Joi.string(),
-      city: Joi.string(),
-      state: Joi.string(),
-      zip: Joi.number().integer().positive(),
-      role: Joi.string(),
-      household: Joi.string(),
-      userType: Joi.string(),
-    });
-    try {
-      const data = (await schema.validateAsync(req.body)) as UserInput;
-      const user = await UserService.createUser(data);
+      const user = await UserService.updateUserByEmail(data, userEmail);
       return res.status(201).json(user);
     } catch (e) {
       next(e);
