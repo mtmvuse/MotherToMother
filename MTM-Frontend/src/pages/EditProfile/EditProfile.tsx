@@ -37,7 +37,6 @@ const schema = Yup.object().shape({
 });
 
 const EditProfile: React.FC = () => {
-  // const { updateUser } = useAuth();
   const navigate = useNavigate();
   const { getUser } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
@@ -76,7 +75,6 @@ const EditProfile: React.FC = () => {
             const userData = await response.json();
             setIsLoading(false);
 
-            // Set form values directly from userData
             setValue(
               "name",
               userData.firstName + " " + userData.lastName || "",
@@ -103,7 +101,6 @@ const EditProfile: React.FC = () => {
   const onSubmit = async (values: FormValues) => {
     try {
       setError("");
-      // await updateUser(values.name, values.email, values.userType);
 
       const firstName = values.name?.split(" ")[0] || "";
       const lastName = values.name?.split(" ")[1] || "";
@@ -163,7 +160,7 @@ const EditProfile: React.FC = () => {
               placeholder={"Email address"}
               {...register("email")}
               readOnly
-              onFocus={(e) => e.target.blur()} // Prevent selection on focus
+              onFocus={(e) => e.target.blur()} 
             />
             {errors.email && (
               <p className="error-message">{errors.email.message}</p>

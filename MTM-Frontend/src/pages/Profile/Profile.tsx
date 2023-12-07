@@ -22,7 +22,6 @@ const Profile: React.FC = () => {
 
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const currentUser = getUser();
 
   useEffect(() => {
     const fetchUser = async () => {

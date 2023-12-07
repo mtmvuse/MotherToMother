@@ -1,8 +1,6 @@
-/* EditProfile.css */
-
 @font-face {
   font-family: Inter;
-  src: url("assets/Inter-VariableFont_slnt,wght.ttf");
+  src: url("../assets/Inter-VariableFont_slnt,wght.ttf");
 }
 
 .edit-profile-container {

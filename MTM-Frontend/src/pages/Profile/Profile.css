@@ -1,12 +1,10 @@
-/* Profile-Route.css */
-
 @font-face {
   font-family: Raleway;
-  src: url("assets/Raleway-VariableFont_wght.ttf");
+  src: url("../assets/Raleway-VariableFont_wght.ttf");
 }
 @font-face {
   font-family: Montserrat;
-  src: url("assets/Montserrat-VariableFont_wght.ttf");
+  src: url("../assets/Montserrat-VariableFont_wght.ttf");
 }
 
 .profile-logo {
@@ -136,7 +134,6 @@
   justify-content: center;
 }
 
-/* Media query for smaller screens */
 @media (max-width: 420px) {
   .inline {
     display: block;
@@ -173,4 +170,3 @@
     text-align: center;
   }
 }
-
