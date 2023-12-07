@@ -73,6 +73,8 @@ export const getUserByEmail = async (
       address: true,
       city: true,
       zip: true,
+      firstName: true,
+      lastName: true,
     },
   });
 };
