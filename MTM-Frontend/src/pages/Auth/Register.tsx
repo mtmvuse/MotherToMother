@@ -1,5 +1,5 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
@@ -32,6 +32,14 @@ interface FormValues {
   city: string;
   affiliation?: string;
 }
+
+interface organization {
+  id: number;
+  name: string;
+  type: string;
+}
+
+const serverBaseUrl = "http://localhost:3001";
 
 const schema = Yup.object().shape({
   name: Yup.string()
@@ -69,6 +77,7 @@ const schema = Yup.object().shape({
 
 const Register: React.FC = () => {
   const [userType, setUserType] = useState<string>("");
+  const [organizations, setOrganizations] = useState<organization[]>([]);
   const { registerUser, currentUser } = useAuth();
   const navigate = useNavigate();
 
@@ -97,12 +106,70 @@ const Register: React.FC = () => {
         values.password,
         values.userType,
       );
+
+      const user = {
+        password: values.password,
+        firstName: values.name.split(" ")[0],
+        lastName: values.name.split(" ")[1],
+        email: values.email,
+        phone: values.phone,
+        address: values.address,
+        city: values.city,
+        state: "state",
+        zip: parseInt(values.zip, 10),
+        role: "role",
+        household: "household",
+        userType: values.userType,
+      };
+
+      const response = await fetch(`${serverBaseUrl}/registration/v1`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(user),
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to save registered user data to database: ${response.status}`,
+        );
+      }
+
       navigate("/home");
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
       setError(err.message);
     }
   };
+
+  const getOrganizations = async () => {
+    try {
+      const response = await fetch(`${serverBaseUrl}/organization/v1`, {
+        method: "GET",
+        headers: {
+          "Control-Cache": "no-cache",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to get organizations: ${response.status}`);
+      }
+
+      const organizations = await response.json();
+      setOrganizations(organizations);
+    } catch (err: any) {
+      if (err instanceof TypeError) {
+        setError("Network error: Failed to get organizations");
+      } else {
+        setError(err.message);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (userType === "Agency Partner") {
+      getOrganizations();
+    }
+  }, [userType]);
 
   return (
     <Box
@@ -301,11 +368,11 @@ const Register: React.FC = () => {
                       }}
                       error={!!errors.affiliation}
                     >
-                      <MenuItem value="affiliation 1">affiliation 1</MenuItem>
-
-                      <MenuItem value="affiliation 2">affiliation 2</MenuItem>
-
-                      <MenuItem value="affiliation 3">affiliation 3</MenuItem>
+                      {organizations.map((organization, index) => (
+                        <MenuItem value={organization.name} key={index}>
+                          {organization.name}
+                        </MenuItem>
+                      ))}
                     </Select>
                     <FormHelperText>
                       {errors.affiliation ? (
