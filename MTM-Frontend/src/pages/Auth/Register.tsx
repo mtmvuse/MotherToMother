@@ -13,8 +13,10 @@ import {
   FormControl,
   Select,
   MenuItem,
-  SelectChangeEvent,
+  type SelectChangeEvent,
 } from "@mui/material";
+import { registerUserOnServer } from "../../lib/services";
+import type { UserType } from "../../types/AuthTypes";
 
 // Register components
 import { RegisterTextField } from "../../components/Auth/RegisterForms/RegisterTextField";
@@ -38,8 +40,6 @@ interface organization {
   name: string;
   type: string;
 }
-
-const serverBaseUrl = "http://localhost:3001";
 
 const schema = Yup.object().shape({
   name: Yup.string()
@@ -120,13 +120,9 @@ const Register: React.FC = () => {
         role: "role",
         household: "household",
         userType: values.userType,
-      };
+      } as UserType;
 
-      const response = await fetch(`${serverBaseUrl}/registration/v1`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(user),
-      });
+      const response = await registerUserOnServer(user);
 
       if (!response.ok) {
         throw new Error(
