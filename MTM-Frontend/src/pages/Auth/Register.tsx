@@ -97,6 +97,34 @@ const Register: React.FC = () => {
         values.password,
         values.userType,
       );
+
+      const user = {
+        password: values.password,
+        firstName: values.name.split(" ")[0],
+        lastName: values.name.split(" ")[1],
+        email: values.email,
+        phone: values.phone,
+        address: values.address,
+        city: values.city,
+        state: "state",
+        zip: parseInt(values.zip, 10),
+        role: "role",
+        household: "household",
+        userType: values.userType,
+      };
+
+      const response = await fetch("http://localhost:3001/users/v1", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(user),
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to save registered user data to database: ${response.status}`,
+        );
+      }
+
       navigate("/home");
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
