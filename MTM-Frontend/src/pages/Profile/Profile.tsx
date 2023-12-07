@@ -6,8 +6,14 @@ import "./Profile.css";
 import profile_logo from "../../pages/assets/profile_logo.png";
 
 type User = {
-  displayName: string | null;
   email: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  phone: string | null;
+  address: string | null;
+  city: string | null;
+  zip: string | null;
+  userType: string | null;
 };
 
 const Profile: React.FC = () => {
@@ -19,11 +25,38 @@ const Profile: React.FC = () => {
   const currentUser = getUser();
 
   useEffect(() => {
-    if (currentUser) {
-      setUser(currentUser);
-      setIsLoading(false);
-    }
-  }, [currentUser]);
+    const fetchUser = async () => {
+      try {
+        const currentUser = getUser();
+        if (currentUser) {
+          const userEmail = currentUser.email;
+
+          const response = await fetch(
+            `http://localhost:3001/users/v1?email=${userEmail}`,
+            {
+              method: "GET",
+              headers: { "Content-Type": "application/json" },
+            },
+          );
+
+          if (response.ok) {
+            const userData = await response.json();
+            setUser(userData);
+            setIsLoading(false);
+          } else {
+            throw new Error("Failed to fetch user data");
+          }
+        } else {
+          throw new Error("Current user not found");
+        }
+      } catch (error) {
+        console.error("Error fetching user:", error);
+        setIsLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, [getUser]);
 
   const handleLogout = () => {
     void logout();
@@ -41,7 +74,7 @@ const Profile: React.FC = () => {
       </div>
       <div className={"profile-heading"}>
         <div className={"name-container"}>
-          <Typography className={"heading"}>{user?.displayName}</Typography>
+          <Typography className={"heading"}>{user?.firstName}</Typography>
         </div>
         <Typography className={"subheading"}>
           Organization / Affiliation
@@ -53,7 +86,7 @@ const Profile: React.FC = () => {
         <div className={"profile-info"}>
           <div className={"inline"}>
             <strong>Phone:</strong>
-            <p className={"value"}>xxx-xxx-xxx</p>
+            <p className={"value"}>{user?.phone}</p>
           </div>
           <div className={"inline"}>
             <strong>Email:</strong>
@@ -61,9 +94,11 @@ const Profile: React.FC = () => {
           </div>
           <div className={"inline"}>
             <strong>Address:</strong>
-            <p className={"value wrap"}>
-              478 Allied DriveSuite 104 & 105Nashville, TN 37211
-            </p>
+            <p className={"value wrap"}>{user?.address}</p>
+          </div>
+          <div className={"inline"}>
+            <strong>Account Type:</strong>
+            <p className={"value"}>{user?.userType}</p>
           </div>
         </div>
       )}
