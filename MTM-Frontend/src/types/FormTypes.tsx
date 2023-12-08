@@ -15,5 +15,19 @@ export interface DemographicDetailType {
   otherNum: number;
 }
 
+export interface RegisterFormValues {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  userType: string;
+
+  phone: string;
+  address: string;
+  zip: string;
+  city: string;
+  affiliation?: string;
+}
+
 export type itemType = Record<string, [number, number]>;
 export type categoryType = Record<string, itemType>;

@@ -5,6 +5,8 @@ import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { useAuth } from "../../contexts/AuthContext";
 import FormError from "./FormError";
+import { RegisterFormValues } from "~/types/FormTypes";
+import { Organization } from "~/types/ApiCallTypes";
 import {
   Button,
   Typography,
@@ -19,27 +21,6 @@ import {
 // Register components
 import { RegisterTextField } from "../../components/Auth/RegisterForms/RegisterTextField";
 import { RegisterTextFieldPassword } from "../../components/Auth/RegisterForms/RegisterTextFieldPassword";
-interface FormValues {
-  name: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-  userType: string;
-
-  phone: string;
-  address: string;
-  zip: string;
-  city: string;
-  affiliation?: string;
-}
-
-interface organization {
-  id: number;
-  name: string;
-  type: string;
-}
-
-const serverBaseUrl = "http://localhost:3001";
 
 const schema = Yup.object().shape({
   name: Yup.string()
@@ -77,7 +58,7 @@ const schema = Yup.object().shape({
 
 const Register: React.FC = () => {
   const [userType, setUserType] = useState<string>("");
-  const [organizations, setOrganizations] = useState<organization[]>([]);
+  const [organizations, setOrganizations] = useState<Organization[]>([]);
   const { registerUser, currentUser } = useAuth();
   const navigate = useNavigate();
 
@@ -91,13 +72,13 @@ const Register: React.FC = () => {
     control,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<FormValues>({
+  } = useForm<RegisterFormValues>({
     resolver: yupResolver(schema),
   });
 
   const [error, setError] = useState<string>("");
 
-  const onSubmit = async (values: FormValues) => {
+  const onSubmit = async (values: RegisterFormValues) => {
     try {
       setError("");
       await registerUser(
@@ -122,11 +103,14 @@ const Register: React.FC = () => {
         userType: values.userType,
       };
 
-      const response = await fetch(`${serverBaseUrl}/registration/v1`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(user),
-      });
+      const response = await fetch(
+        `${import.meta.env.SERVER_BASE_URL}/registration/v1`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(user),
+        },
+      );
 
       if (!response.ok) {
         throw new Error(
@@ -143,12 +127,15 @@ const Register: React.FC = () => {
 
   const getOrganizations = async () => {
     try {
-      const response = await fetch(`${serverBaseUrl}/organization/v1`, {
-        method: "GET",
-        headers: {
-          "Control-Cache": "no-cache",
+      const response = await fetch(
+        `${import.meta.env.SERVER_BASE_URL}/organization/v1`,
+        {
+          method: "GET",
+          headers: {
+            "Control-Cache": "no-cache",
+          },
         },
-      });
+      );
 
       if (!response.ok) {
         throw new Error(`Failed to get organizations: ${response.status}`);
