@@ -6,11 +6,11 @@ import "./EditProfile.css";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import profile_logo from "../../pages/assets/profile_logo.png";
+import { getUserData, updateUser } from "../../lib/services";
 
 interface FormValues {
   name?: string;
   email?: string;
-  userType?: string;
   phone?: string;
   address?: string;
   city?: string;
@@ -54,7 +54,6 @@ const EditProfile: React.FC = () => {
   const handleProfile = () => {
     navigate("/home/profile");
   };
-
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -62,17 +61,9 @@ const EditProfile: React.FC = () => {
         if (currentUser) {
           const userEmail = currentUser.email;
 
-          const response = await fetch(
-            `http://localhost:3001/users/v1?email=${userEmail}`,
+          if (userEmail) {
+            const userData = await getUserData(userEmail);
 
-            {
-              method: "GET",
-              headers: { "Content-Type": "application/json" },
-            },
-          );
-
-          if (response.ok) {
-            const userData = await response.json();
             setIsLoading(false);
 
             setValue(
@@ -96,7 +87,7 @@ const EditProfile: React.FC = () => {
     };
 
     fetchUser();
-  }, [setValue]);
+  }, [getUser, setValue]);
 
   const onSubmit = async (values: FormValues) => {
     try {
@@ -113,23 +104,13 @@ const EditProfile: React.FC = () => {
         address: values.address,
         city: values.city,
         zip: parseInt(values.zip || "0", 10),
-        userType: values.userType,
       };
 
-      const response = await fetch(
-        `http://localhost:3001/users/v1/update/${values.email}`,
-        {
-          method: "put",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(user),
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error(
-          `Failed to save registered user data to database: ${response.status}`,
-        );
+      if (!values.email) {
+        throw new Error("Email not found");
       }
+
+      await updateUser(values.email, user);
 
       navigate("/home/profile");
     } catch (err: any) {
@@ -160,7 +141,7 @@ const EditProfile: React.FC = () => {
               placeholder={"Email address"}
               {...register("email")}
               readOnly
-              onFocus={(e) => e.target.blur()} 
+              onFocus={(e) => e.target.blur()}
             />
             {errors.email && (
               <p className="error-message">{errors.email.message}</p>
@@ -201,15 +182,6 @@ const EditProfile: React.FC = () => {
               <p className="error-message">{errors.zip.message}</p>
             )}
           </div>
-          <p className="text-label">Agency (optional)</p>
-          <input
-            className="form-input"
-            placeholder={"Organization/Affiliation"}
-            {...register("userType")}
-          ></input>{" "}
-          {errors.userType && (
-            <p className="error-message">{errors.userType.message}</p>
-          )}
         </form>
       </div>
 

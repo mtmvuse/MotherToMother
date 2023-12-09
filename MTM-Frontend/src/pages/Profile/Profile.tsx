@@ -4,6 +4,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { CircularProgress, Typography } from "@mui/material";
 import "./Profile.css";
 import profile_logo from "../../pages/assets/profile_logo.png";
+import { getUserData } from "../../lib/services";
 
 type User = {
   email: string | null;
@@ -30,20 +31,13 @@ const Profile: React.FC = () => {
         if (currentUser) {
           const userEmail = currentUser.email;
 
-          const response = await fetch(
-            `http://localhost:3001/users/v1?email=${userEmail}`,
-            {
-              method: "GET",
-              headers: { "Content-Type": "application/json" },
-            },
-          );
+          if (userEmail) {
+            const userData = await getUserData(userEmail);
 
-          if (response.ok) {
-            const userData = await response.json();
             setUser(userData);
             setIsLoading(false);
           } else {
-            throw new Error("Failed to fetch user data");
+            throw new Error("User email not found");
           }
         } else {
           throw new Error("Current user not found");
