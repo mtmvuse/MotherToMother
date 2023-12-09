@@ -7,6 +7,9 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import profile_logo from "../../pages/assets/profile_logo.png";
 import { getUserData, updateUser } from "../../lib/services";
+import { ErrorMessage } from "../../components/Error";
+import { CircularProgress } from "@mui/material";
+import type { UserType } from "../../types/UserTypes";
 
 interface FormValues {
   name?: string;
@@ -38,7 +41,7 @@ const schema = Yup.object().shape({
 
 const EditProfile: React.FC = () => {
   const navigate = useNavigate();
-  const { getUser } = useAuth();
+  const { currentUser } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
   const {
     handleSubmit,
@@ -49,7 +52,7 @@ const EditProfile: React.FC = () => {
     resolver: yupResolver(schema),
   });
 
-  const [error, setError] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
 
   const handleProfile = () => {
     navigate("/home/profile");
@@ -57,44 +60,52 @@ const EditProfile: React.FC = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const currentUser = getUser();
-        if (currentUser) {
-          const userEmail = currentUser.email;
+        const token = await currentUser?.getIdToken();
 
-          if (userEmail) {
-            const userData = await getUserData(userEmail);
-
-            setIsLoading(false);
-
-            setValue(
-              "name",
-              userData.firstName + " " + userData.lastName || "",
-            );
-            setValue("email", userData.email || "");
-            setValue("userType", userData.userType || "");
-            setValue("phone", userData.phone || "");
-            setValue("address", userData.address || "");
-            setValue("city", userData.city || "");
-            setValue("zip", userData.zip || "");
-          }
-        } else {
+        if (!currentUser) {
           throw new Error("Failed to fetch user data");
         }
-      } catch (error) {
+
+        const userEmail = currentUser.email;
+
+        if (!userEmail) {
+          throw new Error("User email not found");
+        }
+
+        const response = await getUserData(userEmail, token);
+
+        if (!response.ok) {
+          throw new Error("Error fetching user");
+        }
+
+        const userData = (await response.json()) as UserType;
+
+        setIsLoading(false);
+        setValue("name", `${userData.firstName} ${userData.lastName}` || "");
+        setValue("email", userData.email || "");
+        setValue("userType", userData.userType || "");
+        setValue("phone", userData.phone || "");
+        setValue("address", userData.address || "");
+        setValue("city", userData.city || "");
+        setValue("zip", userData.zip || "");
+      } catch (error: any) {
         console.error("Error fetching user:", error);
+        setError(error.message);
+      } finally {
         setIsLoading(false);
       }
     };
 
     fetchUser();
-  }, [getUser, setValue]);
+  }, [currentUser, setValue]);
 
   const onSubmit = async (values: FormValues) => {
     try {
       setError("");
+      const token = await currentUser?.getIdToken();
 
-      const firstName = values.name?.split(" ")[0] || "";
-      const lastName = values.name?.split(" ")[1] || "";
+      const firstName = values.name?.split(" ")[0];
+      const lastName = values.name?.split(" ")[1];
 
       const user = {
         firstName,
@@ -103,23 +114,31 @@ const EditProfile: React.FC = () => {
         phone: values.phone,
         address: values.address,
         city: values.city,
-        zip: parseInt(values.zip || "0", 10),
+        zip: parseInt(values.zip ?? "00000"),
       };
 
       if (!values.email) {
         throw new Error("Email not found");
       }
 
-      await updateUser(values.email, user);
-
-      navigate("/home/profile");
+      const response = await updateUser(values.email, user, token);
+      if (!response.ok) {
+        throw new Error("Error updating user");
+      } else {
+        navigate("/home/profile");
+      }
     } catch (err: any) {
       setError(err.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  return (
+  return isLoading ? (
+    <CircularProgress />
+  ) : (
     <div className={"edit-profile-container"}>
+      <ErrorMessage error={error} setError={setError} />
       <div className={"profile-image"}>
         <img className="profile-logo" src={profile_logo} alt="Image1" />
       </div>
@@ -150,7 +169,7 @@ const EditProfile: React.FC = () => {
               className="form-input"
               placeholder={"Phone Number"}
               {...register("phone")}
-            />{" "}
+            />
             {errors.phone && (
               <p className="error-message">{errors.phone.message}</p>
             )}
@@ -160,7 +179,7 @@ const EditProfile: React.FC = () => {
             className="form-input"
             placeholder={"Street Address"}
             {...register("address")}
-          ></input>{" "}
+          ></input>
           {errors.address && (
             <p className="error-message">{errors.address.message}</p>
           )}
@@ -169,7 +188,7 @@ const EditProfile: React.FC = () => {
               className="form-input-left-half"
               placeholder={"City"}
               {...register("city")}
-            ></input>{" "}
+            ></input>
             {errors.city && (
               <p className="error-message">{errors.city.message}</p>
             )}

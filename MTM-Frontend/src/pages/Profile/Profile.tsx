@@ -5,51 +5,45 @@ import { CircularProgress, Typography } from "@mui/material";
 import "./Profile.css";
 import profile_logo from "../../pages/assets/profile_logo.png";
 import { getUserData } from "../../lib/services";
-
-type User = {
-  email: string | null;
-  firstName: string | null;
-  lastName: string | null;
-  phone: string | null;
-  address: string | null;
-  city: string | null;
-  zip: string | null;
-  userType: string | null;
-};
+import type { UserType } from "../../types/UserTypes";
+import { ErrorMessage } from "../../components/Error";
 
 const Profile: React.FC = () => {
-  const { logout, getUser } = useAuth();
+  const { logout, currentUser } = useAuth();
   const navigate = useNavigate();
-
-  const [user, setUser] = useState<User | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [user, setUser] = useState<UserType | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const currentUser = getUser();
-        if (currentUser) {
-          const userEmail = currentUser.email;
-
-          if (userEmail) {
-            const userData = await getUserData(userEmail);
-
-            setUser(userData);
-            setIsLoading(false);
-          } else {
-            throw new Error("User email not found");
-          }
-        } else {
+        if (!currentUser) {
           throw new Error("Current user not found");
         }
-      } catch (error) {
-        console.error("Error fetching user:", error);
+        const token = await currentUser.getIdToken();
+
+        const userEmail = currentUser.email;
+        if (!userEmail) {
+          throw new Error("User email not found");
+        }
+
+        const response = await getUserData(userEmail, token);
+        if (!response.ok) {
+          throw new Error("Error fetching user");
+        }
+
+        const userData = (await response.json()) as UserType;
+        setUser(userData);
+      } catch (error: any) {
+        setError(error.message as string);
+      } finally {
         setIsLoading(false);
       }
     };
 
     fetchUser();
-  }, [getUser]);
+  }, []);
 
   const handleLogout = () => {
     void logout();
@@ -62,6 +56,7 @@ const Profile: React.FC = () => {
 
   return (
     <div className={"profile-container"}>
+      <ErrorMessage error={error} setError={setError} />
       <div className={"profile-image"}>
         <img className="profile-logo" src={profile_logo} alt="Image1" />
       </div>

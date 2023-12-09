@@ -6,3 +6,4 @@ MotherToMother.code-workspace
 .idea/*
 MTM-Backend/prisma/migrations
 .vscode/*
+*.rest
