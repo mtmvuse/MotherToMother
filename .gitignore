@@ -8,4 +8,5 @@ MTM-Backend/prisma/migrations
 .vscode/*
 *.rest
 MTM-Frontend/tsconfig.tsbuildinfo
-MTM-Frontend/dist
+*/dist/
+*/dev-dist/
