@@ -6,6 +6,7 @@ import helmet from "helmet";
 import { exampleRoute } from "./routes/exampleRoute";
 import { userRouter } from "./routes/v1/user/user.router";
 import { sessionRouter } from "./routes/v1/session/session.router";
+import { itemsRouter } from "./routes/v1/item/item.router";
 import { verifyToken } from "./middlewares/verifyToken";
 import { notFound, errorHandler } from "./middlewares/errors";
 import { donationRouter } from "./routes/v1/donation/donation.router";
@@ -30,7 +31,7 @@ app.use("/sessions", sessionRouter);
 app.use("/example", verifyToken, exampleRoute);
 // app.use("/example", exampleRoute);
 app.use("/users", verifyToken, userRouter);
-
+app.use("/items", verifyToken, itemsRouter);
 // app.use("/users", userRouter);
 
 app.use("/donation", donationRouter); // Unprotected, Removed verifyToken
