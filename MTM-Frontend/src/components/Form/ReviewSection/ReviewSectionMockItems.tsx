@@ -1,12 +1,7 @@
-type itemType = {
-  [key: string]: {
-    [key: string]: [number, number];
-  };
-};
-
+import type { categoryType } from "../../../types/FormTypes";
 // TODO: Replace this with API call
 // [0, 0] = [New, Used]
-const items: itemType = {
+export const mockItems: categoryType = {
   Sleep: {
     Bassinet: [0, 0],
     Blanket: [0, 0],
@@ -110,5 +105,3 @@ const items: itemType = {
     "School Supplies": [0, 0],
   },
 };
-
-export { items, type itemType };

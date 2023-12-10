@@ -12,7 +12,7 @@ datasource db {
 
 model Organization {
   id   Int    @id @default(autoincrement())
-  name String
+  name String        @unique
   type String
   user User[]
 }

@@ -10,6 +10,8 @@ import { itemsRouter } from "./routes/v1/item/item.router";
 import { verifyToken } from "./middlewares/verifyToken";
 import { notFound, errorHandler } from "./middlewares/errors";
 import { donationRouter } from "./routes/v1/donation/donation.router";
+import { registrationRouter } from "./routes/v1/registration/registration.router";
+import { organizationRouter } from "./routes/v1/organization/organization.router";
 
 dotenv.config();
 
@@ -30,9 +32,14 @@ app.use(helmet());
 app.use("/sessions", sessionRouter);
 app.use("/example", verifyToken, exampleRoute);
 // app.use("/example", exampleRoute);
+
 app.use("/users", verifyToken, userRouter);
 app.use("/items", verifyToken, itemsRouter);
 // app.use("/users", userRouter);
+app.use("/registration", registrationRouter);
+
+// app.use("/organization", verifyToken, organizationRouter);
+app.use("/organization", organizationRouter);
 
 app.use("/donation", donationRouter); // Unprotected, Removed verifyToken
 

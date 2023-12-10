@@ -1,29 +1,49 @@
 import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../../contexts/AuthContext";
 import { CircularProgress, Typography } from "@mui/material";
 import "./Profile.css";
-import profile_logo from "../pages/assets/profile_logo.png";
-
-type User = {
-  displayName: string | null;
-  email: string | null;
-};
+import profile_logo from "../../pages/assets/profile_logo.png";
+import { getUserData } from "../../lib/services";
+import type { UserType } from "../../types/UserTypes";
+import { ErrorMessage } from "../../components/Error";
 
 const Profile: React.FC = () => {
-  const { logout, getUser } = useAuth();
+  const { logout, currentUser } = useAuth();
   const navigate = useNavigate();
-
-  const [user, setUser] = useState<User | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [user, setUser] = useState<UserType | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const currentUser = getUser();
 
   useEffect(() => {
-    if (currentUser) {
-      setUser(currentUser);
-      setIsLoading(false);
-    }
-  }, [currentUser]);
+    const fetchUser = async () => {
+      try {
+        if (!currentUser) {
+          throw new Error("Current user not found");
+        }
+        const token = await currentUser.getIdToken();
+
+        const userEmail = currentUser.email;
+        if (!userEmail) {
+          throw new Error("User email not found");
+        }
+
+        const response = await getUserData(userEmail, token);
+        if (!response.ok) {
+          throw new Error("Error fetching user");
+        }
+
+        const userData = (await response.json()) as UserType;
+        setUser(userData);
+      } catch (error: any) {
+        setError(error.message as string);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   const handleLogout = () => {
     void logout();
@@ -36,12 +56,13 @@ const Profile: React.FC = () => {
 
   return (
     <div className={"profile-container"}>
+      <ErrorMessage error={error} setError={setError} />
       <div className={"profile-image"}>
         <img className="profile-logo" src={profile_logo} alt="Image1" />
       </div>
       <div className={"profile-heading"}>
         <div className={"name-container"}>
-          <Typography className={"heading"}>{user?.displayName}</Typography>
+          <Typography className={"heading"}>{user?.firstName}</Typography>
         </div>
         <Typography className={"subheading"}>
           Organization / Affiliation
@@ -53,7 +74,7 @@ const Profile: React.FC = () => {
         <div className={"profile-info"}>
           <div className={"inline"}>
             <strong>Phone:</strong>
-            <p className={"value"}>xxx-xxx-xxx</p>
+            <p className={"value"}>{user?.phone}</p>
           </div>
           <div className={"inline"}>
             <strong>Email:</strong>
@@ -61,9 +82,11 @@ const Profile: React.FC = () => {
           </div>
           <div className={"inline"}>
             <strong>Address:</strong>
-            <p className={"value wrap"}>
-              478 Allied DriveSuite 104 & 105Nashville, TN 37211
-            </p>
+            <p className={"value wrap"}>{user?.address}</p>
+          </div>
+          <div className={"inline"}>
+            <strong>Account Type:</strong>
+            <p className={"value"}>{user?.userType}</p>
           </div>
         </div>
       )}

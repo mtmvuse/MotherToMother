@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import "./SpecificItem.css";
 import { CssBaseline, ThemeProvider, Button, Box } from "@mui/material";
 import { PrimaryMainTheme } from "../Theme";
+import { SpecificItemsDialog } from "../SpecificItemDialog/SpecificItemsDialog";
 
 const buttonStyles = {
   button: {
@@ -20,32 +21,51 @@ const buttonStyles = {
 };
 
 interface SpecificItemProps {
-  categoryName: string;
-  productNames: string[];
+  category: string;
+  items: string[];
 }
 
-const SpecificItem: React.FC<SpecificItemProps> = ({
-  categoryName,
-  productNames,
-}) => {
+const SpecificItem: React.FC<SpecificItemProps> = ({ category, items }) => {
+  const [openDialog, setOpenDialog] = useState(false);
+  const [curItem, setCurItem] = useState("");
+  const onItemClick = (item: string) => {
+    setCurItem(item);
+    setOpenDialog(true);
+  };
+
+  const onCloseDialog = () => {
+    setCurItem("");
+    setOpenDialog(false);
+  };
   return (
     <div className="category-container">
       <CssBaseline />
       <ThemeProvider theme={PrimaryMainTheme}>
-        <h1 className="category-name">{categoryName}</h1>
+        <h1 className="category-name">{category}</h1>
         <Box width="100%" marginBottom="80px">
           <div className="product-list">
-            {productNames.map((productName, index) => (
+            {items.map((item, index) => (
               <Button
                 key={index}
                 style={buttonStyles.button}
                 variant="outlined"
+                onClick={() => onItemClick(item)}
               >
-                {productName}
+                {item}
               </Button>
             ))}
           </div>
         </Box>
+        <SpecificItemsDialog
+          open={openDialog}
+          onClose={onCloseDialog}
+          donationDetail={{
+            category: category,
+            item: curItem,
+            newQuantity: 0,
+            usedQuantity: 0,
+          }}
+        />
       </ThemeProvider>
     </div>
   );

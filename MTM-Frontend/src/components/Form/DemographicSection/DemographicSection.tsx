@@ -1,4 +1,4 @@
-import NumberInCircle from "./NumberInCircle";
+import NumberInCircle from "../ReviewSection/NumberInCircle";
 import { NorthSharp } from "@mui/icons-material";
 import {
   Typography,
@@ -9,10 +9,10 @@ import {
   CssBaseline,
   Container,
 } from "@mui/material";
-import { PrimaryMainTheme } from "./Theme";
+import { PrimaryMainTheme } from "../Theme";
 import { question } from "./Questionaire";
 import { QuestionField } from "./QuestionField";
-import { useForm } from "../../contexts/FormContext";
+import { useForm } from "../../../contexts/FormContext";
 
 // Fields in the demographic details object. Corresponding to the questionaire, order matters
 const demographicDetailFields: string[] = [

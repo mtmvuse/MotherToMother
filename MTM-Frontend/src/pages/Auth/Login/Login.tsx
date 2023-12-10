@@ -3,13 +3,13 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuth } from "../../../contexts/AuthContext";
 import { Typography } from "@mui/material";
-import FormError from "./FormError";
+import FormError from "../FormError";
 
 import "./Login.css";
-import m2m_logo from "../assets/m2m_logo.png";
-import animal_logo from "../assets/animal_logo.png";
+import m2m_logo from "../../assets/m2m_logo.png";
+import animal_logo from "../../assets/animal_logo.png";
 
 interface FormValues {
   email: string;

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import m2m_logo from "../pages/assets/m2m_logo.png";
+import m2m_logo from "../../pages/assets/m2m_logo.png";
 import "./Home.css";
 
 const Home: React.FC = () => {

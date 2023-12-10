@@ -7,43 +7,31 @@ import {
   Box,
 } from "@mui/material";
 import { useState } from "react";
-import { PrimaryMainTheme } from "./Theme";
-import { items, itemType } from "./Items";
-import { Category } from "./Category";
-import { isSubCategoryNotEmpty } from "./SubCategory";
+import { PrimaryMainTheme } from "../Theme";
+import { ReviewSectionCategory } from "./ReviewSectionCategory";
 import NumberInCircle from "./NumberInCircle";
-import FormHeader from "./FormHeader";
+import FormHeader from "../FormHeader";
+import { useForm } from "../../../contexts/FormContext";
+import { GeneralCategories } from "../../../lib/constants";
 
 interface ReviewSectionProps {
   step: number;
 }
 
-const getSubCategoryCount = () => {
-  let count = 0;
-  for (const category in items) {
-    for (const subCategory in items[category]) {
-      if (isSubCategoryNotEmpty(items[category]![subCategory]!)) {
-        count++;
-      }
-    }
-  }
-  return count;
-};
-
 const ReviewSection = (props: ReviewSectionProps) => {
-  const [editMode, setEditMode] = useState(false);
+  const { donationDetails } = useForm();
+  const [isEditMode, setisEditMode] = useState(false);
 
   const handleEdit = () => {
-    setEditMode(true);
+    setisEditMode(true);
   };
 
   const handleSave = () => {
-    setEditMode(false);
-    // TODO: Save the changes to the database
+    setisEditMode(false);
   };
 
   const handleCancel = () => {
-    setEditMode(false);
+    setisEditMode(false);
   };
 
   return (
@@ -62,7 +50,7 @@ const ReviewSection = (props: ReviewSectionProps) => {
             justifyContent="center"
           >
             <NumberInCircle
-              num={getSubCategoryCount()}
+              num={donationDetails.length}
               backgroundColor="#6D6D6D"
               color="white"
               borderRaduis="10px"
@@ -72,15 +60,15 @@ const ReviewSection = (props: ReviewSectionProps) => {
             />
             <Typography variant="body1"> items are in your form </Typography>
           </Stack>
-          {Object.keys(items).map((category) => (
-            <Category
-              key={category}
+          {GeneralCategories.map((category, i) => (
+            <ReviewSectionCategory
+              key={i}
               categoryName={category}
-              editMode={editMode}
+              isEditMode={isEditMode}
             />
           ))}
         </Box>
-        {!editMode && (
+        {!isEditMode && (
           <Button
             variant="outlined"
             sx={{ fontSize: 15, height: "33px" }}
@@ -90,7 +78,7 @@ const ReviewSection = (props: ReviewSectionProps) => {
             Edit
           </Button>
         )}
-        {editMode && (
+        {isEditMode && (
           <Stack direction="row" spacing={3}>
             <Button
               variant="contained"

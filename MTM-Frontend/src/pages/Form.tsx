@@ -1,18 +1,13 @@
 import React from "react";
 import { Typography, Stack, Button } from "@mui/material";
 
-import ReviewSection from "../components/Form/ReviewSection";
-import DemographicSection from "../components/Form/DemographicSection";
+import ReviewSection from "../components/Form/ReviewSection/ReviewSection";
+import DemographicSection from "../components/Form/DemographicSection/DemographicSection";
 import GeneralSection from "../components/Form/GeneralSection";
 import { useForm } from "../contexts/FormContext";
 
 const Form: React.FC = () => {
-  const {
-    demographicDetails,
-    setDemographicDetails,
-    donationDetails,
-    setDonationDetails,
-  } = useForm();
+  const { demographicDetails, donationDetails } = useForm();
 
   const onSubmit = () => {
     const sum =

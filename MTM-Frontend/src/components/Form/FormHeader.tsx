@@ -1,14 +1,6 @@
-import {
-  CssBaseline,
-  ThemeProvider,
-  Typography,
-  Stack,
-  Button,
-  Box,
-  Grid,
-} from "@mui/material";
+import { Typography, Stack, Grid } from "@mui/material";
 import { NorthSharp, SouthSharp } from "@mui/icons-material";
-import NumberInCircle from "./NumberInCircle";
+import NumberInCircle from "./ReviewSection/NumberInCircle";
 
 interface FormHeaderNum {
   number: number;
@@ -27,7 +19,6 @@ type props = FormHeaderNum | FormHeaderText | UpArrow;
 const FormHeader: React.FC<props> = (props) => {
   const { number } = props as FormHeaderNum;
   const { header } = props as FormHeaderText;
-  const { north } = props as UpArrow;
   return (
     <Grid container spacing={2} style={{ marginTop: "5px" }}>
       <Grid item xs={8}>
