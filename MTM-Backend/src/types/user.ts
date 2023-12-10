@@ -29,6 +29,10 @@ export interface UserInput {
   userType: string;
 }
 
+export interface RawUserInput extends UserInput {
+  currentUser: string;
+}
+
 export interface PasswordCombo {
   hash: string;
   salt: string;
