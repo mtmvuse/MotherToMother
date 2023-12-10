@@ -1,5 +1,7 @@
 /**
  * feed the database with test data for development
+ * USED FOR TESTING PURPOSES ONLY
+ * PRISMA STUDIO - DIRECTLY, SQL WORKBENCH - DIRECTLY
  */
 import { db } from "../src/utils/db.server";
 
@@ -30,12 +32,12 @@ async function main() {
   // Seeding Item
   const item = await db.item.create({
     data: {
-      id: 123,
+      category: "Sample Category",
       name: "Sample Item",
       quantityUsed: 10,
       quantityNew: 5,
       valueUsed: 15.5,
-      valueOld: 10.0,
+      valueNew: 10.0,
     },
   });
 
