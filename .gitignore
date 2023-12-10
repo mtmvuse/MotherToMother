@@ -7,3 +7,4 @@ MotherToMother.code-workspace
 MTM-Backend/prisma/migrations
 .vscode/*
 *.rest
+MTM-Frontend/tsconfig.tsbuildinfo
