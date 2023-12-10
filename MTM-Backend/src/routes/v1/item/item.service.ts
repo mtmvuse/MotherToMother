@@ -2,77 +2,104 @@ import { db } from "../../../utils/db.server";
 import type { ItemInputNoID, ItemType } from "../../../types/item";
 
 /**
- * Get a items by id
+ * Gets all items
+ * @returns an array of items in the database
+ */
+export const getAllItems = async (): Promise<ItemType[] | null> => {
+  const items: ItemType[] | null = await db.item.findMany({
+    select: {
+      id: true,
+      category: true,
+      name: true,
+      quantityUsed: true,
+      quantityNew: true,
+      valueNew: true,
+      valueUsed: true,
+    },
+  });
+
+  return items;
+};
+
+/**
+ * Get a items by category
+ * @param category
+ * @returns an array of items based upon the given category
+ */
+export const getItemsCategory = async (
+  category: string,
+): Promise<ItemType[] | null> => {
+  const items: ItemType[] | null = await db.item.findMany({
+    where: {
+      category: category,
+    },
+    select: {
+      id: true,
+      category: true,
+      name: true,
+      quantityUsed: true,
+      quantityNew: true,
+      valueNew: true,
+      valueUsed: true,
+    },
+  });
+
+  return items;
+};
+
+/**
+ * Get a items by id w/valid Category and Name
  * @param category
  * @param name
- * @returns an array of items based upon the given category and name or null if not found
- * will return all the items if category and name if null
+ * @returns an array of items based upon the given category and name
  */
-export const getItems = async (
+export const getItemsName = async (
+  name: string,
+): Promise<ItemType[] | null> => {
+  const items: ItemType[] | null = await db.item.findMany({
+    where: {
+      name: name,
+    },
+    select: {
+      id: true,
+      category: true,
+      name: true,
+      quantityUsed: true,
+      quantityNew: true,
+      valueNew: true,
+      valueUsed: true,
+    },
+  });
+
+  return items;
+};
+
+/**
+ * Get a items by category and Name
+ * @param category
+ * @param name
+ * @returns an array of items based upon the given category and name
+ */
+export const getItemsCategoryName = async (
   category: string,
   name: string,
 ): Promise<ItemType[] | null> => {
-  let items: ItemType[] | null;
+  const items: ItemType[] | null = await db.item.findMany({
+    where: {
+      category: category,
+      name: name,
+    },
+    select: {
+      id: true,
+      category: true,
+      name: true,
+      quantityUsed: true,
+      quantityNew: true,
+      valueNew: true,
+      valueUsed: true,
+    },
+  });
 
-  if (!category && !name) {
-    items = await db.item.findMany({
-      select: {
-        id: true,
-        category: true,
-        name: true,
-        quantityUsed: true,
-        quantityNew: true,
-        valueNew: true,
-        valueUsed: true,
-      },
-    });
-  } else if (!category && name) {
-    items = await db.item.findMany({
-      where: {
-        name: name,
-      },
-      select: {
-        id: true,
-        category: true,
-        name: true,
-        quantityUsed: true,
-        quantityNew: true,
-        valueNew: true,
-        valueUsed: true,
-      },
-    });
-  } else if (category && !name) {
-    items = await db.item.findMany({
-      where: {
-        category: category,
-      },
-      select: {
-        id: true,
-        category: true,
-        name: true,
-        quantityUsed: true,
-        quantityNew: true,
-        valueNew: true,
-        valueUsed: true,
-      },
-    });
-  } else {
-    items = await db.item.findMany({
-      where: {
-        category: category,
-        name: name,
-      },
-      select: {
-        id: true,
-        category: true,
-        name: true,
-        quantityUsed: true,
-        quantityNew: true,
-        valueNew: true,
-        valueUsed: true,
-      },
-    });
-  }
   return items;
 };
 
