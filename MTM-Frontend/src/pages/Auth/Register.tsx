@@ -5,8 +5,6 @@ import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { useAuth } from "../../contexts/AuthContext";
 import FormError from "./FormError";
-import { RegisterFormValues } from "~/types/FormTypes";
-import { Organization } from "~/types/ApiCallTypes";
 import {
   Button,
   Typography,
@@ -15,9 +13,10 @@ import {
   FormControl,
   Select,
   MenuItem,
-  SelectChangeEvent,
+  type SelectChangeEvent,
 } from "@mui/material";
-
+import { registerUserOnServer, getOrganizations } from "../../lib/services";
+import { RegisterFormValues, Organization, UserType } from "~/types/AuthTypes";
 // Register components
 import { RegisterTextField } from "../../components/Auth/RegisterForms/RegisterTextField";
 import { RegisterTextFieldPassword } from "../../components/Auth/RegisterForms/RegisterTextFieldPassword";
@@ -68,6 +67,12 @@ const Register: React.FC = () => {
     }
   }, [currentUser, navigate]);
 
+  useEffect(() => {
+    if (userType === "Agency Partner") {
+      getOrganizations(setError, setOrganizations);
+    }
+  }, [userType]);
+
   const {
     control,
     handleSubmit,
@@ -87,7 +92,6 @@ const Register: React.FC = () => {
         values.password,
         values.userType,
       );
-
       const user = {
         password: values.password,
         firstName: values.name.split(" ")[0],
@@ -101,62 +105,21 @@ const Register: React.FC = () => {
         role: "role",
         household: "household",
         userType: values.userType,
-      };
+      } as UserType;
 
-      const response = await fetch(
-        `${import.meta.env.SERVER_BASE_URL}/registration/v1`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(user),
-        },
-      );
+      const response = await registerUserOnServer(user);
 
       if (!response.ok) {
         throw new Error(
           `Failed to save registered user data to database: ${response.status}`,
         );
       }
-
       navigate("/home");
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
       setError(err.message);
     }
   };
-
-  const getOrganizations = async () => {
-    try {
-      const response = await fetch(
-        `${import.meta.env.SERVER_BASE_URL}/organization/v1`,
-        {
-          method: "GET",
-          headers: {
-            "Control-Cache": "no-cache",
-          },
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error(`Failed to get organizations: ${response.status}`);
-      }
-
-      const organizations = await response.json();
-      setOrganizations(organizations);
-    } catch (err: any) {
-      if (err instanceof TypeError) {
-        setError("Network error: Failed to get organizations");
-      } else {
-        setError(err.message);
-      }
-    }
-  };
-
-  useEffect(() => {
-    if (userType === "Agency Partner") {
-      getOrganizations();
-    }
-  }, [userType]);
 
   return (
     <Box
