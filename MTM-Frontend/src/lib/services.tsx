@@ -30,7 +30,6 @@ export const getOrganizations = async (query?: string | undefined) => {
       "Control-Cache": "no-cache",
     },
   });
-
   if (!response.ok) {
     throw new Error(`Failed to get organizations: ${response.status}`);
   }
