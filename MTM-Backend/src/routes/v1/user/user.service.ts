@@ -69,6 +69,12 @@ export const getUserByEmail = async (
       id: true,
       email: true,
       userType: true,
+      phone: true,
+      address: true,
+      city: true,
+      zip: true,
+      firstName: true,
+      lastName: true,
     },
   });
 };
