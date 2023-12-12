@@ -12,3 +12,23 @@ export interface UserType {
   household: string;
   userType: string;
 }
+
+export interface Organization {
+  id: number;
+  name: string;
+  type: string;
+}
+
+export interface RegisterFormValues {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  userType: string;
+
+  phone: string;
+  address: string;
+  zip: string;
+  city: string;
+  affiliation?: string;
+}

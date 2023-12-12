@@ -58,6 +58,7 @@ const schema = Yup.object().shape({
 const Register: React.FC = () => {
   const [userType, setUserType] = useState<string>("");
   const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [error, setError] = useState<string>("");
   const { registerUser, currentUser } = useAuth();
   const navigate = useNavigate();
 
@@ -81,8 +82,6 @@ const Register: React.FC = () => {
     resolver: yupResolver(schema),
   });
 
-  const [error, setError] = useState<string>("");
-
   const onSubmit = async (values: RegisterFormValues) => {
     try {
       setError("");
@@ -102,8 +101,6 @@ const Register: React.FC = () => {
         city: values.city,
         state: "state",
         zip: parseInt(values.zip, 10),
-        role: "role",
-        household: "household",
         userType: values.userType,
       } as UserType;
 
