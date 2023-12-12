@@ -70,7 +70,23 @@ const Register: React.FC = () => {
 
   useEffect(() => {
     if (userType === "Agency Partner") {
-      getOrganizations(setError, setOrganizations);
+      const organizationQueryType: string | undefined = userType
+        .split(" ")[0]
+        ?.toLocaleLowerCase();
+
+      const queryOrganizations = async (query: string | undefined) => {
+        try {
+          const organization = await getOrganizations(query);
+          setOrganizations(organization);
+        } catch (err: any) {
+          if (err instanceof TypeError) {
+            setError("Network error: Failed to get organizations");
+          } else {
+            setError(err.message);
+          }
+        }
+      };
+      queryOrganizations(organizationQueryType);
     }
   }, [userType]);
 
@@ -105,7 +121,6 @@ const Register: React.FC = () => {
       } as UserType;
 
       const response = await registerUserOnServer(user);
-
       if (!response.ok) {
         throw new Error(
           `Failed to save registered user data to database: ${response.status}`,
@@ -117,7 +132,6 @@ const Register: React.FC = () => {
       setError(err.message);
     }
   };
-
   return (
     <Box
       mt={10}
