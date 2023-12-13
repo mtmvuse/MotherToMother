@@ -13,25 +13,13 @@ import {
   FormControl,
   Select,
   MenuItem,
-  SelectChangeEvent,
+  type SelectChangeEvent,
 } from "@mui/material";
-
+import { registerUserOnServer, getOrganizations } from "../../lib/services";
+import { RegisterFormValues, Organization, UserType } from "~/types/AuthTypes";
 // Register components
 import { RegisterTextField } from "../../components/Auth/RegisterForms/RegisterTextField";
 import { RegisterTextFieldPassword } from "../../components/Auth/RegisterForms/RegisterTextFieldPassword";
-interface FormValues {
-  name: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-  userType: string;
-
-  phone: string;
-  address: string;
-  zip: string;
-  city: string;
-  affiliation?: string;
-}
 
 const schema = Yup.object().shape({
   name: Yup.string()
@@ -69,6 +57,8 @@ const schema = Yup.object().shape({
 
 const Register: React.FC = () => {
   const [userType, setUserType] = useState<string>("");
+  const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [error, setError] = useState<string>("");
   const { registerUser, currentUser } = useAuth();
   const navigate = useNavigate();
 
@@ -78,17 +68,37 @@ const Register: React.FC = () => {
     }
   }, [currentUser, navigate]);
 
+  useEffect(() => {
+    if (userType === "Agency Partner") {
+      const organizationQueryType: string | undefined = userType
+        .split(" ")[0]
+        ?.toLocaleLowerCase();
+
+      const queryOrganizations = async (query: string | undefined) => {
+        try {
+          const organization = await getOrganizations(query);
+          setOrganizations(organization);
+        } catch (err: any) {
+          if (err instanceof TypeError) {
+            setError("Network error: Failed to get organizations");
+          } else {
+            setError(err.message);
+          }
+        }
+      };
+      queryOrganizations(organizationQueryType);
+    }
+  }, [userType]);
+
   const {
     control,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<FormValues>({
+  } = useForm<RegisterFormValues>({
     resolver: yupResolver(schema),
   });
 
-  const [error, setError] = useState<string>("");
-
-  const onSubmit = async (values: FormValues) => {
+  const onSubmit = async (values: RegisterFormValues) => {
     try {
       setError("");
       await registerUser(
@@ -97,13 +107,31 @@ const Register: React.FC = () => {
         values.password,
         values.userType,
       );
+      const user = {
+        password: values.password,
+        firstName: values.name.split(" ")[0],
+        lastName: values.name.split(" ")[1],
+        email: values.email,
+        phone: values.phone,
+        address: values.address,
+        city: values.city,
+        state: "state",
+        zip: parseInt(values.zip, 10),
+        userType: values.userType,
+      } as UserType;
+
+      const response = await registerUserOnServer(user);
+      if (!response.ok) {
+        throw new Error(
+          `Failed to save registered user data to database: ${response.status}`,
+        );
+      }
       navigate("/home");
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
       setError(err.message);
     }
   };
-
   return (
     <Box
       mt={10}
@@ -301,11 +329,11 @@ const Register: React.FC = () => {
                       }}
                       error={!!errors.affiliation}
                     >
-                      <MenuItem value="affiliation 1">affiliation 1</MenuItem>
-
-                      <MenuItem value="affiliation 2">affiliation 2</MenuItem>
-
-                      <MenuItem value="affiliation 3">affiliation 3</MenuItem>
+                      {organizations.map((organization, index) => (
+                        <MenuItem value={organization.name} key={index}>
+                          {organization.name}
+                        </MenuItem>
+                      ))}
                     </Select>
                     <FormHelperText>
                       {errors.affiliation ? (

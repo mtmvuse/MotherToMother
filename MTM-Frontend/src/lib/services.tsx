@@ -1,13 +1,39 @@
+import type { UserType } from "../types/AuthTypes";
 import type { EditUserType } from "../types/UserTypes";
 
 export const setUserType = async (uid: string, userType: string) => {
-  return await fetch(`api/sessions/v1/setUserType`, {
+  return await fetch(`/api/sessions/v1/setUserType`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ uid, userType }),
   });
+};
+
+export const registerUserOnServer = async (user: UserType) => {
+  return await fetch(`/api/registration/v1`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(user),
+  });
+};
+
+export const getOrganizations = async (query?: string | undefined) => {
+  let fetchURL: string = "";
+  if (query === undefined) fetchURL = `/api/organization/v1`;
+  else fetchURL = `/api/organization/v1?type=${query}`;
+
+  const response = await fetch(fetchURL, {
+    method: "GET",
+    headers: {
+      "Control-Cache": "no-cache",
+    },
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to get organizations: ${response.status}`);
+  }
+  return await response.json();
 };
 
 export const getUserData = async (email: string, token: string | undefined) => {
