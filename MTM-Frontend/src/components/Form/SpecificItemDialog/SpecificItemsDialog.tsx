@@ -9,6 +9,8 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import Stack from "@mui/material/Stack";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
+import InputBase from "@mui/material/InputBase";
+import Input from "@mui/material/Input";
 import { useForm } from "../../../contexts/FormContext";
 import type { DonationDetailType } from "../../../types/FormTypes";
 import "./SpecificItemsDialog.css";
@@ -101,7 +103,31 @@ export const SpecificItemsDialog = ({
             >
               <RemoveIcon />
             </IconButton>
-            <Typography>{tempNewQuantity}</Typography>
+            <InputBase
+              placeholder={"0"}
+              value={tempNewQuantity || ""}
+              type="number"
+              onChange={(e) => {
+                const minWidth = 50;
+                const calculatedWidth = minWidth + e.target.value.length * 8;
+
+                e.target.style.width = `${calculatedWidth}px`;
+                e.target.value.trim() !== ""
+                  ? setTempNewQuantity(parseInt(e.target.value))
+                  : setTempNewQuantity(0);
+              }}
+              sx={{
+                "& input": {
+                  textAlign: "center",
+                  width: 50,
+                  "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button":
+                    {
+                      "-webkit-appearance": "none",
+                      margin: 0,
+                    },
+                },
+              }}
+            />
             <IconButton onClick={() => setTempNewQuantity((prev) => prev + 1)}>
               <AddIcon />
             </IconButton>
@@ -120,7 +146,31 @@ export const SpecificItemsDialog = ({
             >
               <RemoveIcon />
             </IconButton>
-            <Typography>{tempUsedQuantity}</Typography>
+            <InputBase
+              placeholder={"0"}
+              value={tempUsedQuantity || ""}
+              type="number"
+              onChange={(e) => {
+                const minWidth = 50;
+                const calculatedWidth = minWidth + e.target.value.length * 8;
+
+                e.target.style.width = `${calculatedWidth}px`;
+                e.target.value.trim() !== ""
+                  ? setTempNewQuantity(parseInt(e.target.value))
+                  : setTempNewQuantity(0);
+              }}
+              sx={{
+                "& input": {
+                  textAlign: "center",
+                  width: 50,
+                  "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button":
+                    {
+                      "-webkit-appearance": "none",
+                      margin: 0,
+                    },
+                },
+              }}
+            />
             <IconButton onClick={() => setTempUsedQuantity((prev) => prev + 1)}>
               <AddIcon />
             </IconButton>
