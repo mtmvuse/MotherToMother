@@ -79,18 +79,13 @@ const GeneralSection: React.FC<GeneralSectionProps> = ({ step }) => {
         if (!currentUser) {
           throw new Error("Current user not found");
         }
-        console.log("a");
-
         const token = await currentUser.getIdToken();
-        console.log("b");
 
         const response = await getAllItems(token);
-        console.log(response);
         if (!response.ok) {
           throw new Error("Error fetching items");
         }
 
-        console.log(response);
         const itemsData = (await response.json()) as ItemResponse[];
         setBroadCategories(
           Array.from(

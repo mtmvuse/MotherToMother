@@ -64,8 +64,23 @@ export const updateUser = async (
 
 export const getAllItems = async (token: string | undefined) => {
   const backendUrl = import.meta.env.VITE_LOCAL_SERVER_URL as string;
-  console.log(backendUrl);
   return await fetch(`${backendUrl}/items/v1/`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+export const getItemByCategory = async (
+  category: string,
+  token: string | undefined,
+) => {
+  const backendUrl = import.meta.env.VITE_LOCAL_SERVER_URL as string;
+  const fullUrl = `${backendUrl}/items/v1/?category=${category}`;
+
+  return await fetch(fullUrl, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
