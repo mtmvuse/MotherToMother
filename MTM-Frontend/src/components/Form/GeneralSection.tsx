@@ -12,7 +12,7 @@ import { PrimaryMainTheme } from "./Theme";
 import FormHeader from "./FormHeader";
 import { useNavigate } from "react-router-dom";
 import { getAllItems } from "../../lib/services";
-import { ItemResponse } from "../../types/FormTypes";
+import { type ItemResponse } from "../../types/FormTypes";
 import { useAuth } from "../../contexts/AuthContext";
 import { ErrorMessage } from "../../components/Error";
 

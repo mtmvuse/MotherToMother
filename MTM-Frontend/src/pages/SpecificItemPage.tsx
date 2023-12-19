@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import SpecificItem from "../components/Form/SpecificItem/SpecificItem";
-import categoryToProductNames from "./categoris";
 import { getItemByCategory } from "../lib/services";
 import { useAuth } from "../contexts/AuthContext";
-import { object } from "yup";
-import { ItemResponse } from "../types/FormTypes";
+import { type ItemResponse } from "../types/FormTypes";
 import { ErrorMessage } from "../components/Error";
 import { CircularProgress } from "@mui/material";
 
