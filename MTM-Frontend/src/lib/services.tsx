@@ -20,7 +20,7 @@ export const registerUserOnServer = async (user: UserType) => {
 };
 
 export const getOrganizations = async (query?: string | undefined) => {
-  let fetchURL: string = "";
+  let fetchURL = "";
   if (query === undefined) fetchURL = `/api/organization/v1`;
   else fetchURL = `/api/organization/v1?type=${query}`;
 
@@ -37,6 +37,7 @@ export const getOrganizations = async (query?: string | undefined) => {
 };
 
 export const getUserData = async (email: string, token: string | undefined) => {
+  console.log("Tried");
   return await fetch(`/api/users/v1?email=${email}`, {
     method: "GET",
     headers: {
@@ -58,5 +59,17 @@ export const updateUser = async (
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(userData),
+  });
+};
+
+export const getAllItems = async (token: string | undefined) => {
+  const backendUrl = import.meta.env.VITE_LOCAL_SERVER_URL as string;
+  console.log(backendUrl);
+  return await fetch(`${backendUrl}/items/v1/`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
   });
 };

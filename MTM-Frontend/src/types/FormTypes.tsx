@@ -1,3 +1,5 @@
+import { number, string } from "yup";
+
 export interface DonationDetailType {
   item: string;
   category: string;
@@ -17,3 +19,13 @@ export interface DemographicDetailType {
 
 export type itemType = Record<string, [number, number]>;
 export type categoryType = Record<string, itemType>;
+
+export type ItemResponse = {
+  id: number;
+  category: string;
+  name: string;
+  quantityUsed: number;
+  quantityNew: number;
+  valueNew: number;
+  valueUsed: number;
+};

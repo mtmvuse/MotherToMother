@@ -23,6 +23,7 @@ const Form: React.FC = () => {
       numberServed: sum,
     };
     console.log(submitDemographics);
+    console.log(donationDetails);
   };
   return (
     // Top of Outgoing Donations Form
