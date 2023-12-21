@@ -47,9 +47,8 @@ const CategoryGen: React.FC<CategoryGenProps> = ({ broadCategories }) => {
 
     for (let i = 0; i < broadCategories.length; i += 2) {
       rows.push(
-        <Stack direction="row" spacing={2}>
+        <Stack direction="row" spacing={2} key={i}>
           <Button
-            key={i}
             style={buttonStyles}
             fullWidth={true}
             variant="outlined"
@@ -60,7 +59,6 @@ const CategoryGen: React.FC<CategoryGenProps> = ({ broadCategories }) => {
 
           {i + 1 < broadCategories.length ? (
             <Button
-              key={i + 1}
               style={buttonStyles}
               fullWidth={true}
               variant="outlined"

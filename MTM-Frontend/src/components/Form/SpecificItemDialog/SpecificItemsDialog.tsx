@@ -65,6 +65,7 @@ export const SpecificItemsDialog = ({
     });
     handleClose();
   };
+
   const handleCancelDetails = () => {
     setTempNewQuantity(newQuantity);
     setTempUsedQuantity(usedQuantity);
