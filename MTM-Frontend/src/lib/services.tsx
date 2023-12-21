@@ -37,7 +37,6 @@ export const getOrganizations = async (query?: string | undefined) => {
 };
 
 export const getUserData = async (email: string, token: string | undefined) => {
-  console.log("Tried");
   return await fetch(`/api/users/v1?email=${email}`, {
     method: "GET",
     headers: {
