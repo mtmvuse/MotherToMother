@@ -42,25 +42,43 @@ const CategoryGen: React.FC<CategoryGenProps> = ({ broadCategories }) => {
     navigate(getBottomNavActionValue(categoryName));
   };
 
-  return (
-    <Box width="90%">
-      <Grid>
+  const getAllRows = (broadCategories: string[]) => {
+    const rows = [];
+
+    for (let i = 0; i < broadCategories.length; i += 2) {
+      rows.push(
         <Stack direction="row" spacing={2}>
-          {broadCategories.map((category, index) => (
+          <Button
+            key={i}
+            style={buttonStyles}
+            fullWidth={true}
+            variant="outlined"
+            onClick={() => handleClick(i)}
+          >
+            {broadCategories[i]}
+          </Button>
+
+          {i + 1 < broadCategories.length ? (
             <Button
-              key={index}
+              key={i + 1}
               style={buttonStyles}
               fullWidth={true}
               variant="outlined"
-              onClick={() => handleClick(index)}
+              onClick={() => handleClick(i + 1)}
             >
-              {category}
+              {broadCategories[i + 1]}
             </Button>
-          ))}
-        </Stack>
-      </Grid>
-    </Box>
-  );
+          ) : (
+            <Button fullWidth={true}></Button>
+          )}
+        </Stack>,
+      );
+    }
+
+    return <Grid>{rows}</Grid>;
+  };
+
+  return <Box width="90%">{getAllRows(broadCategories)}</Box>;
 };
 
 interface GeneralSectionProps {
