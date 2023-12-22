@@ -1,5 +1,20 @@
 import type { UserType } from "../types/AuthTypes";
 import type { EditUserType } from "../types/UserTypes";
+import type { OutgoingDonationRequestType } from "../types/FormTypes";
+
+const getBackEndUrl = () => {
+  let backendUrl: string;
+
+  if (import.meta.env.MODE === "production") {
+    // Use the production server URL in production mode
+    backendUrl = import.meta.env.VITE_PRODUCTION_SERVER_URL as string;
+  } else {
+    // Use the local server URL in development mode
+    backendUrl = import.meta.env.VITE_LOCAL_SERVER_URL as string;
+  }
+
+  return backendUrl;
+};
 
 export const setUserType = async (uid: string, userType: string) => {
   return await fetch(`/api/sessions/v1/setUserType`, {
@@ -62,7 +77,7 @@ export const updateUser = async (
 };
 
 export const getAllItems = async (token: string | undefined) => {
-  const backendUrl = import.meta.env.VITE_LOCAL_SERVER_URL as string;
+  const backendUrl = getBackEndUrl();
   return await fetch(`${backendUrl}/items/v1/`, {
     method: "GET",
     headers: {
@@ -76,7 +91,7 @@ export const getItemByCategory = async (
   category: string,
   token: string | undefined,
 ) => {
-  const backendUrl = import.meta.env.VITE_LOCAL_SERVER_URL as string;
+  const backendUrl = getBackEndUrl();
   const fullUrl = `${backendUrl}/items/v1/?category=${category}`;
 
   return await fetch(fullUrl, {
@@ -85,5 +100,22 @@ export const getItemByCategory = async (
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
+  });
+};
+
+export const createOutgoingDonation = async (
+  token: string,
+  request: OutgoingDonationRequestType,
+) => {
+  const backendUrl = getBackEndUrl();
+  const fullUrl = `${backendUrl}/donation/createOutgoingDonation`;
+
+  return await fetch(fullUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(request),
   });
 };

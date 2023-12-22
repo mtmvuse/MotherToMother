@@ -27,3 +27,8 @@ export type ItemResponse = {
   valueNew: number;
   valueUsed: number;
 };
+
+export type OutgoingDonationRequestType = {
+  email: string;
+  donationDetails: DonationDetailType;
+} & DemographicDetailType;

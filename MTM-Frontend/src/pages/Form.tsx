@@ -1,13 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import { Typography, Stack, Button } from "@mui/material";
 
 import ReviewSection from "../components/Form/ReviewSection/ReviewSection";
 import DemographicSection from "../components/Form/DemographicSection/DemographicSection";
 import GeneralSection from "../components/Form/GeneralSection";
 import { useForm } from "../contexts/FormContext";
+import { useAuth } from "../contexts/AuthContext";
 
 const Form: React.FC = () => {
   const { demographicDetails, donationDetails } = useForm();
+  const { logout, currentUser } = useAuth();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   const onSubmit = () => {
     const sum =
@@ -18,10 +22,26 @@ const Form: React.FC = () => {
       demographicDetails.asianNum +
       demographicDetails.otherNum;
 
-    const submitDemographics = {
-      ...demographicDetails,
-      numberServed: sum,
-    };
+    try {
+      if (!currentUser) {
+        throw new Error("Unable to fetch User");
+      }
+
+      const token = currentUser.getIdToken();
+
+      const request = {
+        email: currentUser.email,
+        donationDetails: donationDetails,
+        ...demographicDetails,
+      };
+
+      console.log(request);
+    } catch (error) {
+      const err = error as Error;
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
   return (
     // Top of Outgoing Donations Form
