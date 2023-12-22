@@ -29,6 +29,6 @@ export type ItemResponse = {
 };
 
 export type OutgoingDonationRequestType = {
-  email: string;
-  donationDetails: DonationDetailType;
+  email: string | null;
+  donationDetails: DonationDetailType[];
 } & DemographicDetailType;

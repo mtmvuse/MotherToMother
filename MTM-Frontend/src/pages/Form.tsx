@@ -6,6 +6,8 @@ import DemographicSection from "../components/Form/DemographicSection/Demographi
 import GeneralSection from "../components/Form/GeneralSection";
 import { useForm } from "../contexts/FormContext";
 import { useAuth } from "../contexts/AuthContext";
+import { createOutgoingDonation } from "../lib/services";
+import { ErrorMessage } from "../components/Error";
 
 const Form: React.FC = () => {
   const { demographicDetails, donationDetails } = useForm();
@@ -13,8 +15,10 @@ const Form: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const onSubmit = () => {
-    const sum =
+  const onSubmit = async () => {
+    setIsLoading(true); // Disables the submit button.
+
+    demographicDetails.numberServed =
       demographicDetails.whiteNum +
       demographicDetails.latinoNum +
       demographicDetails.blackNum +
@@ -27,7 +31,7 @@ const Form: React.FC = () => {
         throw new Error("Unable to fetch User");
       }
 
-      const token = currentUser.getIdToken();
+      const token = await currentUser.getIdToken();
 
       const request = {
         email: currentUser.email,
@@ -35,12 +39,12 @@ const Form: React.FC = () => {
         ...demographicDetails,
       };
 
-      console.log(request);
+      await createOutgoingDonation(token, request);
     } catch (error) {
       const err = error as Error;
       setError(err.message);
     } finally {
-      setIsLoading(false);
+      setIsLoading(false); // Enables the submit button
     }
   };
   return (
@@ -70,12 +74,14 @@ const Form: React.FC = () => {
         <GeneralSection step={1} />
         <ReviewSection step={2} />
         <DemographicSection />
+        <ErrorMessage error={error} setError={setError} />
         <Stack justifyContent="center" direction="row" spacing={3}>
           <Button
             onClick={onSubmit}
             type="submit"
             variant="outlined"
             sx={{ fontSize: 15 }}
+            disabled={isLoading}
           >
             Submit
           </Button>
