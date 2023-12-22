@@ -2,6 +2,7 @@ import type { UserType } from "../types/AuthTypes";
 import type { EditUserType } from "../types/UserTypes";
 import type { OutgoingDonationRequestType } from "../types/FormTypes";
 
+// Returns URL of the backend based on production mode
 const getBackEndUrl = () => {
   let backendUrl: string;
 

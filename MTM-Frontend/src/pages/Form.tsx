@@ -12,7 +12,7 @@ import { ErrorMessage } from "../components/Error";
 const Form: React.FC = () => {
   const { demographicDetails, donationDetails } = useForm();
   const { logout, currentUser } = useAuth();
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   const onSubmit = async () => {
