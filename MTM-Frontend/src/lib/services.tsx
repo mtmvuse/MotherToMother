@@ -2,21 +2,6 @@ import type { UserType } from "../types/AuthTypes";
 import type { EditUserType } from "../types/UserTypes";
 import type { OutgoingDonationRequestType } from "../types/FormTypes";
 
-// Returns URL of the backend based on production mode
-const getBackEndUrl = () => {
-  let backendUrl: string;
-
-  if (import.meta.env.MODE === "production") {
-    // Use the production server URL in production mode
-    backendUrl = import.meta.env.VITE_PRODUCTION_SERVER_URL as string;
-  } else {
-    // Use the local server URL in development mode
-    backendUrl = import.meta.env.VITE_LOCAL_SERVER_URL as string;
-  }
-
-  return backendUrl;
-};
-
 export const setUserType = async (uid: string, userType: string) => {
   return await fetch(`/api/sessions/v1/setUserType`, {
     method: "PUT",
@@ -78,8 +63,7 @@ export const updateUser = async (
 };
 
 export const getAllItems = async (token: string | undefined) => {
-  const backendUrl = getBackEndUrl();
-  return await fetch(`${backendUrl}/items/v1/`, {
+  return await fetch(`/api/items/v1/`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -92,8 +76,7 @@ export const getItemByCategory = async (
   category: string,
   token: string | undefined,
 ) => {
-  const backendUrl = getBackEndUrl();
-  const fullUrl = `${backendUrl}/items/v1/?category=${category}`;
+  const fullUrl = `/api/items/v1/?category=${category}`;
 
   return await fetch(fullUrl, {
     method: "GET",
@@ -108,8 +91,7 @@ export const createOutgoingDonation = async (
   token: string,
   request: OutgoingDonationRequestType,
 ) => {
-  const backendUrl = getBackEndUrl();
-  const fullUrl = `${backendUrl}/donation/createOutgoingDonation`;
+  const fullUrl = `/api/donation/createOutgoingDonation`;
 
   return await fetch(fullUrl, {
     method: "POST",
