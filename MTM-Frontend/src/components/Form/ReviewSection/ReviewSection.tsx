@@ -12,7 +12,6 @@ import { ReviewSectionCategory } from "./ReviewSectionCategory";
 import NumberInCircle from "./NumberInCircle";
 import FormHeader from "../FormHeader";
 import { useForm } from "../../../contexts/FormContext";
-import { GeneralCategories } from "../../../lib/constants";
 
 interface ReviewSectionProps {
   step: number;
@@ -32,6 +31,10 @@ const ReviewSection = (props: ReviewSectionProps) => {
 
   const handleCancel = () => {
     setisEditMode(false);
+  };
+
+  const getDonationCategories = () => {
+    return Array.from(new Set(donationDetails.map((item) => item.category)));
   };
 
   return (
@@ -60,7 +63,7 @@ const ReviewSection = (props: ReviewSectionProps) => {
             />
             <Typography variant="body1"> items are in your form </Typography>
           </Stack>
-          {GeneralCategories.map((category, i) => (
+          {getDonationCategories().map((category, i) => (
             <ReviewSectionCategory
               key={i}
               categoryName={category}

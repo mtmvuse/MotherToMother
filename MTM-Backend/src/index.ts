@@ -34,14 +34,15 @@ app.use("/example", verifyToken, exampleRoute);
 // app.use("/example", exampleRoute);
 
 app.use("/users", verifyToken, userRouter);
-app.use("/items", verifyToken, itemsRouter);
 // app.use("/users", userRouter);
-app.use("/registration", registrationRouter);
 
-// app.use("/organization", verifyToken, organizationRouter);
-app.use("/organization", organizationRouter);
+app.use("/items", verifyToken, itemsRouter);
 
-app.use("/donation", donationRouter); // Unprotected, Removed verifyToken
+app.use("/registration", verifyToken, registrationRouter);
+
+app.use("/organization", verifyToken, organizationRouter);
+
+app.use("/donation", verifyToken, donationRouter);
 
 // Default route: Unprotected
 app.get("/", (_req: Request, res: Response) => {

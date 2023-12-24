@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   CssBaseline,
   ThemeProvider,
@@ -6,18 +6,15 @@ import {
   Box,
   Grid,
   Stack,
+  CircularProgress,
 } from "@mui/material";
 import { PrimaryMainTheme } from "./Theme";
 import FormHeader from "./FormHeader";
 import { useNavigate } from "react-router-dom";
-
-// the rows for each button on the form page
-const BroadCategories = {
-  row1: ["Travel", "Sleep"],
-  row2: ["Bath & Changing", "Clothing"],
-  row3: ["Feeding", "Play"],
-  row4: ["Safety", "Other"],
-};
+import { getAllItems } from "../../lib/services";
+import { type ItemResponse } from "../../types/FormTypes";
+import { useAuth } from "../../contexts/AuthContext";
+import { ErrorMessage } from "../../components/Error";
 
 const buttonStyles = {
   width: "100%",
@@ -34,36 +31,52 @@ const getBottomNavActionValue = (category: string) =>
   `/home/form/specificItem?category=${encodeURIComponent(category)}`;
 
 interface CategoryGenProps {
-  rowName: string[];
+  broadCategories: string[];
 }
 
-const CategoryGen: React.FC<CategoryGenProps> = ({ rowName }) => {
+const CategoryGen: React.FC<CategoryGenProps> = ({ broadCategories }) => {
   const navigate = useNavigate();
 
   const handleClick = (index: number) => {
-    const categoryName = rowName[index]!;
+    const categoryName = broadCategories[index]!;
     navigate(getBottomNavActionValue(categoryName));
   };
 
-  return (
-    <Box width="90%">
-      <Grid>
-        <Stack direction="row" spacing={2}>
-          {rowName.map((category, index) => (
+  const getAllRows = (broadCategories: string[]) => {
+    const rows = [];
+
+    for (let i = 0; i < broadCategories.length; i += 2) {
+      rows.push(
+        <Stack direction="row" spacing={2} key={i}>
+          <Button
+            style={buttonStyles}
+            fullWidth={true}
+            variant="outlined"
+            onClick={() => handleClick(i)}
+          >
+            {broadCategories[i]}
+          </Button>
+
+          {i + 1 < broadCategories.length ? (
             <Button
-              key={index}
               style={buttonStyles}
               fullWidth={true}
               variant="outlined"
-              onClick={() => handleClick(index)}
+              onClick={() => handleClick(i + 1)}
             >
-              {category}
+              {broadCategories[i + 1]}
             </Button>
-          ))}
-        </Stack>
-      </Grid>
-    </Box>
-  );
+          ) : (
+            <Button fullWidth={true}></Button>
+          )}
+        </Stack>,
+      );
+    }
+
+    return <Grid>{rows}</Grid>;
+  };
+
+  return <Box width="90%">{getAllRows(broadCategories)}</Box>;
 };
 
 interface GeneralSectionProps {
@@ -71,6 +84,40 @@ interface GeneralSectionProps {
 }
 
 const GeneralSection: React.FC<GeneralSectionProps> = ({ step }) => {
+  const { logout, currentUser } = useAuth();
+  const [broadCategories, setBroadCategories] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        if (!currentUser) {
+          throw new Error("Current user not found");
+        }
+        const token = await currentUser.getIdToken();
+
+        const response = await getAllItems(token);
+        if (!response.ok) {
+          throw new Error("Error fetching items");
+        }
+
+        const itemsData = (await response.json()) as ItemResponse[];
+        setBroadCategories(
+          Array.from(
+            new Set(itemsData.map((item: ItemResponse) => item.category)),
+          ),
+        );
+      } catch (error) {
+        const err = error as Error;
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchItems();
+  }, []);
+
   return (
     <>
       <CssBaseline />
@@ -78,9 +125,13 @@ const GeneralSection: React.FC<GeneralSectionProps> = ({ step }) => {
         <Box width="85%">
           <FormHeader number={step} header="Choose a category" />
         </Box>
-        {Object.values(BroadCategories).map((rowName, index) => (
-          <CategoryGen key={index} rowName={rowName} />
-        ))}
+
+        <ErrorMessage error={error} setError={setError} />
+        {isLoading ? (
+          <CircularProgress />
+        ) : (
+          <CategoryGen broadCategories={broadCategories} />
+        )}
       </ThemeProvider>
     </>
   );

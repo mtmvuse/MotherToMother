@@ -7,6 +7,7 @@ import profile_logo from "../../pages/assets/profile_logo.png";
 import { getUserData } from "../../lib/services";
 import type { UserType } from "../../types/UserTypes";
 import { ErrorMessage } from "../../components/Error";
+import { error } from "console";
 
 const Profile: React.FC = () => {
   const { logout, currentUser } = useAuth();
@@ -35,8 +36,9 @@ const Profile: React.FC = () => {
 
         const userData = (await response.json()) as UserType;
         setUser(userData);
-      } catch (error: any) {
-        setError(error.message as string);
+      } catch (error) {
+        const err = error as Error;
+        setError(err.message);
       } finally {
         setIsLoading(false);
       }

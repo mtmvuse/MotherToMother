@@ -35,7 +35,7 @@ userRouter.get(
   ) => {
     const email = req.query.email;
     const organizationType = req.query.organization;
-    console.log("email: " + email + "\n OrganizationType: " + organizationType);
+    // console.log("email: " + email + "\n OrganizationType: " + organizationType);
     try {
       if (email == undefined && organizationType == undefined) {
         const users = await UserService.getUsers();
