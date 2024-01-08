@@ -55,11 +55,29 @@ const Form: React.FC = () => {
             onClick={onSubmit}
             type="submit"
             variant="outlined"
-            sx={{ fontSize: 15 }}
+            sx={{
+              backgroundColor: "#A4A4A4",
+              color: "white",
+              fontSize: 15,
+              border: "1px solid #c1c1c1",
+              borderRadius: 2,
+              height: "32px",
+            }}
           >
             Submit
           </Button>
-          <Button type="button" variant="outlined" sx={{ fontSize: 15 }}>
+          <Button
+            type="button"
+            variant="outlined"
+            sx={{
+              backgroundColor: "white",
+              color: "#A4A4A4",
+              fontSize: 15,
+              border: "1px solid #A4A4A4",
+              borderRadius: 2,
+              height: "32px",
+            }}
+          >
             Save
           </Button>
         </Stack>
