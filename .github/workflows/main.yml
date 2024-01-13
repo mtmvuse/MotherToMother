@@ -16,12 +16,18 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Install Dependencies
-        run: npm install
+      # Installing dependencies and building the Frontend
+      - name: Install Frontend Dependencies
+        run: |
+          cd MTM-Frontend
+          npm install
 
-      - name: Build
-        run: npm run build
+      - name: Build Frontend
+        run: |
+          cd MTM-Frontend
+          npm run build
 
+      # Deployment to EC2 (for the backend)
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
         with:
