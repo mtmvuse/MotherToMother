@@ -1,16 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
 import { Typography, Stack, Button } from "@mui/material";
 
 import ReviewSection from "../components/Form/ReviewSection/ReviewSection";
 import DemographicSection from "../components/Form/DemographicSection/DemographicSection";
 import GeneralSection from "../components/Form/GeneralSection";
 import { useForm } from "../contexts/FormContext";
+import { useAuth } from "../contexts/AuthContext";
+import { createOutgoingDonation } from "../lib/services";
+import { ErrorMessage } from "../components/Error";
 
 const Form: React.FC = () => {
   const { demographicDetails, donationDetails } = useForm();
+  const { logout, currentUser } = useAuth();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const onSubmit = () => {
-    const sum =
+  const onSubmit = async () => {
+    setIsLoading(true); // Disables the submit button.
+
+    demographicDetails.numberServed =
       demographicDetails.whiteNum +
       demographicDetails.latinoNum +
       demographicDetails.blackNum +
@@ -18,10 +26,26 @@ const Form: React.FC = () => {
       demographicDetails.asianNum +
       demographicDetails.otherNum;
 
-    const submitDemographics = {
-      ...demographicDetails,
-      numberServed: sum,
-    };
+    try {
+      if (!currentUser) {
+        throw new Error("Unable to fetch User");
+      }
+
+      const token = await currentUser.getIdToken();
+
+      const request = {
+        email: currentUser.email,
+        donationDetails: donationDetails,
+        ...demographicDetails,
+      };
+
+      await createOutgoingDonation(token, request);
+    } catch (error) {
+      const err = error as Error;
+      setError(err.message);
+    } finally {
+      setIsLoading(false); // Enables the submit button
+    }
   };
   return (
     // Top of Outgoing Donations Form
@@ -50,6 +74,7 @@ const Form: React.FC = () => {
         <GeneralSection step={1} />
         <ReviewSection step={2} />
         <DemographicSection />
+        <ErrorMessage error={error} setError={setError} />
         <Stack justifyContent="center" direction="row" spacing={3}>
           <Button
             onClick={onSubmit}
@@ -63,6 +88,8 @@ const Form: React.FC = () => {
               borderRadius: 2,
               height: "32px",
             }}
+
+            disabled={isLoading}
           >
             Submit
           </Button>
