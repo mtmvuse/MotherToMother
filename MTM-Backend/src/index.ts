@@ -30,11 +30,8 @@ app.use(helmet());
  * Use the verifyToken to protect all the routes that require authentication
  */
 app.use("/sessions", sessionRouter);
-app.use("/example", verifyToken, exampleRoute);
-// app.use("/example", exampleRoute);
 
 app.use("/users", verifyToken, userRouter);
-// app.use("/users", userRouter);
 
 app.use("/items", verifyToken, itemsRouter);
 

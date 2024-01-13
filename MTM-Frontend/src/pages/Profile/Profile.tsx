@@ -7,7 +7,6 @@ import profile_logo from "../../pages/assets/profile_logo.png";
 import { getUserData } from "../../lib/services";
 import type { UserType } from "../../types/UserTypes";
 import { ErrorMessage } from "../../components/Error";
-import { error } from "console";
 
 const Profile: React.FC = () => {
   const { logout, currentUser } = useAuth();

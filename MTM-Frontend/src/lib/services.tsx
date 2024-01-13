@@ -1,5 +1,6 @@
 import type { UserType } from "../types/AuthTypes";
 import type { EditUserType } from "../types/UserTypes";
+import type { OutgoingDonationRequestType } from "../types/FormTypes";
 
 export const setUserType = async (uid: string, userType: string) => {
   return await fetch(`/api/sessions/v1/setUserType`, {
@@ -83,5 +84,21 @@ export const getItemByCategory = async (
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
+  });
+};
+
+export const createOutgoingDonation = async (
+  token: string,
+  request: OutgoingDonationRequestType,
+) => {
+  const fullUrl = `/api/donation/createOutgoingDonation`;
+
+  return await fetch(fullUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(request),
   });
 };
