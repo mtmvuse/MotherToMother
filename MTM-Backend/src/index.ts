@@ -32,18 +32,13 @@ app.use(helmet());
 app.use("/sessions", sessionRouter);
 
 app.use("/users", verifyToken, userRouter);
-// app.use("/users", userRouter);
 
-// app.use("/items", itemsRouter);
 app.use("/items", verifyToken, itemsRouter);
 
-// app.use("/registration", registrationRouter);
 app.use("/registration", verifyToken, registrationRouter);
 
-// app.use("/organization", organizationRouter);
 app.use("/organization", verifyToken, organizationRouter);
 
-// app.use("/donation", donationRouter);
 app.use("/donation", verifyToken, donationRouter);
 
 // Default route: Unprotected
