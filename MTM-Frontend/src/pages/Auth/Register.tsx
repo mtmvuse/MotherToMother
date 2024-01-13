@@ -13,7 +13,10 @@ import {
   FormControl,
   Select,
   MenuItem,
-  type SelectChangeEvent,
+  SelectChangeEvent,
+  RadioGroup,
+  Radio,
+  FormControlLabel,
 } from "@mui/material";
 import { registerUserOnServer, getOrganizations } from "../../lib/services";
 import { RegisterFormValues, Organization, UserType } from "~/types/AuthTypes";
@@ -132,6 +135,34 @@ const Register: React.FC = () => {
       setError(err.message);
     }
   };
+
+  const renderOption = (value: string, label: string) => {
+    const isSelected = userType === value;
+
+    return (
+      <Box
+        key={value}
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        flexDirection="column"
+        height="35px"
+        width="100%"
+        borderRadius="10px"
+        marginTop="10px"
+        border={`1px solid ${isSelected ? "#1976d2" : "#000"}`}
+        fontSize="14px"
+        fontStyle="Inter, sans-serif"
+        bgcolor={isSelected ? "#6D6D6D" : "transparent"}
+        color={isSelected ? "#fff" : "#000"}
+        onClick={() => setUserType(value)}
+        style={{ cursor: "pointer" }}
+      >
+        {label}
+      </Box>
+    );
+  };
+
   return (
     <Box
       mt={10}
@@ -260,7 +291,7 @@ const Register: React.FC = () => {
             </Box>
           </Box>
 
-          <Box mb={2}>
+          <Box mb={2} width="100%">
             <Typography variant="body1">
               Account Type<span style={{ color: "#EF4444" }}>*</span>
             </Typography>
@@ -273,24 +304,57 @@ const Register: React.FC = () => {
               name="userType"
               control={control}
               render={({ field: { value, onChange } }) => (
-                <FormControl fullWidth variant="standard">
-                  <Select
-                    value={value ?? ""}
-                    onChange={(e: SelectChangeEvent) => {
-                      onChange(e);
-                      setUserType(e.target.value);
-                    }}
+                <FormControl component="fieldset" style={{ width: "100%" }}>
+                  <Box
                     style={{
-                      border: "none",
-                      borderRadius: "100px",
-                      color: "black",
+                      width: "100%",
                     }}
-                    error={!!errors.userType}
                   >
-                    <MenuItem value="Public Donor">Public Donor</MenuItem>
-
-                    <MenuItem value="Agency Partner">Agency Partner</MenuItem>
-                  </Select>
+                    <div
+                      onClick={() => {
+                        onChange("Public Donor");
+                        setUserType("Public Donor");
+                      }}
+                      style={{
+                        border: "1px solid #ccc",
+                        textAlign: "center",
+                        marginTop: "8px",
+                        borderRadius: "10px",
+                        padding: "8px",
+                        backgroundColor:
+                          value === "Public Donor" ? "#6D6D6D" : "transparent",
+                        color: value === "Public Donor" ? "#fff" : "#000",
+                        cursor: "pointer",
+                        width: "100%",
+                        boxSizing: "border-box",
+                      }}
+                    >
+                      Public Donor
+                    </div>
+                    <div
+                      onClick={() => {
+                        onChange("Agency Partner");
+                        setUserType("Agency Partner");
+                      }}
+                      style={{
+                        marginTop: "8px",
+                        textAlign: "center",
+                        border: "1px solid #ccc",
+                        borderRadius: "10px",
+                        padding: "8px",
+                        backgroundColor:
+                          value === "Agency Partner"
+                            ? "#6D6D6D"
+                            : "transparent",
+                        color: value === "Agency Partner" ? "#fff" : "#000",
+                        cursor: "pointer",
+                        width: "100%",
+                        boxSizing: "border-box",
+                      }}
+                    >
+                      Agency Partner
+                    </div>
+                  </Box>
                   <FormHelperText>
                     {errors.userType ? (
                       <span style={{ color: "#d32f2f" }}>
@@ -304,7 +368,6 @@ const Register: React.FC = () => {
               )}
             />
           </Box>
-
           {userType != "Public Donor" && userType != "" && (
             <Box>
               <Typography variant="body1">
@@ -360,17 +423,18 @@ const Register: React.FC = () => {
             alignItems="center"
           >
             <Button
-              disabled={isSubmitting}
               type="submit"
-              variant="contained"
-              size="small"
               style={{
-                borderRadius: "100px",
-                width: "70%",
-                fontSize: "1.3rem",
+                borderRadius: "30px",
+                width: "210px",
+                height: "43px",
+                fontSize: "20px",
+                fontWeight: "400",
+                fontFamily: "Inter, sans-serif",
                 textTransform: "none",
-                backgroundColor: "rgb(229 231 235)",
+                backgroundColor: "#d9d9d9",
                 color: "black",
+                boxShadow: "none",
               }}
             >
               {isSubmitting ? "Signing in" : "Sign up"}
@@ -381,9 +445,11 @@ const Register: React.FC = () => {
 
       <Box mt={2}>
         <Typography>
-          Already have an account?<span> </span>
-          <Link style={{ fontWeight: "bold" }} to="/">
-            Log in
+          <Link to="/" style={{ color: "gray", textDecoration: "none" }}>
+            <span style={{ fontWeight: "normal" }}>
+              Already have an account?
+            </span>
+            <span style={{ fontWeight: "bold" }}> Log in</span>
           </Link>
         </Typography>
       </Box>

@@ -78,7 +78,11 @@ export const SpecificItemsDialog = ({
 
   return (
     <div id="SpecificItems-Dialog">
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        PaperProps={{ sx: { borderRadius: "20px" } }}
+      >
         <DialogTitle>
           <Typography align="center" sx={{ fontWeight: "bold" }}>
             {category} - {item}
@@ -93,51 +97,94 @@ export const SpecificItemsDialog = ({
             justifyContent="center"
             alignItems="center"
             spacing={2}
+            sx={{ marginTop: "8px", marginBottom: "8px" }}
           >
-            <Typography>New</Typography>
-            <IconButton
-              onClick={() =>
-                setTempNewQuantity((prev) => Math.max(prev - 1, 0))
-              }
+            <Typography
+              sx={{
+                fontWeight: "700",
+                width: "60px",
+                textAlign: "left",
+                fontSize: "20px",
+              }}
             >
-              <RemoveIcon />
-            </IconButton>
-            <Typography>{tempNewQuantity}</Typography>
-            <IconButton onClick={() => setTempNewQuantity((prev) => prev + 1)}>
-              <AddIcon />
-            </IconButton>
+              New
+            </Typography>
+            <input
+              type="number"
+              value={tempNewQuantity === 0 ? "" : tempNewQuantity}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value === "" || !isNaN(parseInt(value))) {
+                  setTempNewQuantity(value === "" ? 0 : parseInt(value));
+                }
+              }}
+              style={{
+                width: "65px",
+                height: "27px",
+                top: "613px",
+                left: "224px",
+                borderRadius: "5px",
+                border: "1px solid #D9D9D9",
+              }}
+            />
           </Stack>
           <Stack
             direction="row"
             justifyContent="center"
             alignItems="center"
             spacing={2}
+            sx={{ marginTop: "8px", marginBottom: "8px" }}
           >
-            <Typography>Used</Typography>
-            <IconButton
-              onClick={() =>
-                setTempUsedQuantity((prev) => Math.max(prev - 1, 0))
-              }
+            <Typography
+              sx={{
+                fontWeight: "bold",
+                width: "60px",
+                textAlign: "left",
+                fontSize: "20px",
+              }}
             >
-              <RemoveIcon />
-            </IconButton>
-            <Typography>{tempUsedQuantity}</Typography>
-            <IconButton onClick={() => setTempUsedQuantity((prev) => prev + 1)}>
-              <AddIcon />
-            </IconButton>
+              Used
+            </Typography>
+            <input
+              type="number"
+              value={tempUsedQuantity === 0 ? "" : tempUsedQuantity}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value === "" || !isNaN(parseInt(value))) {
+                  setTempUsedQuantity(value === "" ? 0 : parseInt(value));
+                }
+              }}
+              style={{
+                width: "65px",
+                height: "27px",
+                top: "613px",
+                left: "224px",
+                borderRadius: "5px",
+                border: "1px solid #D9D9D9",
+              }}
+            />
           </Stack>
           <Grid
             container
             spacing={1}
-            direction={{ xs: "column", sm: "row" }}
+            direction={{ xs: "row", sm: "row" }}
             justifyContent="center"
             alignItems="center"
+            sx={{ marginTop: "16px" }}
           >
             <Grid item>
               <Button
                 variant="outlined"
                 onClick={handleCancelDetails}
                 color="primary"
+                sx={{
+                  backgroundColor: "white",
+                  color: "#A4A4A4",
+                  fontSize: 15,
+                  border: "1px solid #A4A4A4",
+                  borderRadius: 2,
+                  height: "32px",
+                }}
               >
                 Cancel
               </Button>
@@ -147,6 +194,15 @@ export const SpecificItemsDialog = ({
                 variant="outlined"
                 onClick={handleSaveDetails}
                 color="primary"
+                sx={{
+                  backgroundColor: "#A4A4A4",
+                  color: "white",
+                  fontSize: 15,
+                  border: "1px solid #c1c1c1",
+                  borderRadius: "10px",
+                  height: "32px",
+                  width: "87px",
+                }}
               >
                 Save
               </Button>

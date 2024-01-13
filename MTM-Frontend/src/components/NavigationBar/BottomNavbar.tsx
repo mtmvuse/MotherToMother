@@ -3,6 +3,8 @@ import {
   BottomNavigation,
   BottomNavigationAction,
   SvgIcon,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import React from "react";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
@@ -14,6 +16,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 export const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm")); // Change breakpoint as needed
 
   return (
     <div className="BottomNavbar">
@@ -53,9 +57,11 @@ export const Navbar: React.FC = () => {
             }
           />
         </BottomNavigation>
+        {isMobile && <div className="navbar-spacer"></div>}
       </Box>
     </div>
   );
 };
 
 export default Navbar;
+
