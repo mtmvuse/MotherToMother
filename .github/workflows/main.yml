@@ -28,13 +28,15 @@ jobs:
           npm run build
 
       # Deployment to EC2 (for the backend)
-      - name: Deploy to EC2
+      - name: Deploy to EC2 (Debug)
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
+            set -x  # For shell command verbosity
+            ssh -vvv  # If the action supports it
             cd MotherToMother/MTM-Backend/
             git pull
             npm install
