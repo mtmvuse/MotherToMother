@@ -2,7 +2,7 @@ name: Node.js CI/CD to EC2
 
 on:
   push:
-    branches: [CI/CD-setup]
+    branches: [main]
 
 jobs:
   deploy:
