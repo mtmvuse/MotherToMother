@@ -29,7 +29,7 @@ const router = createBrowserRouter(
       <Route path="/" element={<AuthLayout />}>
         <Route index element={<Login />} />
         <Route path="register" element={<Register />} />
-        <Route path="forgotPassword" element={<ForgotPassword />} />
+        <Route path="forgot-password" element={<ForgotPassword />} />
       </Route>
       <Route path="home" element={<PrivateRoute element={<HomeLayout />} />}>
         <Route index element={<Home />} />
@@ -45,7 +45,7 @@ const router = createBrowserRouter(
               <Routes>
                 <Route index element={<Form />} />
                 <Route
-                  path="specificItem"
+                  path="specific-item"
                   element={<PrivateRoute element={<SpecificItemPage />} />}
                 />
               </Routes>

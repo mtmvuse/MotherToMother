@@ -3,7 +3,6 @@ import dotenv from "dotenv";
 import cors from "cors";
 import morgan from "morgan";
 import helmet from "helmet";
-import { exampleRoute } from "./routes/exampleRoute";
 import { userRouter } from "./routes/v1/user/user.router";
 import { sessionRouter } from "./routes/v1/session/session.router";
 import { itemsRouter } from "./routes/v1/item/item.router";

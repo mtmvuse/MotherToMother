@@ -88,7 +88,6 @@ const Form: React.FC = () => {
               borderRadius: 2,
               height: "32px",
             }}
-
             disabled={isLoading}
           >
             Submit
