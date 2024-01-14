@@ -16,12 +16,7 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Install Dependencies
-        run: npm install
-
-      - name: Build
-        run: npm run build
-
+      # Deployment to EC2 (for the backend)
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
         with:
