@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../lib/contexts";
+import { Box, Button, Typography } from "@mui/material";
 
 type User = {
   displayName: string | null;
@@ -28,22 +29,21 @@ const Profile: React.FC = () => {
   };
 
   return (
-    <div>
-      <h1>Profile</h1>
+    <Box>
       {isLoading ? (
         <p>Loading...</p>
       ) : (
-        <div>
-          <p>
+        <Box>
+          <Typography>
             <strong>Name:</strong> {user?.displayName}
-          </p>
-          <p>
+          </Typography>
+          <Typography>
             <strong>Email:</strong> {user?.email}
-          </p>
-          <button onClick={handleLogout}>Logout</button>
-        </div>
+          </Typography>
+          <Button onClick={handleLogout}>Logout</Button>
+        </Box>
       )}
-    </div>
+    </Box>
   );
 };
 

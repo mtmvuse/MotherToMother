@@ -1,6 +1,7 @@
 import React from "react";
 import { Outlet, useNavigate } from "react-router-dom";
-import { Box, Tab, Tabs } from "@mui/material";
+import { Box, Tab, Tabs, Typography } from "@mui/material";
+import { CAPTIONS } from "../lib/constants";
 
 interface LinkTabProps {
   label?: string;
@@ -23,11 +24,12 @@ const LinkTab = (props: LinkTabProps) => {
 };
 
 const HomeLayout: React.FC = () => {
-  const [value, setValue] = React.useState(0);
+  const [curPage, setCurPage] = React.useState(0);
 
-  const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue);
+  const handleChange = (_event: React.SyntheticEvent, newPage: number) => {
+    setCurPage(newPage);
   };
+
   return (
     <Box sx={{ display: "flex" }}>
       <Box
@@ -38,18 +40,27 @@ const HomeLayout: React.FC = () => {
         }}
       >
         <Tabs
-          value={value}
+          value={curPage}
           onChange={handleChange}
           aria-label="nav tabs"
           role="navigation"
           orientation="vertical"
         >
-          <LinkTab label="Profile" href="/" />
-          <LinkTab label="Page 1" href="/page1" />
-          <LinkTab label="Page 2" href="/page2" />
+          {CAPTIONS.map((caption, index) => (
+            <LinkTab
+              key={index}
+              label={caption}
+              href={`/${caption.replace(/\s/g, "")}`}
+            />
+          ))}
         </Tabs>
       </Box>
-      <Box sx={{ flex: 1, p: 3 }}>{<Outlet />}</Box>
+      <Box sx={{ flex: 1, p: 3 }}>
+        <Typography variant="h5" gutterBottom>
+          {CAPTIONS[curPage]}
+        </Typography>
+        {<Outlet />}
+      </Box>
     </Box>
   );
 };
