@@ -6,9 +6,12 @@ import {
   signOut,
   confirmPasswordReset,
   onAuthStateChanged,
+  signInWithEmailLink,
+  sendSignInLinkToEmail,
+  isSignInWithEmailLink,
 } from "firebase/auth";
 import React, { useContext, useState, useEffect, createContext } from "react";
-import auth from "./firebase";
+import { auth, actionCodeSettings } from "./firebase";
 import type { UserCredential, User } from "firebase/auth";
 
 /** Firebase Auth context */
@@ -24,6 +27,9 @@ interface AuthContextData {
   getUser: () => User | null;
   forgotPassword: (email: string) => Promise<void>;
   confirmReset: (code: string, password: string) => Promise<void>;
+  loginWithEmailLink: (email: string) => Promise<void>;
+  sendLoginEmail: (email: string) => Promise<void>;
+  handleLoginWithEmailLink: (email: string | null) => void;
 }
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
@@ -66,6 +72,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return await confirmPasswordReset(auth, code, password);
   }
 
+  const sendLoginEmail = async (email: string) => {
+    return await sendSignInLinkToEmail(auth, email, actionCodeSettings);
+  };
+
+  const loginWithEmailLink = async (email: string) => {
+    return await signInWithEmailLink(auth, email, window.location.href)
+      .then((result) => {
+        // Clear the stored email
+        window.localStorage.removeItem("emailForSignIn");
+      })
+      .catch((error) => {
+        console.error(error);
+        alert("Error signing in with email link");
+      });
+  };
+
+  const handleLoginWithEmailLink = (email: string | null) => {
+    if (isSignInWithEmailLink(auth, window.location.href)) {
+      if (!email) {
+        window.prompt("Please provide your email for confirmation");
+      } else {
+        loginWithEmailLink(email);
+      }
+    }
+  };
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
@@ -82,6 +114,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     getUser,
     forgotPassword,
     confirmReset,
+    loginWithEmailLink,
+    sendLoginEmail,
+    handleLoginWithEmailLink,
   };
 
   return (

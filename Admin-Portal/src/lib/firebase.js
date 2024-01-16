@@ -18,6 +18,10 @@ const app = initializeApp(firebaseConfig);
 export const analytics = getAnalytics(app);
 
 // Initialize Firebase Authentication and get a reference to the service
-const auth = getAuth(app);
+export const auth = getAuth(app);
 
-export default auth;
+// TODO For Sign-in with email link, url to change
+export const actionCodeSettings = {
+  url: "https://localhost:5175/loginLink",
+  handleCodeInApp: true,
+};
