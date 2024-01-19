@@ -43,6 +43,9 @@ export const RegisterTextFieldPassword: React.FC<InputProps> = ({
               style: {
                 padding: "0px",
                 margin: "1rem 0rem 0rem 0rem",
+                 fontFamily: "Raleway, sans-serif",
+                fontStyle: "italic",
+                color: "var(--mtmLightgray)",
               },
             },
             endAdornment: (

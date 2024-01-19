@@ -13,6 +13,7 @@ import {
   FormControl,
   Select,
   MenuItem,
+  InputLabel,
   SelectChangeEvent,
   RadioGroup,
   Radio,
@@ -170,12 +171,22 @@ const Register: React.FC = () => {
       flexDirection="column"
       alignItems="center"
       width="100%"
+      style={{
+        fontFamily: "Raleway, sans-serif",
+        fontSize: "15px",
+        fontWeight: "400",
+      }}
     >
       <Typography
         fontWeight="bold"
         component="h2"
         variant="h6"
-        style={{ margin: "1rem 0rem 1rem 0rem" }}
+        style={{
+          margin: "1rem 0rem 1rem 0rem",
+          color: "var(--mtmNavy)",
+          fontSize: "25px",
+          fontWeight: "700",
+        }}
       >
         Create an account
       </Typography>
@@ -183,7 +194,12 @@ const Register: React.FC = () => {
       <Box width="75%">
         <form onSubmit={handleSubmit(onSubmit)}>
           <Box>
-            <Typography variant="body1">
+            <Typography
+              variant="body1"
+              style={{
+                fontFamily: "Raleway, sans-serif",
+              }}
+            >
               Name<span style={{ color: "#EF4444" }}>*</span>
             </Typography>
             <Box mt={-2} mb={2}>
@@ -197,7 +213,12 @@ const Register: React.FC = () => {
           </Box>
 
           <Box>
-            <Typography variant="body1">
+            <Typography
+              variant="body1"
+              style={{
+                fontFamily: "Raleway, sans-serif",
+              }}
+            >
               Contact<span style={{ color: "#EF4444" }}>*</span>
             </Typography>
             <Box mt={-2}>
@@ -219,7 +240,12 @@ const Register: React.FC = () => {
           </Box>
 
           <Box>
-            <Typography variant="body1">
+            <Typography
+              variant="body1"
+              style={{
+                fontFamily: "Raleway, sans-serif",
+              }}
+            >
               Password<span style={{ color: "#EF4444" }}>*</span>
             </Typography>
             <Box mt={-2}>
@@ -252,7 +278,12 @@ const Register: React.FC = () => {
           </Box>
 
           <Box>
-            <Typography variant="body1">
+            <Typography
+              variant="body1"
+              style={{
+                fontFamily: "Raleway, sans-serif",
+              }}
+            >
               Address<span style={{ color: "#EF4444" }}>*</span>
             </Typography>
             <Box mt={-2} mb={1.5}>
@@ -292,10 +323,20 @@ const Register: React.FC = () => {
           </Box>
 
           <Box mb={2} width="100%">
-            <Typography variant="body1">
+            <Typography variant="body1"  style={{
+                fontFamily: "Raleway, sans-serif",
+              }}>
               Account Type<span style={{ color: "#EF4444" }}>*</span>
             </Typography>
-            <Typography variant="body1" color="grey.500">
+            <Typography
+              variant="body1"
+              color="var(--mtmNavy)"
+              style={{
+                fontFamily: "Raleway, sans-serif",
+                fontSize: "15px",
+                fontWeight: "400",
+              }}
+            >
               Choose the account type that most aligns with your needs and
               interactions
             </Typography>
@@ -322,7 +363,9 @@ const Register: React.FC = () => {
                         borderRadius: "10px",
                         padding: "8px",
                         backgroundColor:
-                          value === "Public Donor" ? "#6D6D6D" : "transparent",
+                          value === "Public Donor"
+                            ? "var(--mtmNavy)"
+                            : "transparent",
                         color: value === "Public Donor" ? "#fff" : "#000",
                         cursor: "pointer",
                         width: "100%",
@@ -344,7 +387,7 @@ const Register: React.FC = () => {
                         padding: "8px",
                         backgroundColor:
                           value === "Agency Partner"
-                            ? "#6D6D6D"
+                            ? "var(--mtmNavy)"
                             : "transparent",
                         color: value === "Agency Partner" ? "#fff" : "#000",
                         cursor: "pointer",
@@ -373,8 +416,16 @@ const Register: React.FC = () => {
               <Typography variant="body1">
                 Affiliation<span style={{ color: "#EF4444" }}>*</span>
               </Typography>
-              <Typography variant="body1" color="grey.500">
-                Choose the affiliation you belong with
+              <Typography
+                variant="body1"
+                style={{
+                  color: "black",
+                  fontSize: "15px",
+                  fontWeight: "400",
+                  fontFamily: "Raleway, sans-serif",
+                }}
+              >
+                Organizational Affiliation (optional)
               </Typography>
 
               <Controller
@@ -382,8 +433,22 @@ const Register: React.FC = () => {
                 control={control}
                 render={({ field: { value, onChange } }) => (
                   <FormControl fullWidth variant="standard">
+                    <InputLabel
+                      id="select-label"
+                      style={{
+                        color: "var(--mtmLightGray)",
+                        fontStyle: "italic",
+                        fontSize: "15px",
+                        fontFamily: "Raleway, sans-serif",
+                      }}
+                    >
+                      Corporate donor/agency partner
+                    </InputLabel>
+
                     <Select
                       value={value ?? ""}
+                      labelId="select-label"
+                      label={"Corporate donor/agency partner"}
                       onChange={onChange}
                       style={{
                         border: "none",
@@ -416,7 +481,7 @@ const Register: React.FC = () => {
           {error && <FormError>{error}</FormError>}
 
           <Box
-            mt={7}
+            mt={2}
             display="flex"
             flexDirection="column"
             width="100%"
@@ -425,15 +490,14 @@ const Register: React.FC = () => {
             <Button
               type="submit"
               style={{
-                borderRadius: "30px",
                 width: "210px",
                 height: "43px",
                 fontSize: "20px",
                 fontWeight: "400",
-                fontFamily: "Inter, sans-serif",
+                fontFamily: "Raleway, sans-serif",
                 textTransform: "none",
-                backgroundColor: "#d9d9d9",
-                color: "black",
+                backgroundColor: "var(--mtmNavy)",
+                color: "white",
                 boxShadow: "none",
               }}
             >
@@ -445,8 +509,19 @@ const Register: React.FC = () => {
 
       <Box mt={2}>
         <Typography>
-          <Link to="/" style={{ color: "gray", textDecoration: "none" }}>
-            <span style={{ fontWeight: "normal" }}>
+          <Link
+            to="/"
+            style={{
+              color: "gray",
+              textDecoration: "none",
+              fontFamily: "Raleway, sans-serif",
+            }}
+          >
+            <span
+              style={{
+                fontWeight: "normal",
+              }}
+            >
               Already have an account?
             </span>
             <span style={{ fontWeight: "bold" }}> Log in</span>
