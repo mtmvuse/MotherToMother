@@ -66,7 +66,7 @@ const Profile: React.FC = () => {
           <Typography className={"heading"}>{user?.firstName}</Typography>
         </div>
         <Typography className={"subheading"}>
-          Organization / Affiliation
+          {user?.userType}
         </Typography>
       </div>
       {isLoading ? (
