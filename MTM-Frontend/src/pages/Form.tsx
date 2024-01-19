@@ -50,10 +50,22 @@ const Form: React.FC = () => {
   return (
     // Top of Outgoing Donations Form
     <Stack direction="column" alignItems="center" spacing={2}>
-      <Typography fontSize="25px" fontWeight="700">
+      <Typography
+        fontSize="25px"
+        fontWeight="700"
+        style={{ fontFamily: "Raleway, sans-serif", color: "var(--mtmNavy)" }}
+      >
         Outgoing Donations
       </Typography>
-      <Typography fontSize="15px" style={{ textAlign: "center" }}>
+      <Typography
+        fontSize="15px"
+        style={{
+          textAlign: "center",
+          fontFamily: "Raleway, sans-serif",
+          fontWeight: "400",
+          color: "var(--mtmGray)",
+        }}
+      >
         Select the categories and item types of resources that you would like to
         donate
       </Typography>
