@@ -167,7 +167,7 @@ const EditProfile: React.FC = () => {
             )}
             <input
               className="form-input"
-              placeholder={"Phone Number"}
+              placeholder={"*Phone Number"}
               {...register("phone")}
             />
             {errors.phone && (
