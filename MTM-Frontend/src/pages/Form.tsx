@@ -93,12 +93,13 @@ const Form: React.FC = () => {
             type="submit"
             variant="outlined"
             sx={{
-              backgroundColor: "#A4A4A4",
+              fontFamily: "Interit, sans-serif",
+              fontSize: "15px",
+              fontWeight: "800",
+              backgroundColor: "var(--mtmNavy)",
               color: "white",
-              fontSize: 15,
-              border: "1px solid #c1c1c1",
-              borderRadius: 2,
               height: "32px",
+              width: "87px",
             }}
             disabled={isLoading}
           >
@@ -108,12 +109,13 @@ const Form: React.FC = () => {
             type="button"
             variant="outlined"
             sx={{
-              backgroundColor: "white",
-              color: "#A4A4A4",
-              fontSize: 15,
-              border: "1px solid #A4A4A4",
-              borderRadius: 2,
+              fontFamily: "Interit, sans-serif",
+              fontSize: "15px",
+              fontWeight: "800",
+              border: "var(--mtmNavy) 1px solid",
+              color: "var(--mtmNavy)",
               height: "32px",
+              width: "87px",
             }}
           >
             Save
