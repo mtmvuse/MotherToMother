@@ -24,17 +24,27 @@ export const Navbar: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm")); // Change breakpoint as needed
 
+  const getParentRoute = (pathname: string) => {
+    if (pathname.startsWith("/home/profile")) {
+      return "/home/profile";
+    } else if (pathname.startsWith("/home/form")) {
+      return "/home/form";
+    } else {
+      return pathname;
+    }
+  };
+
   return (
     <div className="BottomNavbar">
       <Box>
         <BottomNavigation
           showLabels
-          value={location.pathname}
+          value={getParentRoute(location.pathname)}
           onChange={(event, newValue) => {
             navigate(newValue);
           }}
           sx={{
-            "& .Mui-selected": {
+            "& .MuiBottomNavigationAction-root.Mui-selected": {
               bgcolor: "var(--mtmLightBlue)",
               borderRadius: "15px",
             },
