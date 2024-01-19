@@ -39,18 +39,11 @@ const schema = Yup.object().shape({
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password")], feedback.confirmPassword)
     .required(feedback.confirmPassword),
-
-  // phone: Yup.string()
-  //   .transform((phone) => {
-  //     const formattedPhone = `(${phone.slice(0, 3)}) - ${phone.slice(
-  //       3,
-  //       6,
-  //     )} - ${phone.slice(6)}`;
-  //     return formattedPhone;
-  //   })
-  //   .matches(/^\(\d{3}\) - \d{3} - \d{4}$/, "Please enter your phone number"),
   phone: Yup.string()
-    .matches(/^[0-9]{10}$/, feedback.phone)
+    .matches(
+      /^((\+\d{1,3}(-| )?\(?\d\)?(-| )?\d{1,3})|(\(?\d{2,3}\)?))(-| )?(\d{3,4})(-| )?(\d{4})(( x| ext)\d{1,5}){0,1}$/,
+      feedback.phone,
+    )
     .required(feedback.phone),
 
   address: Yup.string().required(feedback.address),
