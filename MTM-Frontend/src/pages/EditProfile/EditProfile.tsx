@@ -5,7 +5,6 @@ import * as Yup from "yup";
 import "./EditProfile.css";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import profile_logo from "../../pages/assets/profile_logo.png";
 import { getUserData, updateUser } from "../../lib/services";
 import { ErrorMessage } from "../../components/Error";
 import { CircularProgress } from "@mui/material";
@@ -139,9 +138,6 @@ const EditProfile: React.FC = () => {
   ) : (
     <div className={"edit-profile-container"}>
       <ErrorMessage error={error} setError={setError} />
-      <div className={"profile-image"}>
-        <img className="profile-logo" src={profile_logo} alt="Image1" />
-      </div>
       <div className={"edit-form"}>
         <form id="edit-form" onSubmit={handleSubmit(onSubmit)}>
           <p className="text-label">Basic Information</p>

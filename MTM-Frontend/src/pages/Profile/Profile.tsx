@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { CircularProgress, Typography } from "@mui/material";
 import "./Profile.css";
-import profile_logo from "../../pages/assets/profile_logo.png";
 import { getUserData } from "../../lib/services";
 import type { UserType } from "../../types/UserTypes";
 import { ErrorMessage } from "../../components/Error";
@@ -58,9 +57,6 @@ const Profile: React.FC = () => {
   return (
     <div className={"profile-container"}>
       <ErrorMessage error={error} setError={setError} />
-      <div className={"profile-image"}>
-        <img className="profile-logo" src={profile_logo} alt="Image1" />
-      </div>
       <div className={"profile-heading"}>
         <div className={"name-container"}>
           <Typography className={"heading"}>{user?.firstName}</Typography>
