@@ -23,6 +23,7 @@ import { RegisterFormValues, Organization, UserType } from "~/types/AuthTypes";
 // Register components
 import { RegisterTextField } from "../../components/Auth/RegisterForms/RegisterTextField";
 import { RegisterTextFieldPassword } from "../../components/Auth/RegisterForms/RegisterTextFieldPassword";
+import { RegisterTextFieldPhone } from "../../components/Auth/RegisterForms/RegisterTextFieldPhone";
 import { feedback } from "../../components/Auth/RegisterForms/RegisterFeedback";
 
 const schema = Yup.object().shape({
@@ -210,7 +211,7 @@ const Register: React.FC = () => {
               />
             </Box>
             <Box mt={-1.5} mb={2}>
-              <RegisterTextField
+              <RegisterTextFieldPhone
                 name="phone"
                 placeHolder="Phone number"
                 control={control}

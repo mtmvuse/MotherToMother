@@ -1,5 +1,5 @@
 import { TextField } from "@mui/material";
-import { Controller } from "react-hook-form";
+import { Controller, set } from "react-hook-form";
 import { useState } from "react";
 import { FeedbackType, feedback } from "./RegisterFeedback";
 
@@ -10,13 +10,14 @@ interface InputProps {
   errors: any;
 }
 
-export const RegisterTextField: React.FC<InputProps> = ({
+export const RegisterTextFieldPhone: React.FC<InputProps> = ({
   name,
   placeHolder,
   control,
   errors,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
+  const [currPhone, setCurrPhone] = useState("");
 
   const handleFocus = () => {
     setIsFocused(true);
@@ -26,13 +27,37 @@ export const RegisterTextField: React.FC<InputProps> = ({
     setIsFocused(false);
   };
 
+  const handlePhoneFormat = (value: string) => {
+    const numericValue = value.replace(/[^0-9\.]+/g, "");
+    const length = numericValue.length;
+    const areaCode = () => `(${numericValue.slice(0, 3)})`;
+    const firstSix = () => `${areaCode()} ${numericValue.slice(3, 6)}`;
+    const trailer = (start: number) => `${numericValue.slice(start, length)}`;
+
+    let formattedNumber = "";
+    if (length <= 3) {
+      formattedNumber = numericValue;
+    } else if (length >= 4 && length <= 6) {
+      formattedNumber = `${areaCode()} ${trailer(3)}`;
+    } else if (length >= 7) {
+      formattedNumber = `${firstSix()}-${trailer(6)}`;
+    }
+
+    setCurrPhone(formattedNumber);
+  };
+
   return (
     <Controller
       name={name}
       control={control}
-      render={({ field: { onBlur, ...restField } }) => (
+      render={({ field: { onBlur, value, onChange, ...restField } }) => (
         <TextField
           placeholder={placeHolder}
+          value={currPhone}
+          onChange={(e) => {
+            onChange(e);
+            handlePhoneFormat(e.target.value);
+          }}
           type="text"
           fullWidth
           variant="standard"
