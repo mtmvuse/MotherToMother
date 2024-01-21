@@ -30,6 +30,7 @@ function NumberInCircle(props: NumberInCircleProps) {
       alignItems="center"
       bgcolor={backgroundColor}
       color={color}
+      borderColor={color}
     >
       <Typography variant="h6">{props.num}</Typography>
     </Box>

@@ -91,7 +91,9 @@ const ForgotPassword: React.FC = () => {
       </div>
 
       <div className={"signup-container"}>
-        <Typography>
+        <Typography
+          style={{ fontFamily: "Raleway, sans-serif", fontWeight: "400" }}
+        >
           <Link to="/" style={{ color: "gray", textDecoration: "none" }}>
             <span style={{ fontWeight: "normal" }}>
               Already have an account?
@@ -108,8 +110,14 @@ const ForgotPassword: React.FC = () => {
             An email with instructions to reset your password was sent to your
             inbox.
           </p>
-          <Typography>
-            <Link to="/" className={"link"}>
+          <Typography
+            style={{
+              fontFamily: "Raleway, sans-serif",
+              fontWeight: "400",
+              color: "var(--mtmNavy)",
+            }}
+          >
+            <Link to="/ " style={{ color: "var(--mtmNavy)", textDecoration: "none" }}>
               Back to login
             </Link>
           </Typography>
