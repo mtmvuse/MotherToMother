@@ -45,7 +45,7 @@ export const Navbar: React.FC = () => {
             value={"/home/profile"}
             icon={<PersonOutlineOutlinedIcon />}
           />
-          {localStorage.getItem("userType") != "Public Donor" && (
+          {localStorage.getItem("userType") == "Agency" && (
             <BottomNavigationAction
               sx={{ flexGrow: 1 }}
               value={"/home/form"}
