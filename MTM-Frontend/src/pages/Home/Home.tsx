@@ -1,13 +1,23 @@
 import React, { useState } from "react";
 import m2m_logo from "../../pages/assets/m2m_logo.png";
 import "./Home.css";
+import { AboutUsAccordion } from "../../components/Accordions/AboutUsAccordion";
+import { ImpactAccordion } from "../../components/Accordions/ImpactAccordion";
+import { ContactUsAccordion } from "../../components/Accordions/ContactUsAccordion";
+import { DonateAccordion } from "../../components/Accordions/DonateAccordion";
 
 const Home: React.FC = () => {
   const [showContact, setShowContact] = useState<boolean>(false);
+  const [expanded, setExpanded] = useState<string | false>("about us");
 
   const toggleContact = () => {
     setShowContact(!showContact);
   };
+
+  const handleChange =
+    (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
+      setExpanded(newExpanded ? panel : false);
+    };
 
   return (
     <div className={"main-container"}>
@@ -15,26 +25,6 @@ const Home: React.FC = () => {
         <img className="m2m_logo" src={m2m_logo} alt="m2m_logo" />
       </div>
       <div className="button-column">
-        <a
-          href="https://www.mothertomother.org/aboutmothertomother"
-          target="_blank"
-          className="square-button"
-        >
-          ABOUT US
-        </a>
-
-        <a
-          href="https://www.mothertomother.org/suppliesweneed"
-          target="_blank"
-          className="square-button"
-        >
-          DONATE
-        </a>
-
-        <button className="square-button" onClick={toggleContact}>
-          CONNECT
-        </button>
-
         {showContact && (
           <div className="contact-popup">
             <div className="contact-content">
@@ -53,6 +43,15 @@ const Home: React.FC = () => {
           </div>
         )}
       </div>
+
+      <AboutUsAccordion expanded={expanded} handleChange={handleChange} />
+
+      <ImpactAccordion expanded={expanded} handleChange={handleChange} />
+
+      <ContactUsAccordion expanded={expanded} handleChange={handleChange} />
+
+      <DonateAccordion expanded={expanded} handleChange={handleChange} />
+
       <div className="hours-container">
         <div className="hours-section">
           <h2>Warehouse Hours</h2>
