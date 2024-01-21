@@ -1,6 +1,5 @@
 import { db } from "../../../utils/db.server";
-import type { AdminType } from "../../../types/admin";
-import { Admin } from "@prisma/client";
+import type { AdminInputNoID, AdminType } from "../../../types/admin";
 
 /**
  * Gets all of the admin based on an email
@@ -36,12 +35,39 @@ export const getAdminEmail = async (
   return null;
 };
 
-/*
+export const createAdmin = async (
+  admin: AdminInputNoID,
+): Promise<AdminType> => {
+  const newAdmin: AdminType = await db.admin.create({
+    data: {
+      name: admin.name,
+      email: admin.email,
+      role: admin.role,
+    },
+  });
 
+  return {
+    id: newAdmin.id,
+    name: newAdmin.name,
+    email: newAdmin.email,
+    role: newAdmin.role,
+  };
+};
+
+export const updateAdmin = async (admin: AdminInputNoID) => {
+  await db.admin.update({
+    where: {
+      email: admin.email,
+    },
+    data: {
+      name: admin.name,
+      role: admin.role,
+    },
     select: {
       id: true,
       name: true,
       email: true,
       role: true,
     },
-*/
+  });
+};
