@@ -1,14 +1,23 @@
 import React, { useState } from "react";
 import m2m_logo from "../../pages/assets/m2m_logo.png";
 import "./Home.css";
-import AccordionsLayout from "../../components/Accordions/AccordionsLayout";
+import { AboutUsAccordion } from "../../components/Accordions/AboutUsAccordion";
+import { ImpactAccordion } from "../../components/Accordions/ImpactAccordion";
+import { ContactUsAccordion } from "../../components/Accordions/ContactUsAccordion";
+import { DonateAccordion } from "../../components/Accordions/DonateAccordion";
 
 const Home: React.FC = () => {
   const [showContact, setShowContact] = useState<boolean>(false);
+  const [expanded, setExpanded] = useState<string | false>("about us");
 
   const toggleContact = () => {
     setShowContact(!showContact);
   };
+
+  const handleChange =
+    (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
+      setExpanded(newExpanded ? panel : false);
+    };
 
   return (
     <div className={"main-container"}>
@@ -35,7 +44,13 @@ const Home: React.FC = () => {
         )}
       </div>
 
-      <AccordionsLayout />
+      <AboutUsAccordion expanded={expanded} handleChange={handleChange} />
+
+      <ImpactAccordion expanded={expanded} handleChange={handleChange} />
+
+      <ContactUsAccordion expanded={expanded} handleChange={handleChange} />
+
+      <DonateAccordion expanded={expanded} handleChange={handleChange} />
 
       <div className="hours-container">
         <div className="hours-section">
