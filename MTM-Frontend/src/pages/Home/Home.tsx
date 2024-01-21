@@ -1,24 +1,14 @@
 import React, { useState } from "react";
 import m2m_logo from "../../pages/assets/m2m_logo.png";
 import "./Home.css";
-import Typography from "@mui/material/Typography";
-
-import { Accordion } from "../../components/Form/Accordions/Accordion";
-import { AccordionSummary } from "../../components/Form/Accordions/AccordionSummary";
-import { AccordionDetails } from "../../components/Form/Accordions/AccordionDetails";
+import AccordionsLayout from "../../components/Accordions/AccordionsLayout";
 
 const Home: React.FC = () => {
   const [showContact, setShowContact] = useState<boolean>(false);
-  const [expanded, setExpanded] = useState<string | false>("about us");
 
   const toggleContact = () => {
     setShowContact(!showContact);
   };
-
-  const handleChange =
-    (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
-      setExpanded(newExpanded ? panel : false);
-    };
 
   return (
     <div className={"main-container"}>
@@ -26,98 +16,6 @@ const Home: React.FC = () => {
         <img className="m2m_logo" src={m2m_logo} alt="m2m_logo" />
       </div>
       <div className="button-column">
-        <Accordion
-          expanded={expanded === "about us"}
-          onChange={handleChange("about us")}
-          customStyles={{}}
-        >
-          <AccordionSummary
-            aria-controls="about-panel-content"
-            id="about-header"
-            customStyles={{ backgroundColor: "#bae6fd" }}
-          >
-            <Typography className="square-button">ABOUT US</Typography>
-          </AccordionSummary>
-          <AccordionDetails customStyles={{ backgroundColor: "#bae6fd" }}>
-            <Typography>
-              For almost two decades, Nashville-based Mother To Mother has been
-              working to ensure children in our community have access to three
-              basic essentials that often slip through the cracks of government
-              subsidies and charitable support:​ diapers car seats a safe place
-              to sleep
-            </Typography>
-          </AccordionDetails>
-        </Accordion>
-
-        <Accordion
-          expanded={expanded === "impact"}
-          onChange={handleChange("impact")}
-          customStyles={{}}
-        >
-          <AccordionSummary
-            aria-controls="impact-panel-content"
-            id="impact-header"
-            customStyles={{ backgroundColor: "#f5f5f5" }}
-          >
-            <Typography className="square-button">IMPACT</Typography>
-          </AccordionSummary>
-          <AccordionDetails customStyles={{ backgroundColor: "#f5f5f5" }}>
-            <Typography>
-              For almost two decades, Nashville-based Mother To Mother has been
-              working to ensure children in our community have access to three
-              basic essentials that often slip through the cracks of government
-              subsidies and charitable support:​ diapers car seats a safe place
-              to sleep
-            </Typography>
-          </AccordionDetails>
-        </Accordion>
-
-        <Accordion
-          expanded={expanded === "contact"}
-          onChange={handleChange("contact")}
-          customStyles={{}}
-        >
-          <AccordionSummary
-            aria-controls="contact-panel-content"
-            id="contact-header"
-            customStyles={{ backgroundColor: "#bbf7d0" }}
-          >
-            <Typography className="square-button">CONTACT & HOURS</Typography>
-          </AccordionSummary>
-          <AccordionDetails customStyles={{ backgroundColor: "#bbf7d0" }}>
-            <Typography>
-              For almost two decades, Nashville-based Mother To Mother has been
-              working to ensure children in our community have access to three
-              basic essentials that often slip through the cracks of government
-              subsidies and charitable support:​ diapers car seats a safe place
-              to sleep
-            </Typography>
-          </AccordionDetails>
-        </Accordion>
-
-        <Accordion
-          expanded={expanded === "donate"}
-          onChange={handleChange("donate")}
-          customStyles={{}}
-        >
-          <AccordionSummary
-            aria-controls="donate-panel-content"
-            id="donate-header"
-            customStyles={{ backgroundColor: "#dcfce7" }}
-          >
-            <Typography className="square-button">Donate</Typography>
-          </AccordionSummary>
-          <AccordionDetails customStyles={{ backgroundColor: "#dcfce7" }}>
-            <Typography>
-              For almost two decades, Nashville-based Mother To Mother has been
-              working to ensure children in our community have access to three
-              basic essentials that often slip through the cracks of government
-              subsidies and charitable support:​ diapers car seats a safe place
-              to sleep
-            </Typography>
-          </AccordionDetails>
-        </Accordion>
-
         {showContact && (
           <div className="contact-popup">
             <div className="contact-content">
@@ -136,6 +34,8 @@ const Home: React.FC = () => {
           </div>
         )}
       </div>
+
+      <AccordionsLayout />
 
       <div className="hours-container">
         <div className="hours-section">
