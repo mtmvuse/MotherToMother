@@ -2,12 +2,65 @@ import React, { useState } from "react";
 import m2m_logo from "../../pages/assets/m2m_logo.png";
 import "./Home.css";
 
+import { styled } from "@mui/material/styles";
+import MuiAccordion, { AccordionProps } from "@mui/material/Accordion";
+import MuiAccordionSummary, {
+  AccordionSummaryProps,
+} from "@mui/material/AccordionSummary";
+import MuiAccordionDetails, {
+  AccordionDetailsProps,
+} from "@mui/material/AccordionDetails";
+import Typography from "@mui/material/Typography";
+
+// Add common styles shared between all inside these variables.
+// I added a customStyles that you can indivdually edit the components
+// it is an object similar to styles={{}}
+interface AccordionSummaryStyledProps extends AccordionSummaryProps {
+  customStyles?: React.CSSProperties;
+}
+
+interface AccordionStyledProps extends AccordionProps {
+  customStyles?: React.CSSProperties;
+}
+
+interface AccordionDetailsStyledProps extends AccordionDetailsProps {
+  customStyles?: React.CSSProperties;
+}
+
+const Accordion = styled(({ customStyles, ...props }: AccordionStyledProps) => (
+  <MuiAccordion disableGutters elevation={0} square {...props} />
+))(({ theme }) => ({}));
+
+const AccordionSummary = styled(
+  ({ customStyles, ...props }: AccordionSummaryStyledProps) => (
+    <MuiAccordionSummary {...props} />
+  ),
+)(({ theme, customStyles }) => ({
+  padding: 0,
+  ...customStyles,
+}));
+
+const AccordionDetails = styled(
+  ({ customStyles, ...props }: AccordionDetailsStyledProps) => (
+    <MuiAccordionDetails {...props} />
+  ),
+)(({ theme, customStyles }) => ({
+  // Your default styles here
+  ...(customStyles || {}),
+}));
+
 const Home: React.FC = () => {
   const [showContact, setShowContact] = useState<boolean>(false);
+  const [expanded, setExpanded] = useState<string | false>("panel1");
 
   const toggleContact = () => {
     setShowContact(!showContact);
   };
+
+  const handleChange =
+    (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
+      setExpanded(newExpanded ? panel : false);
+    };
 
   return (
     <div className={"main-container"}>
@@ -15,25 +68,97 @@ const Home: React.FC = () => {
         <img className="m2m_logo" src={m2m_logo} alt="m2m_logo" />
       </div>
       <div className="button-column">
-        <a
-          href="https://www.mothertomother.org/aboutmothertomother"
-          target="_blank"
-          className="square-button"
+        <Accordion
+          expanded={expanded === "about us"}
+          onChange={handleChange("about us")}
+          customStyles={{}}
         >
-          ABOUT US
-        </a>
+          <AccordionSummary
+            aria-controls="about-panel-content"
+            id="about-header"
+            customStyles={{ backgroundColor: "red" }}
+          >
+            <Typography className="square-button">ABOUT US</Typography>
+          </AccordionSummary>
+          <AccordionDetails customStyles={{}}>
+            <Typography>
+              For almost two decades, Nashville-based Mother To Mother has been
+              working to ensure children in our community have access to three
+              basic essentials that often slip through the cracks of government
+              subsidies and charitable support:​ diapers car seats a safe place
+              to sleep
+            </Typography>
+          </AccordionDetails>
+        </Accordion>
 
-        <a
-          href="https://www.mothertomother.org/suppliesweneed"
-          target="_blank"
-          className="square-button"
+        <Accordion
+          expanded={expanded === "impact"}
+          onChange={handleChange("impact")}
+          customStyles={{}}
         >
-          DONATE
-        </a>
+          <AccordionSummary
+            aria-controls="impact-panel-content"
+            id="impact-header"
+            customStyles={{ backgroundColor: "turquoise" }}
+          >
+            <Typography className="square-button">IMPACT</Typography>
+          </AccordionSummary>
+          <AccordionDetails customStyles={{}}>
+            <Typography>
+              For almost two decades, Nashville-based Mother To Mother has been
+              working to ensure children in our community have access to three
+              basic essentials that often slip through the cracks of government
+              subsidies and charitable support:​ diapers car seats a safe place
+              to sleep
+            </Typography>
+          </AccordionDetails>
+        </Accordion>
 
-        <button className="square-button" onClick={toggleContact}>
-          CONNECT
-        </button>
+        <Accordion
+          expanded={expanded === "contact"}
+          onChange={handleChange("contact")}
+          customStyles={{}}
+        >
+          <AccordionSummary
+            aria-controls="contact-panel-content"
+            id="contact-header"
+            customStyles={{ backgroundColor: "pinks" }}
+          >
+            <Typography className="square-button">CONTACT & HOURS</Typography>
+          </AccordionSummary>
+          <AccordionDetails customStyles={{}}>
+            <Typography>
+              For almost two decades, Nashville-based Mother To Mother has been
+              working to ensure children in our community have access to three
+              basic essentials that often slip through the cracks of government
+              subsidies and charitable support:​ diapers car seats a safe place
+              to sleep
+            </Typography>
+          </AccordionDetails>
+        </Accordion>
+
+        <Accordion
+          expanded={expanded === "donate"}
+          onChange={handleChange("donate")}
+          customStyles={{}}
+        >
+          <AccordionSummary
+            aria-controls="donate-panel-content"
+            id="donate-header"
+            customStyles={{ backgroundColor: "blue" }}
+          >
+            <Typography className="square-button">Donate</Typography>
+          </AccordionSummary>
+          <AccordionDetails customStyles={{}}>
+            <Typography>
+              For almost two decades, Nashville-based Mother To Mother has been
+              working to ensure children in our community have access to three
+              basic essentials that often slip through the cracks of government
+              subsidies and charitable support:​ diapers car seats a safe place
+              to sleep
+            </Typography>
+          </AccordionDetails>
+        </Accordion>
 
         {showContact && (
           <div className="contact-popup">
@@ -53,6 +178,7 @@ const Home: React.FC = () => {
           </div>
         )}
       </div>
+
       <div className="hours-container">
         <div className="hours-section">
           <h2>Warehouse Hours</h2>
