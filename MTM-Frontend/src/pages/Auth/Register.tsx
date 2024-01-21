@@ -24,36 +24,38 @@ import { RegisterFormValues, Organization, UserType } from "~/types/AuthTypes";
 // Register components
 import { RegisterTextField } from "../../components/Auth/RegisterForms/RegisterTextField";
 import { RegisterTextFieldPassword } from "../../components/Auth/RegisterForms/RegisterTextFieldPassword";
+import { RegisterTextFieldPhone } from "../../components/Auth/RegisterForms/RegisterTextFieldPhone";
+import { feedback } from "../../components/Auth/RegisterForms/RegisterFeedback";
 
 const schema = Yup.object().shape({
   name: Yup.string()
-    .matches(/^([A-Za-z]+\s[A-Za-z]+)$/, "First and Last name")
-    .required("First and Last name is required"),
-  email: Yup.string()
-    .email("Invalid email address")
-    .required("Email is required"),
+    .matches(/^([A-Za-z]+\s[A-Za-z]+)$/, {
+      message: feedback.name,
+    })
+    .required(feedback.name),
+  email: Yup.string().email(feedback.email).required(feedback.email),
   password: Yup.string()
-    .matches(
-      /^(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{8,}$/,
-      "Invalid password",
-    )
-    .min(8, "Password must be at least 8 characters")
-    .required("Password is required"),
-  userType: Yup.string().required("Type is required"),
+    .matches(/^(?=.*[A-Z])(?=.*[0-9])(?=.*[\W_])(.{8,})$/, feedback.password)
+    .required(feedback.password),
+  userType: Yup.string().required(feedback.userType),
   confirmPassword: Yup.string()
-    .oneOf([Yup.ref("password")], "Passwords do not match")
-    .required("Confirm password is required"),
+    .oneOf([Yup.ref("password")], feedback.confirmPassword)
+    .required(feedback.confirmPassword),
   phone: Yup.string()
-    .matches(/^[0-9]{10}$/, "Phone number is not valid")
-    .required("Phone number is required"),
-  address: Yup.string().required("Address is required"),
+    .matches(
+      /^((\+\d{1,3}(-| )?\(?\d\)?(-| )?\d{1,3})|(\(?\d{2,3}\)?))(-| )?(\d{3,4})(-| )?(\d{4})(( x| ext)\d{1,5}){0,1}$/,
+      feedback.phone,
+    )
+    .required(feedback.phone),
+
+  address: Yup.string().required(feedback.address),
   zip: Yup.string()
-    .matches(/^\d{5}(-\d{4})?$/, "Invalid Zip code")
-    .required("Zip code is required"),
-  city: Yup.string().required("City is required"),
+    .matches(/^\d{5}(-\d{4})?$/, feedback.zip)
+    .required(feedback.zip),
+  city: Yup.string().required(feedback.city),
   affiliation: Yup.string().when("userType", ([userType], s) => {
     if (userType !== "Public Donor" && userType !== "") {
-      return s.required("affiliation is required");
+      return s.required(feedback.affiliation);
     }
     return s;
   }),
@@ -230,7 +232,7 @@ const Register: React.FC = () => {
               />
             </Box>
             <Box mt={-1.5} mb={2}>
-              <RegisterTextField
+              <RegisterTextFieldPhone
                 name="phone"
                 placeHolder="Phone number"
                 control={control}
@@ -256,18 +258,8 @@ const Register: React.FC = () => {
                 errors={errors.password}
               />
             </Box>
-            <FormHelperText
-              sx={{
-                fontWeight: "bold",
-                marginTop: "-0.05rem",
-                color: "grey",
-                opacity: "50%",
-                fontSize: "0.6rem",
-              }}
-            >
-              at least one number and one special character
-            </FormHelperText>
-            <Box mt={-1.5} mb={2}>
+
+            <Box mt={-0.5} mb={2}>
               <RegisterTextFieldPassword
                 name="confirmPassword"
                 placeHolder="Confirm password"
