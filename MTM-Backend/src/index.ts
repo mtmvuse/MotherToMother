@@ -34,7 +34,7 @@ app.use("/users", verifyToken, userRouter);
 
 app.use("/items", verifyToken, itemsRouter);
 
-app.use("/registration", verifyToken, registrationRouter);
+app.use("/registration", registrationRouter);
 
 app.use("/organization", verifyToken, organizationRouter);
 
