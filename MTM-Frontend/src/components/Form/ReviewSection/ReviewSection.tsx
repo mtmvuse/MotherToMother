@@ -77,8 +77,8 @@ const ReviewSection = (props: ReviewSectionProps) => {
             sx={{ fontSize: 15, height: "33px" }}
             onClick={handleEdit}
             style={{
-              marginTop: "5%",
-              marginBottom: "5%",
+              marginTop: "15px",
+              marginBottom: "15px",
               color: "var(--mtmNavy)",
               border: "1px solid var(--mtmNavy)",
               fontFamily: " Inter, sans-serif",
@@ -90,15 +90,15 @@ const ReviewSection = (props: ReviewSectionProps) => {
           </Button>
         )}
         {isEditMode && (
-          <Stack direction="row" spacing={3} marginTop="50px">
+          <Stack direction="row" spacing={3}>
             <Button
               variant="outlined"
               sx={{ fontSize: 15, height: "33px" }}
               color="primary"
               onClick={handleSave}
               style={{
-                marginTop: "0",
-              marginBottom: "5%",
+                marginTop: "15px",
+                marginBottom: "15px",
                 backgroundColor: "var(--mtmNavy)",
                 color: "white",
                 height: "32px",
@@ -115,8 +115,8 @@ const ReviewSection = (props: ReviewSectionProps) => {
               sx={{ fontSize: 15, height: "33px" }}
               onClick={handleCancel}
               style={{
-                marginTop: "0",
-              marginBottom: "5%",
+                marginTop: "15px",
+                marginBottom: "15px",
                 color: "var(--mtmNavy)",
                 border: "1px solid var(--mtmNavy)",
                 fontFamily: " Inter, sans-serif",
