@@ -63,16 +63,17 @@ export default ({ mode }: { mode: string }) => {
     optimizeDeps: {
       include: ["@mui/icons-material", "@mui/material"],
     },
-    server: {
-      proxy: {
-        // Proxy /api requests to our express server
-        "/api": {
-          target: backendURL,
-          changeOrigin: true,
-          secure: false,
-          rewrite: (path) => path.replace(/^\/api/, ""),
-        },
-      },
-    },
+    // server: {
+    //   proxy: {
+    //     // Proxy /api requests to our express server
+    //     "/api": {
+    //       // target: backendURL,
+    //       target: backendURL,
+    //       changeOrigin: true,
+    //       secure: false,
+    //       rewrite: (path) => path.replace(/^\/api/, ""),
+    //     },
+    //   },
+    // },
   });
 };
