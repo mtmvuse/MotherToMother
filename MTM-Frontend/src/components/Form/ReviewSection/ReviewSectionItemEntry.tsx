@@ -29,36 +29,59 @@ const ReviewSectionItemEntry = (props: ReviewSectionItemEntryProps) => {
   };
 
   return (
-    <Stack
-      key={item}
-      direction="row"
-      justifyContent="space-between"
-      marginY="7px"
-      width="95%"
-      height="25px"
-    >
-      <Typography>{item}</Typography>
-      <Typography className="subcategory-status">
-        Used: {usedQuantity}
-      </Typography>
-      <Typography marginRight="15px">New: {newQuantity}</Typography>
-      {isEditMode && (
-        <>
-          <IconButton onClick={handleOpenDialog}>
-            <EditOutlinedIcon sx={{ fontSize: 20 }} color="primary" />
-          </IconButton>
-          <IconButton onClick={handleDelete}>
-            <DeleteOutlinedIcon sx={{ fontSize: 20 }} color="primary" />
-          </IconButton>
-        </>
-      )}
-      <SpecificItemsDialog
-        open={openDialog}
-        onClose={handleCloseDialog}
-        donationDetail={donationDetail}
-      />
-    </Stack>
+      <Stack
+          key={item}
+          direction="row"
+          justifyContent="space-between"
+          marginY="10px"
+          alignItems="center"
+          width="95%"
+      >
+        {/* Wrap item name and limit width */}
+        <Typography
+            sx={{
+              whiteSpace: "normal",
+              width: "115px", // Adjust as needed
+            }}
+        >
+          {item}
+        </Typography>
+
+        {/* Align "Used" and "New" quantities */}
+        <Typography
+            className="subcategory-status"
+            sx={{
+              whiteSpace: "normal",
+              marginLeft: "auto",
+              marginRight: "10px",
+              fontSize: "14px",
+            }}
+        >
+          Used: {usedQuantity}
+        </Typography>
+        <Typography
+            marginRight="10px"
+            sx={{ whiteSpace: "normal", fontSize: "14px" }}
+        >
+          New: {newQuantity}
+        </Typography>
+
+        {isEditMode && (
+            <>
+              <IconButton onClick={handleOpenDialog} sx={{ p: "2px" }}>
+                <EditOutlinedIcon sx={{ fontSize: 20 }} color="primary" />
+              </IconButton>
+              <IconButton onClick={handleDelete} sx={{ p: "2px" }}>
+                <DeleteOutlinedIcon sx={{ fontSize: 20 }} color="primary" />
+              </IconButton>
+            </>
+        )}
+        <SpecificItemsDialog
+            open={openDialog}
+            onClose={handleCloseDialog}
+            donationDetail={donationDetail}
+        />
+      </Stack>
   );
 };
-
 export { ReviewSectionItemEntry };
