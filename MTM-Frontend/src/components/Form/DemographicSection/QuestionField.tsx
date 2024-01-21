@@ -14,7 +14,13 @@ export const QuestionField: React.FC<InputProps> = ({
   return (
     <Grid container justifyContent="space-between" alignItems="center">
       <Grid item>
-        <Typography>{question}</Typography>
+        <Typography
+          color={"var(--mtmGray)"}
+          fontSize={12}
+          style={{ width: "200px" }}
+        >
+          {question}
+        </Typography>
       </Grid>
       <Grid item>
         <input

@@ -54,7 +54,7 @@ const ReviewSection = (props: ReviewSectionProps) => {
           >
             <NumberInCircle
               num={donationDetails.length}
-              backgroundColor="#6D6D6D"
+              backgroundColor="var(--mtmNavy)"
               color="white"
               borderRaduis="10px"
               width="50px"
@@ -78,12 +78,12 @@ const ReviewSection = (props: ReviewSectionProps) => {
             onClick={handleEdit}
             style={{
               marginTop: "5%",
-              backgroundColor: "white",
-              color: "#A4A4A4",
-              fontSize: 15,
-              border: "1px solid #A4A4A4",
-              borderRadius: "10px",
-              height: "32px",
+              marginBottom: "5%",
+              color: "var(--mtmNavy)",
+              border: "1px solid var(--mtmNavy)",
+              fontFamily: " Inter, sans-serif",
+              fontSize: "15px",
+              fontWeight: "800",
             }}
           >
             Edit
@@ -98,13 +98,14 @@ const ReviewSection = (props: ReviewSectionProps) => {
               onClick={handleSave}
               style={{
                 marginTop: "0",
-                backgroundColor: "#A4A4A4",
+              marginBottom: "5%",
+                backgroundColor: "var(--mtmNavy)",
                 color: "white",
-                fontSize: 15,
-                border: "1px solid #c1c1c1",
-                borderRadius: "10px",
                 height: "32px",
                 width: "87px",
+                fontFamily: " Inter, sans-serif",
+                fontSize: "15px",
+                fontWeight: "800",
               }}
             >
               Save
@@ -113,7 +114,15 @@ const ReviewSection = (props: ReviewSectionProps) => {
               variant="outlined"
               sx={{ fontSize: 15, height: "33px" }}
               onClick={handleCancel}
-              style={{ marginTop: "0" }}
+              style={{
+                marginTop: "0",
+              marginBottom: "5%",
+                color: "var(--mtmNavy)",
+                border: "1px solid var(--mtmNavy)",
+                fontFamily: " Inter, sans-serif",
+                fontSize: "15px",
+                fontWeight: "800",
+              }}
             >
               Cancel
             </Button>

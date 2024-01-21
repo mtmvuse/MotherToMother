@@ -24,9 +24,14 @@ const FormHeader: React.FC<props> = (props) => {
       <Grid item xs={8}>
         <Stack direction="row" spacing={1}>
           <span>
-            <NumberInCircle num={number} borderRaduis="50%" />
+            <NumberInCircle num={number} color="var(--mtmGray)" borderRaduis="50%" />
           </span>
-          <Typography variant="h6" fontSize={"18px"} whiteSpace={"nowrap"}>
+          <Typography
+            variant="h6"
+            fontSize={"18px"}
+            whiteSpace={"nowrap"}
+            style={{ color: "var(--mtmGray)" }}
+          >
             {header}
           </Typography>
         </Stack>
