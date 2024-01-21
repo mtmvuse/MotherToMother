@@ -46,7 +46,7 @@ const AccordionDetails = styled(
   ),
 )(({ theme, customStyles }) => ({
   // Your default styles here
-  ...(customStyles || {}),
+  ...customStyles,
 }));
 
 const Home: React.FC = () => {
@@ -76,11 +76,11 @@ const Home: React.FC = () => {
           <AccordionSummary
             aria-controls="about-panel-content"
             id="about-header"
-            customStyles={{ backgroundColor: "red" }}
+            customStyles={{ backgroundColor: "#bae6fd" }}
           >
             <Typography className="square-button">ABOUT US</Typography>
           </AccordionSummary>
-          <AccordionDetails customStyles={{}}>
+          <AccordionDetails customStyles={{ backgroundColor: "#bae6fd" }}>
             <Typography>
               For almost two decades, Nashville-based Mother To Mother has been
               working to ensure children in our community have access to three
@@ -99,11 +99,11 @@ const Home: React.FC = () => {
           <AccordionSummary
             aria-controls="impact-panel-content"
             id="impact-header"
-            customStyles={{ backgroundColor: "turquoise" }}
+            customStyles={{ backgroundColor: "#f5f5f5" }}
           >
             <Typography className="square-button">IMPACT</Typography>
           </AccordionSummary>
-          <AccordionDetails customStyles={{}}>
+          <AccordionDetails customStyles={{ backgroundColor: "#f5f5f5" }}>
             <Typography>
               For almost two decades, Nashville-based Mother To Mother has been
               working to ensure children in our community have access to three
@@ -122,11 +122,11 @@ const Home: React.FC = () => {
           <AccordionSummary
             aria-controls="contact-panel-content"
             id="contact-header"
-            customStyles={{ backgroundColor: "pinks" }}
+            customStyles={{ backgroundColor: "#bbf7d0" }}
           >
             <Typography className="square-button">CONTACT & HOURS</Typography>
           </AccordionSummary>
-          <AccordionDetails customStyles={{}}>
+          <AccordionDetails customStyles={{ backgroundColor: "#bbf7d0" }}>
             <Typography>
               For almost two decades, Nashville-based Mother To Mother has been
               working to ensure children in our community have access to three
@@ -145,11 +145,11 @@ const Home: React.FC = () => {
           <AccordionSummary
             aria-controls="donate-panel-content"
             id="donate-header"
-            customStyles={{ backgroundColor: "blue" }}
+            customStyles={{ backgroundColor: "#dcfce7" }}
           >
             <Typography className="square-button">Donate</Typography>
           </AccordionSummary>
-          <AccordionDetails customStyles={{}}>
+          <AccordionDetails customStyles={{ backgroundColor: "#dcfce7" }}>
             <Typography>
               For almost two decades, Nashville-based Mother To Mother has been
               working to ensure children in our community have access to three
