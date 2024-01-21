@@ -54,7 +54,7 @@ const DemographicSection: React.FC<DemographicSectionProps> = ({
     <>
       <CssBaseline />
       <ThemeProvider theme={PrimaryMainTheme}>
-        <Box width="100%" onClick={handlePanelChange}>
+        <Box width="100%">
           <Box width="100%" onClick={handlePanelChange}>
             {/* Header of Demographic Section */}
             <Grid container spacing={2}>
