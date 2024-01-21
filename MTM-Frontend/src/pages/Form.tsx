@@ -49,7 +49,12 @@ const Form: React.FC = () => {
   };
   return (
     // Top of Outgoing Donations Form
-    <Stack direction="column" alignItems="center" spacing={2}>
+    <Stack
+      direction="column"
+      alignItems="center"
+      spacing={2}
+      style={{ marginTop: "50px" }}
+    >
       <Typography
         fontSize="25px"
         fontWeight="700"
