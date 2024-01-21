@@ -51,7 +51,7 @@ const AccordionDetails = styled(
 
 const Home: React.FC = () => {
   const [showContact, setShowContact] = useState<boolean>(false);
-  const [expanded, setExpanded] = useState<string | false>("panel1");
+  const [expanded, setExpanded] = useState<string | false>("about us");
 
   const toggleContact = () => {
     setShowContact(!showContact);
