@@ -4,9 +4,11 @@ import Navbar from "../../components/NavigationBar/BottomNavbar";
 import { TopBar } from "../../components/NavigationBar/TopBar";
 import { getUserData } from "../../lib/services";
 import { useAuth } from "../../contexts/AuthContext";
+import { Outlet, useLocation } from "react-router-dom";
 
 export const HomeLayout: React.FC = () => {
   const location = useLocation();
+  const isFormRoute = location.pathname.startsWith("/home/form/specificItem");
   const isHomeIndex = location.pathname === "/home";
   const { currentUser } = useAuth();
 
