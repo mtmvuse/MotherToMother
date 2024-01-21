@@ -45,17 +45,19 @@ export const Navbar: React.FC = () => {
             value={"/home/profile"}
             icon={<PersonOutlineOutlinedIcon />}
           />
-          <BottomNavigationAction
-            sx={{ flexGrow: 1 }}
-            value={"/home/form"}
-            icon={
-              <SvgIcon
-                sx={{ bgcolor: "#F5F5F5", alignItems: "center" }}
-                component={DonationIcon}
-                inheritViewBox
-              />
-            }
-          />
+          {localStorage.getItem("userType") != "Public Donor" && (
+            <BottomNavigationAction
+              sx={{ flexGrow: 1 }}
+              value={"/home/form"}
+              icon={
+                <SvgIcon
+                  sx={{ bgcolor: "#F5F5F5", alignItems: "center" }}
+                  component={DonationIcon}
+                  inheritViewBox
+                />
+              }
+            />
+          )}
         </BottomNavigation>
         {isMobile && <div className="navbar-spacer"></div>}
       </Box>
@@ -64,4 +66,3 @@ export const Navbar: React.FC = () => {
 };
 
 export default Navbar;
-

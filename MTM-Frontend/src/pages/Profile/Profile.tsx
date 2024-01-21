@@ -47,6 +47,7 @@ const Profile: React.FC = () => {
   }, []);
 
   const handleLogout = () => {
+    localStorage.removeItem("userType");
     void logout();
     navigate("/");
   };
