@@ -49,11 +49,28 @@ const Form: React.FC = () => {
   };
   return (
     // Top of Outgoing Donations Form
-    <Stack direction="column" alignItems="center" spacing={2}>
-      <Typography fontSize="25px" fontWeight="700">
+    <Stack
+      direction="column"
+      alignItems="center"
+      spacing={2}
+      style={{ marginTop: "50px" }}
+    >
+      <Typography
+        fontSize="25px"
+        fontWeight="700"
+        style={{ fontFamily: "Raleway, sans-serif", color: "var(--mtmNavy)" }}
+      >
         Outgoing Donations
       </Typography>
-      <Typography fontSize="15px" style={{ textAlign: "center" }}>
+      <Typography
+        fontSize="15px"
+        style={{
+          textAlign: "center",
+          fontFamily: "Raleway, sans-serif",
+          fontWeight: "400",
+          color: "var(--mtmGray)",
+        }}
+      >
         Select the categories and item types of resources that you would like to
         donate
       </Typography>
@@ -81,12 +98,13 @@ const Form: React.FC = () => {
             type="submit"
             variant="outlined"
             sx={{
-              backgroundColor: "#A4A4A4",
+              fontFamily: "Interit, sans-serif",
+              fontSize: "15px",
+              fontWeight: "800",
+              backgroundColor: "var(--mtmNavy)",
               color: "white",
-              fontSize: 15,
-              border: "1px solid #c1c1c1",
-              borderRadius: 2,
               height: "32px",
+              width: "87px",
             }}
             disabled={isLoading}
           >
@@ -96,12 +114,13 @@ const Form: React.FC = () => {
             type="button"
             variant="outlined"
             sx={{
-              backgroundColor: "white",
-              color: "#A4A4A4",
-              fontSize: 15,
-              border: "1px solid #A4A4A4",
-              borderRadius: 2,
+              fontFamily: "Interit, sans-serif",
+              fontSize: "15px",
+              fontWeight: "800",
+              border: "var(--mtmNavy) 1px solid",
+              color: "var(--mtmNavy)",
               height: "32px",
+              width: "87px",
             }}
           >
             Save

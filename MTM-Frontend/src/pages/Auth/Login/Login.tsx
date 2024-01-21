@@ -94,12 +94,17 @@ const Login: React.FC = () => {
 
           <div className={"input-container"}>
             <button className="login-button" type="submit" color="primary">
-              {isSubmitting ? "Submitting" : "Login"}
+              {isSubmitting ? "Submitting" : "LOGIN"}
             </button>
             <Typography>
               <Link
                 to="/register"
-                style={{ color: "gray", textDecoration: "none" }}
+                style={{
+                  color: "gray",
+                  textDecoration: "none",
+                  fontFamily: "Raleway, sans-serif",
+                  fontSize: "15px",
+                }}
               >
                 <span style={{ fontWeight: "normal" }}>
                   Don't have an account?

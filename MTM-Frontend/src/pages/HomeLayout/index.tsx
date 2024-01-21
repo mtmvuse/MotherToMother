@@ -1,5 +1,4 @@
-import styles from "./index.module.css";
-import { Outlet, useLocation } from "react-router-dom";
+import React from "react";
 import { Container } from "@mui/material";
 import Navbar from "../../components/NavigationBar/BottomNavbar";
 import { TopBar } from "../../components/NavigationBar/TopBar";
@@ -38,9 +37,9 @@ export const HomeLayout: React.FC = () => {
   }
 
   return (
-    <Container className={styles.container} sx={isHomeIndex ? { px: 0 } : {}}>
-      <TopBar />
-      <Container className={styles.content} sx={isHomeIndex ? { px: 0 } : {}}>
+    <Container>
+      {isFormRoute && <TopBar />}{" "}
+      <Container>
         <Outlet />
       </Container>
       <Navbar />

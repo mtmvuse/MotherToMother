@@ -1,10 +1,3 @@
-/* Login.css */
-
-@font-face {
-  font-family: Raleway;
-  src: url("MTM-Frontend/src/pages/assets/Inter-VariableFont_slnt,wght.ttf");
-}
-
 .login-container {
   display: flex;
   flex-direction: column;
@@ -16,16 +9,17 @@
 }
 
 .animal-image {
-  position: absolute; /* Position this element absolutely */
-  bottom: 0; /* Align it to the bottom of the login-container */
+  position: absolute; 
+  bottom: 0; 
 }
 
 .login-container .heading {
-  margin-top: 40px;
+  margin-top: 100px;
   font-family: Inter, sans-serif;
   font-size: 30px;
   font-weight: 700;
   margin-bottom: 20px;
+  color: var(--mtmNavy);
 }
 
 .login-form-container {
@@ -49,7 +43,7 @@
   border-radius: 40px;
   width: 100%;
   height: 35px;
-  font-family: Inter, sans-serif;
+  font-family: Raleway, sans-serif;
   font-size: 15px;
   font-weight: 400;
   text-indent: 15px;
@@ -62,7 +56,7 @@
 }
 
 .link {
-  font-family: Inter, sans-serif;
+  font-family: Raleway, sans-serif;
   font-size: 15px;
   font-weight: 400;
   color: #6d6d6d;
@@ -121,14 +115,14 @@
 .login-container .login-button {
   margin-top: 50px;
   margin-bottom: 40px;
-  border-radius: 30px;
   width: 210px;
   height: 43px;
   align-items: center;
-  background: #d9d9d9;
+  background: var(--mtmNavy);
   font-family: Inter, sans-serif;
   font-size: 20px;
-  font-weight: 400;
+  font-weight: 300;
+  color: #ffffff;
   text-align: center;
   border: none;
   cursor: pointer;

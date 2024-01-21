@@ -7,7 +7,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%;
+  margin: -32px;
 }
 
 .logo-image {
@@ -37,7 +37,7 @@ body {
   height: 84px;
   margin-bottom: 10px;
   border: none;
-  background-color: #279f00;
+  /* background-color: #279f00; */
   color: #fff;
   font-size: 16px;
   font-family: Inter, sans-serif;
@@ -47,13 +47,13 @@ body {
   color: black;
 }
 
-.square-button:active {
+/* .square-button:active {
   background-color: #84c778;
 }
 
 .square-button:hover {
   background-color: #84c778;
-}
+} */
 
 .contact-popup {
   position: fixed;
