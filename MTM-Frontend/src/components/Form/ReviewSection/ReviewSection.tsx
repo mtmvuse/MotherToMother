@@ -15,11 +15,17 @@ import { useForm } from "../../../contexts/FormContext";
 
 interface ReviewSectionProps {
   step: number;
+  currPanel: string;
+  setCurrPanel: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const ReviewSection = (props: ReviewSectionProps) => {
   const { donationDetails } = useForm();
   const [isEditMode, setisEditMode] = useState(false);
+
+  const handlePanelChange = () => {
+    props.setCurrPanel("ReviewSection");
+  };
 
   const handleEdit = () => {
     setisEditMode(true);
@@ -41,7 +47,7 @@ const ReviewSection = (props: ReviewSectionProps) => {
     <>
       <CssBaseline />
       <ThemeProvider theme={PrimaryMainTheme}>
-        <Box width="85%">
+        <Box width="100%" onClick={handlePanelChange}>
           {/* Header of Review Section */}
           <FormHeader number={props.step} header="Review" />
 
@@ -63,61 +69,66 @@ const ReviewSection = (props: ReviewSectionProps) => {
             />
             <Typography variant="body1"> items are in your form </Typography>
           </Stack>
-          {getDonationCategories().map((category, i) => (
-            <ReviewSectionCategory
-              key={i}
-              categoryName={category}
-              isEditMode={isEditMode}
-            />
-          ))}
         </Box>
-        {!isEditMode && (
-          <Button
-            variant="outlined"
-            sx={{ fontSize: 15, height: "33px" }}
-            onClick={handleEdit}
-            style={{
-              marginTop: "5%",
-              backgroundColor: "white",
-              color: "#A4A4A4",
-              fontSize: 15,
-              border: "1px solid #A4A4A4",
-              borderRadius: "10px",
-              height: "32px",
-            }}
-          >
-            Edit
-          </Button>
-        )}
-        {isEditMode && (
-          <Stack direction="row" spacing={3} marginTop="50px">
-            <Button
-              variant="outlined"
-              sx={{ fontSize: 15, height: "33px" }}
-              color="primary"
-              onClick={handleSave}
-              style={{
-                marginTop: "0",
-                backgroundColor: "#A4A4A4",
-                color: "white",
-                fontSize: 15,
-                border: "1px solid #c1c1c1",
-                borderRadius: "10px",
-                height: "32px",
-                width: "87px",
-              }}
-            >
-              Save
-            </Button>
-            <Button
-              variant="outlined"
-              sx={{ fontSize: 15, height: "33px" }}
-              onClick={handleCancel}
-              style={{ marginTop: "0" }}
-            >
-              Cancel
-            </Button>
-          </Stack>
+
+        {props.currPanel === "ReviewSection" && (
+          <>
+            {getDonationCategories().map((category, i) => (
+              <ReviewSectionCategory
+                key={i}
+                categoryName={category}
+                isEditMode={isEditMode}
+              />
+            ))}
+            {!isEditMode && (
+              <Button
+                variant="outlined"
+                sx={{ fontSize: 15, height: "33px" }}
+                onClick={handleEdit}
+                style={{
+                  marginTop: "5%",
+                  backgroundColor: "white",
+                  color: "#A4A4A4",
+                  fontSize: 15,
+                  border: "1px solid #A4A4A4",
+                  borderRadius: "10px",
+                  height: "32px",
+                }}
+              >
+                Edit
+              </Button>
+            )}
+            {isEditMode && (
+              <Stack direction="row" spacing={3} marginTop="50px">
+                <Button
+                  variant="outlined"
+                  sx={{ fontSize: 15, height: "33px" }}
+                  color="primary"
+                  onClick={handleSave}
+                  style={{
+                    marginTop: "0",
+                    backgroundColor: "#A4A4A4",
+                    color: "white",
+                    fontSize: 15,
+                    border: "1px solid #c1c1c1",
+                    borderRadius: "10px",
+                    height: "32px",
+                    width: "87px",
+                  }}
+                >
+                  Save
+                </Button>
+                <Button
+                  variant="outlined"
+                  sx={{ fontSize: 15, height: "33px" }}
+                  onClick={handleCancel}
+                  style={{ marginTop: "0" }}
+                >
+                  Cancel
+                </Button>
+              </Stack>
+            )}
+          </>
         )}
       </ThemeProvider>
     </>

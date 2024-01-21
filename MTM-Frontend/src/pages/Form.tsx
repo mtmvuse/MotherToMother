@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Typography, Stack, Button } from "@mui/material";
-
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ReviewSection from "../components/Form/ReviewSection/ReviewSection";
 import DemographicSection from "../components/Form/DemographicSection/DemographicSection";
 import GeneralSection from "../components/Form/GeneralSection";
@@ -14,6 +14,7 @@ const Form: React.FC = () => {
   const { logout, currentUser } = useAuth();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [currPanel, setCurrPanel] = useState<string>("GeneralSection");
 
   const onSubmit = async () => {
     setIsLoading(true); // Disables the submit button.
@@ -57,7 +58,6 @@ const Form: React.FC = () => {
         Select the categories and item types of resources that you would like to
         donate
       </Typography>
-
       {/* body of the form calls each component, general section,
       review section and demographic */}
       <Stack
@@ -71,9 +71,56 @@ const Form: React.FC = () => {
         }}
       >
         {/* All form components */}
-        <GeneralSection step={1} />
-        <ReviewSection step={2} />
-        <DemographicSection />
+        <div
+          style={{
+            filter: `${
+              currPanel !== "GeneralSection"
+                ? "grayscale(100%) opacity(50%)"
+                : ""
+            }`,
+            width: "85%",
+          }}
+        >
+          <GeneralSection
+            step={1}
+            currPanel={currPanel}
+            setCurrPanel={setCurrPanel}
+          />
+        </div>
+
+        <div
+          style={{
+            filter: `${
+              currPanel !== "ReviewSection"
+                ? "grayscale(100%) opacity(50%)"
+                : ""
+            }`,
+            width: "85%",
+          }}
+        >
+          <ReviewSection
+            step={2}
+            currPanel={currPanel}
+            setCurrPanel={setCurrPanel}
+          />
+        </div>
+
+        <div
+          style={{
+            filter: `${
+              currPanel !== "DemographicSection"
+                ? "grayscale(100%) opacity(50%)"
+                : ""
+            }`,
+            width: "85%",
+          }}
+        >
+          <DemographicSection
+            currPanel={currPanel}
+            setCurrPanel={setCurrPanel}
+          />
+        </div>
+
         <ErrorMessage error={error} setError={setError} />
         <Stack justifyContent="center" direction="row" spacing={3}>
           <Button
