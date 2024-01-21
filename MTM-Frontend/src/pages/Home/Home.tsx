@@ -1,53 +1,11 @@
 import React, { useState } from "react";
 import m2m_logo from "../../pages/assets/m2m_logo.png";
 import "./Home.css";
-
-import { styled } from "@mui/material/styles";
-import MuiAccordion, { AccordionProps } from "@mui/material/Accordion";
-import MuiAccordionSummary, {
-  AccordionSummaryProps,
-} from "@mui/material/AccordionSummary";
-import MuiAccordionDetails, {
-  AccordionDetailsProps,
-} from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
 
-// Add common styles shared between all inside these variables.
-// I added a customStyles that you can indivdually edit the components
-// it is an object similar to styles={{}}
-interface AccordionSummaryStyledProps extends AccordionSummaryProps {
-  customStyles?: React.CSSProperties;
-}
-
-interface AccordionStyledProps extends AccordionProps {
-  customStyles?: React.CSSProperties;
-}
-
-interface AccordionDetailsStyledProps extends AccordionDetailsProps {
-  customStyles?: React.CSSProperties;
-}
-
-const Accordion = styled(({ customStyles, ...props }: AccordionStyledProps) => (
-  <MuiAccordion disableGutters elevation={0} square {...props} />
-))(({ theme }) => ({}));
-
-const AccordionSummary = styled(
-  ({ customStyles, ...props }: AccordionSummaryStyledProps) => (
-    <MuiAccordionSummary {...props} />
-  ),
-)(({ theme, customStyles }) => ({
-  padding: 0,
-  ...customStyles,
-}));
-
-const AccordionDetails = styled(
-  ({ customStyles, ...props }: AccordionDetailsStyledProps) => (
-    <MuiAccordionDetails {...props} />
-  ),
-)(({ theme, customStyles }) => ({
-  // Your default styles here
-  ...customStyles,
-}));
+import { Accordion } from "~/components/Form/Accordions/Accordion";
+import { AccordionSummary } from "~/components/Form/Accordions/AccordionSummary";
+import { AccordionDetails } from "~/components/Form/Accordions/AccordionDetails";
 
 const Home: React.FC = () => {
   const [showContact, setShowContact] = useState<boolean>(false);
