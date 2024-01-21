@@ -12,6 +12,7 @@ import { ReviewSectionCategory } from "./ReviewSectionCategory";
 import NumberInCircle from "./NumberInCircle";
 import FormHeader from "../FormHeader";
 import { useForm } from "../../../contexts/FormContext";
+import { BorderClear } from "@mui/icons-material";
 
 interface ReviewSectionProps {
   step: number;
@@ -80,54 +81,61 @@ const ReviewSection = (props: ReviewSectionProps) => {
                 isEditMode={isEditMode}
               />
             ))}
-            {!isEditMode && (
-              <Button
-                variant="outlined"
-                sx={{ fontSize: 15, height: "33px" }}
-                onClick={handleEdit}
-                style={{
-                  marginTop: "5%",
-                  backgroundColor: "white",
-                  color: "#A4A4A4",
-                  fontSize: 15,
-                  border: "1px solid #A4A4A4",
-                  borderRadius: "10px",
-                  height: "32px",
-                }}
-              >
-                Edit
-              </Button>
-            )}
-            {isEditMode && (
-              <Stack direction="row" spacing={3} marginTop="50px">
+            <Box
+              width="100%"
+              display="flex"
+              justifyContent="center"
+              marginBottom={2}
+            >
+              {!isEditMode && (
                 <Button
                   variant="outlined"
                   sx={{ fontSize: 15, height: "33px" }}
-                  color="primary"
-                  onClick={handleSave}
+                  onClick={handleEdit}
                   style={{
-                    marginTop: "0",
-                    backgroundColor: "#A4A4A4",
-                    color: "white",
+                    marginTop: "5%",
+                    backgroundColor: "white",
+                    color: "#A4A4A4",
                     fontSize: 15,
-                    border: "1px solid #c1c1c1",
+                    border: "1px solid #A4A4A4",
                     borderRadius: "10px",
                     height: "32px",
-                    width: "87px",
                   }}
                 >
-                  Save
+                  Edit
                 </Button>
-                <Button
-                  variant="outlined"
-                  sx={{ fontSize: 15, height: "33px" }}
-                  onClick={handleCancel}
-                  style={{ marginTop: "0" }}
-                >
-                  Cancel
-                </Button>
-              </Stack>
-            )}
+              )}
+              {isEditMode && (
+                <Stack direction="row" spacing={3} marginTop="50px">
+                  <Button
+                    variant="outlined"
+                    sx={{ fontSize: 15, height: "33px" }}
+                    color="primary"
+                    onClick={handleSave}
+                    style={{
+                      marginTop: "0",
+                      backgroundColor: "#A4A4A4",
+                      color: "white",
+                      fontSize: 15,
+                      border: "1px solid #c1c1c1",
+                      borderRadius: "10px",
+                      height: "32px",
+                      width: "87px",
+                    }}
+                  >
+                    Save
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    sx={{ fontSize: 15, height: "33px" }}
+                    onClick={handleCancel}
+                    style={{ marginTop: "0" }}
+                  >
+                    Cancel
+                  </Button>
+                </Stack>
+              )}
+            </Box>
           </>
         )}
       </ThemeProvider>
