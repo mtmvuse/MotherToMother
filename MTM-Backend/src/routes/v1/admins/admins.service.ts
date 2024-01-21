@@ -37,7 +37,17 @@ export const getAdminEmail = async (
 
 export const createAdmin = async (
   admin: AdminInputNoID,
-): Promise<AdminType> => {
+): Promise<AdminType | null> => {
+  // if email is already in use, throw an error
+  const existingAdmin = await db.admin.findUnique({
+    where: {
+      email: admin.email,
+    },
+  });
+  if (existingAdmin) {
+    return null;
+  }
+
   const newAdmin: AdminType = await db.admin.create({
     data: {
       name: admin.name,

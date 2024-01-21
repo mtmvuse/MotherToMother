@@ -34,6 +34,7 @@ adminsRouter.get(
       }
       return res.status(200).json(admin);
     } catch (e) {
+      console.error(e);
       next(e);
     }
   },
@@ -48,13 +49,17 @@ adminsRouter.post(
     const schema = Joi.object({
       name: Joi.string().required(),
       email: Joi.string().required(),
-      role: Joi.number().required(),
+      role: Joi.string().required(),
     });
     try {
       const data = (await schema.validateAsync(req.body)) as AdminInputNoID;
       const item = await AdminService.createAdmin(data);
+      if (!item) {
+        return res.status(400).json({ error: "Admin already exists" });
+      }
       return res.status(201).json(item);
     } catch (e) {
+      console.error(e);
       next(e);
     }
   },
@@ -74,8 +79,8 @@ adminsRouter.put(
     next: NextFunction,
   ) => {
     const schema = Joi.object({
-      name: Joi.string(),
-      role: Joi.number(),
+      name: Joi.string().required(),
+      role: Joi.string().required(),
     });
 
     const email = req.query.email;
@@ -90,6 +95,7 @@ adminsRouter.put(
 
       res.status(200).send("Admin type updated successfully");
     } catch (e) {
+      console.error(e);
       next(e);
     }
   },
