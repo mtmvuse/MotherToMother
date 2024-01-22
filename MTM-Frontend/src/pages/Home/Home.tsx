@@ -1,64 +1,77 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useAuth } from "../../contexts/AuthContext";
+import { getUserData } from "../../lib/services";
+import type { UserType } from "../../types/UserTypes";
 import m2m_logo from "../../pages/assets/m2m_logo.png";
+import m2m_animal from "../assets/animal_logo.png";
 import "./Home.css";
+import { AboutUsAccordion } from "../../components/Accordions/AboutUsAccordion";
+import { ImpactAccordion } from "../../components/Accordions/ImpactAccordion";
+import { ContactUsAccordion } from "../../components/Accordions/ContactUsAccordion";
+import { DonateAccordion } from "../../components/Accordions/DonateAccordion";
 
 const Home: React.FC = () => {
-  const [showContact, setShowContact] = useState<boolean>(false);
+  const [expanded, setExpanded] = useState<string | false>("");
+  const [user, setUser] = useState<UserType | null>(null);
+  const { currentUser } = useAuth();
 
-  const toggleContact = () => {
-    setShowContact(!showContact);
-  };
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        if (!currentUser) {
+          throw new Error("Current user not found");
+        }
+        const token = await currentUser.getIdToken();
+
+        const userEmail = currentUser.email;
+        if (!userEmail) {
+          throw new Error("User email not found");
+        }
+
+        const response = await getUserData(userEmail, token);
+        if (!response.ok) {
+          throw new Error("Error fetching user");
+        }
+
+        const userData = (await response.json()) as UserType;
+        setUser(userData);
+      } catch (error) {
+        const err = error as Error;
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  const handleChange =
+    (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
+      setExpanded(newExpanded ? panel : false);
+    };
 
   return (
     <div className={"main-container"}>
       <div className={"logo-image"}>
         <img className="m2m_logo" src={m2m_logo} alt="m2m_logo" />
       </div>
-      <div className="button-column">
-        <a
-          href="https://www.mothertomother.org/aboutmothertomother"
-          target="_blank"
-          className="square-button"
-        >
-          ABOUT US
-        </a>
 
-        <a
-          href="https://www.mothertomother.org/suppliesweneed"
-          target="_blank"
-          className="square-button"
-        >
-          DONATE
-        </a>
-
-        <button className="square-button" onClick={toggleContact}>
-          CONNECT
-        </button>
-
-        {showContact && (
-          <div className="contact-popup">
-            <div className="contact-content">
-              <span className="close-btn" onClick={toggleContact}>
-                &times;
-              </span>
-              <h2>Contact Us</h2>
-              <h4>Phone</h4>
-              <p>615-540-7000</p>
-              <h4>Email</h4>
-              <p>info@mothertomother.org</p>
-              <h4>Address</h4>
-              <p>478 Allied Drive Suite 104 & 105</p>
-              <p>Nashville, TN 37211</p>
-            </div>
+      {!expanded && (
+        <div>
+          <h1 className="welcome-text">Welcome, {user?.firstName}!</h1>
+          <div className={"welcome-container"}>
+            <p className="info-text">
+              Give children in need the gift of health and wellness.
+            </p>
+            <img className="m2m_animal" src={m2m_animal} alt="m2m_animal" />
           </div>
-        )}
-      </div>
-      <div className="hours-container">
-        <div className="hours-section">
-          <h2>Warehouse Hours</h2>
-          <p>Monday - Thursday: 1:00pm - 4:30pm</p>
         </div>
-      </div>
+      )}
+      <AboutUsAccordion expanded={expanded} handleChange={handleChange} />
+
+      <ImpactAccordion expanded={expanded} handleChange={handleChange} />
+
+      <ContactUsAccordion expanded={expanded} handleChange={handleChange} />
+
+      <DonateAccordion expanded={expanded} handleChange={handleChange} />
     </div>
   );
 };

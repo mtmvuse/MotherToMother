@@ -16,7 +16,7 @@ function NumberInCircle(props: NumberInCircleProps) {
     : "white";
   const color = props.color ? props.color : "black";
   const width = props.width ? props.width : "34px";
-  const borderWidth = props.borderWidth ? props.borderWidth : "1.5px";
+  const borderWidth = props.borderWidth ? props.borderWidth : "1px";
   const height = props.height ? props.height : "34px";
 
   return (
@@ -30,6 +30,7 @@ function NumberInCircle(props: NumberInCircleProps) {
       alignItems="center"
       bgcolor={backgroundColor}
       color={color}
+      borderColor={color}
     >
       <Typography variant="h6">{props.num}</Typography>
     </Box>

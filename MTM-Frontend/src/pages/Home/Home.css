@@ -7,24 +7,36 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%;
+  margin: -32px;
 }
 
 .logo-image {
   display: flex;
   margin-top: 90px;
+  margin-bottom: 50px;
 }
 .logo-image img {
   max-width: 100%;
   height: auto;
 }
 
-.button-column {
-  margin-top: 50px;
-  margin-bottom: 50px;
+.welcome-container {
   display: flex;
-  flex-direction: column;
-  width: 100%;
+}
+.welcome-text {
+  font-family: Raleway, sans-serif;
+  font-weight: 700;
+}
+.info-text {
+  font-family: Raleway, sans-serif;
+  font-weight: 400;
+  color: var(--mtmNavy);
+  width: 150px;
+}
+.m2m_animal {
+  width: 100px;
+  height: auto;
+  margin-left: 20px;
 }
 
 .square-button {
@@ -34,10 +46,9 @@ body {
   align-items: center;
 
   width: 100%;
-  height: 84px;
+  height: 70px;
   margin-bottom: 10px;
   border: none;
-  background-color: #279f00;
   color: #fff;
   font-size: 16px;
   font-family: Inter, sans-serif;
@@ -46,39 +57,6 @@ body {
   margin: 0;
   color: black;
 }
-
-.square-button:active {
-  background-color: #84c778;
-}
-
-.square-button:hover {
-  background-color: #84c778;
-}
-
-.contact-popup {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: #fff;
-  padding: 20px;
-  border: 2px solid #279f00;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-  z-index: 999;
-  text-align: center;
-  width: 300px;
-  border-radius: 10px;
-}
-
-.close-btn {
-  position: absolute;
-  top: 5px;
-  right: 10px;
-  cursor: pointer;
-  font-size: 24px;
-  color: #279f00;
-}
-
 .contact-content h2 {
   margin-bottom: 15px;
   color: #333;

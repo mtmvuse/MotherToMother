@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Typography, Stack, Button } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ReviewSection from "../components/Form/ReviewSection/ReviewSection";
 import DemographicSection from "../components/Form/DemographicSection/DemographicSection";
 import GeneralSection from "../components/Form/GeneralSection";
@@ -10,8 +9,13 @@ import { createOutgoingDonation } from "../lib/services";
 import { ErrorMessage } from "../components/Error";
 
 const Form: React.FC = () => {
-  const { demographicDetails, donationDetails } = useForm();
-  const { logout, currentUser } = useAuth();
+  const {
+    demographicDetails,
+    donationDetails,
+    setDemographicDetails,
+    setDonationDetails,
+  } = useForm();
+  const { currentUser } = useAuth();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [currPanel, setCurrPanel] = useState<string>("GeneralSection");
@@ -40,21 +44,53 @@ const Form: React.FC = () => {
         ...demographicDetails,
       };
 
-      await createOutgoingDonation(token, request);
+      const response = await createOutgoingDonation(token, request);
+      if (!response.ok) {
+        throw new Error("Error submitting form. Please try again");
+      }
+      // reset form
+      setDemographicDetails({
+        whiteNum: 0,
+        blackNum: 0,
+        latinoNum: 0,
+        nativeNum: 0,
+        asianNum: 0,
+        otherNum: 0,
+        numberServed: 0,
+      });
+      setDonationDetails([]);
+      navigate("/home/form/success");
     } catch (error) {
       const err = error as Error;
       setError(err.message);
     } finally {
-      setIsLoading(false); // Enables the submit button
+      setIsLoading(false);
     }
   };
   return (
     // Top of Outgoing Donations Form
-    <Stack direction="column" alignItems="center" spacing={2}>
-      <Typography fontSize="25px" fontWeight="700">
+    <Stack
+      direction="column"
+      alignItems="center"
+      spacing={2}
+      style={{ marginTop: "50px" }}
+    >
+      <Typography
+        fontSize="25px"
+        fontWeight="700"
+        style={{ fontFamily: "Raleway, sans-serif", color: "var(--mtmNavy)" }}
+      >
         Outgoing Donations
       </Typography>
-      <Typography fontSize="15px" style={{ textAlign: "center" }}>
+      <Typography
+        fontSize="15px"
+        style={{
+          textAlign: "center",
+          fontFamily: "Raleway, sans-serif",
+          fontWeight: "400",
+          color: "var(--mtmGray)",
+        }}
+      >
         Select the categories and item types of resources that you would like to
         donate
       </Typography>
@@ -126,29 +162,33 @@ const Form: React.FC = () => {
           <Button
             onClick={onSubmit}
             type="submit"
+            component={Link}
+            to="/home/form/success"
             variant="outlined"
             sx={{
-              backgroundColor: "#A4A4A4",
+              fontFamily: "Interit, sans-serif",
+              fontSize: "15px",
+              fontWeight: "800",
+              backgroundColor: "var(--mtmNavy)",
               color: "white",
-              fontSize: 15,
-              border: "1px solid #c1c1c1",
-              borderRadius: 2,
               height: "32px",
+              width: "87px",
             }}
             disabled={isLoading}
           >
-            Submit
+            SUBMIT
           </Button>
           <Button
             type="button"
             variant="outlined"
             sx={{
-              backgroundColor: "white",
-              color: "#A4A4A4",
-              fontSize: 15,
-              border: "1px solid #A4A4A4",
-              borderRadius: 2,
+              fontFamily: "Interit, sans-serif",
+              fontSize: "15px",
+              fontWeight: "800",
+              border: "var(--mtmNavy) 1px solid",
+              color: "var(--mtmNavy)",
               height: "32px",
+              width: "87px",
             }}
           >
             Save

@@ -1,0 +1,61 @@
+/* About Us Accordion Part */
+#about-us{
+  color: #004A7C;
+}
+
+#about-us-accordion-text-1{
+  line-height: 21.13px;
+  font-weight: 400;
+  text-align: justify;
+  margin-bottom: -15px;
+}
+
+#about-us-accordion-text-2{
+  color: white;
+  font-size: 15px;
+  line-height: 17.61px;
+  font-weight: 400;
+  text-align: justify;
+}
+
+.about-us-item{
+  font-weight: 400;
+}
+
+/* Imapct Accordion Part */
+#impact-accordion-main-text {
+  width: 100%;
+  justify-content: center;
+  display: flex;
+  line-height: 17.61px;
+  font-size: 15px;
+  font-weight: 400;
+  color: #004A7C;
+}
+
+#impact-stats-title {
+  text-align: center;
+  font-size: 18px;
+  color: #004A7C;
+  font-weight: 700;
+}
+
+#impact-stats-subtitle {
+  text-align: center;
+  font-size: 12px;
+  color: #004A7C;
+  font-weight: 400;
+  line-height: 14.09px;
+}
+
+#impact-stats-stack {
+  justify-content: center;
+  width: 83%;
+  margin-bottom: 20px;
+}
+
+.square-button {
+  color: #004A7C;
+  font-size: 15px;
+  font-weight: 400;
+}

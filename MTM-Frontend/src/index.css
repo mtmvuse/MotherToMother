@@ -1,3 +1,18 @@
 :root {
-  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+  @font-face {
+    font-family: Inter;
+    src: url("MTM-Frontend/src/pages/assets/Inter-VariableFont_slnt,wght.ttf");
+  }
+
+  @font-face {
+    font-family: Raleway;
+    src: url("MTM-Frontend/src/pages/assets/Raleway-VariableFont_slnt,wght.ttf");
+  }
+
+  --mtmNavy: #004a7c;
+  --mtmLightBlue: #eef4f8;
+  --mtmDarkGreen: #4dad45;
+  --mtmLightGreen: #84c778;
+  --mtmLightGray: #a4a4a4;
+  --mtmGray: #6D6D6D
 }

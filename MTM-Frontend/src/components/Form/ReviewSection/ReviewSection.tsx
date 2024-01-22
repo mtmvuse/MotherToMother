@@ -61,7 +61,7 @@ const ReviewSection = (props: ReviewSectionProps) => {
           >
             <NumberInCircle
               num={donationDetails.length}
-              backgroundColor="#6D6D6D"
+              backgroundColor="var(--mtmNavy)"
               color="white"
               borderRaduis="10px"
               width="50px"
