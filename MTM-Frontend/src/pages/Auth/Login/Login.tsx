@@ -11,6 +11,8 @@ import "./Login.css";
 import m2m_logo from "../../assets/m2m_logo.png";
 import animal_logo from "../../assets/animal_logo.png";
 
+import { getUserData } from "../../../lib/services";
+
 interface FormValues {
   email: string;
   password: string;
@@ -26,6 +28,30 @@ const schema = Yup.object().shape({
 const Login: React.FC = () => {
   const { login, currentUser } = useAuth();
   const navigate = useNavigate();
+
+  const storeUserType = async () => {
+    try {
+      const token = await currentUser?.getIdToken();
+      if (!currentUser) {
+        throw new Error("Failed to fetch user data");
+      }
+      const userEmail = currentUser.email;
+      if (!userEmail) {
+        throw new Error("User email not found");
+      }
+      const response = await getUserData(userEmail, token);
+      if (!response.ok) {
+        throw new Error("Error fetching user");
+      }
+      const userData = await response.json();
+      localStorage.setItem("userType", userData.userType);
+      // console.log(localStorage.getItem("userType"));
+    } catch (error: any) {
+      console.error("Error fetching user:", error);
+    }
+  };
+
+  // storeUserType();
 
   const {
     handleSubmit,
@@ -47,6 +73,7 @@ const Login: React.FC = () => {
     try {
       setError("");
       await login(data.email, data.password);
+      storeUserType();
       navigate("/home");
     } catch (err: any) {
       setError(err.message);
