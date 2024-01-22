@@ -38,13 +38,6 @@ const ContactUsAccordion: React.FC<ContactUsAccordionProps> = ({
             subsidies and charitable support:​ diapers car seats a safe place to
             sleep
           </Typography>
-
-          <div className="hours-container">
-            <div className="hours-section">
-              <h2>Warehouse Hours</h2>
-              <p>Monday - Thursday: 1:00pm - 4:30pm</p>
-            </div>
-          </div>
         </AccordionDetails>
       </Accordion>
     </>
