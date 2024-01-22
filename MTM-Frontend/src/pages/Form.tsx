@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Typography, Stack, Button } from "@mui/material";
+import { Link, useNavigate } from "react-router-dom";
 import ReviewSection from "../components/Form/ReviewSection/ReviewSection";
 import DemographicSection from "../components/Form/DemographicSection/DemographicSection";
 import GeneralSection from "../components/Form/GeneralSection";
@@ -18,6 +19,7 @@ const Form: React.FC = () => {
   const { currentUser } = useAuth();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
   const [currPanel, setCurrPanel] = useState<string>("GeneralSection");
 
   const onSubmit = async () => {
