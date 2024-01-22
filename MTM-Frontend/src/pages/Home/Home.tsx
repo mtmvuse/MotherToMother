@@ -12,7 +12,6 @@ import { DonateAccordion } from "../../components/Accordions/DonateAccordion";
 
 const Home: React.FC = () => {
   const [showContact, setShowContact] = useState<boolean>(false);
-  const [showWarehouse, setshowWarehouse] = useState<boolean>(false);
   const [expanded, setExpanded] = useState<string | false>("");
 
   const [user, setUser] = useState<UserType | null>(null);
@@ -49,10 +48,6 @@ const Home: React.FC = () => {
   const toggleContact = () => {
     setShowContact(!showContact);
   };
-  const toggleWarehouse = () => {
-    setshowWarehouse(!showWarehouse);
-  };
-
 
   const handleChange =
     (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {

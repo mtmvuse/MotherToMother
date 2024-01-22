@@ -3,12 +3,6 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { CircularProgress, Typography, Stack, Button } from "@mui/material";
 import "./Profile.css";
-import profile_logo from "../../pages/assets/profile_logo_color.png";
-
-type User = {
-  displayName: string | null;
-  email: string | null;
-};
 import { getUserData } from "../../lib/services";
 import type { UserType } from "../../types/UserTypes";
 import { ErrorMessage } from "../../components/Error";
