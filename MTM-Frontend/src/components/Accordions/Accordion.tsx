@@ -1,5 +1,5 @@
 import { styled } from "@mui/material/styles";
-import MuiAccordion, { AccordionProps } from "@mui/material/Accordion";
+import MuiAccordion, { type AccordionProps } from "@mui/material/Accordion";
 
 interface AccordionStyledProps extends AccordionProps {
   customStyles?: React.CSSProperties;
