@@ -72,9 +72,18 @@ const Login: React.FC = () => {
   const onSubmit = async (data: FormValues) => {
     try {
       setError("");
-      await login(data.email, data.password);
-      storeUserType();
-      navigate("/home");
+      const result = await login(data.email, data.password);
+      const accessToken = await result.user?.getIdToken();
+      const userEmail = result.user?.email as string;
+      console.log(accessToken, userEmail);
+      const userResponse = await getUserData(userEmail, accessToken);
+      console.log("user response", userResponse);
+      const userData = await userResponse.json(); // Type declaration here
+      console.log("user data", userData);
+      localStorage.setItem("userType", userData.userType);
+
+      // storeUserType();
+      // navigate("/home");
     } catch (err: any) {
       setError(err.message);
     }

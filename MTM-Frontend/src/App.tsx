@@ -1,12 +1,6 @@
 import React from "react";
 
-import {
-  createBrowserRouter,
-  createRoutesFromElements,
-  Route,
-  Routes,
-  RouterProvider,
-} from "react-router-dom";
+import { Route, Routes, BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { FormProvider } from "./contexts/FormContext";
 // Routes
@@ -23,44 +17,40 @@ import { ProfileLayout } from "./pages/Profile/ProfileLayout";
 import SpecificItemPage from "./pages/SpecificItemPage";
 import Home from "./pages/Home/Home";
 
-const router = createBrowserRouter(
-  createRoutesFromElements(
-    <>
-      <Route path="/" element={<AuthLayout />}>
-        <Route index element={<Login />} />
-        <Route path="register" element={<Register />} />
-        <Route path="forgotPassword" element={<ForgotPassword />} />
-      </Route>
-      <Route path="home" element={<PrivateRoute element={<HomeLayout />} />}>
-        <Route index element={<Home />} />
-        <Route path="profile" element={<ProfileLayout />}>
-          <Route index element={<Profile />} />
-          <Route path="edit" element={<EditProfile />} />
-        </Route>
-
-        <Route
-          path="form/*"
-          element={
-            <FormProvider>
-              <Routes>
-                <Route index element={<Form />} />
-                <Route
-                  path="specificItem"
-                  element={<PrivateRoute element={<SpecificItemPage />} />}
-                />
-              </Routes>
-            </FormProvider>
-          }
-        />
-      </Route>
-    </>,
-  ),
-);
-
 const App: React.FC = () => (
-  <AuthProvider>
-    <RouterProvider router={router} />
-  </AuthProvider>
+  <BrowserRouter>
+    <AuthProvider>
+      <Routes>
+        <Route path="/" element={<AuthLayout />}>
+          <Route index element={<Login />} />
+          <Route path="register" element={<Register />} />
+          <Route path="forgotPassword" element={<ForgotPassword />} />
+        </Route>
+        <Route path="home" element={<PrivateRoute element={<HomeLayout />} />}>
+          <Route index element={<Home />} />
+          <Route path="profile" element={<ProfileLayout />}>
+            <Route index element={<Profile />} />
+            <Route path="edit" element={<EditProfile />} />
+          </Route>
+
+          <Route
+            path="form/*"
+            element={
+              <FormProvider>
+                <Routes>
+                  <Route index element={<Form />} />
+                  <Route
+                    path="specificItem"
+                    element={<PrivateRoute element={<SpecificItemPage />} />}
+                  />
+                </Routes>
+              </FormProvider>
+            }
+          />
+        </Route>
+      </Routes>
+    </AuthProvider>
+  </BrowserRouter>
 );
 
 export default App;
