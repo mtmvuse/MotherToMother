@@ -1,16 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
 import { Typography, Stack, Button } from "@mui/material";
 import { Link } from 'react-router-dom';
 import ReviewSection from "../components/Form/ReviewSection/ReviewSection";
 import DemographicSection from "../components/Form/DemographicSection/DemographicSection";
 import GeneralSection from "../components/Form/GeneralSection";
 import { useForm } from "../contexts/FormContext";
+import { useAuth } from "../contexts/AuthContext";
+import { createOutgoingDonation } from "../lib/services";
+import { ErrorMessage } from "../components/Error";
 
 const Form: React.FC = () => {
   const { demographicDetails, donationDetails } = useForm();
+  const { logout, currentUser } = useAuth();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const onSubmit = () => {
-    const sum =
+  const onSubmit = async () => {
+    setIsLoading(true); // Disables the submit button.
+
+    demographicDetails.numberServed =
       demographicDetails.whiteNum +
       demographicDetails.latinoNum +
       demographicDetails.blackNum +
@@ -18,21 +26,51 @@ const Form: React.FC = () => {
       demographicDetails.asianNum +
       demographicDetails.otherNum;
 
-    const submitDemographics = {
-      ...demographicDetails,
-      numberServed: sum,
-    };
-    console.log(submitDemographics);
+    try {
+      if (!currentUser) {
+        throw new Error("Unable to fetch User");
+      }
+
+      const token = await currentUser.getIdToken();
+
+      const request = {
+        email: currentUser.email,
+        donationDetails: donationDetails,
+        ...demographicDetails,
+      };
+
+      await createOutgoingDonation(token, request);
+    } catch (error) {
+      const err = error as Error;
+      setError(err.message);
+    } finally {
+      setIsLoading(false); // Enables the submit button
+    }
   };
   return (
     // Top of Outgoing Donations Form
-    <Stack direction="column" alignItems="center" spacing={2}>
+    <Stack
+      direction="column"
+      alignItems="center"
+      spacing={2}
+      style={{ marginTop: "50px" }}
+    >
       <Typography
-        style={{ color: "#004A7C", fontSize: "25px", fontWeight: 700 }}
+        fontSize="25px"
+        fontWeight="700"
+        style={{ fontFamily: "Raleway, sans-serif", color: "var(--mtmNavy)" }}
       >
         Outgoing Donations
       </Typography>
-      <Typography fontSize="15px" style={{ textAlign: "center", color: "#6D6D6D"}}>
+      <Typography
+        fontSize="15px"
+        style={{
+          textAlign: "center",
+          fontFamily: "Raleway, sans-serif",
+          fontWeight: "400",
+          color: "var(--mtmGray)",
+        }}
+      >
         Select the categories and item types of resources that you would like to
         donate
       </Typography>
@@ -53,6 +91,7 @@ const Form: React.FC = () => {
         <GeneralSection step={1} />
         <ReviewSection step={2} />
         <DemographicSection />
+        <ErrorMessage error={error} setError={setError} />
         <Stack justifyContent="center" direction="row" spacing={3}>
           <Button
             onClick={onSubmit}
@@ -60,12 +99,33 @@ const Form: React.FC = () => {
             component={Link}
             to="/home/form/success" 
             variant="outlined"
-            sx={{ fontSize: 15, background: "#004A7C", color: "white" }}
+            sx={{
+              fontFamily: "Interit, sans-serif",
+              fontSize: "15px",
+              fontWeight: "800",
+              backgroundColor: "var(--mtmNavy)",
+              color: "white",
+              height: "32px",
+              width: "87px",
+            }}
+            disabled={isLoading}
           >
             SUBMIT
           </Button>
-          <Button type="button" variant="outlined" sx={{ fontSize: 15, color: "#004A7C", borderColor: "#004A7C" }}>
-            SAVE
+          <Button
+            type="button"
+            variant="outlined"
+            sx={{
+              fontFamily: "Interit, sans-serif",
+              fontSize: "15px",
+              fontWeight: "800",
+              border: "var(--mtmNavy) 1px solid",
+              color: "var(--mtmNavy)",
+              height: "32px",
+              width: "87px",
+            }}
+          >
+            Save
           </Button>
         </Stack>
       </Stack>

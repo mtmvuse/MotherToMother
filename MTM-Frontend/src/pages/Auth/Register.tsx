@@ -13,55 +13,49 @@ import {
   FormControl,
   Select,
   MenuItem,
+  InputLabel,
   SelectChangeEvent,
+  RadioGroup,
+  Radio,
+  FormControlLabel,
 } from "@mui/material";
-
+import { registerUserOnServer, getOrganizations } from "../../lib/services";
+import { RegisterFormValues, Organization, UserType } from "~/types/AuthTypes";
 // Register components
 import { RegisterTextField } from "../../components/Auth/RegisterForms/RegisterTextField";
 import { RegisterTextFieldPassword } from "../../components/Auth/RegisterForms/RegisterTextFieldPassword";
-interface FormValues {
-  name: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-  userType: string;
-
-  phone: string;
-  address: string;
-  zip: string;
-  city: string;
-  affiliation?: string;
-}
+import { RegisterTextFieldPhone } from "../../components/Auth/RegisterForms/RegisterTextFieldPhone";
+import { feedback } from "../../components/Auth/RegisterForms/RegisterFeedback";
 
 const schema = Yup.object().shape({
   name: Yup.string()
-    .matches(/^([A-Za-z]+\s[A-Za-z]+)$/, "First and Last name")
-    .required("First and Last name is required"),
-  email: Yup.string()
-    .email("Invalid email address")
-    .required("Email is required"),
+    .matches(/^([A-Za-z]+\s[A-Za-z]+)$/, {
+      message: feedback.name,
+    })
+    .required(feedback.name),
+  email: Yup.string().email(feedback.email).required(feedback.email),
   password: Yup.string()
-    .matches(
-      /^(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{8,}$/,
-      "Invalid password",
-    )
-    .min(8, "Password must be at least 8 characters")
-    .required("Password is required"),
-  userType: Yup.string().required("Type is required"),
+    .matches(/^(?=.*[A-Z])(?=.*[0-9])(?=.*[\W_])(.{8,})$/, feedback.password)
+    .required(feedback.password),
+  userType: Yup.string().required(feedback.userType),
   confirmPassword: Yup.string()
-    .oneOf([Yup.ref("password")], "Passwords do not match")
-    .required("Confirm password is required"),
+    .oneOf([Yup.ref("password")], feedback.confirmPassword)
+    .required(feedback.confirmPassword),
   phone: Yup.string()
-    .matches(/^[0-9]{10}$/, "Phone number is not valid")
-    .required("Phone number is required"),
-  address: Yup.string().required("Address is required"),
+    .matches(
+      /^((\+\d{1,3}(-| )?\(?\d\)?(-| )?\d{1,3})|(\(?\d{2,3}\)?))(-| )?(\d{3,4})(-| )?(\d{4})(( x| ext)\d{1,5}){0,1}$/,
+      feedback.phone,
+    )
+    .required(feedback.phone),
+
+  address: Yup.string().required(feedback.address),
   zip: Yup.string()
-    .matches(/^\d{5}(-\d{4})?$/, "Invalid Zip code")
-    .required("Zip code is required"),
-  city: Yup.string().required("City is required"),
+    .matches(/^\d{5}(-\d{4})?$/, feedback.zip)
+    .required(feedback.zip),
+  city: Yup.string().required(feedback.city),
   affiliation: Yup.string().when("userType", ([userType], s) => {
     if (userType !== "Public Donor" && userType !== "") {
-      return s.required("affiliation is required");
+      return s.required(feedback.affiliation);
     }
     return s;
   }),
@@ -69,6 +63,8 @@ const schema = Yup.object().shape({
 
 const Register: React.FC = () => {
   const [userType, setUserType] = useState<string>("");
+  const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [error, setError] = useState<string>("");
   const { registerUser, currentUser } = useAuth();
   const navigate = useNavigate();
 
@@ -78,17 +74,37 @@ const Register: React.FC = () => {
     }
   }, [currentUser, navigate]);
 
+  useEffect(() => {
+    if (userType === "Agency Partner") {
+      const organizationQueryType: string | undefined = userType
+        .split(" ")[0]
+        ?.toLocaleLowerCase();
+
+      const queryOrganizations = async (query: string | undefined) => {
+        try {
+          const organization = await getOrganizations(query);
+          setOrganizations(organization);
+        } catch (err: any) {
+          if (err instanceof TypeError) {
+            setError("Network error: Failed to get organizations");
+          } else {
+            setError(err.message);
+          }
+        }
+      };
+      queryOrganizations(organizationQueryType);
+    }
+  }, [userType]);
+
   const {
     control,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<FormValues>({
+  } = useForm<RegisterFormValues>({
     resolver: yupResolver(schema),
   });
 
-  const [error, setError] = useState<string>("");
-
-  const onSubmit = async (values: FormValues) => {
+  const onSubmit = async (values: RegisterFormValues) => {
     try {
       setError("");
       await registerUser(
@@ -97,11 +113,57 @@ const Register: React.FC = () => {
         values.password,
         values.userType,
       );
+      const user = {
+        password: values.password,
+        firstName: values.name.split(" ")[0],
+        lastName: values.name.split(" ")[1],
+        email: values.email,
+        phone: values.phone,
+        address: values.address,
+        city: values.city,
+        state: "state",
+        zip: parseInt(values.zip, 10),
+        userType: values.userType,
+      } as UserType;
+
+      const response = await registerUserOnServer(user);
+      if (!response.ok) {
+        throw new Error(
+          `Failed to save registered user data to database: ${response.status}`,
+        );
+      }
       navigate("/home");
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
       setError(err.message);
     }
+  };
+
+  const renderOption = (value: string, label: string) => {
+    const isSelected = userType === value;
+
+    return (
+      <Box
+        key={value}
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        flexDirection="column"
+        height="35px"
+        width="100%"
+        borderRadius="10px"
+        marginTop="10px"
+        border={`1px solid ${isSelected ? "#1976d2" : "#000"}`}
+        fontSize="14px"
+        fontStyle="Inter, sans-serif"
+        bgcolor={isSelected ? "#6D6D6D" : "transparent"}
+        color={isSelected ? "#fff" : "#000"}
+        onClick={() => setUserType(value)}
+        style={{ cursor: "pointer" }}
+      >
+        {label}
+      </Box>
+    );
   };
 
   return (
@@ -111,12 +173,22 @@ const Register: React.FC = () => {
       flexDirection="column"
       alignItems="center"
       width="100%"
+      style={{
+        fontFamily: "Raleway, sans-serif",
+        fontSize: "15px",
+        fontWeight: "400",
+      }}
     >
       <Typography
         fontWeight="bold"
         component="h2"
         variant="h6"
-        style={{ margin: "1rem 0rem 1rem 0rem", color: "#004A7C" }}
+        style={{
+          margin: "1rem 0rem 1rem 0rem",
+          color: "var(--mtmNavy)",
+          fontSize: "25px",
+          fontWeight: "700",
+        }}
       >
         Create an account
       </Typography>
@@ -124,7 +196,12 @@ const Register: React.FC = () => {
       <Box width="75%">
         <form onSubmit={handleSubmit(onSubmit)}>
           <Box>
-            <Typography variant="body1">
+            <Typography
+              variant="body1"
+              style={{
+                fontFamily: "Raleway, sans-serif",
+              }}
+            >
               Name<span style={{ color: "#EF4444" }}>*</span>
             </Typography>
             <Box mt={-2} mb={2}>
@@ -138,7 +215,12 @@ const Register: React.FC = () => {
           </Box>
 
           <Box>
-            <Typography variant="body1">
+            <Typography
+              variant="body1"
+              style={{
+                fontFamily: "Raleway, sans-serif",
+              }}
+            >
               Contact<span style={{ color: "#EF4444" }}>*</span>
             </Typography>
             <Box mt={-2}>
@@ -150,7 +232,7 @@ const Register: React.FC = () => {
               />
             </Box>
             <Box mt={-1.5} mb={2}>
-              <RegisterTextField
+              <RegisterTextFieldPhone
                 name="phone"
                 placeHolder="Phone number"
                 control={control}
@@ -160,7 +242,12 @@ const Register: React.FC = () => {
           </Box>
 
           <Box>
-            <Typography variant="body1">
+            <Typography
+              variant="body1"
+              style={{
+                fontFamily: "Raleway, sans-serif",
+              }}
+            >
               Password<span style={{ color: "#EF4444" }}>*</span>
             </Typography>
             <Box mt={-2}>
@@ -171,18 +258,8 @@ const Register: React.FC = () => {
                 errors={errors.password}
               />
             </Box>
-            <FormHelperText
-              sx={{
-                fontWeight: "bold",
-                marginTop: "-0.05rem",
-                color: "grey",
-                opacity: "50%",
-                fontSize: "0.6rem",
-              }}
-            >
-              at least one number and one special character
-            </FormHelperText>
-            <Box mt={-1.5} mb={2}>
+
+            <Box mt={-0.5} mb={2}>
               <RegisterTextFieldPassword
                 name="confirmPassword"
                 placeHolder="Confirm password"
@@ -193,7 +270,12 @@ const Register: React.FC = () => {
           </Box>
 
           <Box>
-            <Typography variant="body1">
+            <Typography
+              variant="body1"
+              style={{
+                fontFamily: "Raleway, sans-serif",
+              }}
+            >
               Address<span style={{ color: "#EF4444" }}>*</span>
             </Typography>
             <Box mt={-2} mb={1.5}>
@@ -232,11 +314,21 @@ const Register: React.FC = () => {
             </Box>
           </Box>
 
-          <Box mb={2}>
-            <Typography variant="body1">
+          <Box mb={2} width="100%">
+            <Typography variant="body1"  style={{
+                fontFamily: "Raleway, sans-serif",
+              }}>
               Account Type<span style={{ color: "#EF4444" }}>*</span>
             </Typography>
-            <Typography variant="body1" color="grey.500">
+            <Typography
+              variant="body1"
+              color="var(--mtmNavy)"
+              style={{
+                fontFamily: "Raleway, sans-serif",
+                fontSize: "15px",
+                fontWeight: "400",
+              }}
+            >
               Choose the account type that most aligns with your needs and
               interactions
             </Typography>
@@ -245,24 +337,59 @@ const Register: React.FC = () => {
               name="userType"
               control={control}
               render={({ field: { value, onChange } }) => (
-                <FormControl fullWidth variant="standard">
-                  <Select
-                    value={value ?? ""}
-                    onChange={(e: SelectChangeEvent) => {
-                      onChange(e);
-                      setUserType(e.target.value);
-                    }}
+                <FormControl component="fieldset" style={{ width: "100%" }}>
+                  <Box
                     style={{
-                      border: "none",
-                      borderRadius: "100px",
-                      color: "black",
+                      width: "100%",
                     }}
-                    error={!!errors.userType}
                   >
-                    <MenuItem value="Public Donor">Public Donor</MenuItem>
-
-                    <MenuItem value="Agency Partner">Agency Partner</MenuItem>
-                  </Select>
+                    <div
+                      onClick={() => {
+                        onChange("Public Donor");
+                        setUserType("Public Donor");
+                      }}
+                      style={{
+                        border: "1px solid #ccc",
+                        textAlign: "center",
+                        marginTop: "8px",
+                        borderRadius: "10px",
+                        padding: "8px",
+                        backgroundColor:
+                          value === "Public Donor"
+                            ? "var(--mtmNavy)"
+                            : "transparent",
+                        color: value === "Public Donor" ? "#fff" : "#000",
+                        cursor: "pointer",
+                        width: "100%",
+                        boxSizing: "border-box",
+                      }}
+                    >
+                      Public Donor
+                    </div>
+                    <div
+                      onClick={() => {
+                        onChange("Agency Partner");
+                        setUserType("Agency Partner");
+                      }}
+                      style={{
+                        marginTop: "8px",
+                        textAlign: "center",
+                        border: "1px solid #ccc",
+                        borderRadius: "10px",
+                        padding: "8px",
+                        backgroundColor:
+                          value === "Agency Partner"
+                            ? "var(--mtmNavy)"
+                            : "transparent",
+                        color: value === "Agency Partner" ? "#fff" : "#000",
+                        cursor: "pointer",
+                        width: "100%",
+                        boxSizing: "border-box",
+                      }}
+                    >
+                      Agency Partner
+                    </div>
+                  </Box>
                   <FormHelperText>
                     {errors.userType ? (
                       <span style={{ color: "#d32f2f" }}>
@@ -276,14 +403,21 @@ const Register: React.FC = () => {
               )}
             />
           </Box>
-
           {userType != "Public Donor" && userType != "" && (
             <Box>
               <Typography variant="body1">
                 Affiliation<span style={{ color: "#EF4444" }}>*</span>
               </Typography>
-              <Typography variant="body1" color="grey.500">
-                Choose the affiliation you belong with
+              <Typography
+                variant="body1"
+                style={{
+                  color: "black",
+                  fontSize: "15px",
+                  fontWeight: "400",
+                  fontFamily: "Raleway, sans-serif",
+                }}
+              >
+                Organizational Affiliation (optional)
               </Typography>
 
               <Controller
@@ -291,8 +425,22 @@ const Register: React.FC = () => {
                 control={control}
                 render={({ field: { value, onChange } }) => (
                   <FormControl fullWidth variant="standard">
+                    <InputLabel
+                      id="select-label"
+                      style={{
+                        color: "var(--mtmLightGray)",
+                        fontStyle: "italic",
+                        fontSize: "15px",
+                        fontFamily: "Raleway, sans-serif",
+                      }}
+                    >
+                      Corporate donor/agency partner
+                    </InputLabel>
+
                     <Select
                       value={value ?? ""}
+                      labelId="select-label"
+                      label={"Corporate donor/agency partner"}
                       onChange={onChange}
                       style={{
                         border: "none",
@@ -301,11 +449,11 @@ const Register: React.FC = () => {
                       }}
                       error={!!errors.affiliation}
                     >
-                      <MenuItem value="affiliation 1">affiliation 1</MenuItem>
-
-                      <MenuItem value="affiliation 2">affiliation 2</MenuItem>
-
-                      <MenuItem value="affiliation 3">affiliation 3</MenuItem>
+                      {organizations.map((organization, index) => (
+                        <MenuItem value={organization.name} key={index}>
+                          {organization.name}
+                        </MenuItem>
+                      ))}
                     </Select>
                     <FormHelperText>
                       {errors.affiliation ? (
@@ -325,24 +473,24 @@ const Register: React.FC = () => {
           {error && <FormError>{error}</FormError>}
 
           <Box
-            mt={7}
+            mt={2}
             display="flex"
             flexDirection="column"
             width="100%"
             alignItems="center"
           >
             <Button
-              disabled={isSubmitting}
               type="submit"
-              variant="contained"
-              size="small"
               style={{
-                borderRadius: "2px",
-                width: "70%",
-                fontSize: "1.3rem",
+                width: "210px",
+                height: "43px",
+                fontSize: "20px",
+                fontWeight: "400",
+                fontFamily: "Raleway, sans-serif",
                 textTransform: "none",
-                backgroundColor: "rgb(0 85 135)",
+                backgroundColor: "var(--mtmNavy)",
                 color: "white",
+                boxShadow: "none",
               }}
             >
               {isSubmitting ? "Signing in" : "Sign up"}
@@ -353,9 +501,22 @@ const Register: React.FC = () => {
 
       <Box mt={2}>
         <Typography>
-          Already have an account?<span> </span>
-          <Link style={{ fontWeight: "bold" }} to="/">
-            Log in
+          <Link
+            to="/"
+            style={{
+              color: "gray",
+              textDecoration: "none",
+              fontFamily: "Raleway, sans-serif",
+            }}
+          >
+            <span
+              style={{
+                fontWeight: "normal",
+              }}
+            >
+              Already have an account?
+            </span>
+            <span style={{ fontWeight: "bold" }}> Log in</span>
           </Link>
         </Typography>
       </Box>

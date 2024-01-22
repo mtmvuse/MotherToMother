@@ -10,7 +10,7 @@
   font-size: 35px;
   margin: 35px 0;
   line-height: 41.09px;
-  color: #004A7C;
+  color: var(--mtmNavy)
 }
 
 .product-list {

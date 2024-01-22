@@ -3,7 +3,7 @@ import express, {
   type Response,
   type NextFunction,
 } from "express";
-import type { UserInput } from "../../../types/user";
+import type { RawUserInput, UserInput } from "../../../types/user";
 import * as UserService from "./user.service";
 import Joi from "joi";
 
@@ -35,7 +35,7 @@ userRouter.get(
   ) => {
     const email = req.query.email;
     const organizationType = req.query.organization;
-    console.log("email: " + email + "\n OrganizationType: " + organizationType);
+    // console.log("email: " + email + "\n OrganizationType: " + organizationType);
     try {
       if (email == undefined && organizationType == undefined) {
         const users = await UserService.getUsers();
@@ -106,11 +106,16 @@ userRouter.put(
       role: Joi.string(),
       household: Joi.string(),
       userType: Joi.string(),
+      currentUser: Joi.string(),
     });
     const userEmail = req.params.email;
     try {
-      const data = (await schema.validateAsync(req.body)) as UserInput;
-      const user = await UserService.updateUserByEmail(data, userEmail);
+      const data = (await schema.validateAsync(req.body)) as RawUserInput;
+      const { currentUser, ...userData } = data;
+      if (userEmail != currentUser) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      const user = await UserService.updateUserByEmail(userData, userEmail);
       return res.status(201).json(user);
     } catch (e) {
       next(e);

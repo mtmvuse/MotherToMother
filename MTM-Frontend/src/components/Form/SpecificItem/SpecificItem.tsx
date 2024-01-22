@@ -15,8 +15,8 @@ const buttonStyles = {
     borderRadius: "10px",
     border: "outlined",
     fontSize: "18px",
-    color: "#004A7C",
-    borderColor: "#004A7C",
+    color: "var(--mtmNavy)",
+    borderColor: "var(--mtmNavy)",
   },
 };
 

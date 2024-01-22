@@ -3,14 +3,15 @@ import dotenv from "dotenv";
 import cors from "cors";
 import morgan from "morgan";
 import helmet from "helmet";
-import { exampleRoute } from "./routes/exampleRoute";
 import { userRouter } from "./routes/v1/user/user.router";
 import { sessionRouter } from "./routes/v1/session/session.router";
+import { itemsRouter } from "./routes/v1/item/item.router";
 import { verifyToken } from "./middlewares/verifyToken";
 import { notFound, errorHandler } from "./middlewares/errors";
 import { donationRouter } from "./routes/v1/donation/donation.router";
 import { registrationRouter } from "./routes/v1/registration/registration.router";
 import { organizationRouter } from "./routes/v1/organization/organization.router";
+import { adminsRouter } from "./routes/v1/admins/admins.router";
 
 dotenv.config();
 
@@ -29,17 +30,18 @@ app.use(helmet());
  * Use the verifyToken to protect all the routes that require authentication
  */
 app.use("/sessions", sessionRouter);
-app.use("/example", verifyToken, exampleRoute);
-// app.use("/example", exampleRoute);
 
 app.use("/users", verifyToken, userRouter);
-// app.use("/users", userRouter);
+
+app.use("/admins", verifyToken, adminsRouter);
+
+app.use("/items", verifyToken, itemsRouter);
+
 app.use("/registration", registrationRouter);
 
-// app.use("/organization", verifyToken, organizationRouter);
 app.use("/organization", organizationRouter);
 
-app.use("/donation", donationRouter); // Unprotected, Removed verifyToken
+app.use("/donation", verifyToken, donationRouter);
 
 // Default route: Unprotected
 app.get("/", (_req: Request, res: Response) => {

@@ -6,3 +6,7 @@ MotherToMother.code-workspace
 .idea/*
 MTM-Backend/prisma/migrations
 .vscode/*
+*.rest
+MTM-Frontend/tsconfig.tsbuildinfo
+*/dist/
+*/dev-dist/

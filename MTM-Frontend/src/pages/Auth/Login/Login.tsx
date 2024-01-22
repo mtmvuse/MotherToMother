@@ -97,8 +97,19 @@ const Login: React.FC = () => {
               {isSubmitting ? "Submitting" : "LOGIN"}
             </button>
             <Typography>
-              <Link to="/register" className={"link-bold"}>
-                Don't have an account? Sign up
+              <Link
+                to="/register"
+                style={{
+                  color: "gray",
+                  textDecoration: "none",
+                  fontFamily: "Raleway, sans-serif",
+                  fontSize: "15px",
+                }}
+              >
+                <span style={{ fontWeight: "normal" }}>
+                  Don't have an account?
+                </span>
+                <span style={{ fontWeight: "bold" }}> Sign up</span>
               </Link>
             </Typography>
           </div>

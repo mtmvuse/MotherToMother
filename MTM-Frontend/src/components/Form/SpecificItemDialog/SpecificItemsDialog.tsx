@@ -65,6 +65,7 @@ export const SpecificItemsDialog = ({
     });
     handleClose();
   };
+
   const handleCancelDetails = () => {
     setTempNewQuantity(newQuantity);
     setTempUsedQuantity(usedQuantity);
@@ -77,66 +78,131 @@ export const SpecificItemsDialog = ({
 
   return (
     <div id="SpecificItems-Dialog">
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        PaperProps={{ sx: { borderRadius: "20px" } }}
+      >
         <DialogTitle>
-          <Typography align="center" sx={{ fontWeight: "bold", color: "#4DAD45" }}>
+          <Typography
+            align="center"
+            sx={{ fontWeight: "bold" }}
+            color="var(--mtmDarkGreen)"
+            style={{
+              fontFamily: "Raleway, sans-serif",
+              fontSize: "25px",
+              fontWeight: "700",
+            }}
+          >
             {category} - {item}
           </Typography>
         </DialogTitle>
         <DialogContent>
-          <Typography variant="body1" align="center" sx={{ pb: "16px", fontFamily: 'Raleway, sans-serif', fontWeight: 200  }}>
-            Enter the number of new or used {item} you will donate.
+          <Typography
+            variant="body1"
+            align="center"
+            sx={{ pb: "16px" }}
+            style={{ fontFamily: "Raleway, sans-serif" }}
+          >
+            Enter the number of new or used {category} you will donate.
           </Typography>
           <Stack
             direction="row"
             justifyContent="center"
             alignItems="center"
             spacing={2}
+            sx={{ marginTop: "8px", marginBottom: "8px" }}
           >
-            <Typography sx={{ fontWeight: "bold", color: "#4DAD45" }}>NEW</Typography>
-            <IconButton
-              onClick={() =>
-                setTempNewQuantity((prev) => Math.max(prev - 1, 0))
-              }
+            <Typography
+              sx={{
+                fontWeight: "700",
+                width: "60px",
+                textAlign: "left",
+                fontSize: "20px",
+                color: "var(--mtmDarkGreen)",
+              }}
             >
-              <RemoveIcon />
-            </IconButton>
-            <Typography>{tempNewQuantity}</Typography>
-            <IconButton onClick={() => setTempNewQuantity((prev) => prev + 1)}>
-              <AddIcon />
-            </IconButton>
+              NEW
+            </Typography>
+            <input
+              type="number"
+              value={tempNewQuantity === 0 ? "" : tempNewQuantity}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value === "" || !isNaN(parseInt(value))) {
+                  setTempNewQuantity(value === "" ? 0 : parseInt(value));
+                }
+              }}
+              style={{
+                width: "65px",
+                height: "27px",
+                top: "613px",
+                left: "224px",
+                borderRadius: "5px",
+                border: "1px solid #D9D9D9",
+              }}
+            />
           </Stack>
           <Stack
             direction="row"
             justifyContent="center"
             alignItems="center"
             spacing={2}
+            sx={{ marginTop: "8px", marginBottom: "8px" }}
           >
-            <Typography sx={{ fontWeight: "bold", color: "#4DAD45" }}>USED</Typography>
-            <IconButton
-              onClick={() =>
-                setTempUsedQuantity((prev) => Math.max(prev - 1, 0))
-              }
+            <Typography
+              sx={{
+                fontWeight: "bold",
+                width: "60px",
+                textAlign: "left",
+                fontSize: "20px",
+                color: "var(--mtmDarkGreen)",
+              }}
             >
-              <RemoveIcon />
-            </IconButton>
-            <Typography>{tempUsedQuantity}</Typography>
-            <IconButton onClick={() => setTempUsedQuantity((prev) => prev + 1)}>
-              <AddIcon />
-            </IconButton>
+              USED
+            </Typography>
+            <input
+              type="number"
+              value={tempUsedQuantity === 0 ? "" : tempUsedQuantity}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value === "" || !isNaN(parseInt(value))) {
+                  setTempUsedQuantity(value === "" ? 0 : parseInt(value));
+                }
+              }}
+              style={{
+                width: "65px",
+                height: "27px",
+                top: "613px",
+                left: "224px",
+                borderRadius: "5px",
+                border: "1px solid #D9D9D9",
+              }}
+            />
           </Stack>
           <Grid
             container
             spacing={1}
-            direction={{ xs: "column", sm: "row" }}
+            direction={{ xs: "row", sm: "row" }}
             justifyContent="center"
             alignItems="center"
+            sx={{ marginTop: "16px" }}
           >
             <Grid item>
               <Button
                 variant="outlined"
                 onClick={handleCancelDetails}
                 color="primary"
+                sx={{
+                  backgroundColor: "white",
+                  color: "var(--mtmDarkGreen)",
+                  border: "1px solid var(--mtmDarkGreen)",
+                  height: "32px",
+                  borderRadius: "10px",
+                   fontFamily: "Interit, sans-serif",
+                  fontSize: "15px",
+                  fontWeight: "800",
+                }}
               >
                 Cancel
               </Button>
@@ -146,6 +212,16 @@ export const SpecificItemsDialog = ({
                 variant="outlined"
                 onClick={handleSaveDetails}
                 color="primary"
+                sx={{
+                  fontFamily: "Interit, sans-serif",
+                  fontSize: "15px",
+                  fontWeight: "800",
+                  backgroundColor: "var(--mtmDarkGreen)",
+                  color: "white",
+                  borderRadius: "10px",
+                  height: "32px",
+                  width: "87px",
+                }}
               >
                 Save
               </Button>

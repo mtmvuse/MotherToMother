@@ -46,8 +46,15 @@ const DemographicSection: React.FC = ({}) => {
           <Grid container spacing={2}>
             <Grid item xs={10}>
               <Stack direction="row" spacing={1}>
-                <NumberInCircle num={3} borderRaduis="50%" />
-                <Typography sx={{ size: "15px" }}>
+                <NumberInCircle
+                  num={3}
+                  color="var(--mtmGray)"
+                  borderRaduis="50%"
+                />
+                <Typography
+                  sx={{ typography: { xs: "h6" } }}
+                  color="var(--mtmGray)"
+                >
                   Save and Submit{" "}
                 </Typography>
               </Stack>

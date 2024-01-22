@@ -12,7 +12,6 @@ import { ReviewSectionCategory } from "./ReviewSectionCategory";
 import NumberInCircle from "./NumberInCircle";
 import FormHeader from "../FormHeader";
 import { useForm } from "../../../contexts/FormContext";
-import { GeneralCategories } from "../../../lib/constants";
 
 interface ReviewSectionProps {
   step: number;
@@ -34,6 +33,10 @@ const ReviewSection = (props: ReviewSectionProps) => {
     setisEditMode(false);
   };
 
+  const getDonationCategories = () => {
+    return Array.from(new Set(donationDetails.map((item) => item.category)));
+  };
+
   return (
     <>
       <CssBaseline />
@@ -51,7 +54,7 @@ const ReviewSection = (props: ReviewSectionProps) => {
           >
             <NumberInCircle
               num={donationDetails.length}
-              backgroundColor="#004A7C"
+              backgroundColor="var(--mtmNavy)"
               color="white"
               borderRaduis="10px"
               width="50px"
@@ -60,7 +63,7 @@ const ReviewSection = (props: ReviewSectionProps) => {
             />
             <Typography variant="body1"> items are in your form </Typography>
           </Stack>
-          {GeneralCategories.map((category, i) => (
+          {getDonationCategories().map((category, i) => (
             <ReviewSectionCategory
               key={i}
               categoryName={category}
@@ -73,7 +76,15 @@ const ReviewSection = (props: ReviewSectionProps) => {
             variant="outlined"
             sx={{ fontSize: 15, height: "33px", color: "#004A7C", borderColor: "#004A7C" }}
             onClick={handleEdit}
-            style={{ marginTop: "5%" }}
+            style={{
+              marginTop: "15px",
+              marginBottom: "15px",
+              color: "var(--mtmNavy)",
+              border: "1px solid var(--mtmNavy)",
+              fontFamily: " Inter, sans-serif",
+              fontSize: "15px",
+              fontWeight: "800",
+            }}
           >
             EDIT
           </Button>
@@ -81,7 +92,7 @@ const ReviewSection = (props: ReviewSectionProps) => {
         {isEditMode && (
           <Stack direction="row" spacing={3}>
             <Button
-              variant="contained"
+              variant="outlined"
               sx={{
                 fontSize: 15,
                 height: "33px",
@@ -90,7 +101,17 @@ const ReviewSection = (props: ReviewSectionProps) => {
               }}
               color="primary"
               onClick={handleSave}
-              style={{ marginTop: "0" }}
+              style={{
+                marginTop: "15px",
+                marginBottom: "15px",
+                backgroundColor: "var(--mtmNavy)",
+                color: "white",
+                height: "32px",
+                width: "87px",
+                fontFamily: " Inter, sans-serif",
+                fontSize: "15px",
+                fontWeight: "800",
+              }}
             >
               SAVE
             </Button>
@@ -98,7 +119,15 @@ const ReviewSection = (props: ReviewSectionProps) => {
               variant="outlined"
               sx={{ fontSize: 15, height: "33px", color: "#004A7C", borderColor: "#004A7C" }}
               onClick={handleCancel}
-              style={{ marginTop: "0" }}
+              style={{
+                marginTop: "15px",
+                marginBottom: "15px",
+                color: "var(--mtmNavy)",
+                border: "1px solid var(--mtmNavy)",
+                fontFamily: " Inter, sans-serif",
+                fontSize: "15px",
+                fontWeight: "800",
+              }}
             >
               CANCEL
             </Button>
