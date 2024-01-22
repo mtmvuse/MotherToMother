@@ -8,7 +8,7 @@ import { DonateAccordion } from "../../components/Accordions/DonateAccordion";
 
 const Home: React.FC = () => {
   const [showContact, setShowContact] = useState<boolean>(false);
-  const [expanded, setExpanded] = useState<string | false>("about us");
+  const [expanded, setExpanded] = useState<string | false>("");
 
   const toggleContact = () => {
     setShowContact(!showContact);
@@ -51,13 +51,6 @@ const Home: React.FC = () => {
       <ContactUsAccordion expanded={expanded} handleChange={handleChange} />
 
       <DonateAccordion expanded={expanded} handleChange={handleChange} />
-
-      <div className="hours-container">
-        <div className="hours-section">
-          <h2>Warehouse Hours</h2>
-          <p>Monday - Thursday: 1:00pm - 4:30pm</p>
-        </div>
-      </div>
     </div>
   );
 };
