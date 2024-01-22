@@ -54,11 +54,7 @@ const ForgotPassword: React.FC = () => {
 
   return (
     <div className={"forgot-password-container"}>
-      <img
-        className="forgot-logo-image"
-        src={forgotpasswordlogo}
-        alt="Image1"
-      />
+      <img src={forgotpasswordlogo} alt="Image1" className="custom-image" />
       <Typography className="heading">Forgot your password?</Typography>
       <div className={"forgot-password-form"}>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -83,7 +79,7 @@ const ForgotPassword: React.FC = () => {
               type="submit"
               disabled={isSubmitting}
             >
-              {isSubmitting ? "Submitting" : "Reset Password"}
+              {isSubmitting ? "Submitting" : "RESET PASSWORD"}
             </button>
             {/* Button to test popup Modal: <button onClick={() => setOpen(true)}>Modal Test</button> */}
           </div>
@@ -107,12 +103,13 @@ const ForgotPassword: React.FC = () => {
           <p className={"instructions-text"}>
             An email with instructions to reset your password was sent to your
             inbox.
-          </p>
-          <Typography>
+            <Typography>
             <Link to="/" className={"link"}>
-              Back to login
+              back to login
             </Link>
           </Typography>
+          </p>
+          
         </div>
       </ForgotPasswordModal>
     </div>

@@ -26,7 +26,7 @@ const ReviewSectionCategory: React.FC<ReviewSectionCategoryProps> = ({
     <Box key={categoryName}>
       <Container
         sx={{
-          backgroundColor: "primary.main",
+          backgroundColor: "#004A7C",
           borderRadius: "5px",
           height: "25px",
           display: "flex",

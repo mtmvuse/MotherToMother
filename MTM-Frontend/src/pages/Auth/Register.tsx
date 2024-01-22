@@ -116,7 +116,7 @@ const Register: React.FC = () => {
         fontWeight="bold"
         component="h2"
         variant="h6"
-        style={{ margin: "1rem 0rem 1rem 0rem" }}
+        style={{ margin: "1rem 0rem 1rem 0rem", color: "#004A7C" }}
       >
         Create an account
       </Typography>
@@ -337,12 +337,12 @@ const Register: React.FC = () => {
               variant="contained"
               size="small"
               style={{
-                borderRadius: "100px",
+                borderRadius: "2px",
                 width: "70%",
                 fontSize: "1.3rem",
                 textTransform: "none",
-                backgroundColor: "rgb(229 231 235)",
-                color: "black",
+                backgroundColor: "rgb(0 85 135)",
+                color: "white",
               }}
             >
               {isSubmitting ? "Signing in" : "Sign up"}

@@ -50,10 +50,11 @@
 .profile-heading .heading
 {
     text-align: center;
-    font-size: 20px;
+    font-size: 30px;
     font-family: Raleway, sans-serif;
     font-weight: 700;
-    color: #000000;
+    color: #004A7C;
+    ;
 }
 
 .profile-heading .subheading
@@ -61,7 +62,7 @@
     text-align: center;
     font-size: 20px;
     font-family: Raleway, sans-serif;
-    font-weight: 400;
+    font-weight: 200;
     color: #6D6D6D;
 
 }
@@ -70,23 +71,22 @@
 {
     justify-content: center;
     width: 90%;
-    margin: 3rem auto;
+    margin: 2rem auto;
 }
 
 .inline
 {
     display: flex;
     align-items: center;
-    margin-bottom: 1rem;
 }
 
 .inline strong
 {
     margin-right: 7px;
     width: 80px;
-    font-family: Montserrat, sans-serif;
+    font-family: Raleway, sans-serif;
     font-size: 16px;
-    color: #000000;
+    color: #004A7C;
 }
 
 .value
@@ -114,12 +114,12 @@
 
 .logout-button
 {
-    margin-top: 50px;
+    /* margin-top: 20px; */
     border-radius: 10px;
     width: 70px;
     height: 30px;
     align-items: center;
-    background: #C1C1C1;
+    background: #004A7C;
     font-family: Inter, sans-serif;
     font-size: 15px;
     font-weight: 400;
@@ -129,7 +129,7 @@
     cursor: pointer;
 }
 .edit-button {
-    margin-top: 50px;
+    /* margin-top: 20px; */
     border-radius: 10px;
     width: 70px;
     height: 30px;
@@ -138,9 +138,9 @@
     font-family: Inter, sans-serif;
     font-size: 15px;
     font-weight: 400;
-    color: #C1C1C1;
+    color: #004A7C;
     text-align: center;
-    border: 1px solid #C1C1C1;
+    border: 1px solid #004A7C;
     cursor: pointer;
     margin-left: 10px;
 }

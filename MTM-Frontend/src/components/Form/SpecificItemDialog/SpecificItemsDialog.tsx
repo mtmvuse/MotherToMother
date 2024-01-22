@@ -79,13 +79,13 @@ export const SpecificItemsDialog = ({
     <div id="SpecificItems-Dialog">
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>
-          <Typography align="center" sx={{ fontWeight: "bold" }}>
+          <Typography align="center" sx={{ fontWeight: "bold", color: "#4DAD45" }}>
             {category} - {item}
           </Typography>
         </DialogTitle>
         <DialogContent>
-          <Typography variant="body1" align="center" sx={{ pb: "16px" }}>
-            Enter the number of new or used {category} you will donate.
+          <Typography variant="body1" align="center" sx={{ pb: "16px", fontFamily: 'Raleway, sans-serif', fontWeight: 200  }}>
+            Enter the number of new or used {item} you will donate.
           </Typography>
           <Stack
             direction="row"
@@ -93,7 +93,7 @@ export const SpecificItemsDialog = ({
             alignItems="center"
             spacing={2}
           >
-            <Typography>New</Typography>
+            <Typography sx={{ fontWeight: "bold", color: "#4DAD45" }}>NEW</Typography>
             <IconButton
               onClick={() =>
                 setTempNewQuantity((prev) => Math.max(prev - 1, 0))
@@ -112,7 +112,7 @@ export const SpecificItemsDialog = ({
             alignItems="center"
             spacing={2}
           >
-            <Typography>Used</Typography>
+            <Typography sx={{ fontWeight: "bold", color: "#4DAD45" }}>USED</Typography>
             <IconButton
               onClick={() =>
                 setTempUsedQuantity((prev) => Math.max(prev - 1, 0))

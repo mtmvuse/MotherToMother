@@ -47,7 +47,7 @@ const DemographicSection: React.FC = ({}) => {
             <Grid item xs={10}>
               <Stack direction="row" spacing={1}>
                 <NumberInCircle num={3} borderRaduis="50%" />
-                <Typography sx={{ typography: { xs: "h6" } }}>
+                <Typography sx={{ size: "15px" }}>
                   Save and Submit{" "}
                 </Typography>
               </Stack>
@@ -61,7 +61,7 @@ const DemographicSection: React.FC = ({}) => {
           {/* Main Content of Demographic Section */}
           <Container
             sx={{
-              backgroundColor: "primary.main",
+              backgroundColor: "#004A7C",
               borderRadius: "5px",
               height: "29px",
               display: "flex",

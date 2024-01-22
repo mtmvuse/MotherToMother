@@ -4,10 +4,15 @@ import "./Home.css";
 
 const Home: React.FC = () => {
   const [showContact, setShowContact] = useState<boolean>(false);
+  const [showWarehouse, setshowWarehouse] = useState<boolean>(false);
 
   const toggleContact = () => {
     setShowContact(!showContact);
   };
+  const toggleWarehouse = () => {
+    setshowWarehouse(!showWarehouse);
+  };
+
 
   return (
     <div className={"main-container"}>
@@ -22,6 +27,10 @@ const Home: React.FC = () => {
         >
           ABOUT US
         </a>
+
+        <button className="square-button" onClick={toggleWarehouse}>
+          WAREHOUSE HOURS
+        </button>
 
         <a
           href="https://www.mothertomother.org/suppliesweneed"
@@ -52,12 +61,22 @@ const Home: React.FC = () => {
             </div>
           </div>
         )}
-      </div>
-      <div className="hours-container">
+
+{showWarehouse && (
+          <div className="contact-popup">
+            <div className="contact-content">
+              <span className="close-btn" onClick={toggleWarehouse}>
+                &times;
+              </span>
+              <div className="hours-container">
         <div className="hours-section">
           <h2>Warehouse Hours</h2>
           <p>Monday - Thursday: 1:00pm - 4:30pm</p>
         </div>
+      </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

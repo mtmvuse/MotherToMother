@@ -26,8 +26,8 @@ const buttonStyles = {
   borderRadius: "20px",
   border: "outlined",
   fontSize: "22px",
-  color: "#333",
-  borderColor: "#333",
+  color: "#004A7C",
+  borderColor: "#004A7C",
 } as const;
 
 const getBottomNavActionValue = (category: string) =>

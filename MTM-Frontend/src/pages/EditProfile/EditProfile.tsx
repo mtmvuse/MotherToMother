@@ -5,7 +5,7 @@ import * as Yup from "yup";
 import "./EditProfile.css";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import profile_logo from "../../pages/assets/profile_logo.png";
+import profile_logo from "../../pages/assets/profile_logo_color.png";
 
 interface FormValues {
   firstName: string;

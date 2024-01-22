@@ -51,7 +51,7 @@ const ReviewSection = (props: ReviewSectionProps) => {
           >
             <NumberInCircle
               num={donationDetails.length}
-              backgroundColor="#6D6D6D"
+              backgroundColor="#004A7C"
               color="white"
               borderRaduis="10px"
               width="50px"
@@ -71,31 +71,36 @@ const ReviewSection = (props: ReviewSectionProps) => {
         {!isEditMode && (
           <Button
             variant="outlined"
-            sx={{ fontSize: 15, height: "33px" }}
+            sx={{ fontSize: 15, height: "33px", color: "#004A7C", borderColor: "#004A7C" }}
             onClick={handleEdit}
             style={{ marginTop: "5%" }}
           >
-            Edit
+            EDIT
           </Button>
         )}
         {isEditMode && (
           <Stack direction="row" spacing={3}>
             <Button
               variant="contained"
-              sx={{ fontSize: 15, height: "33px" }}
+              sx={{
+                fontSize: 15,
+                height: "33px",
+                backgroundColor: "#004A7C", // Replace with your desired background color
+                color: "white", // Replace with your desired text color
+              }}
               color="primary"
               onClick={handleSave}
               style={{ marginTop: "0" }}
             >
-              Save
+              SAVE
             </Button>
             <Button
               variant="outlined"
-              sx={{ fontSize: 15, height: "33px" }}
+              sx={{ fontSize: 15, height: "33px", color: "#004A7C", borderColor: "#004A7C" }}
               onClick={handleCancel}
               style={{ marginTop: "0" }}
             >
-              Cancel
+              CANCEL
             </Button>
           </Stack>
         )}

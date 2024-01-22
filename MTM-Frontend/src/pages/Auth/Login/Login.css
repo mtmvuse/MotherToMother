@@ -26,6 +26,7 @@
     font-size: 30px;
     font-weight: 700;
     margin-bottom: 20px;
+    color: #004A7C;
 }
 
 .login-form-container {
@@ -121,17 +122,18 @@
 .login-container .login-button {
     margin-top: 50px;
     margin-bottom: 40px;
-    border-radius: 30px;
+    border-radius: 2px;
     width: 210px;
     height: 43px;
     align-items: center;
-    background: #d9d9d9;
+    background: #004A7C;
     font-family: Inter, sans-serif;
     font-size: 20px;
-    font-weight: 400;
+    font-weight: 100;
     text-align: center;
     border: none;
     cursor: pointer;
+    color: white
 }
 
 @media (max-height: 750px) {

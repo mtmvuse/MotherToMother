@@ -94,7 +94,7 @@ const Login: React.FC = () => {
 
           <div className={"input-container"}>
             <button className="login-button" type="submit" color="primary">
-              {isSubmitting ? "Submitting" : "Login"}
+              {isSubmitting ? "Submitting" : "LOGIN"}
             </button>
             <Typography>
               <Link to="/register" className={"link-bold"}>

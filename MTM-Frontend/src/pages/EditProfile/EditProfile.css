@@ -91,7 +91,7 @@
   width: 70px;
   height: 30px;
   align-items: center;
-  background: #c1c1c1;
+  background: #004A7C;
   font-family: Inter, sans-serif;
   font-size: 15px;
   font-weight: 400;
@@ -111,9 +111,9 @@
   font-family: Inter, sans-serif;
   font-size: 15px;
   font-weight: 400;
-  color: #c1c1c1;
+  color: #004A7C;
   text-align: center;
-  border: 1px solid #c1c1c1;
+  border: 1px solid #004A7C;
   cursor: pointer;
   margin-left: 10px;
 }
