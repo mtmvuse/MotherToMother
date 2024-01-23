@@ -20,14 +20,18 @@ import {
   FormControlLabel,
 } from "@mui/material";
 import { registerUserOnServer, getOrganizations } from "../../lib/services";
-import { RegisterFormValues, Organization, UserType } from "~/types/AuthTypes";
+import type {
+  RegisterFormValues,
+  Organization,
+  UserType,
+} from "~/types/AuthTypes";
 // Register components
 import { RegisterTextField } from "../../components/Auth/RegisterForms/RegisterTextField";
 import { RegisterTextFieldPassword } from "../../components/Auth/RegisterForms/RegisterTextFieldPassword";
 import { RegisterTextFieldPhone } from "../../components/Auth/RegisterForms/RegisterTextFieldPhone";
 import { feedback } from "../../components/Auth/RegisterForms/RegisterFeedback";
-
-import { SharedStates } from "../../App";
+import { USER_TYPE } from "../../lib/constants";
+import type { SharedStates } from "../../App";
 
 const schema = Yup.object().shape({
   name: Yup.string()
@@ -56,7 +60,7 @@ const schema = Yup.object().shape({
     .required(feedback.zip),
   city: Yup.string().required(feedback.city),
   affiliation: Yup.string().when("userType", ([userType], s) => {
-    if (userType !== "Public Donor" && userType !== "") {
+    if (userType !== USER_TYPE.PUBLIC && userType !== "") {
       return s.required(feedback.affiliation);
     }
     return s;
@@ -77,7 +81,7 @@ const Register: React.FC<SharedStates> = ({ setSavedUserType }) => {
   }, [currentUser, navigate]);
 
   useEffect(() => {
-    if (userType === "Agency Partner") {
+    if (userType === USER_TYPE.AGENCY) {
       const organizationQueryType: string | undefined = userType
         .split(" ")[0]
         ?.toLocaleLowerCase();
@@ -352,8 +356,8 @@ const Register: React.FC<SharedStates> = ({ setSavedUserType }) => {
                   >
                     <div
                       onClick={() => {
-                        onChange("Public Donor");
-                        setUserType("Public Donor");
+                        onChange(USER_TYPE.PUBLIC);
+                        setUserType(USER_TYPE.PUBLIC);
                       }}
                       style={{
                         border: "1px solid #ccc",
@@ -362,21 +366,21 @@ const Register: React.FC<SharedStates> = ({ setSavedUserType }) => {
                         borderRadius: "10px",
                         padding: "8px",
                         backgroundColor:
-                          value === "Public Donor"
+                          value === USER_TYPE.PUBLIC
                             ? "var(--mtmNavy)"
                             : "transparent",
-                        color: value === "Public Donor" ? "#fff" : "#000",
+                        color: value === USER_TYPE.PUBLIC ? "#fff" : "#000",
                         cursor: "pointer",
                         width: "100%",
                         boxSizing: "border-box",
                       }}
                     >
-                      Public Donor
+                      {USER_TYPE.PUBLIC}
                     </div>
                     <div
                       onClick={() => {
-                        onChange("Agency Partner");
-                        setUserType("Agency Partner");
+                        onChange(USER_TYPE.AGENCY);
+                        setUserType(USER_TYPE.AGENCY);
                       }}
                       style={{
                         marginTop: "8px",
@@ -385,16 +389,16 @@ const Register: React.FC<SharedStates> = ({ setSavedUserType }) => {
                         borderRadius: "10px",
                         padding: "8px",
                         backgroundColor:
-                          value === "Agency Partner"
+                          value === USER_TYPE.AGENCY
                             ? "var(--mtmNavy)"
                             : "transparent",
-                        color: value === "Agency Partner" ? "#fff" : "#000",
+                        color: value === USER_TYPE.AGENCY ? "#fff" : "#000",
                         cursor: "pointer",
                         width: "100%",
                         boxSizing: "border-box",
                       }}
                     >
-                      Agency Partner
+                      {USER_TYPE.AGENCY}
                     </div>
                   </Box>
                   <FormHelperText>
@@ -410,7 +414,7 @@ const Register: React.FC<SharedStates> = ({ setSavedUserType }) => {
               )}
             />
           </Box>
-          {userType != "Public Donor" && userType != "" && (
+          {userType != USER_TYPE.PUBLIC && userType != "" && (
             <Box>
               <Typography variant="body1">
                 Affiliation<span style={{ color: "#EF4444" }}>*</span>

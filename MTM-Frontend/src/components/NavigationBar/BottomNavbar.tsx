@@ -10,14 +10,14 @@ import React from "react";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import DonationIcon from "./DonationIcon";
-
+import { USER_TYPE } from "../../lib/constants";
 import homeIcon from "../../pages/assets/home-icon.png";
 import profileIcon from "../../pages/assets/profile-icon.png";
 import formIcon from "../../pages/assets/form-icon.png";
 
 import "./Navbar.css";
 import { useLocation, useNavigate } from "react-router-dom";
-import { UserTypeProps } from "~/pages/HomeLayout";
+import type { UserTypeProps } from "~/pages/HomeLayout";
 
 export const Navbar: React.FC<UserTypeProps> = ({ savedUserType }) => {
   const navigate = useNavigate();
@@ -41,7 +41,7 @@ export const Navbar: React.FC<UserTypeProps> = ({ savedUserType }) => {
         <BottomNavigation
           showLabels
           value={getParentRoute(location.pathname)}
-          onChange={(event, newValue) => {
+          onChange={(_event, newValue: string) => {
             navigate(newValue);
           }}
           sx={{
@@ -61,7 +61,7 @@ export const Navbar: React.FC<UserTypeProps> = ({ savedUserType }) => {
             value={"/home/profile"}
             icon={<img src={profileIcon} />}
           />
-          {savedUserType == "Agency" && (
+          {savedUserType == USER_TYPE.AGENCY && (
             <BottomNavigationAction
               sx={{ flexGrow: 1 }}
               value={"/home/form"}

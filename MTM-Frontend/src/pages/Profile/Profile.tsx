@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
-import { CircularProgress, Typography, Stack, Button } from "@mui/material";
+import { CircularProgress, Typography } from "@mui/material";
 import "./Profile.css";
 import { getUserData } from "../../lib/services";
 import type { UserType } from "../../types/UserTypes";

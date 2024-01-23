@@ -1,6 +1,6 @@
 import React from "react";
 import "./Navbar.css";
-import { AppBar, Box, IconButton, Typography } from "@mui/material";
+import { AppBar, Box, IconButton } from "@mui/material";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { useNavigate } from "react-router-dom";
 

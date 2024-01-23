@@ -1,5 +1,5 @@
-import React from "react";
-
+import React, { useEffect } from "react";
+import { CACHE_KEY } from "./lib/constants";
 import { Route, Routes, BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { FormProvider } from "./contexts/FormContext";
@@ -25,6 +25,12 @@ export interface SharedStates {
 
 const App: React.FC = () => {
   const [savedUserType, setSavedUserType] = useState<string>("");
+  useEffect(() => {
+    const savedUserType = localStorage.getItem(CACHE_KEY.USER_TYPE);
+    if (savedUserType) {
+      setSavedUserType(savedUserType);
+    }
+  }, []);
 
   return (
     <BrowserRouter>
