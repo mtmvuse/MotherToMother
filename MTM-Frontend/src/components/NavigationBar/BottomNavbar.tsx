@@ -10,6 +10,11 @@ import React from "react";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import DonationIcon from "./DonationIcon";
+
+import homeIcon from "../../pages/assets/home-icon.png";
+import profileIcon from "../../pages/assets/profile-icon.png";
+import formIcon from "../../pages/assets/form-icon.png";
+
 import "./Navbar.css";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -19,45 +24,47 @@ export const Navbar: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm")); // Change breakpoint as needed
 
+  const getParentRoute = (pathname: string) => {
+    if (pathname.startsWith("/home/profile")) {
+      return "/home/profile";
+    } else if (pathname.startsWith("/home/form")) {
+      return "/home/form";
+    } else {
+      return pathname;
+    }
+  };
+
   return (
     <div className="BottomNavbar">
       <Box>
         <BottomNavigation
           showLabels
-          value={location.pathname}
+          value={getParentRoute(location.pathname)}
           onChange={(event, newValue) => {
             navigate(newValue);
           }}
           sx={{
-            "& .Mui-selected": {
-              bgcolor: "#F5F5F5",
-              "& .MuiSvgIcon-root": { color: "black" },
+            "& .MuiBottomNavigationAction-root.Mui-selected": {
+              bgcolor: "var(--mtmLightBlue)",
+              borderRadius: "15px",
             },
           }}
         >
           <BottomNavigationAction
             sx={{ flexGrow: 1 }}
             value={"/home"}
-            icon={<HomeOutlinedIcon />}
+            icon={<img src={homeIcon} />}
           />
           <BottomNavigationAction
             sx={{ flexGrow: 1 }}
             value={"/home/profile"}
-            icon={<PersonOutlineOutlinedIcon />}
+            icon={<img src={profileIcon} />}
           />
-          {localStorage.getItem("userType") != "Public Donor" && (
-            <BottomNavigationAction
-              sx={{ flexGrow: 1 }}
-              value={"/home/form"}
-              icon={
-                <SvgIcon
-                  sx={{ bgcolor: "#F5F5F5", alignItems: "center" }}
-                  component={DonationIcon}
-                  inheritViewBox
-                />
-              }
-            />
-          )}
+          <BottomNavigationAction
+            sx={{ flexGrow: 1 }}
+            value={"/home/form"}
+            icon={<img src={formIcon} />}
+          />
         </BottomNavigation>
         {isMobile && <div className="navbar-spacer"></div>}
       </Box>

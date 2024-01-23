@@ -54,11 +54,7 @@ const ForgotPassword: React.FC = () => {
 
   return (
     <div className={"forgot-password-container"}>
-      <img
-        className="forgot-logo-image"
-        src={forgotpasswordlogo}
-        alt="Image1"
-      />
+      <img src={forgotpasswordlogo} alt="Image1" className="custom-image" />
       <Typography className="heading">Forgot your password?</Typography>
       <div className={"forgot-password-form"}>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -83,7 +79,7 @@ const ForgotPassword: React.FC = () => {
               type="submit"
               disabled={isSubmitting}
             >
-              {isSubmitting ? "Submitting" : "Reset Password"}
+              {isSubmitting ? "Submitting" : "RESET PASSWORD"}
             </button>
             {/* Button to test popup Modal: <button onClick={() => setOpen(true)}>Modal Test</button> */}
           </div>
@@ -91,7 +87,9 @@ const ForgotPassword: React.FC = () => {
       </div>
 
       <div className={"signup-container"}>
-        <Typography>
+        <Typography
+          style={{ fontFamily: "Raleway, sans-serif", fontWeight: "400" }}
+        >
           <Link to="/" style={{ color: "gray", textDecoration: "none" }}>
             <span style={{ fontWeight: "normal" }}>
               Already have an account?
@@ -108,8 +106,17 @@ const ForgotPassword: React.FC = () => {
             An email with instructions to reset your password was sent to your
             inbox.
           </p>
-          <Typography>
-            <Link to="/" className={"link"}>
+          <Typography
+            style={{
+              fontFamily: "Raleway, sans-serif",
+              fontWeight: "400",
+              color: "var(--mtmNavy)",
+            }}
+          >
+            <Link
+              to="/ "
+              style={{ color: "var(--mtmNavy)", textDecoration: "none" }}
+            >
               Back to login
             </Link>
           </Typography>

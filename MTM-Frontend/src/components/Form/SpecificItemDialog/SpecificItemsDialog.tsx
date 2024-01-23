@@ -84,12 +84,26 @@ export const SpecificItemsDialog = ({
         PaperProps={{ sx: { borderRadius: "20px" } }}
       >
         <DialogTitle>
-          <Typography align="center" sx={{ fontWeight: "bold" }}>
+          <Typography
+            align="center"
+            sx={{ fontWeight: "bold" }}
+            color="var(--mtmDarkGreen)"
+            style={{
+              fontFamily: "Raleway, sans-serif",
+              fontSize: "25px",
+              fontWeight: "700",
+            }}
+          >
             {category} - {item}
           </Typography>
         </DialogTitle>
         <DialogContent>
-          <Typography variant="body1" align="center" sx={{ pb: "16px" }}>
+          <Typography
+            variant="body1"
+            align="center"
+            sx={{ pb: "16px" }}
+            style={{ fontFamily: "Raleway, sans-serif" }}
+          >
             Enter the number of new or used {category} you will donate.
           </Typography>
           <Stack
@@ -105,9 +119,10 @@ export const SpecificItemsDialog = ({
                 width: "60px",
                 textAlign: "left",
                 fontSize: "20px",
+                color: "var(--mtmDarkGreen)",
               }}
             >
-              New
+              NEW
             </Typography>
             <input
               type="number"
@@ -141,9 +156,10 @@ export const SpecificItemsDialog = ({
                 width: "60px",
                 textAlign: "left",
                 fontSize: "20px",
+                color: "var(--mtmDarkGreen)",
               }}
             >
-              Used
+              USED
             </Typography>
             <input
               type="number"
@@ -179,11 +195,13 @@ export const SpecificItemsDialog = ({
                 color="primary"
                 sx={{
                   backgroundColor: "white",
-                  color: "#A4A4A4",
-                  fontSize: 15,
-                  border: "1px solid #A4A4A4",
-                  borderRadius: 2,
+                  color: "var(--mtmDarkGreen)",
+                  border: "1px solid var(--mtmDarkGreen)",
                   height: "32px",
+                  borderRadius: "10px",
+                   fontFamily: "Interit, sans-serif",
+                  fontSize: "15px",
+                  fontWeight: "800",
                 }}
               >
                 Cancel
@@ -195,10 +213,11 @@ export const SpecificItemsDialog = ({
                 onClick={handleSaveDetails}
                 color="primary"
                 sx={{
-                  backgroundColor: "#A4A4A4",
+                  fontFamily: "Interit, sans-serif",
+                  fontSize: "15px",
+                  fontWeight: "800",
+                  backgroundColor: "var(--mtmDarkGreen)",
                   color: "white",
-                  fontSize: 15,
-                  border: "1px solid #c1c1c1",
                   borderRadius: "10px",
                   height: "32px",
                   width: "87px",

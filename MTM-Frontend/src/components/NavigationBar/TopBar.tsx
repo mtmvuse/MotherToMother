@@ -13,10 +13,7 @@ export const TopBar: React.FC = () => {
         <AppBar
           elevation={0}
           color="inherit"
-          sx={{ flexDirection: "row" }}
-          onClick={() => {
-            navigate(-1);
-          }}
+          sx={{ flexDirection: "row", background: "transparent" }}
           position="static"
         >
           <IconButton
@@ -25,19 +22,12 @@ export const TopBar: React.FC = () => {
             color="inherit"
             style={{ color: "gray" }}
             sx={{ ml: 1, mr: 2 }}
+            onClick={() => {
+              navigate(-1);
+            }}
           >
-            <ArrowBackIosNewIcon />
+            <ArrowBackIosNewIcon fontSize="large" />
           </IconButton>
-          <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            align="center"
-            style={{ color: "#A4A4A4", fontFamily: "Roboto", fontWeight: 400 }}
-            sx={{ display: "flex", alignItems: "center" }}
-          >
-            return back
-          </Typography>
         </AppBar>
       </Box>
     </div>
