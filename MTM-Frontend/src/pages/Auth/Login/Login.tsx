@@ -57,7 +57,10 @@ const Login: React.FC = () => {
     <div className={"login-container"}>
       <img className="logo-image" src={m2m_logo} alt="Image1" />
       <Typography className={"heading"}>Log In</Typography>
-      <div className="login-form-container">
+      <div
+        className="login-form-container"
+        style={{ background: "transparent" }}
+      >
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className={"input-container"}>
             <input
@@ -115,7 +118,12 @@ const Login: React.FC = () => {
           </div>
         </form>
       </div>
-      <img className="animal-image" src={animal_logo} alt="Image1" />
+      <img
+        style={{ zIndex: -1 }}
+        className="animal-image"
+        src={animal_logo}
+        alt="Image1"
+      />
     </div>
   );
 };
