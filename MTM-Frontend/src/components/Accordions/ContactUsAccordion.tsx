@@ -83,18 +83,71 @@ const ContactUsAccordion: React.FC<ContactUsAccordionProps> = ({
         <AccordionSummary
           aria-controls="contact-panel-content"
           id="contact-header"
-          customStyles={{ backgroundColor: "#bbf7d0" }}
+          customStyles={{ backgroundColor: "#FFFFFF" }}
         >
           <Typography className="square-button">CONTACT & HOURS</Typography>
         </AccordionSummary>
-        <AccordionDetails customStyles={{ backgroundColor: "#bbf7d0" }}>
-          <Typography>
-            For almost two decades, Nashville-based Mother To Mother has been
-            working to ensure children in our community have access to three
-            basic essentials that often slip through the cracks of government
-            subsidies and charitable support:​ diapers car seats a safe place to
-            sleep
-          </Typography>
+        <AccordionDetails customStyles={{ backgroundColor: "#FFFFFF" }}>
+          {/*Contact Us box*/}
+          <Box sx={boxStyle}>
+            <Box sx={innerTextStyle} marginTop={"39.5px"}>
+              Contact Us
+            </Box>
+            {/*Inner Contact Us box*/}
+            <Box sx={innerBoxStyle}>
+              {/*Icons*/}
+              <Box sx={innerBoxIconStyle}>
+                <SVG1 />
+                <br />
+                <SVG2 />
+                <br />
+                <SVG3 />
+              </Box>
+
+              <Box sx={innerBoxTextStyle}>
+                615-540-7000 info@mothertomother.org www.mothertomother.org/
+              </Box>
+            </Box>
+          </Box>
+          {/*Adress box*/}
+          <Box sx={boxStyle} marginTop={"30px"}>
+            <Box sx={innerTextStyle} marginTop={"39.5px"}>
+              Address
+            </Box>
+            {/*Inner Address box*/}
+            <Box sx={innerBoxStyle}>
+              {/*Icons*/}
+              <Box sx={innerBoxIconStyle}>
+                <br />
+                <SVG4 />
+              </Box>
+              {/*Inner Information*/}
+              <Box sx={innerBoxTextStyle}>
+                478 Allied Drive <br />
+                Suite 104 & 105 <br />
+                Nashville, TN 37211
+              </Box>
+            </Box>
+          </Box>
+          {/*Brop Off Hours box*/}
+          <Box sx={boxStyle} marginTop={"30px"}>
+            <Box sx={innerTextStyle} marginTop={"32px"}>
+              Drop Off Hours
+            </Box>
+            {/*Inner Drop off box*/}
+            <Box sx={innerBoxStyle}>
+              {/*Icons*/}
+              <Box sx={innerBoxIconStyle}>
+                <br />
+                <SVG5 />
+              </Box>
+              {/*Inner Information*/}
+              <Box sx={innerBoxTextStyle} paddingTop={"6px"}>
+                Mon – Thur 1-4:30 pm
+                <br /> Fri - Sun CLOSED
+              </Box>
+            </Box>
+          </Box>
         </AccordionDetails>
       </Accordion>
     </>
