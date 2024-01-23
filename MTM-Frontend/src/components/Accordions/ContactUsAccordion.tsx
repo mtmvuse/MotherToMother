@@ -5,7 +5,11 @@ import { Accordion } from "./Accordion";
 import { AccordionSummary } from "./AccordionSummary";
 import { AccordionDetails } from "./AccordionDetails";
 import { Box } from "@mui/material";
-import { SVG1, SVG2, SVG3, SVG4, SVG5 } from "./CustomSVGContactUsAccordion";
+import LocalPhoneOutlinedIcon from "@mui/icons-material/LocalPhoneOutlined";
+import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
+import LinkOutlinedIcon from "@mui/icons-material/LinkOutlined";
+import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
+import WatchLaterOutlinedIcon from "@mui/icons-material/WatchLaterOutlined";
 
 // style for outermost green contact boxes
 const boxStyle = {
@@ -48,18 +52,17 @@ const innerBoxIconStyle = {
   fontFamily: "Raleway",
   fontWeight: "400",
   wordWrap: "break-word",
-  margin: "14px 10px 14px 14px",
 } as const;
 
 // style for all text inside of the white boxes
 const innerBoxTextStyle = {
   color: "black",
-  fontSize: "12px",
+  fontSize: "15px",
   fontFamily: "Raleway",
   fontWeight: "400",
   wordWrap: "break-word",
   width: "166px",
-  margin: "14px 0px 14px",
+  margin: "10px 0px 14px",
 } as const;
 
 type ContactUsAccordionProps = {
@@ -96,12 +99,12 @@ const ContactUsAccordion: React.FC<ContactUsAccordionProps> = ({
             {/*Inner Contact Us box*/}
             <Box sx={innerBoxStyle}>
               {/*Icons*/}
-              <Box sx={innerBoxIconStyle}>
-                <SVG1 />
+              <Box sx={innerBoxIconStyle} margin={"2px 10px 14px 14px"}>
+                <LocalPhoneOutlinedIcon fontSize="small" />
                 <br />
-                <SVG2 />
+                <EmailOutlinedIcon fontSize="small" />
                 <br />
-                <SVG3 />
+                <LinkOutlinedIcon fontSize="small" />
               </Box>
 
               <Box sx={innerBoxTextStyle}>
@@ -117,9 +120,8 @@ const ContactUsAccordion: React.FC<ContactUsAccordionProps> = ({
             {/*Inner Address box*/}
             <Box sx={innerBoxStyle}>
               {/*Icons*/}
-              <Box sx={innerBoxIconStyle}>
-                <br />
-                <SVG4 />
+              <Box sx={innerBoxIconStyle} margin={"25px 10px 14px 14px"}>
+                <HomeOutlinedIcon fontSize="medium" />
               </Box>
               {/*Inner Information*/}
               <Box sx={innerBoxTextStyle}>
@@ -137,9 +139,8 @@ const ContactUsAccordion: React.FC<ContactUsAccordionProps> = ({
             {/*Inner Drop off box*/}
             <Box sx={innerBoxStyle}>
               {/*Icons*/}
-              <Box sx={innerBoxIconStyle}>
-                <br />
-                <SVG5 />
+              <Box sx={innerBoxIconStyle} margin={"25px 10px 14px 14px"}>
+                <WatchLaterOutlinedIcon fontSize="small" />
               </Box>
               {/*Inner Information*/}
               <Box sx={innerBoxTextStyle} paddingTop={"6px"}>
