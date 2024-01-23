@@ -2,14 +2,10 @@ import {
   Box,
   BottomNavigation,
   BottomNavigationAction,
-  SvgIcon,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
 import React from "react";
-import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
-import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
-import DonationIcon from "./DonationIcon";
 import { USER_TYPE } from "../../lib/constants";
 import homeIcon from "../../pages/assets/home-icon.png";
 import profileIcon from "../../pages/assets/profile-icon.png";
@@ -65,13 +61,7 @@ export const Navbar: React.FC<UserTypeProps> = ({ savedUserType }) => {
             <BottomNavigationAction
               sx={{ flexGrow: 1 }}
               value={"/home/form"}
-              icon={
-                <SvgIcon
-                  sx={{ bgcolor: "#F5F5F5", alignItems: "center" }}
-                  component={DonationIcon}
-                  inheritViewBox
-                />
-              }
+              icon={<img src={formIcon} />}
             />
           )}
         </BottomNavigation>

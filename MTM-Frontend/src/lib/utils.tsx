@@ -1,4 +1,4 @@
-import { UserType } from "~/types/UserTypes";
+import { type UserType } from "~/types/UserTypes";
 import { getUserData } from "./services";
 
 export const storeLocalUserType = async (

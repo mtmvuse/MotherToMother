@@ -1,5 +1,5 @@
 import { db } from "../../../utils/db.server";
-import { Organization } from "../../../types/organization";
+import { type Organization } from "../../../types/organization";
 
 /**
  * get all organizations in the db

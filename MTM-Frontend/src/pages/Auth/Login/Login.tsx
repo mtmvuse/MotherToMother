@@ -12,7 +12,7 @@ import m2m_logo from "../../assets/m2m_logo.png";
 import animal_logo from "../../assets/animal_logo.png";
 
 import { storeLocalUserType } from "../../../lib/utils";
-import { SharedStates } from "~/App";
+import { type SharedStates } from "~/App";
 
 interface FormValues {
   email: string;
@@ -51,12 +51,12 @@ const Login: React.FC<SharedStates> = ({ setSavedUserType }) => {
       setError("");
       const result = await login(data.email, data.password);
       const accessToken = await result.user?.getIdToken();
-      const userEmail = result.user?.email as string;
+      const userEmail = result.user.email!;
       const savedUserType = await storeLocalUserType(userEmail, accessToken);
       setSavedUserType(savedUserType);
       navigate("/home");
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError((err as Error).message);
     }
   };
 
