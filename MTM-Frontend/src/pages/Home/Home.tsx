@@ -11,9 +11,7 @@ import { ContactUsAccordion } from "../../components/Accordions/ContactUsAccordi
 import { DonateAccordion } from "../../components/Accordions/DonateAccordion";
 
 const Home: React.FC = () => {
-  const [showContact, setShowContact] = useState<boolean>(false);
   const [expanded, setExpanded] = useState<string | false>("");
-
   const [user, setUser] = useState<UserType | null>(null);
   const { currentUser } = useAuth();
 
@@ -44,10 +42,6 @@ const Home: React.FC = () => {
 
     fetchUser();
   }, []);
-
-  const toggleContact = () => {
-    setShowContact(!showContact);
-  };
 
   const handleChange =
     (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {

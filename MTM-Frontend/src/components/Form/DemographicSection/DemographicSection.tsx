@@ -68,7 +68,7 @@ const DemographicSection: React.FC = ({}) => {
           {/* Main Content of Demographic Section */}
           <Container
             sx={{
-              backgroundColor: "var(--mtmNavy)",
+              backgroundColor: "#004A7C",
               borderRadius: "5px",
               height: "29px",
               display: "flex",

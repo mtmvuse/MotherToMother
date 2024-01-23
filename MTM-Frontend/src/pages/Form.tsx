@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Typography, Stack, Button } from "@mui/material";
-
+import { Link, useNavigate } from "react-router-dom";
 import ReviewSection from "../components/Form/ReviewSection/ReviewSection";
 import DemographicSection from "../components/Form/DemographicSection/DemographicSection";
 import GeneralSection from "../components/Form/GeneralSection";
@@ -10,10 +10,16 @@ import { createOutgoingDonation } from "../lib/services";
 import { ErrorMessage } from "../components/Error";
 
 const Form: React.FC = () => {
-  const { demographicDetails, donationDetails } = useForm();
-  const { logout, currentUser } = useAuth();
+  const {
+    demographicDetails,
+    donationDetails,
+    setDemographicDetails,
+    setDonationDetails,
+  } = useForm();
+  const { currentUser } = useAuth();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const onSubmit = async () => {
     setIsLoading(true); // Disables the submit button.
@@ -39,12 +45,27 @@ const Form: React.FC = () => {
         ...demographicDetails,
       };
 
-      await createOutgoingDonation(token, request);
+      const response = await createOutgoingDonation(token, request);
+      if (!response.ok) {
+        throw new Error("Error submitting form. Please try again");
+      }
+      // reset form
+      setDemographicDetails({
+        whiteNum: 0,
+        blackNum: 0,
+        latinoNum: 0,
+        nativeNum: 0,
+        asianNum: 0,
+        otherNum: 0,
+        numberServed: 0,
+      });
+      setDonationDetails([]);
+      navigate("/home/form/success");
     } catch (error) {
       const err = error as Error;
       setError(err.message);
     } finally {
-      setIsLoading(false); // Enables the submit button
+      setIsLoading(false);
     }
   };
   return (
@@ -96,6 +117,8 @@ const Form: React.FC = () => {
           <Button
             onClick={onSubmit}
             type="submit"
+            component={Link}
+            to="/home/form/success"
             variant="outlined"
             sx={{
               fontFamily: "Interit, sans-serif",
@@ -108,7 +131,7 @@ const Form: React.FC = () => {
             }}
             disabled={isLoading}
           >
-            Submit
+            SUBMIT
           </Button>
           <Button
             type="button"

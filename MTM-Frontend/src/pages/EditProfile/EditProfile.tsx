@@ -30,7 +30,7 @@ const schema = Yup.object().shape({
   phone: Yup.string()
     .matches(
       /^((\+\d{1,3}(-| )?\(?\d\)?(-| )?\d{1,3})|(\(?\d{2,3}\)?))(-| )?(\d{3,4})(-| )?(\d{4})(( x| ext)\d{1,5}){0,1}$/,
-      ("Phone number is invalid"),
+      "Phone number is invalid",
     )
     .required("Phone number is required"),
   address: Yup.string().required("Address is required"),

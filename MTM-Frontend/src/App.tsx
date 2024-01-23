@@ -22,6 +22,7 @@ import EditProfile from "./pages/EditProfile/EditProfile";
 import { ProfileLayout } from "./pages/Profile/ProfileLayout";
 import SpecificItemPage from "./pages/SpecificItemPage";
 import Home from "./pages/Home/Home";
+import Success from "./pages/Success"
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -47,6 +48,10 @@ const router = createBrowserRouter(
                 <Route
                   path="specificItem"
                   element={<PrivateRoute element={<SpecificItemPage />} />}
+                />
+                <Route
+                  path="success"
+                  element={<PrivateRoute element={<Success />} />}
                 />
               </Routes>
             </FormProvider>

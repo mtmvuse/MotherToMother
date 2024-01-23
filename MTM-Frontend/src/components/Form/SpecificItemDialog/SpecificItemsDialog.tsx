@@ -122,7 +122,7 @@ export const SpecificItemsDialog = ({
                 color: "var(--mtmDarkGreen)",
               }}
             >
-              New
+              NEW
             </Typography>
             <input
               type="number"
@@ -159,7 +159,7 @@ export const SpecificItemsDialog = ({
                 color: "var(--mtmDarkGreen)",
               }}
             >
-              Used
+              USED
             </Typography>
             <input
               type="number"
