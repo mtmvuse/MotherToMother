@@ -28,7 +28,10 @@ const schema = Yup.object().shape({
     .required("Email is required"),
   userType: Yup.string().required("Type is required"),
   phone: Yup.string()
-    .matches(/^[0-9]{10}$/, "Phone number is not valid")
+    .matches(
+      /^((\+\d{1,3}(-| )?\(?\d\)?(-| )?\d{1,3})|(\(?\d{2,3}\)?))(-| )?(\d{3,4})(-| )?(\d{4})(( x| ext)\d{1,5}){0,1}$/,
+      "Phone number is invalid",
+    )
     .required("Phone number is required"),
   address: Yup.string().required("Address is required"),
   zip: Yup.string()
@@ -136,68 +139,70 @@ const EditProfile: React.FC = () => {
   return isLoading ? (
     <CircularProgress />
   ) : (
-    <div className={"edit-profile-container"}>
-      <ErrorMessage error={error} setError={setError} />
-      <div className={"edit-form"}>
-        <form id="edit-form" onSubmit={handleSubmit(onSubmit)}>
-          <p className="text-label">Basic Information</p>
-          <input
-            className="form-input"
-            placeholder="Name"
-            {...register("name")}
-          ></input>
-          {errors?.name && (
-            <p className="error-message">{errors.name.message}</p>
-          )}
-          <p className="text-label">Contact</p>
-          <div className="vertical-input-container">
+    <div>
+      <div className={"edit-profile-container"}>
+        <ErrorMessage error={error} setError={setError} />
+        <div className={"edit-form"}>
+          <form id="edit-form" onSubmit={handleSubmit(onSubmit)}>
+            <p className="text-label">Basic Information</p>
             <input
               className="form-input"
-              placeholder={"Email address"}
-              {...register("email")}
-              readOnly
-              onFocus={(e) => e.target.blur()}
-            />
-            {errors.email && (
-              <p className="error-message">{errors.email.message}</p>
+              placeholder="Name"
+              {...register("name")}
+            ></input>
+            {errors?.name && (
+              <p className="error-message">{errors.name.message}</p>
             )}
+            <p className="text-label">Contact</p>
+            <div className="vertical-input-container">
+              <input
+                className="form-input"
+                placeholder={"Email address"}
+                {...register("email")}
+                readOnly
+                onFocus={(e) => e.target.blur()}
+              />
+              {errors.email && (
+                <p className="error-message">{errors.email.message}</p>
+              )}
+              <input
+                className="form-input"
+                placeholder={"*Phone Number"}
+                {...register("phone")}
+              />
+              {errors.phone && (
+                <p className="error-message">{errors.phone.message}</p>
+              )}
+            </div>
+            <p className="text-label">Address</p>
             <input
               className="form-input"
-              placeholder={"*Phone Number"}
-              {...register("phone")}
-            />
-            {errors.phone && (
-              <p className="error-message">{errors.phone.message}</p>
-            )}
-          </div>
-          <p className="text-label">Address</p>
-          <input
-            className="form-input"
-            placeholder={"Street Address"}
-            {...register("address")}
-          ></input>
-          {errors.address && (
-            <p className="error-message">{errors.address.message}</p>
-          )}
-          <div className={"side-inputs"}>
-            <input
-              className="form-input-left-half"
-              placeholder={"City"}
-              {...register("city")}
+              placeholder={"Street Address"}
+              {...register("address")}
             ></input>
-            {errors.city && (
-              <p className="error-message">{errors.city.message}</p>
+            {errors.address && (
+              <p className="error-message">{errors.address.message}</p>
             )}
-            <input
-              className="form-input-right-half"
-              placeholder={"Zip"}
-              {...register("zip")}
-            ></input>
-            {errors.zip && (
-              <p className="error-message">{errors.zip.message}</p>
-            )}
-          </div>
-        </form>
+            <div className={"side-inputs"}>
+              <input
+                className="form-input-left-half"
+                placeholder={"City"}
+                {...register("city")}
+              ></input>
+              {errors.city && (
+                <p className="error-message">{errors.city.message}</p>
+              )}
+              <input
+                className="form-input-right-half"
+                placeholder={"Zip"}
+                {...register("zip")}
+              ></input>
+              {errors.zip && (
+                <p className="error-message">{errors.zip.message}</p>
+              )}
+            </div>
+          </form>
+        </div>
       </div>
 
       <div className={"buttons-container"}>

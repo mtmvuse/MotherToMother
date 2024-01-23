@@ -74,11 +74,11 @@ const ReviewSection = (props: ReviewSectionProps) => {
         {!isEditMode && (
           <Button
             variant="outlined"
-            sx={{ fontSize: 15, height: "33px" }}
+            sx={{ fontSize: 15, height: "33px", color: "#004A7C", borderColor: "#004A7C" }}
             onClick={handleEdit}
             style={{
-              marginTop: "5%",
-              marginBottom: "5%",
+              marginTop: "15px",
+              marginBottom: "15px",
               color: "var(--mtmNavy)",
               border: "1px solid var(--mtmNavy)",
               fontFamily: " Inter, sans-serif",
@@ -86,19 +86,24 @@ const ReviewSection = (props: ReviewSectionProps) => {
               fontWeight: "800",
             }}
           >
-            Edit
+            EDIT
           </Button>
         )}
         {isEditMode && (
-          <Stack direction="row" spacing={3} marginTop="50px">
+          <Stack direction="row" spacing={3}>
             <Button
               variant="outlined"
-              sx={{ fontSize: 15, height: "33px" }}
+              sx={{
+                fontSize: 15,
+                height: "33px",
+                backgroundColor: "#004A7C", // Replace with your desired background color
+                color: "white", // Replace with your desired text color
+              }}
               color="primary"
               onClick={handleSave}
               style={{
-                marginTop: "0",
-              marginBottom: "5%",
+                marginTop: "15px",
+                marginBottom: "15px",
                 backgroundColor: "var(--mtmNavy)",
                 color: "white",
                 height: "32px",
@@ -108,15 +113,15 @@ const ReviewSection = (props: ReviewSectionProps) => {
                 fontWeight: "800",
               }}
             >
-              Save
+              SAVE
             </Button>
             <Button
               variant="outlined"
-              sx={{ fontSize: 15, height: "33px" }}
+              sx={{ fontSize: 15, height: "33px", color: "#004A7C", borderColor: "#004A7C" }}
               onClick={handleCancel}
               style={{
-                marginTop: "0",
-              marginBottom: "5%",
+                marginTop: "15px",
+                marginBottom: "15px",
                 color: "var(--mtmNavy)",
                 border: "1px solid var(--mtmNavy)",
                 fontFamily: " Inter, sans-serif",
@@ -124,7 +129,7 @@ const ReviewSection = (props: ReviewSectionProps) => {
                 fontWeight: "800",
               }}
             >
-              Cancel
+              CANCEL
             </Button>
           </Stack>
         )}

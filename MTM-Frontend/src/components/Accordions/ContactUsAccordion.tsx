@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Typography from "@mui/material/Typography";
 
 import { Accordion } from "./Accordion";
@@ -26,11 +26,11 @@ const ContactUsAccordion: React.FC<ContactUsAccordionProps> = ({
         <AccordionSummary
           aria-controls="contact-panel-content"
           id="contact-header"
-          customStyles={{ backgroundColor: "#bbf7d0" }}
+          customStyles={{ backgroundColor: "#F6FBF5" }}
         >
           <Typography className="square-button">CONTACT & HOURS</Typography>
         </AccordionSummary>
-        <AccordionDetails customStyles={{ backgroundColor: "#bbf7d0" }}>
+        <AccordionDetails customStyles={{ backgroundColor: "#F6FBF5" }}>
           <Typography>
             For almost two decades, Nashville-based Mother To Mother has been
             working to ensure children in our community have access to three

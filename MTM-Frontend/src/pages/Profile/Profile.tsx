@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
-import { CircularProgress, Typography } from "@mui/material";
+import { CircularProgress, Typography, Stack, Button } from "@mui/material";
 import "./Profile.css";
 import { getUserData } from "../../lib/services";
 import type { UserType } from "../../types/UserTypes";
@@ -56,42 +56,44 @@ const Profile: React.FC = () => {
   };
 
   return (
-    <div className={"profile-container"}>
-      <ErrorMessage error={error} setError={setError} />
-      <div className={"profile-heading"}>
-        <div className={"name-container"}>
-          <Typography className={"heading"}>{user?.firstName}</Typography>
-        </div>
-        <Typography className={"subheading"}>
-          {user?.userType}
-        </Typography>
-      </div>
-      {isLoading ? (
-        <CircularProgress />
-      ) : (
-        <div className={"profile-info"}>
-          <div className={"inline"}>
-            <strong>Phone:</strong>
-            <p className={"value"}>{user?.phone}</p>
-          </div>
-          <div className={"inline"}>
-            <strong>Email:</strong>
-            <p className={"value"}>{user?.email}</p>
-          </div>
-          <div className={"inline"}>
-            <strong>Address:</strong>
-            <p className={"value wrap"}>{user?.address}</p>
-          </div>
-          <div className={"inline"}>
-            <strong>Account Type:</strong>
-            <p className={"value"}>{user?.userType}</p>
-          </div>
-        </div>
-      )}
-      <div className={"buttons-conatiner"}>
+    <div className="profile-page">
+      <div className={"logout-button-conatiner"}>
         <button className="logout-button" onClick={handleLogout}>
           Logout
         </button>
+      </div>
+      <div className={"profile-container"}>
+        <ErrorMessage error={error} setError={setError} />
+        <div className={"profile-heading"}>
+          <div className={"name-container"}>
+            <Typography className={"heading"}>{user?.firstName}</Typography>
+          </div>
+          <Typography className={"subheading"}>{user?.userType}</Typography>
+        </div>
+        {isLoading ? (
+          <CircularProgress />
+        ) : (
+          <div className={"profile-info"}>
+            <div className={"inline"}>
+              <strong>Phone:</strong>
+              <p className={"value"}>{user?.phone}</p>
+            </div>
+            <div className={"inline"}>
+              <strong>Email:</strong>
+              <p className={"value"}>{user?.email}</p>
+            </div>
+            <div className={"inline"}>
+              <strong>Address:</strong>
+              <p className={"value"}>{user?.address}</p>
+            </div>
+            <div className={"inline"}>
+              <strong>Account Type:</strong>
+              <p className={"value"}>{user?.userType}</p>
+            </div>
+          </div>
+        )}
+      </div>
+      <div className={"edit-button-conatiner"}>
         <button className="edit-button" onClick={handleEditProfile}>
           Edit
         </button>
