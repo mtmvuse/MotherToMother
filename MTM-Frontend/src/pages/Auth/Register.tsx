@@ -27,6 +27,8 @@ import { RegisterTextFieldPassword } from "../../components/Auth/RegisterForms/R
 import { RegisterTextFieldPhone } from "../../components/Auth/RegisterForms/RegisterTextFieldPhone";
 import { feedback } from "../../components/Auth/RegisterForms/RegisterFeedback";
 
+import { SharedStates } from "../../App";
+
 const schema = Yup.object().shape({
   name: Yup.string()
     .matches(/^([A-Za-z]+\s[A-Za-z]+)$/, {
@@ -61,7 +63,7 @@ const schema = Yup.object().shape({
   }),
 });
 
-const Register: React.FC = () => {
+const Register: React.FC<SharedStates> = ({ setSavedUserType }) => {
   const [userType, setUserType] = useState<string>("");
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [error, setError] = useState<string>("");
@@ -132,6 +134,8 @@ const Register: React.FC = () => {
           `Failed to save registered user data to database: ${response.status}`,
         );
       }
+      localStorage.setItem("userType", values.userType);
+      setSavedUserType(values.userType);
       navigate("/home");
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
@@ -315,9 +319,12 @@ const Register: React.FC = () => {
           </Box>
 
           <Box mb={2} width="100%">
-            <Typography variant="body1"  style={{
+            <Typography
+              variant="body1"
+              style={{
                 fontFamily: "Raleway, sans-serif",
-              }}>
+              }}
+            >
               Account Type<span style={{ color: "#EF4444" }}>*</span>
             </Typography>
             <Typography

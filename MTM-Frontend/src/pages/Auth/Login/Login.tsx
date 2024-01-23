@@ -11,7 +11,8 @@ import "./Login.css";
 import m2m_logo from "../../assets/m2m_logo.png";
 import animal_logo from "../../assets/animal_logo.png";
 
-import { getUserData } from "../../../lib/services";
+import { storeLocalUserType } from "../../../lib/utils";
+import { SharedStates } from "~/App";
 
 interface FormValues {
   email: string;
@@ -25,33 +26,9 @@ const schema = Yup.object().shape({
   password: Yup.string().required("Password is required"),
 });
 
-const Login: React.FC = () => {
+const Login: React.FC<SharedStates> = ({ setSavedUserType }) => {
   const { login, currentUser } = useAuth();
   const navigate = useNavigate();
-
-  const storeUserType = async () => {
-    try {
-      const token = await currentUser?.getIdToken();
-      if (!currentUser) {
-        throw new Error("Failed to fetch user data");
-      }
-      const userEmail = currentUser.email;
-      if (!userEmail) {
-        throw new Error("User email not found");
-      }
-      const response = await getUserData(userEmail, token);
-      if (!response.ok) {
-        throw new Error("Error fetching user");
-      }
-      const userData = await response.json();
-      localStorage.setItem("userType", userData.userType);
-      // console.log(localStorage.getItem("userType"));
-    } catch (error: any) {
-      console.error("Error fetching user:", error);
-    }
-  };
-
-  // storeUserType();
 
   const {
     handleSubmit,
@@ -75,15 +52,9 @@ const Login: React.FC = () => {
       const result = await login(data.email, data.password);
       const accessToken = await result.user?.getIdToken();
       const userEmail = result.user?.email as string;
-      console.log(accessToken, userEmail);
-      const userResponse = await getUserData(userEmail, accessToken);
-      console.log("user response", userResponse);
-      const userData = await userResponse.json(); // Type declaration here
-      console.log("user data", userData);
-      localStorage.setItem("userType", userData.userType);
-
-      // storeUserType();
-      // navigate("/home");
+      const savedUserType = await storeLocalUserType(userEmail, accessToken);
+      setSavedUserType(savedUserType);
+      navigate("/home");
     } catch (err: any) {
       setError(err.message);
     }

@@ -17,8 +17,9 @@ import formIcon from "../../pages/assets/form-icon.png";
 
 import "./Navbar.css";
 import { useLocation, useNavigate } from "react-router-dom";
+import { UserTypeProps } from "~/pages/HomeLayout";
 
-export const Navbar: React.FC = () => {
+export const Navbar: React.FC<UserTypeProps> = ({ savedUserType }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const theme = useTheme();
@@ -60,7 +61,7 @@ export const Navbar: React.FC = () => {
             value={"/home/profile"}
             icon={<img src={profileIcon} />}
           />
-          {localStorage.getItem("userType") == "Agency" && (
+          {savedUserType == "Agency" && (
             <BottomNavigationAction
               sx={{ flexGrow: 1 }}
               value={"/home/form"}

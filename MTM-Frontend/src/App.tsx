@@ -16,41 +16,63 @@ import EditProfile from "./pages/EditProfile/EditProfile";
 import { ProfileLayout } from "./pages/Profile/ProfileLayout";
 import SpecificItemPage from "./pages/SpecificItemPage";
 import Home from "./pages/Home/Home";
+import { useState } from "react";
 
-const App: React.FC = () => (
-  <BrowserRouter>
-    <AuthProvider>
-      <Routes>
-        <Route path="/" element={<AuthLayout />}>
-          <Route index element={<Login />} />
-          <Route path="register" element={<Register />} />
-          <Route path="forgotPassword" element={<ForgotPassword />} />
-        </Route>
-        <Route path="home" element={<PrivateRoute element={<HomeLayout />} />}>
-          <Route index element={<Home />} />
-          <Route path="profile" element={<ProfileLayout />}>
-            <Route index element={<Profile />} />
-            <Route path="edit" element={<EditProfile />} />
+export interface SharedStates {
+  setSavedUserType: (newUserType: string) => void;
+}
+
+const App: React.FC = () => {
+  const [savedUserType, setSavedUserType] = useState<string>("");
+
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <Routes>
+          <Route path="/" element={<AuthLayout />}>
+            <Route
+              index
+              element={<Login setSavedUserType={setSavedUserType} />}
+            />
+            <Route
+              path="register"
+              element={<Register setSavedUserType={setSavedUserType} />}
+            />
+            <Route path="forgotPassword" element={<ForgotPassword />} />
           </Route>
-
           <Route
-            path="form/*"
+            path="home"
             element={
-              <FormProvider>
-                <Routes>
-                  <Route index element={<Form />} />
-                  <Route
-                    path="specificItem"
-                    element={<PrivateRoute element={<SpecificItemPage />} />}
-                  />
-                </Routes>
-              </FormProvider>
+              <PrivateRoute
+                element={<HomeLayout savedUserType={savedUserType} />}
+              />
             }
-          />
-        </Route>
-      </Routes>
-    </AuthProvider>
-  </BrowserRouter>
-);
+          >
+            <Route index element={<Home />} />
+            <Route path="profile" element={<ProfileLayout />}>
+              <Route index element={<Profile />} />
+              <Route path="edit" element={<EditProfile />} />
+            </Route>
+
+            <Route
+              path="form/*"
+              element={
+                <FormProvider>
+                  <Routes>
+                    <Route index element={<Form />} />
+                    <Route
+                      path="specificItem"
+                      element={<PrivateRoute element={<SpecificItemPage />} />}
+                    />
+                  </Routes>
+                </FormProvider>
+              }
+            />
+          </Route>
+        </Routes>
+      </AuthProvider>
+    </BrowserRouter>
+  );
+};
 
 export default App;
