@@ -3,6 +3,7 @@ import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { Box, Tab, Tabs, Typography, Button } from "@mui/material";
 import { CAPTIONS } from "../lib/constants";
 import { useAuth } from "../lib/contexts";
+import { capitalizeFirstLetter } from "../lib/utils";
 
 interface LinkTabProps {
   label?: string;
@@ -28,7 +29,7 @@ const HomeLayout: React.FC = () => {
   const location = useLocation();
   const currentPathname = location.pathname.substring(1);
   const [curPage, setCurPage] = React.useState(
-    CAPTIONS.indexOf(currentPathname)
+    CAPTIONS.indexOf(capitalizeFirstLetter(currentPathname))
   );
   const { logout } = useAuth();
   const navigate = useNavigate();
