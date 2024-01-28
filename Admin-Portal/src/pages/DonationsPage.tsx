@@ -2,7 +2,11 @@ import React from "react";
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
 
 const columns: GridColDef[] = [
-  { field: "id", headerName: "ID", width: 70 },
+  {
+    field: "id",
+    headerName: "ID",
+    width: 100,
+  },
   {
     field: "date",
     headerName: "Date",
@@ -10,7 +14,7 @@ const columns: GridColDef[] = [
     width: 200,
     valueGetter: (params: GridValueGetterParams) => new Date(params.row.date),
   },
-  { field: "organization", headerName: "Organization", width: 300 },
+  { field: "organization", headerName: "Organization", width: 350 },
   {
     field: "items",
     headerName: "Items",
@@ -73,7 +77,6 @@ const DonationsPage: React.FC = () => {
             paginationModel: { page: 0, pageSize: 10 },
           },
         }}
-        checkboxSelection
         pageSizeOptions={[10, 25]}
       />
     </div>
