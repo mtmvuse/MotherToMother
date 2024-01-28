@@ -73,7 +73,7 @@ const HomeLayout: React.FC = () => {
         </Button>
       </Box>
       <Box sx={{ flex: 1, p: 3 }}>
-        <Typography variant="h5" gutterBottom sx={{ marginBottom: "50px" }}>
+        <Typography variant="h5" gutterBottom sx={{ marginBottom: "25px" }}>
           {CAPTIONS[curPage]}
         </Typography>
         {<Outlet />}
