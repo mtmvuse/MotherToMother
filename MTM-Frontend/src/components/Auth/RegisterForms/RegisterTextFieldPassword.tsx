@@ -4,9 +4,9 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { Controller } from "react-hook-form";
 import { FormHelperText } from "@mui/material";
 import {
-  PasswordRequirementsType,
+  type PasswordRequirementsType,
   passwordRequirements,
-  FeedbackType,
+  type FeedbackType,
   feedback,
 } from "./RegisterFeedback";
 
@@ -69,9 +69,9 @@ export const RegisterTextFieldPassword: React.FC<InputProps> = ({
                 style: {
                   padding: "0px",
                   margin: "1rem 0rem 0rem 0rem",
-                    fontFamily: "Raleway, sans-serif",
-                    fontStyle: "italic",
-                    color: "var(--mtmLightgray)",
+                  fontFamily: "Raleway, sans-serif",
+                  fontStyle: "italic",
+                  color: "var(--mtmLightgray)",
                 },
               },
               endAdornment: (
@@ -92,8 +92,8 @@ export const RegisterTextFieldPassword: React.FC<InputProps> = ({
               errors
                 ? errors.message
                 : isFocused
-                  ? feedback[name as keyof FeedbackType]
-                  : ""
+                ? feedback[name as keyof FeedbackType]
+                : ""
             }
           />
         )}

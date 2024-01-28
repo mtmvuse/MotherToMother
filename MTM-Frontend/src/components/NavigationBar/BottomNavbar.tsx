@@ -2,23 +2,20 @@ import {
   Box,
   BottomNavigation,
   BottomNavigationAction,
-  SvgIcon,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
 import React from "react";
-import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
-import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
-import DonationIcon from "./DonationIcon";
-
+import { USER_TYPE } from "../../lib/constants";
 import homeIcon from "../../pages/assets/home-icon.png";
 import profileIcon from "../../pages/assets/profile-icon.png";
 import formIcon from "../../pages/assets/form-icon.png";
 
 import "./Navbar.css";
 import { useLocation, useNavigate } from "react-router-dom";
+import type { UserTypeProps } from "~/pages/HomeLayout";
 
-export const Navbar: React.FC = () => {
+export const Navbar: React.FC<UserTypeProps> = ({ savedUserType }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const theme = useTheme();
@@ -40,7 +37,7 @@ export const Navbar: React.FC = () => {
         <BottomNavigation
           showLabels
           value={getParentRoute(location.pathname)}
-          onChange={(event, newValue) => {
+          onChange={(_event, newValue: string) => {
             navigate(newValue);
           }}
           sx={{
@@ -60,11 +57,13 @@ export const Navbar: React.FC = () => {
             value={"/home/profile"}
             icon={<img src={profileIcon} />}
           />
-          <BottomNavigationAction
-            sx={{ flexGrow: 1 }}
-            value={"/home/form"}
-            icon={<img src={formIcon} />}
-          />
+          {savedUserType == USER_TYPE.AGENCY && (
+            <BottomNavigationAction
+              sx={{ flexGrow: 1 }}
+              value={"/home/form"}
+              icon={<img src={formIcon} />}
+            />
+          )}
         </BottomNavigation>
         {isMobile && <div className="navbar-spacer"></div>}
       </Box>

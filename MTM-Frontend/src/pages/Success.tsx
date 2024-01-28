@@ -14,7 +14,9 @@ const Success: React.FC = () => {
         <img src={animal_logo} alt="Image1" />
       </div>
       <h1 className="h1-custom">Success!</h1>
-      <h2 className="h2-custom">Your donation form has been received <br /> and it will help others!</h2>
+      <h2 className="h2-custom">
+        Your donation form has been received <br /> and it will help others!
+      </h2>
       <Typography>
         <Link to="/home/form" className={"link-bold"}>
           start new form
