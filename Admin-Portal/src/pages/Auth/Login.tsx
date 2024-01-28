@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { useAuth } from "../../lib/contexts";
-import { Box, Typography, TextField, Button } from "@mui/material";
+import { Box, TextField, Button } from "@mui/material";
 import FormError from "./FormError";
 import { DEFAULT_PAGE } from "../../lib/constants";
 
@@ -49,8 +49,14 @@ const Login: React.FC = () => {
     }
   };
   return (
-    <Box>
-      <Typography variant="h5">Login</Typography>
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+      }}
+    >
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
           <TextField

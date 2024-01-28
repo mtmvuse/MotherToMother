@@ -1,7 +1,8 @@
 import React from "react";
-import { Outlet, useNavigate } from "react-router-dom";
-import { Box, Tab, Tabs, Typography } from "@mui/material";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import { Box, Tab, Tabs, Typography, Button } from "@mui/material";
 import { CAPTIONS } from "../lib/constants";
+import { useAuth } from "../lib/contexts";
 
 interface LinkTabProps {
   label?: string;
@@ -24,19 +25,32 @@ const LinkTab = (props: LinkTabProps) => {
 };
 
 const HomeLayout: React.FC = () => {
-  const [curPage, setCurPage] = React.useState(0);
+  const location = useLocation();
+  const currentPathname = location.pathname.substring(1);
+  const [curPage, setCurPage] = React.useState(
+    CAPTIONS.indexOf(currentPathname)
+  );
+  const { logout } = useAuth();
+  const navigate = useNavigate();
 
   const handleChange = (_event: React.SyntheticEvent, newPage: number) => {
     setCurPage(newPage);
+  };
+  const handleLogout = async () => {
+    await logout();
+    navigate("/login");
   };
 
   return (
     <Box sx={{ display: "flex" }}>
       <Box
         sx={{
-          flex: "0 0 20%",
+          flex: "0 0 15%",
           borderRight: 1,
           borderColor: "divider",
+          height: "100vh",
+          display: "flex",
+          flexDirection: "column",
         }}
       >
         <Tabs
@@ -54,9 +68,12 @@ const HomeLayout: React.FC = () => {
             />
           ))}
         </Tabs>
+        <Button sx={{ marginButton: "auto" }} onClick={handleLogout}>
+          Logout
+        </Button>
       </Box>
       <Box sx={{ flex: 1, p: 3 }}>
-        <Typography variant="h5" gutterBottom>
+        <Typography variant="h5" gutterBottom sx={{ marginBottom: "25px" }}>
           {CAPTIONS[curPage]}
         </Typography>
         {<Outlet />}
