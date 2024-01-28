@@ -9,6 +9,7 @@ import PrivateRoute from "./pages/Auth/PrivateRoute";
 import HomeLayout from "./pages/HomeLayout";
 import DonationsPage from "./pages/DonationsPage";
 import InventoryPage from "./pages/InventoryPage";
+import ReportsPage from "./pages/ReportsPage";
 import UsersPage from "./pages/UsersPage";
 import AdminsPage from "./pages/AdminsPage";
 
@@ -24,6 +25,7 @@ export const App = () => {
           <Route path="/" element={<PrivateRoute element={<HomeLayout />} />}>
             <Route path="donations" element={<DonationsPage />} />
             <Route path="inventory" element={<InventoryPage />} />
+            <Route path="reports" element={<ReportsPage />} />
             <Route path="users" element={<UsersPage />} />
             <Route path="admins" element={<AdminsPage />} />
           </Route>
