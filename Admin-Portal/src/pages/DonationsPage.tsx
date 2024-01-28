@@ -1,25 +1,26 @@
 import React from "react";
+import { Button } from "@mui/material";
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
 
 const columns: GridColDef[] = [
   {
     field: "id",
     headerName: "ID",
-    width: 100,
+    flex: 2,
   },
   {
     field: "date",
     headerName: "Date",
     type: "date",
-    width: 200,
+    flex: 3,
     valueGetter: (params: GridValueGetterParams) => new Date(params.row.date),
   },
-  { field: "organization", headerName: "Organization", width: 350 },
+  { field: "organization", headerName: "Organization", flex: 4 },
   {
     field: "items",
     headerName: "Items",
     type: "number",
-    width: 250,
+    flex: 3,
     align: "left",
     headerAlign: "left",
   },
@@ -27,14 +28,14 @@ const columns: GridColDef[] = [
     field: "total",
     headerName: "Total",
     type: "number",
-    width: 250,
+    flex: 3,
     align: "left",
     headerAlign: "left",
   },
   {
     field: "type",
     headerName: "Type",
-    width: 250,
+    flex: 3,
   },
 ];
 
@@ -68,6 +69,9 @@ const rows = [
 const DonationsPage: React.FC = () => {
   return (
     <div style={{ height: 400, width: "100%" }}>
+      <Button variant="contained" sx={{ margin: "auto 10px 10px auto" }}>
+        Add Donation
+      </Button>
       <DataGrid
         sx={{ width: "95%" }}
         rows={rows}
