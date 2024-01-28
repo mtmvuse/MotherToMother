@@ -1,2 +1,2 @@
-export const CAPTIONS = ["User Management", "Profile"];
-export const DEFAULT_PAGE = "/userManagement";
+export const CAPTIONS = ["Donations", "Inventory", "Users", "Admins"];
+export const DEFAULT_PAGE = "/donations";
