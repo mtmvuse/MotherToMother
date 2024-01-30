@@ -1,7 +1,7 @@
 import { TextField } from "@mui/material";
 import { Controller } from "react-hook-form";
 import { useState } from "react";
-import { FeedbackType, feedback } from "./RegisterFeedback";
+import { type FeedbackType, feedback } from "./RegisterFeedback";
 
 interface InputProps {
   name: string;
@@ -80,8 +80,8 @@ export const RegisterTextFieldPhone: React.FC<InputProps> = ({
             errors
               ? errors.message
               : isFocused
-                ? feedback[name as keyof FeedbackType]
-                : ""
+              ? feedback[name as keyof FeedbackType]
+              : ""
           }
         />
       )}

@@ -11,7 +11,8 @@ import "./Login.css";
 import m2m_logo from "../../assets/m2m_logo.png";
 import animal_logo from "../../assets/animal_logo.png";
 
-import { getUserData } from "../../../lib/services";
+import { storeLocalUserType } from "../../../lib/utils";
+import { type SharedStates } from "~/App";
 
 interface FormValues {
   email: string;
@@ -25,30 +26,9 @@ const schema = Yup.object().shape({
   password: Yup.string().required("Password is required"),
 });
 
-const Login: React.FC = () => {
+const Login: React.FC<SharedStates> = ({ setSavedUserType }) => {
   const { login, currentUser } = useAuth();
   const navigate = useNavigate();
-
-  const storeUserType = async () => {
-    try {
-      const token = await currentUser?.getIdToken();
-      if (!currentUser) {
-        throw new Error("Failed to fetch user data");
-      }
-      const userEmail = currentUser.email;
-      if (!userEmail) {
-        throw new Error("User email not found");
-      }
-      const response = await getUserData(userEmail, token);
-      if (!response.ok) {
-        throw new Error("Error fetching user");
-      }
-      const userData = await response.json();
-      localStorage.setItem("userType", userData.userType);
-    } catch (error: any) {
-      console.error("Error fetching user:", error);
-    }
-  };
 
   const {
     handleSubmit,
@@ -69,11 +49,14 @@ const Login: React.FC = () => {
   const onSubmit = async (data: FormValues) => {
     try {
       setError("");
-      await login(data.email, data.password);
+      const result = await login(data.email, data.password);
+      const accessToken = await result.user?.getIdToken();
+      const userEmail = result.user.email!;
+      const savedUserType = await storeLocalUserType(userEmail, accessToken);
+      setSavedUserType(savedUserType);
       navigate("/home");
-      storeUserType();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError((err as Error).message);
     }
   };
 
@@ -81,7 +64,10 @@ const Login: React.FC = () => {
     <div className={"login-container"}>
       <img className="logo-image" src={m2m_logo} alt="Image1" />
       <Typography className={"heading"}>Log In</Typography>
-      <div className="login-form-container">
+      <div
+        className="login-form-container"
+        style={{ background: "transparent" }}
+      >
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className={"input-container"}>
             <input
@@ -139,7 +125,12 @@ const Login: React.FC = () => {
           </div>
         </form>
       </div>
-      <img className="animal-image" src={animal_logo} alt="Image1" />
+      <img
+        style={{ zIndex: -1 }}
+        className="animal-image"
+        src={animal_logo}
+        alt="Image1"
+      />
     </div>
   );
 };

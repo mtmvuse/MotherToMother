@@ -27,8 +27,11 @@ const LinkTab = (props: LinkTabProps) => {
 const HomeLayout: React.FC = () => {
   const location = useLocation();
   const currentPathname = location.pathname.substring(1);
+  const captionsToPathnames = CAPTIONS.map((caption) =>
+    caption.replace(/\s/g, "").toLowerCase()
+  );
   const [curPage, setCurPage] = React.useState(
-    CAPTIONS.indexOf(currentPathname)
+    captionsToPathnames.indexOf(currentPathname.toLowerCase())
   );
   const { logout } = useAuth();
   const navigate = useNavigate();

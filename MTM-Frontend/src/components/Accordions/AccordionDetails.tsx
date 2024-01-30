@@ -1,6 +1,6 @@
 import { styled } from "@mui/material/styles";
 import MuiAccordionDetails, {
-  AccordionDetailsProps,
+  type AccordionDetailsProps,
 } from "@mui/material/AccordionDetails";
 
 interface AccordionDetailsStyledProps extends AccordionDetailsProps {

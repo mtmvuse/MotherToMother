@@ -74,7 +74,12 @@ const ReviewSection = (props: ReviewSectionProps) => {
         {!isEditMode && (
           <Button
             variant="outlined"
-            sx={{ fontSize: 15, height: "33px", color: "#004A7C", borderColor: "#004A7C" }}
+            sx={{
+              fontSize: 15,
+              height: "33px",
+              color: "#004A7C",
+              borderColor: "#004A7C",
+            }}
             onClick={handleEdit}
             style={{
               marginTop: "15px",
@@ -117,7 +122,12 @@ const ReviewSection = (props: ReviewSectionProps) => {
             </Button>
             <Button
               variant="outlined"
-              sx={{ fontSize: 15, height: "33px", color: "#004A7C", borderColor: "#004A7C" }}
+              sx={{
+                fontSize: 15,
+                height: "33px",
+                color: "#004A7C",
+                borderColor: "#004A7C",
+              }}
               onClick={handleCancel}
               style={{
                 marginTop: "15px",
