@@ -5,9 +5,10 @@ import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import ItemField from "../components/ItemField";
 import { Typography } from "@mui/material";
 
@@ -85,9 +86,13 @@ const AddDonationsModal: React.FC<{}> = () => {
         </Select>
       </FormControl>
       {showCalendar && (
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DateCalendar value={selectedDate} onChange={handleDateChange} />
-        </LocalizationProvider>
+
+  <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <DemoContainer components={['DatePicker']}>
+        <DatePicker onChange={handleDateChange} value={selectedDate} label="Basic date picker" />
+      </DemoContainer>
+    </LocalizationProvider>
+
       )}
       {showAddButton && (
         <Button
@@ -110,8 +115,7 @@ const AddDonationsModal: React.FC<{}> = () => {
       {items.length > 0 && (
         <div>
           <Typography>Total Items: {totalQuantity}</Typography>
-                    <Typography>Total Cost: ${totalCost}</Typography>
-
+          <Typography>Total Cost: ${totalCost}</Typography>
 
           <Button variant="contained" sx={{ mt: 2 }}>
             Submit
