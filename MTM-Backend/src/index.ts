@@ -12,6 +12,7 @@ import { donationRouter } from "./routes/v1/donation/donation.router";
 import { registrationRouter } from "./routes/v1/registration/registration.router";
 import { organizationRouter } from "./routes/v1/organization/organization.router";
 import { adminsRouter } from "./routes/v1/admins/admins.router";
+import { inventoryRouter } from "./routes/v1/inventory/inventory.router";
 
 dotenv.config();
 
@@ -41,7 +42,9 @@ app.use("/registration", registrationRouter);
 
 app.use("/organization", organizationRouter);
 
-app.use("/donation", verifyToken, donationRouter);
+app.use("/donation", donationRouter);
+
+app.use("/inventory", verifyToken, inventoryRouter);
 
 // Default route: Unprotected
 app.get("/", (_req: Request, res: Response) => {
