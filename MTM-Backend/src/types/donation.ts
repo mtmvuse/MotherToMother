@@ -38,3 +38,11 @@ export interface OutgoingDonationStatsType {
   asianNum: number;
   otherNum: number;
 }
+
+export interface TransactionDetail {
+  item: string;
+  status: string;
+  value: number;
+  quantity: number;
+  total: number;
+}
