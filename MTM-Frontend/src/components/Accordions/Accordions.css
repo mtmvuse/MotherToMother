@@ -1,16 +1,16 @@
 /* About Us Accordion Part */
-#about-us{
-  color: #004A7C;
+#about-us {
+  color: #004a7c;
 }
 
-#about-us-accordion-text-1{
+#about-us-accordion-text-1 {
   line-height: 21.13px;
   font-weight: 400;
   text-align: justify;
   margin-bottom: -15px;
 }
 
-#about-us-accordion-text-2{
+#about-us-accordion-text-2 {
   color: white;
   font-size: 15px;
   line-height: 17.61px;
@@ -18,7 +18,7 @@
   text-align: justify;
 }
 
-.about-us-item{
+.about-us-item {
   font-weight: 400;
 }
 
@@ -30,20 +30,20 @@
   line-height: 17.61px;
   font-size: 15px;
   font-weight: 400;
-  color: #004A7C;
+  color: #004a7c;
 }
 
 #impact-stats-title {
   text-align: center;
   font-size: 18px;
-  color: #004A7C;
+  color: #004a7c;
   font-weight: 700;
 }
 
 #impact-stats-subtitle {
   text-align: center;
   font-size: 12px;
-  color: #004A7C;
+  color: #004a7c;
   font-weight: 400;
   line-height: 14.09px;
 }
@@ -55,7 +55,7 @@
 }
 
 .square-button {
-  color: #004A7C;
+  color: #004a7c;
   font-size: 15px;
   font-weight: 400;
 }

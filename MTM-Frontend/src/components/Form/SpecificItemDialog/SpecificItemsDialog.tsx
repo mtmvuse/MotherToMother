@@ -199,7 +199,7 @@ export const SpecificItemsDialog = ({
                   border: "1px solid var(--mtmDarkGreen)",
                   height: "32px",
                   borderRadius: "10px",
-                   fontFamily: "Interit, sans-serif",
+                  fontFamily: "Interit, sans-serif",
                   fontSize: "15px",
                   fontWeight: "800",
                 }}
