@@ -47,8 +47,7 @@ app.use("/donation", donationRouter);
 
 app.use("/inventory", verifyToken, inventoryRouter);
 
-// TODO: Add verifyToken to protect the "/transactions" route
-app.use("/transactions", transactionsRouter);
+app.use("/donations", verifyToken, transactionsRouter);
 
 // Default route: Unprotected
 app.get("/", (_req: Request, res: Response) => {

@@ -1,4 +1,5 @@
 import { db } from "../../../utils/db.server";
+import type { TransactionDetail } from "../../../types/transaction";
 
 export const getTransactions = async (page: number, pageSize: number) => {
   // print type of page and pageSize
@@ -22,26 +23,45 @@ export const getTransactions = async (page: number, pageSize: number) => {
   });
 
   const transformedData = donations.map((donation) => {
-    const details = donation.DonationDetail.map((detail) => ({
-      item: detail.item.name,
-      status: detail.usedQuantity > 0 ? "Used" : "New",
-      value:
-        detail.usedQuantity > 0 ? detail.item.valueUsed : detail.item.valueNew,
-      quantity:
-        detail.usedQuantity > 0 ? detail.usedQuantity : detail.newQuantity,
-      total:
-        detail.usedQuantity * detail.item.valueUsed +
-        detail.newQuantity * detail.item.valueNew,
-    }));
+    const details: TransactionDetail[] = [];
 
-    const total = details.reduce((acc, detail) => acc + detail.total, 0);
+    donation.DonationDetail.forEach((detail) => {
+      // If there are used items, create a separate entry for them
+      if (detail.usedQuantity > 0) {
+        details.push({
+          item: detail.item.name,
+          status: "Used",
+          value: detail.item.valueUsed,
+          quantity: detail.usedQuantity,
+          total: detail.usedQuantity * detail.item.valueUsed,
+        });
+      }
 
+      // If there are new items, create a separate entry for them
+      if (detail.newQuantity > 0) {
+        details.push({
+          item: detail.item.name,
+          status: "New",
+          value: detail.item.valueNew,
+          quantity: detail.newQuantity,
+          total: detail.newQuantity * detail.item.valueNew,
+        });
+      }
+    });
+
+    // Sum the total value of all items in the donation
+    const totalValue: number = details.reduce(
+      (acc: number, detail) => acc + detail.total,
+      0,
+    );
+
+    // Return the transformed donation data with separate entries for new and used items
     return {
       id: donation.id,
       date: donation.date,
       organization: donation.user.Organization?.name || "Individual",
-      total: total,
-      items: details.length,
+      total: totalValue,
+      items: details.length, // The count of all item entries (both new and used)
       type: donation.user.Organization
         ? donation.user.Organization.type
         : "Individual",
