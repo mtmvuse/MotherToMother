@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Modal, Box } from "@mui/material";
+import { Button } from "@mui/material";
 import {
   DataGrid,
   GridActionsCellItem,
@@ -10,15 +10,12 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-import AddUserModal from "../Components/AddUserModal";
-import AddOrganizationModal from "../Components/AddOrginizationModal";
-
 const exampleRows = [
   {
     id: 1,
     name: "Joe Burrow",
     type: "Corporate",
-    orginization: "Amazon",
+    organization: "Amazon",
     email: "joebrrow@gmail.com",
     phone: 1234567890,
   },
@@ -27,65 +24,19 @@ const exampleRows = [
     id: 2,
     name: "Josh Allen",
     type: "Other",
-    orginization: "Target",
+    organization: "Target",
     email: "joshallen@gmail.com",
     phone: 1231231233,
   },
 ];
 
-const modalStyle = {
-  backgroundColor: "#fefefe",
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  padding: "20px",
-  border: "1px solid #888",
-  width: "40%",
-  height: "auto",
-  maxHeight: "80vh",
-  overflowY: "auto",
-  boxShadow: "0 4px 8px 0 rgba(0,0,0,0.2)",
-  borderRadius: "10px",
-  outline: "none",
-};
-
 let id_counter = 2;
 
-const orginizationOptions: string[] = ["Amazon", "Target"];
+const organizationOptions: string[] = ["Amazon", "Target"];
 const typeOptions: string[] = ["Corporate", "Other"];
 
 const UsersPage: React.FC = () => {
   const [rows, setRows] = useState(exampleRows);
-  const [userModalOpen, setUserModalOpen] = useState(false);
-  const [organizationModalOpen, setOrganizationModalOpen] = useState(false);
-
-  const handleUserModal = () => {
-    setUserModalOpen(true);
-  };
-
-  const handleOrginizationModal = () => {
-    setOrganizationModalOpen(true);
-  };
-
-  const handleClose = () => {
-    setUserModalOpen(false);
-    setOrganizationModalOpen(false);
-  };
-
-  const handleAddRow = () => {
-    setRows((prevRows) => [
-      ...prevRows,
-      {
-        id: ++id_counter,
-        name: "",
-        type: "",
-        orginization: "",
-        email: "",
-        phone: 0,
-      },
-    ]);
-  };
 
   const handleDeleteRow = (id: GridRowId) => () => {
     setRows(rows.filter((row) => row.id !== id));
@@ -119,11 +70,11 @@ const UsersPage: React.FC = () => {
       editable: true,
     },
     {
-      field: "orginization",
-      headerName: "Orginization",
+      field: "organization",
+      headerName: "Organization",
       flex: 3,
       type: "singleSelect",
-      valueOptions: orginizationOptions,
+      valueOptions: organizationOptions,
       align: "left",
       headerAlign: "left",
       editable: true,
@@ -170,16 +121,14 @@ const UsersPage: React.FC = () => {
       <Button
         variant="contained"
         sx={{ margin: "auto 10px 10px auto" }}
-        onClick={handleUserModal}
       >
         Add User
       </Button>
       <Button
         variant="contained"
         sx={{ margin: "auto 10px 10px auto" }}
-        onClick={handleOrginizationModal}
       >
-        Add Orginization
+        Add Organization
       </Button>
       <DataGrid
         sx={{ width: "95%" }}
@@ -192,17 +141,6 @@ const UsersPage: React.FC = () => {
         }}
         pageSizeOptions={[10, 25]}
       />
-      <Modal open={userModalOpen} onClose={handleClose}>
-        <Box sx={modalStyle}>
-          <AddUserModal></AddUserModal>
-        </Box>
-      </Modal>
-
-      <Modal open={organizationModalOpen} onClose={handleClose}>
-        <Box sx={modalStyle}>
-          <AddOrganizationModal></AddOrganizationModal>
-        </Box>
-      </Modal>
     </div>
   );
 };
