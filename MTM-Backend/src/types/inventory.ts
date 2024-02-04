@@ -1,9 +1,12 @@
-export interface InventoryType {
+export interface InventoryType extends InventoryInputType {
   id: number;
-  name: string;
+}
+
+export interface InventoryInputType {
   category: string;
+  name: string;
   quantityUsed: number;
   quantityNew: number;
-  valueUsed: number;
   valueNew: number;
+  valueUsed: number;
 }
