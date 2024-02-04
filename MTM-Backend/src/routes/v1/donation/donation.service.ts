@@ -3,7 +3,7 @@ import type {
   DonationType,
   DonationDetailType,
   OutgoingDonationStatsType,
-  TransactionDetail,
+  DashboardDonationDetailType,
 } from "../../../types/donation";
 
 export const getTransactions = async (page: number, pageSize: number) => {
@@ -28,12 +28,13 @@ export const getTransactions = async (page: number, pageSize: number) => {
   });
 
   const transformedData = donations.map((donation) => {
-    const details: TransactionDetail[] = [];
+    const details: DashboardDonationDetailType[] = [];
 
     donation.DonationDetail.forEach((detail) => {
       // If there are used items, create a separate entry for them
       if (detail.usedQuantity > 0) {
         details.push({
+          itemId: detail.item.id,
           item: detail.item.name,
           status: "Used",
           value: detail.item.valueUsed,
@@ -45,6 +46,7 @@ export const getTransactions = async (page: number, pageSize: number) => {
       // If there are new items, create a separate entry for them
       if (detail.newQuantity > 0) {
         details.push({
+          itemId: detail.item.id,
           item: detail.item.name,
           status: "New",
           value: detail.item.valueNew,

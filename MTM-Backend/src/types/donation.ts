@@ -14,7 +14,7 @@ export interface DonationDetailType {
   newQuantity: number;
 }
 
-export interface DonationRequestBodyType {
+export interface OutgoingDonationRequestBodyType {
   userId: number;
   email: string;
   numberServed: number;
@@ -39,7 +39,8 @@ export interface OutgoingDonationStatsType {
   otherNum: number;
 }
 
-export interface TransactionDetail {
+export interface DashboardDonationDetailType {
+  itemId: number;
   item: string;
   status: string;
   value: number;
