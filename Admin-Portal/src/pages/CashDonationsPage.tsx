@@ -15,7 +15,7 @@ const columns: GridColDef[] = [
     flex: 3,
     valueGetter: (params: GridValueGetterParams) => new Date(params.row.date),
   },
-  { field: "donor", headerName: "Donor", flex: 4 },
+  { field: "donor", headerName: "Donor", type: "", flex: 4, editable: true },
   {
     field: "total",
     headerName: "Total",
@@ -23,6 +23,7 @@ const columns: GridColDef[] = [
     flex: 3,
     align: "left",
     headerAlign: "left",
+    editable: true,
   },
 ];
 
