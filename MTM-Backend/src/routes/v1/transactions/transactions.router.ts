@@ -5,7 +5,6 @@ import express, {
 } from "express";
 // import type { AdminInputNoID, AdminType } from "../../../types/transactions";
 import * as TransactionsServices from "./transactions.service";
-import Joi from "joi";
 
 const transactionsRouter = express.Router();
 

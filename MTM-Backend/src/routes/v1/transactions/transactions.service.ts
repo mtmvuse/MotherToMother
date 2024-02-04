@@ -46,9 +46,3 @@ export const getTransactions = async () => {
 
   return transformedData;
 };
-
-// TODO: add date, type - incoming (public, corporate) outgoing (to the agency - look at organization type)
-// [order_id, product, category, organization, amount, date, status]
-// look at the updated body
-// TOOD: req. queries: page, pageSize.
-// response body: [{id, date, organization, total, items, type, details: [{item, status, value, quantity, total}]]
