@@ -1,7 +1,12 @@
 import { db } from "../../../utils/db.server";
 
-export const getTransactions = async () => {
+export const getTransactions = async (page: number, pageSize: number) => {
+  // print type of page and pageSize
+  console.log(typeof page, typeof pageSize);
+  const skip = (page - 1) * pageSize;
   const donations = await db.donation.findMany({
+    skip,
+    take: pageSize,
     include: {
       user: {
         include: {
