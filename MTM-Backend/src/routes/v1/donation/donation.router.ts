@@ -7,7 +7,7 @@ import * as DonationService from "./donation.service";
 import { getUserByEmail } from "../user/user.service";
 import { getItemsCategoryName } from "../item/item.service";
 import {
-  type DonationRequestBodyType,
+  type OutgoingDonationRequestBodyType,
   type DonationDetailType,
   type OutgoingDonationStatsType,
 } from "../../../types/donation";
@@ -34,8 +34,8 @@ donationRouter.get(
           error: "Page and pageSize must be entered and greater than 0",
         });
       }
-      const transaction = await DonationService.getTransactions(page, pageSize);
-      return res.status(200).json(transaction);
+      const donation = await DonationService.getTransactions(page, pageSize);
+      return res.status(200).json(donation);
     } catch (e) {
       console.error(e);
       next(e);
@@ -49,8 +49,8 @@ const createOutgoingDonation = async (
   next: NextFunction,
 ) => {
   try {
-    // Setting type of req.body to DonationRequestBodyType
-    const donationReqBody = req.body as DonationRequestBodyType;
+    // Setting type of req.body to OutgoingDonationRequestBodyType
+    const donationReqBody = req.body as OutgoingDonationRequestBodyType;
 
     if (!donationReqBody.userId) {
       // Then get the ID from the email
