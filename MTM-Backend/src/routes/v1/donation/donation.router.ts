@@ -100,6 +100,6 @@ const createOutgoingDonation = async (
   }
 };
 
-donationRouter.post("/createOutgoingDonation", createOutgoingDonation);
+donationRouter.post("/v1/outgoing", createOutgoingDonation);
 
 export { donationRouter };
