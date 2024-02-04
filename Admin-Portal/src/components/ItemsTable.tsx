@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   DataGrid,
@@ -83,12 +83,30 @@ const ItemsTable: React.FC<DonationTableProps> = ({
   editable,
 }) => {
   const [rows, setRows] = useState<RowData[]>(initialRows);
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [totalQuantity, setTotalQuantity] = useState(0);
 
-  const totalPrice = rows.reduce(
-    (sum, { value, quantity }) => sum + value * quantity,
-    0,
-  );
-  const totalQuantity = rows.reduce((sum, { quantity }) => sum + quantity, 0);
+  const handleProcessRowUpdate = (updatedRow: RowData) => {
+    const rowIndex = rows.findIndex((row) => row.id === updatedRow.id);
+    const updatedRows = [...rows];
+    updatedRows[rowIndex] = updatedRow;
+    setRows(updatedRows);
+    return updatedRow;
+  };
+
+  useEffect(() => {
+    const newTotalPrice = rows.reduce(
+        (sum, { value, quantity }) => sum + value * quantity,
+        0
+    );
+    const newTotalQuantity = rows.reduce(
+        (sum, { quantity }) => sum + quantity,
+        0
+    );
+    setTotalPrice(newTotalPrice);
+    setTotalQuantity(newTotalQuantity);
+  }, [rows]);
+
 
   return (
     <div>
@@ -100,6 +118,7 @@ const ItemsTable: React.FC<DonationTableProps> = ({
           ...column,
           editable: editable ? column.editable : false,
         }))}
+        processRowUpdate={handleProcessRowUpdate}
       />
 
       <div style={{ textAlign: "right", marginRight: "5px" }}>
