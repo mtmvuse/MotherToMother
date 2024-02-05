@@ -7,12 +7,41 @@ import * as DonationService from "./donation.service";
 import { getUserByEmail } from "../user/user.service";
 import { getItemsCategoryName } from "../item/item.service";
 import {
-  type DonationRequestBodyType,
+  type OutgoingDonationRequestBodyType,
   type DonationDetailType,
   type OutgoingDonationStatsType,
 } from "../../../types/donation";
 
+interface QueryType {
+  page: string;
+  pageSize: string;
+}
+
 const donationRouter = express.Router();
+
+donationRouter.get(
+  "/v1",
+  async (
+    req: Request<any, any, any, QueryType>,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const page = parseInt(req.query.page, 10);
+      const pageSize = parseInt(req.query.pageSize, 10);
+      if (!page || !pageSize || page <= 0 || pageSize <= 0) {
+        return res.status(400).json({
+          error: "Page and pageSize must be entered and greater than 0",
+        });
+      }
+      const donation = await DonationService.getTransactions(page, pageSize);
+      return res.status(200).json(donation);
+    } catch (e) {
+      console.error(e);
+      next(e);
+    }
+  },
+);
 
 const createOutgoingDonation = async (
   req: Request,
@@ -20,8 +49,8 @@ const createOutgoingDonation = async (
   next: NextFunction,
 ) => {
   try {
-    // Setting type of req.body to DonationRequestBodyType
-    const donationReqBody = req.body as DonationRequestBodyType;
+    // Setting type of req.body to OutgoingDonationRequestBodyType
+    const donationReqBody = req.body as OutgoingDonationRequestBodyType;
 
     if (!donationReqBody.userId) {
       // Then get the ID from the email
@@ -100,6 +129,6 @@ const createOutgoingDonation = async (
   }
 };
 
-donationRouter.post("/createOutgoingDonation", createOutgoingDonation);
+donationRouter.post("/v1/outgoing", createOutgoingDonation);
 
 export { donationRouter };

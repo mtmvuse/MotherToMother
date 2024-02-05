@@ -1,10 +1,8 @@
-export interface ItemInput {
-  name: string;
-  category: string;
+export interface InventoryType extends InventoryInputType {
+  id: number;
 }
 
-export interface ItemType {
-  id: number;
+export interface InventoryInputType {
   category: string;
   name: string;
   quantityUsed: number;
