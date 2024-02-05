@@ -1,61 +1,123 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@mui/material";
-import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridActionsCellItem,
+  GridColDef,
+  GridRowId,
+  GridRowParams,
+  GridValueFormatterParams,
+} from "@mui/x-data-grid";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
-const columns: GridColDef[] = [
-  {
-    field: "id",
-    headerName: "ID",
-    flex: 2,
-  },
-  {
-    field: "date",
-    headerName: "Date",
-    type: "date",
-    flex: 3,
-    valueGetter: (params: GridValueGetterParams) => new Date(params.row.date),
-  },
-  { field: "donor", headerName: "Donor", type: "", flex: 4, editable: true },
-  {
-    field: "total",
-    headerName: "Total",
-    type: "number",
-    flex: 3,
-    align: "left",
-    headerAlign: "left",
-    editable: true,
-  },
-];
-
-const rows = [
+const exampleRows = [
   {
     id: 1,
-    date: Date(),
-    donor: "donor 1",
-    total: 1000,
-    type: "Outgoing",
+    date: "2/5/2024",
+    donor: "Donor 1",
+    total: 100,
   },
   {
     id: 2,
-    date: Date(),
-    donor: "donor 2",
-    total: 1030,
-    type: "Incoming",
-  },
-  {
-    id: 3,
-    date: Date(),
-    donor: "donor 3",
-    total: 10,
-    type: "Incoming",
+    date: "1/30/2024",
+    donor: "Donor 1",
+    total: 100,
   },
 ];
 
+let id_counter = 2;
+
+const donorOptions: string[] = ["Donor 1", "Donor 2", "Donor 3"];
+
 const CashDonationsPage: React.FC = () => {
+  const [rows, setRows] = useState(exampleRows);
+
+  const handleAddRow = () => {
+    setRows((prevRows) => [
+      ...prevRows,
+      {
+        id: ++id_counter,
+        date: "01/01/2024",
+        donor: "Donor 1",
+        total: 0,
+      },
+    ]);
+  };
+
+  const handleDeleteRow = (id: GridRowId) => () => {
+    setRows(rows.filter((row) => row.id !== id));
+    --id_counter;
+  };
+
+  const columns: GridColDef[] = [
+    {
+      field: "id",
+      headerName: "ID",
+      flex: 2,
+      type: "number",
+      align: "left",
+      headerAlign: "left",
+    },
+    {
+      field: "date",
+      headerName: "Item",
+      flex: 3,
+      align: "left",
+      headerAlign: "left",
+    },
+    {
+      field: "donor",
+      headerName: "Category",
+      flex: 3,
+      type: "singleSelect",
+      valueOptions: donorOptions,
+      align: "left",
+      headerAlign: "left",
+      editable: true,
+    },
+    {
+      field: "total",
+      headerName: "Unit Value",
+      flex: 3,
+      type: "number",
+      align: "left",
+      headerAlign: "left",
+      editable: true,
+      valueFormatter: (params: GridValueFormatterParams<number>) => {
+        if (params.value == null) {
+          return "$0";
+        }
+        return `$${params.value.toLocaleString()}`;
+      },
+    },
+    {
+      field: "actions",
+      type: "actions",
+      getActions: (params: GridRowParams) => [
+        <GridActionsCellItem
+          icon={<EditIcon />}
+          onClick={() => {
+            console.log("edit clicked");
+          }}
+          label="Edit"
+        />,
+        <GridActionsCellItem
+          icon={<DeleteIcon />}
+          onClick={handleDeleteRow(params.id)}
+          label="Delete"
+        />,
+      ],
+    },
+  ];
   return (
     <div style={{ height: 400, width: "100%" }}>
-      <Button variant="contained" sx={{ margin: "auto 10px 10px auto" }}>
-        Add Donation
+      <Button
+        variant="contained"
+        sx={{ margin: "auto 10px 10px auto" }}
+        onClick={handleAddRow}
+      >
+        Add Inventory Item
       </Button>
       <DataGrid
         sx={{ width: "95%" }}
