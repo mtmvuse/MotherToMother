@@ -38,7 +38,7 @@ const CashDonationsPage: React.FC = () => {
       ...prevRows,
       {
         id: ++id_counter,
-        date: "01/01/2024",
+        date: "1/1/2024",
         donor: "Donor 1",
         total: 0,
       },
@@ -61,14 +61,14 @@ const CashDonationsPage: React.FC = () => {
     },
     {
       field: "date",
-      headerName: "Item",
+      headerName: "Date",
       flex: 3,
       align: "left",
       headerAlign: "left",
     },
     {
       field: "donor",
-      headerName: "Category",
+      headerName: "Donor",
       flex: 3,
       type: "singleSelect",
       valueOptions: donorOptions,
@@ -78,7 +78,7 @@ const CashDonationsPage: React.FC = () => {
     },
     {
       field: "total",
-      headerName: "Unit Value",
+      headerName: "Total",
       flex: 3,
       type: "number",
       align: "left",
@@ -117,7 +117,7 @@ const CashDonationsPage: React.FC = () => {
         sx={{ margin: "auto 10px 10px auto" }}
         onClick={handleAddRow}
       >
-        Add Inventory Item
+        Add Donation
       </Button>
       <DataGrid
         sx={{ width: "95%" }}
