@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Button, Modal, Typography, Box } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
 
-import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
-import AddDonationModal from "../components/AddDontaionModal";
+import {
+  DataGrid,
+  GridColDef,
+  GridRowParams,
+  GridValueGetterParams,
+} from "@mui/x-data-grid";
+import AddDonationModal from "../Components/AddDontaionModal";
+import DonationDetailsIncoming from "../Components/DonationDetailsIncoming";
+import DonationDetailsOutgoing from "../Components/DonationDetailsOutgoing";
 
 const columns: GridColDef[] = [
   {
@@ -69,29 +75,61 @@ const rows = [
   },
 ];
 
+const modalStyle = {
+  backgroundColor: "#fefefe",
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  padding: "20px",
+  border: "1px solid #888",
+  width: "40%",
+  height: "auto",
+  maxHeight: "80vh",
+  overflowY: "auto",
+  boxShadow: "0 4px 8px 0 rgba(0,0,0,0.2)",
+  borderRadius: "10px",
+  outline: "none",
+};
+
+interface Donation {
+  id: number;
+  date: Date;
+  organization: string;
+  items: number;
+  total: number;
+  type: string;
+}
+
 const DonationsPage: React.FC = () => {
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-  const modalStyle = {
-    backgroundColor: "#fefefe",
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    padding: "20px",
-    border: "1px solid #888",
-    width: "40%",
-    maxHeight: "80vh", // Set maximum height to 80% of the viewport height
-    overflowY: "auto", // Add vertical scrollbar if content exceeds the max height
-    boxShadow: "0 4px 8px 0 rgba(0,0,0,0.2)",
-    borderRadius: "10px",
-    outline: "none",
+  const [selectedDonation, setSelectedDonation] = useState<Donation | null>(
+    null,
+  );
+  const [incomingModalOpen, setIncomingModalOpen] = useState(false);
+  const [outgoingModalOpen, setOutgoingModalOpen] = useState(false);
+  const [addDonationModal, setAddDonationModalOpen] = React.useState(false);
+  const handleAddDonation = () => setAddDonationModalOpen(true);
+
+  const handleRowClick = (params: GridRowParams) => {
+    setSelectedDonation(params.row as Donation);
+    if (params.row.type === "Incoming") {
+      setIncomingModalOpen(true);
+    } else {
+      setOutgoingModalOpen(true);
+    }
   };
+
+  const handleCloseModal = () => {
+    setSelectedDonation(null);
+    setIncomingModalOpen(false);
+    setOutgoingModalOpen(false);
+    setAddDonationModalOpen(false);
+  };
+
   return (
     <div style={{ height: 400, width: "100%" }}>
       <Button
-        onClick={handleOpen}
+        onClick={handleAddDonation}
         variant="contained"
         sx={{ margin: "auto 10px 10px auto" }}
       >
@@ -101,19 +139,21 @@ const DonationsPage: React.FC = () => {
         sx={{ width: "95%" }}
         rows={rows}
         columns={columns}
-        initialState={{
-          pagination: {
-            paginationModel: { page: 0, pageSize: 10 },
-          },
-        }}
+        pagination
         pageSizeOptions={[10, 25]}
+        onRowClick={handleRowClick}
       />
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
+      <Modal open={incomingModalOpen} onClose={handleCloseModal}>
+        <Box sx={modalStyle}>
+          <DonationDetailsIncoming selectedDonation={selectedDonation} />
+        </Box>
+      </Modal>
+      <Modal open={outgoingModalOpen} onClose={handleCloseModal}>
+        <Box sx={modalStyle}>
+          <DonationDetailsOutgoing selectedDonation={selectedDonation} />
+        </Box>
+      </Modal>
+      <Modal open={addDonationModal} onClose={handleCloseModal}>
         <Box sx={modalStyle}>
           <AddDonationModal />
         </Box>

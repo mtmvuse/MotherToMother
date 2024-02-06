@@ -19,8 +19,8 @@ model Organization {
 
 model User {
   id             Int           @id @default(autoincrement())
-  Organization   Organization? @relation(fields: [organizationId], references: [id])
-  organizationId Int?
+  Organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId Int
   firstName      String
   lastName       String
   email          String        @unique
