@@ -4,52 +4,91 @@ import {
   DataGrid,
   GridActionsCellItem,
   GridColDef,
+  GridEventListener,
+  GridRowEditStopReasons,
   GridRowId,
+  GridRowModes,
+  GridRowModesModel,
   GridRowParams,
   GridValueFormatterParams,
 } from "@mui/x-data-grid";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import SaveIcon from "@mui/icons-material/Save";
+import CancelIcon from "@mui/icons-material/Close";
 
 const exampleRows = [
   {
     id: 1,
-    item: "Baby Bath",
+    itemName: "Baby Bath",
     category: "Baby",
-    status: "New",
-    value: 20,
-    stock: 400,
+    newStock: 200,
+    newValue: 40,
+    usedStock: 100,
+    usedValue: 20,
   },
   {
     id: 2,
-    item: "Car Seat",
+    itemName: "Car Seat",
     category: "Travel",
-    status: "Used",
-    value: "40",
-    stock: 600,
+    newStock: 200,
+    newValue: 40,
+    usedStock: 100,
+    usedValue: 20,
   },
 ];
 
 let id_counter = 2;
 
 const categoryOptions: string[] = ["Baby", "Travel", ""];
-const statusOptions: string[] = ["New", "Used", ""];
+const backendUrl: String = import.meta.env.VITE_LOCAL_SERVER_URL as string;
+
+async function fetchInventoryRows(page: number, pageSize: number) {
+  fetch(`${backendUrl}/inventory/v1`)
+    .then((response) => response.json())
+    .then((data) => console.log(data));
+}
 
 const InventoryPage: React.FC = () => {
   const [rows, setRows] = useState(exampleRows);
+  const [rowModesModel, setRowModesModel] = React.useState<GridRowModesModel>(
+    {}
+  );
+
+  const handleRowEditStop: GridEventListener<"rowEditStop"> = (
+    params,
+    event
+  ) => {
+    if (params.reason === GridRowEditStopReasons.rowFocusOut) {
+      event.defaultMuiPrevented = true;
+    }
+  };
 
   const handleAddRow = () => {
     setRows((prevRows) => [
       ...prevRows,
       {
         id: ++id_counter,
-        item: "",
+        itemName: "",
         category: "",
-        status: "",
-        value: 0,
-        stock: 0,
+        newStock: 0,
+        newValue: 0,
+        usedStock: 0,
+        usedValue: 0,
       },
     ]);
+  };
+
+  const handleEditClick = (id: GridRowId) => () => {
+    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
+  };
+
+  const handleSaveClick = (id: GridRowId) => () => {
+    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
+  };
+
+  const handleCancelClick = (id: GridRowId) => () => {
+    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
   };
 
   const handleDeleteRow = (id: GridRowId) => () => {
@@ -66,8 +105,8 @@ const InventoryPage: React.FC = () => {
       headerAlign: "left",
     },
     {
-      field: "item",
-      headerName: "Item",
+      field: "itemName",
+      headerName: "ITEM NAME",
       flex: 3,
       align: "left",
       headerAlign: "left",
@@ -75,7 +114,7 @@ const InventoryPage: React.FC = () => {
     },
     {
       field: "category",
-      headerName: "Category",
+      headerName: "CATEGORY",
       flex: 3,
       type: "singleSelect",
       valueOptions: categoryOptions,
@@ -84,18 +123,17 @@ const InventoryPage: React.FC = () => {
       editable: true,
     },
     {
-      field: "status",
-      headerName: "Status",
+      field: "newStock",
+      headerName: "NEW STOCK",
       flex: 3,
-      type: "singleSelect",
-      valueOptions: statusOptions,
+      type: "number",
       align: "left",
       headerAlign: "left",
       editable: true,
     },
     {
-      field: "value",
-      headerName: "Unit Value",
+      field: "newValue",
+      headerName: "NEW VALUE",
       flex: 3,
       type: "number",
       align: "left",
@@ -105,12 +143,12 @@ const InventoryPage: React.FC = () => {
         if (params.value == null) {
           return "$0";
         }
-        return `$${params.value.toLocaleString()}`;
+        return `$${params.value.toFixed(2).toLocaleString()}`;
       },
     },
     {
-      field: "stock",
-      headerName: "Stock/Amount",
+      field: "usedStock",
+      headerName: "USED STOCK",
       flex: 3,
       type: "number",
       align: "left",
@@ -118,22 +156,54 @@ const InventoryPage: React.FC = () => {
       editable: true,
     },
     {
+      field: "usedValue",
+      headerName: "USED VALUE",
+      flex: 3,
+      type: "number",
+      align: "left",
+      headerAlign: "left",
+      editable: true,
+      valueFormatter: (params: GridValueFormatterParams<number>) => {
+        if (params.value == null) {
+          return "$0";
+        }
+        return `$${params.value.toFixed(2).toLocaleString()}`;
+      },
+    },
+    {
       field: "actions",
       type: "actions",
-      getActions: (params: GridRowParams) => [
-        <GridActionsCellItem
-          icon={<EditIcon />}
-          onClick={() => {
-            console.log("edit clicked");
-          }}
-          label="Edit"
-        />,
-        <GridActionsCellItem
-          icon={<DeleteIcon />}
-          onClick={handleDeleteRow(params.id)}
-          label="Delete"
-        />,
-      ],
+      getActions: (params: GridRowParams) => {
+        const isEditMode = rowModesModel[params.id]?.mode == GridRowModes.Edit;
+
+        if (isEditMode) {
+          return [
+            <GridActionsCellItem
+              icon={<SaveIcon />}
+              onClick={handleSaveClick(params.id)}
+              label="Save"
+            />,
+            <GridActionsCellItem
+              icon={<CancelIcon />}
+              onClick={handleCancelClick(params.id)}
+              label="Cancel"
+            />,
+          ];
+        }
+
+        return [
+          <GridActionsCellItem
+            icon={<EditIcon />}
+            onClick={handleEditClick(params.id)}
+            label="Edit"
+          />,
+          <GridActionsCellItem
+            icon={<DeleteIcon />}
+            onClick={handleDeleteRow(params.id)}
+            label="Delete"
+          />,
+        ];
+      },
     },
   ];
   return (
@@ -146,9 +216,11 @@ const InventoryPage: React.FC = () => {
         Add Inventory Item
       </Button>
       <DataGrid
+        editMode="row"
         sx={{ width: "95%" }}
         rows={rows}
         columns={columns}
+        onRowEditStop={handleRowEditStop}
         initialState={{
           pagination: {
             paginationModel: { page: 0, pageSize: 10 },
@@ -161,3 +233,6 @@ const InventoryPage: React.FC = () => {
 };
 
 export default InventoryPage;
+
+//delete reminder
+//edit button
