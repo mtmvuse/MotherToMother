@@ -4,49 +4,81 @@ import {
   DataGrid,
   GridActionsCellItem,
   GridColDef,
-  GridRowId,
   GridRowParams,
 } from "@mui/x-data-grid";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-
-const exampleRows = [
-  {
-    id: 1,
-    name: "Joe Burrow",
-    type: "Corporate",
-    organization: "Amazon",
-    email: "joebrrow@gmail.com",
-    phone: 1234567890,
-  },
-
-  {
-    id: 2,
-    name: "Josh Allen",
-    type: "Other",
-    organization: "Target",
-    email: "joshallen@gmail.com",
-    phone: 1231231233,
-  },
-];
-
-let id_counter = 2;
-
-const organizationOptions: string[] = ["Amazon", "Target"];
-const typeOptions: string[] = ["Corporate", "Other"];
+import { getUsers, updateUser } from "../lib/services";
+import { USER_TYPE, PAGE_SIZE } from "../lib/constants";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  keepPreviousData,
+} from "@tanstack/react-query";
+import type {
+  ResponseUser,
+  UserDashboardResponse,
+  EditUserArgs,
+} from "../types/user";
+import Box from "@mui/material/Box";
 
 const UsersPage: React.FC = () => {
-  const [rows, setRows] = useState(exampleRows);
+  // TODO: Chaneg this to API call
+  const organizationOptions: string[] = ["Amazon", "Target"];
+  const [page, setPage] = useState(0);
+  const [totalNumber, setTotalNumber] = useState(0);
+  const queryClient = useQueryClient();
 
-  const handleDeleteRow = (id: GridRowId) => () => {
-    setRows(rows.filter((row) => row.id !== id));
-  };
+  const { isLoading, error, data } = useQuery({
+    queryKey: ["users", page],
+    placeholderData: keepPreviousData,
+    queryFn: () =>
+      getUsers("token", page, PAGE_SIZE)
+        .then((res: Response) => res.json())
+        .then((data: UserDashboardResponse) => {
+          const users = data.users;
+          setTotalNumber(data.totalNumber);
+          const renderUsers = users.map((user: ResponseUser) => {
+            // clean up the data for frontend presentation
+            return {
+              ...user,
+              name: user.firstName + " " + user.lastName,
+              organization: user.Organization.name,
+              type: user.userType,
+              address:
+                user.address +
+                ", " +
+                user.city +
+                ", " +
+                user.state +
+                ", " +
+                user.zip,
+            };
+          });
+          return renderUsers;
+        })
+        .catch((err: any) => {
+          console.error(err);
+        }),
+  });
+
+  const editMutation = useMutation({
+    mutationFn: (data: EditUserArgs) =>
+      updateUser(data.email, data.userData, "token"),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    },
+  });
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
 
   const columns: GridColDef[] = [
     {
       field: "id",
       headerName: "ID",
-      flex: 2,
+      flex: 1,
       type: "number",
       align: "left",
       headerAlign: "left",
@@ -54,7 +86,7 @@ const UsersPage: React.FC = () => {
     {
       field: "name",
       headerName: "Name",
-      flex: 3,
+      flex: 2,
       align: "left",
       headerAlign: "left",
       editable: true,
@@ -62,9 +94,9 @@ const UsersPage: React.FC = () => {
     {
       field: "type",
       headerName: "Type",
-      flex: 3,
+      flex: 2,
       type: "singleSelect",
-      valueOptions: typeOptions,
+      valueOptions: Object.values(USER_TYPE),
       align: "left",
       headerAlign: "left",
       editable: true,
@@ -72,7 +104,7 @@ const UsersPage: React.FC = () => {
     {
       field: "organization",
       headerName: "Organization",
-      flex: 3,
+      flex: 2,
       type: "singleSelect",
       valueOptions: organizationOptions,
       align: "left",
@@ -83,7 +115,6 @@ const UsersPage: React.FC = () => {
       field: "email",
       headerName: "Email",
       flex: 3,
-      type: "number",
       align: "left",
       headerAlign: "left",
       editable: true,
@@ -91,6 +122,14 @@ const UsersPage: React.FC = () => {
     {
       field: "phone",
       headerName: "Phone",
+      flex: 2,
+      align: "left",
+      headerAlign: "left",
+      editable: true,
+    },
+    {
+      field: "address",
+      headerName: "Address",
       flex: 3,
       type: "number",
       align: "left",
@@ -110,38 +149,36 @@ const UsersPage: React.FC = () => {
         />,
         <GridActionsCellItem
           icon={<DeleteIcon />}
-          onClick={handleDeleteRow(params.id)}
+          onClick={() => {
+            console.log("delete clicked");
+          }}
           label="Delete"
         />,
       ],
     },
   ];
   return (
-    <div style={{ height: 400, width: "100%" }}>
-      <Button
-        variant="contained"
-        sx={{ margin: "auto 10px 10px auto" }}
-      >
+    <Box sx={{ height: "80%", width: "100%" }}>
+      <Button variant="contained" sx={{ margin: "auto 10px 10px auto" }}>
         Add User
       </Button>
-      <Button
-        variant="contained"
-        sx={{ margin: "auto 10px 10px auto" }}
-      >
+      <Button variant="contained" sx={{ margin: "auto 10px 10px auto" }}>
         Add Organization
       </Button>
       <DataGrid
         sx={{ width: "95%" }}
-        rows={rows}
+        rows={data || []}
         columns={columns}
-        initialState={{
-          pagination: {
-            paginationModel: { page: 0, pageSize: 10 },
-          },
+        pagination
+        rowCount={totalNumber}
+        pageSizeOptions={[PAGE_SIZE]}
+        paginationMode="server"
+        paginationModel={{ page: page, pageSize: PAGE_SIZE }}
+        onPaginationModelChange={(params) => {
+          setPage(params.page);
         }}
-        pageSizeOptions={[10, 25]}
       />
-    </div>
+    </Box>
   );
 };
 

@@ -12,6 +12,8 @@ const userRouter = express.Router();
 interface QueryType {
   email: string;
   organization: string;
+  page: number;
+  pageSize: number;
 }
 
 /**
@@ -35,11 +37,13 @@ userRouter.get(
   ) => {
     const email = req.query.email;
     const organizationType = req.query.organization;
-    // console.log("email: " + email + "\n OrganizationType: " + organizationType);
+    const page = Number(req.query.page);
+    const pageSize = Number(req.query.pageSize);
     try {
       if (email == undefined && organizationType == undefined) {
-        const users = await UserService.getUsers();
-        return res.status(200).json(users);
+        const users = await UserService.getUsers(page, pageSize);
+        const count = await UserService.getUserCount();
+        return res.status(200).json({ users, totalNumber: count });
       } else if (organizationType == undefined) {
         const user = await UserService.getUserByEmail(email);
         if (user) {

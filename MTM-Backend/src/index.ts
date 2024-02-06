@@ -31,12 +31,13 @@ app.use(helmet());
  */
 app.use("/sessions", sessionRouter);
 
-app.use("/users", verifyToken, userRouter);
+app.use("/users", userRouter);
 
 app.use("/admins", verifyToken, adminsRouter);
 
 app.use("/items", verifyToken, itemsRouter);
 
+// registration and organization routes are unprotected intentionally
 app.use("/registration", registrationRouter);
 
 app.use("/organization", organizationRouter);
