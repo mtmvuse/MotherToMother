@@ -7,3 +7,9 @@ export const CAPTIONS = [
   "Admins",
 ];
 export const DEFAULT_PAGE = "/donations";
+export const USER_TYPE = {
+  AGENCY: "Agency Partner",
+  PUBLIC: "Public Donor",
+  CORPORATE: "Corporate Donor",
+};
+export const PAGE_SIZE = 10;

@@ -25,14 +25,35 @@ const validatePassword = async (
  * get all users in the db
  * @returns all users in the database
  */
-export const getUsers = async (): Promise<ResponseUser[]> => {
+export const getUsers = async (
+  page: number,
+  pageSize: number,
+): Promise<ResponseUser[]> => {
   return db.user.findMany({
+    skip: page * pageSize,
+    take: pageSize,
     select: {
       id: true,
       email: true,
       userType: true,
+      firstName: true,
+      lastName: true,
+      phone: true,
+      address: true,
+      city: true,
+      zip: true,
+      state: true,
+      Organization: {
+        select: {
+          name: true,
+        },
+      },
     },
   });
+};
+
+export const getUserCount = async (): Promise<number> => {
+  return db.user.count();
 };
 
 /**
