@@ -9,6 +9,16 @@ export interface ResponseUser {
   id: number;
   email: string;
   userType: string;
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  address?: string;
+  city?: string;
+  zip?: number;
+  state?: string;
+  Organization?: {
+    name: string;
+  };
 }
 
 export interface UserInput {

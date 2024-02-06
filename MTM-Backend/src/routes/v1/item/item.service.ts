@@ -1,5 +1,5 @@
 import { db } from "../../../utils/db.server";
-import type { ItemInputNoID, ItemType } from "../../../types/item";
+import type { ItemType } from "../../../types/item";
 
 /**
  * Gets all items
@@ -101,32 +101,4 @@ export const getItemsCategoryName = async (
   });
 
   return items;
-};
-
-/**
- * Create a item
- * @param item
- * @returns the created item
- */
-export const createItem = async (item: ItemInputNoID): Promise<ItemType> => {
-  const createdItem: ItemType = await db.item.create({
-    data: {
-      category: item.category,
-      name: item.name,
-      quantityUsed: item.quantityUsed,
-      quantityNew: item.quantityNew,
-      valueNew: item.valueNew,
-      valueUsed: item.valueUsed,
-    },
-    select: {
-      id: true,
-      category: true,
-      name: true,
-      quantityUsed: true,
-      quantityNew: true,
-      valueNew: true,
-      valueUsed: true,
-    },
-  });
-  return createdItem;
 };
