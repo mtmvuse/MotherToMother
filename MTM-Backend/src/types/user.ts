@@ -16,7 +16,9 @@ export interface ResponseUser {
   city?: string;
   zip?: number;
   state?: string;
-  organizatioin?: string;
+  Organization?: {
+    name: string;
+  } | null;
 }
 
 export interface UserInput {
