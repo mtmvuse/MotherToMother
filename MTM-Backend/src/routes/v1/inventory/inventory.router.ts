@@ -3,7 +3,11 @@ import express, {
   type Response,
   type NextFunction,
 } from "express";
-import { getInventoryByPage, createItem } from "./inventory.service";
+import {
+  getInventoryByPage,
+  createItem,
+  getTotalNumberInventory,
+} from "./inventory.service";
 import type { InventoryInputType } from "../../../types/inventory";
 import Joi from "joi";
 
@@ -24,8 +28,9 @@ inventoryRouter.get(
       const pageSize = parseInt(req.query.pageSize as string);
 
       const inventory = await getInventoryByPage(page, pageSize);
+      const totalNumber = await getTotalNumberInventory();
 
-      res.status(200).json(inventory);
+      res.status(200).json({ totalNumber, inventory });
     } catch (error) {
       next(error);
     }

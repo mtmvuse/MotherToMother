@@ -6,10 +6,12 @@ import type {
   DashboardDonationDetailType,
 } from "../../../types/donation";
 
+export const getTotalNumberDonations = async () => {
+  return db.donation.count();
+};
+
 export const getTransactions = async (page: number, pageSize: number) => {
-  // print type of page and pageSize
-  console.log(typeof page, typeof pageSize);
-  const skip = (page - 1) * pageSize;
+  const skip = page * pageSize;
   const donations = await db.donation.findMany({
     skip,
     take: pageSize,
@@ -58,7 +60,7 @@ export const getTransactions = async (page: number, pageSize: number) => {
 
     // Sum the total value of all items in the donation
     const totalValue: number = details.reduce(
-      (acc: number, detail) => acc + detail.total,
+      (acc: number, detail: DashboardDonationDetailType) => acc + detail.total,
       0,
     );
 
