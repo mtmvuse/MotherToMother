@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@mui/material";
 import {
   DataGrid,
@@ -44,7 +44,7 @@ const categoryOptions: string[] = ["Baby", "Travel", ""];
 const backendUrl: String = import.meta.env.VITE_LOCAL_SERVER_URL as string;
 
 async function fetchInventoryRows(page: number, pageSize: number) {
-  fetch(`${backendUrl}/inventory/v1`)
+  fetch(`${backendUrl}/inventory/v1?page=${page}&pageSize=${pageSize}`)
     .then((response) => response.json())
     .then((data) => console.log(data));
 }
@@ -54,6 +54,10 @@ const InventoryPage: React.FC = () => {
   const [rowModesModel, setRowModesModel] = React.useState<GridRowModesModel>(
     {}
   );
+
+  useEffect(() => {
+    fetchInventoryRows(1, 25);
+  });
 
   const handleRowEditStop: GridEventListener<"rowEditStop"> = (
     params,
@@ -221,6 +225,7 @@ const InventoryPage: React.FC = () => {
         rows={rows}
         columns={columns}
         onRowEditStop={handleRowEditStop}
+        rowModesModel={rowModesModel}
         initialState={{
           pagination: {
             paginationModel: { page: 0, pageSize: 10 },
