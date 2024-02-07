@@ -9,20 +9,38 @@ import {
   DialogTitle,
 } from "@mui/material";
 import ItemsTable from "./ItemsTable";
+import { itemTypes } from "~/Types/DonationTypes";
 
 interface ModalContentProps {
   selectedDonation: any;
 }
 
+const createItemData = (
+  id: number,
+  item: string,
+  status: string,
+  value: number,
+  quantity: number,
+): itemTypes => {
+  return { id, item, status, value, quantity };
+};
+
+const initialRows: itemTypes[] = [
+  createItemData(1, "Clothes", "Used", 4, 11),
+  createItemData(2, "Cribs", "Used", 12, 110),
+];
+
 const DonationDetailsIncoming: React.FC<ModalContentProps> = ({
   selectedDonation,
 }) => {
+  const [itemRows, setItemRows] = useState<itemTypes[]>(initialRows);
+  const [editable, setEditable] = useState(false);
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+  const [idItemCounter, setIdItemCounter] = useState(2);
+
   const dateString = selectedDonation?.date
     ? new Date(selectedDonation.date).toLocaleDateString()
     : "";
-
-  const [editable, setEditable] = useState(false);
-  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
 
   const handleEditButtonClick = () => {
     setEditable(!editable);
@@ -30,6 +48,7 @@ const DonationDetailsIncoming: React.FC<ModalContentProps> = ({
 
   const handleCancelButtonClick = () => {
     setEditable(false);
+    setItemRows(initialRows);
   };
 
   const handleSaveButtonClick = () => {
@@ -43,6 +62,31 @@ const DonationDetailsIncoming: React.FC<ModalContentProps> = ({
 
   const handleCancelConfirm = () => {
     setOpenConfirmDialog(false);
+  };
+
+  const handleAddItemButtonClick = () => {
+    const hasEmptyFields = itemRows.some((row) =>
+      Object.values(row).some((value) => value === "" || value === 0),
+    );
+
+    if (hasEmptyFields) {
+      console.log(
+        "Please fill all fields in the current rows before adding a new row.",
+      );
+      return;
+    }
+
+    setItemRows((prevRows) => [
+      ...prevRows,
+      {
+        id: idItemCounter + 1,
+        item: "",
+        status: "",
+        value: 0,
+        quantity: 0,
+      },
+    ]);
+    setIdItemCounter(idItemCounter + 1); // Update the id counter after adding a new row
   };
 
   return (
@@ -68,6 +112,7 @@ const DonationDetailsIncoming: React.FC<ModalContentProps> = ({
           <>
             <Button onClick={handleSaveButtonClick}>Save</Button>
             <Button onClick={handleCancelButtonClick}>Cancel</Button>
+            <Button onClick={handleAddItemButtonClick}>Add Item</Button>
           </>
         )}
       </Box>
@@ -77,7 +122,7 @@ const DonationDetailsIncoming: React.FC<ModalContentProps> = ({
           borderRadius: "5px",
         }}
       >
-        <ItemsTable selectedDonation={selectedDonation} editable={editable} />
+        <ItemsTable editable={editable} rows={itemRows} setRows={setItemRows} />
       </div>
       <Dialog open={openConfirmDialog} onClose={handleCancelConfirm}>
         <DialogTitle>Confirm Save</DialogTitle>
