@@ -34,7 +34,7 @@ app.use("/sessions", sessionRouter);
 
 app.use("/users", userRouter);
 
-app.use("/admins", verifyToken, adminsRouter);
+app.use("/admins", adminsRouter);
 
 app.use("/items", verifyToken, itemsRouter);
 
@@ -45,7 +45,7 @@ app.use("/organization", organizationRouter);
 
 app.use("/donation", donationRouter);
 
-app.use("/inventory", verifyToken, inventoryRouter);
+app.use("/inventory", inventoryRouter);
 
 // Default route: Unprotected
 app.get("/", (_req: Request, res: Response) => {
