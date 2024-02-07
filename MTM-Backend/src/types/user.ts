@@ -18,7 +18,7 @@ export interface ResponseUser {
   state?: string;
   Organization?: {
     name: string;
-  } | null;
+  };
 }
 
 export interface UserInput {

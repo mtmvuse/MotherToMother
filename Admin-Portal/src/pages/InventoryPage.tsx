@@ -38,25 +38,40 @@ const exampleRows = [
   },
 ];
 
+export interface Rows {
+  id: number;
+  itemName: String;
+  category: String;
+  newStock: number;
+  newValue: number;
+  usedStock: number;
+  usedValue: number;
+}
+
 let id_counter = 2;
 
 const categoryOptions: string[] = ["Baby", "Travel", ""];
 const backendUrl: String = import.meta.env.VITE_LOCAL_SERVER_URL as string;
 
-async function fetchInventoryRows(page: number, pageSize: number) {
-  fetch(`${backendUrl}/inventory/v1?page=${page}&pageSize=${pageSize}`)
-    .then((response) => response.json())
-    .then((data) => console.log(data));
-}
+// async function editInventoryRows
+// cancel the modification when cancel is clicked
 
 const InventoryPage: React.FC = () => {
-  const [rows, setRows] = useState(exampleRows);
+  const [rows, setRows] = useState([]);
   const [rowModesModel, setRowModesModel] = React.useState<GridRowModesModel>(
     {}
   );
 
+  async function getInventoryRows(page: number, pageSize: number) {
+    const data = await fetch(
+      `${backendUrl}/inventory/v1?page=${page}&pageSize=${pageSize}`
+    )
+      .then((response) => response.json())
+      .then((data) => setRows(data));
+  }
+
   useEffect(() => {
-    fetchInventoryRows(1, 25);
+    getInventoryRows(1, 10);
   });
 
   const handleRowEditStop: GridEventListener<"rowEditStop"> = (
@@ -69,18 +84,18 @@ const InventoryPage: React.FC = () => {
   };
 
   const handleAddRow = () => {
-    setRows((prevRows) => [
-      ...prevRows,
-      {
-        id: ++id_counter,
-        itemName: "",
-        category: "",
-        newStock: 0,
-        newValue: 0,
-        usedStock: 0,
-        usedValue: 0,
-      },
-    ]);
+    // setRows((prevRows) => [
+    //   ...prevRows,
+    //   {
+    //     id: ++id_counter,
+    //     itemName: "",
+    //     category: "",
+    //     newStock: 0,
+    //     newValue: 0,
+    //     usedStock: 0,
+    //     usedValue: 0,
+    //   },
+    // ]);
   };
 
   const handleEditClick = (id: GridRowId) => () => {
@@ -96,7 +111,7 @@ const InventoryPage: React.FC = () => {
   };
 
   const handleDeleteRow = (id: GridRowId) => () => {
-    setRows(rows.filter((row) => row.id !== id));
+    setRows(rows.filter((row: Rows) => row.id !== id));
   };
 
   const columns: GridColDef[] = [
@@ -241,3 +256,6 @@ export default InventoryPage;
 
 //delete reminder
 //edit button
+//add button
+//rows for pagination
+//get id from backend
