@@ -28,6 +28,7 @@ registrationRouter.post(
       role: Joi.string(),
       household: Joi.string(),
       userType: Joi.string(),
+      organizationId: Joi.number().integer().positive(),
     });
     try {
       const data = (await schema.validateAsync(req.body)) as UserInput;

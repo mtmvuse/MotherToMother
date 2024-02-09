@@ -1,4 +1,4 @@
-import type { EditUserType } from "../types/user";
+import type { EditUserType, AddUserType } from "../types/user";
 const mode = import.meta.env.MODE;
 const backendUrl: string =
   mode === "development"
@@ -34,5 +34,25 @@ export const updateUser = async (
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(userData),
+  });
+};
+
+export const addUser = async (user: AddUserType) => {
+  return await fetch(`${backendUrl}/registration/v1`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(user),
+  });
+};
+
+export const getOrganizations = async (query?: string | undefined) => {
+  const fetchURL = query
+    ? `${backendUrl}/organization/v1?type=${query}`
+    : `${backendUrl}/organization/v1`;
+  return await fetch(fetchURL, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
 };
