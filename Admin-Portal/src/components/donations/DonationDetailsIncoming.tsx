@@ -9,7 +9,7 @@ import {
   DialogTitle,
 } from "@mui/material";
 import ItemsTable from "./ItemsTable";
-import DemographicTable from "./DemographicTable";
+
 interface ModalContentProps {
   selectedDonation: any;
 }
@@ -20,6 +20,7 @@ const DonationDetailsIncoming: React.FC<ModalContentProps> = ({
   const dateString = selectedDonation?.date
     ? new Date(selectedDonation.date).toLocaleDateString()
     : "";
+
   const [editable, setEditable] = useState(false);
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
 
@@ -43,6 +44,7 @@ const DonationDetailsIncoming: React.FC<ModalContentProps> = ({
   const handleCancelConfirm = () => {
     setOpenConfirmDialog(false);
   };
+
   return (
     <Box p={2} sx={{ overflowY: "auto" }}>
       <h2>Donation Detail</h2>
@@ -76,15 +78,6 @@ const DonationDetailsIncoming: React.FC<ModalContentProps> = ({
         }}
       >
         <ItemsTable selectedDonation={selectedDonation} editable={editable} />
-      </div>
-      <div
-        style={{
-          border: "4px solid black",
-          borderRadius: "5px",
-          marginTop: "10px",
-        }}
-      >
-        <DemographicTable selectedDonation={selectedDonation} editable={editable} />
       </div>
       <Dialog open={openConfirmDialog} onClose={handleCancelConfirm}>
         <DialogTitle>Confirm Save</DialogTitle>

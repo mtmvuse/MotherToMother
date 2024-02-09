@@ -14,6 +14,19 @@ export interface ResponseUser {
   };
 }
 
+export interface AddUserType {
+  email: string;
+  userType: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  address: string;
+  city: string;
+  zip: number;
+  state: string;
+  organizationId: number;
+}
+
 export interface UserDashboardResponse {
   totalNumber: number;
   users: ResponseUser[];

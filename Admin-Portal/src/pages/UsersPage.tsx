@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Button } from "@mui/material";
 import {
   DataGrid,
   GridActionsCellItem,
@@ -8,7 +7,12 @@ import {
 } from "@mui/x-data-grid";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { getUsers, updateUser } from "../lib/services";
+import {
+  getUsers,
+  updateUser,
+  getOrganizations,
+  addUser,
+} from "../lib/services";
 import { USER_TYPE, PAGE_SIZE } from "../lib/constants";
 import {
   useQuery,
@@ -21,16 +25,28 @@ import type {
   UserDashboardResponse,
   EditUserArgs,
 } from "../types/user";
-import Box from "@mui/material/Box";
+import { Button, Box } from "@mui/material";
+import FormDialog from "../components/FormDialog";
+import AddUserDialog from "../components/users/AddUserDialog";
+import type { Organization } from "~/types/organization";
 
 const UsersPage: React.FC = () => {
   // TODO: Chaneg this to API call
   const organizationOptions: string[] = ["Amazon", "Target"];
   const [page, setPage] = useState(0);
   const [totalNumber, setTotalNumber] = useState(0);
+  const [openAddUser, setOpenAddUser] = React.useState(false);
   const queryClient = useQueryClient();
 
-  const { isLoading, error, data } = useQuery({
+  const handleOpenAddUser = () => {
+    setOpenAddUser(true);
+  };
+
+  const handleCloseAddUser = () => {
+    setOpenAddUser(false);
+  };
+
+  const usersQueryResponse = useQuery({
     queryKey: ["users", page],
     placeholderData: keepPreviousData,
     queryFn: () =>
@@ -63,6 +79,24 @@ const UsersPage: React.FC = () => {
         }),
   });
 
+  const organizationsQueryResponse = useQuery({
+    queryKey: ["organizations"],
+    queryFn: () =>
+      getOrganizations()
+        .then((res: Response) => res.json())
+        .then((data: Organization[]) => data)
+        .catch((err: any) => {
+          console.error(err);
+        }),
+  });
+
+  const addMutation = useMutation({
+    mutationFn: (data: any) => addUser(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    },
+  });
+
   const editMutation = useMutation({
     mutationFn: (data: EditUserArgs) =>
       updateUser(data.email, data.userData, "token"),
@@ -71,8 +105,22 @@ const UsersPage: React.FC = () => {
     },
   });
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
+  const handleAddUser = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const formJson = Object.fromEntries((formData as any).entries());
+    const userData = {
+      ...formJson,
+      password: "password",
+    };
+    console.log(userData);
+    addMutation.mutate(userData);
+    handleCloseAddUser();
+  };
+
+  if (usersQueryResponse.isLoading) return <div>Loading...</div>;
+  if (usersQueryResponse.error)
+    return <div>Error: {usersQueryResponse.error.message}</div>;
 
   const columns: GridColDef[] = [
     {
@@ -134,7 +182,7 @@ const UsersPage: React.FC = () => {
       type: "number",
       align: "left",
       headerAlign: "left",
-      editable: true,
+      // editable: true,
     },
     {
       field: "actions",
@@ -159,7 +207,11 @@ const UsersPage: React.FC = () => {
   ];
   return (
     <Box sx={{ height: "80%", width: "100%" }}>
-      <Button variant="contained" sx={{ margin: "auto 10px 10px auto" }}>
+      <Button
+        variant="contained"
+        sx={{ margin: "auto 10px 10px auto" }}
+        onClick={handleOpenAddUser}
+      >
         Add User
       </Button>
       <Button variant="contained" sx={{ margin: "auto 10px 10px auto" }}>
@@ -167,7 +219,7 @@ const UsersPage: React.FC = () => {
       </Button>
       <DataGrid
         sx={{ width: "95%" }}
-        rows={data || []}
+        rows={usersQueryResponse.data || []}
         columns={columns}
         pagination
         rowCount={totalNumber}
@@ -178,6 +230,15 @@ const UsersPage: React.FC = () => {
           setPage(params.page);
         }}
       />
+
+      <FormDialog
+        title={"ADD A NEW USER"}
+        handleClose={handleCloseAddUser}
+        open={openAddUser}
+        handleSubmit={handleAddUser}
+      >
+        <AddUserDialog organizations={organizationsQueryResponse.data} />
+      </FormDialog>
     </Box>
   );
 };

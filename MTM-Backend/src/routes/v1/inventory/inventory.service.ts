@@ -15,9 +15,17 @@ export const getInventoryByPage = async (
   pageSize: number,
 ): Promise<InventoryType[]> => {
   return db.item.findMany({
-    skip: (page - 1) * pageSize,
+    skip: page * pageSize,
     take: pageSize,
   });
+};
+
+/**
+ * Get total number of inventory items
+ * @returns total number of inventory items
+ */
+export const getTotalNumberInventory = async (): Promise<number> => {
+  return db.item.count();
 };
 
 /**

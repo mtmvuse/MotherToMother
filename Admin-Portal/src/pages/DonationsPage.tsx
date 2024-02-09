@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Button, Modal, Typography, Box } from "@mui/material";
-
 import {
   DataGrid,
   GridColDef,
   GridRowParams,
   GridValueGetterParams,
 } from "@mui/x-data-grid";
-import AddDonationModal from "../components/AddDontaionModal";
-import DonationDetailsIncoming from "../components/DonationDetailsIncoming";
-import DonationDetailsOutgoing from "../components/DonationDetailsOutgoing";
+import AddDonationModal from "../components/donations/AddDontaionModal";
+import DonationDetailsIncoming from "../components/donations/DonationDetailsIncoming";
+import DonationDetailsOutgoing from "../components/donations/DonationDetailsOutgoing";
 
 const columns: GridColDef[] = [
   {

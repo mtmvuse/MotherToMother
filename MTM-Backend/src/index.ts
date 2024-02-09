@@ -34,7 +34,7 @@ app.use("/sessions", sessionRouter);
 
 app.use("/users", userRouter);
 
-app.use("/admins", verifyToken, adminsRouter);
+app.use("/admins", adminsRouter);
 
 app.use("/items", verifyToken, itemsRouter);
 
