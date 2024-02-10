@@ -10,21 +10,28 @@ import {
 } from "@mui/material";
 import { USER_TYPE } from "../../lib/constants";
 import type { Organization } from "~/types/organization";
+import type { UserRow } from "~/types/user";
 
-interface AddUserDialogProps {
+interface UserDialogProps {
   organizations: void | Organization[] | undefined;
+  editRow?: UserRow;
 }
 
-const AddUserDialog: React.FC<AddUserDialogProps> = (props) => {
-  const { organizations } = props;
-  const [userType, setUserType] = React.useState("");
-  const [organization, setOrganization] = React.useState("");
+const UserDialog: React.FC<UserDialogProps> = (props) => {
+  const { organizations, editRow } = props;
+  const [userType, setUserType] = React.useState(editRow?.type || "");
+  const [organization, setOrganization] = React.useState(
+    editRow?.organization || ""
+  );
   const handleUserTypeChange = (event: SelectChangeEvent) => {
     setUserType(event.target.value as string);
   };
   const handleOrganizationChange = (event: SelectChangeEvent) => {
     setOrganization(event.target.value as string);
   };
+
+  const [firstName, lastName] = editRow?.name.split(" ") || [];
+  const [address, city, state, zip] = editRow?.address.split(", ") || [];
 
   return (
     <>
@@ -38,6 +45,7 @@ const AddUserDialog: React.FC<AddUserDialogProps> = (props) => {
           label="First Name"
           type="text"
           variant="standard"
+          defaultValue={firstName}
         />
         <TextField
           autoFocus
@@ -48,6 +56,7 @@ const AddUserDialog: React.FC<AddUserDialogProps> = (props) => {
           label="Last Name"
           type="text"
           variant="standard"
+          defaultValue={lastName}
         />
       </Box>
       <TextField
@@ -60,6 +69,7 @@ const AddUserDialog: React.FC<AddUserDialogProps> = (props) => {
         type="email"
         fullWidth
         variant="standard"
+        defaultValue={editRow?.email}
       />
       <TextField
         autoFocus
@@ -71,6 +81,7 @@ const AddUserDialog: React.FC<AddUserDialogProps> = (props) => {
         type="text"
         fullWidth
         variant="standard"
+        defaultValue={editRow?.phone}
       />
       <TextField
         autoFocus
@@ -82,6 +93,7 @@ const AddUserDialog: React.FC<AddUserDialogProps> = (props) => {
         type="text"
         fullWidth
         variant="standard"
+        defaultValue={address}
       />
       <TextField
         autoFocus
@@ -93,6 +105,7 @@ const AddUserDialog: React.FC<AddUserDialogProps> = (props) => {
         type="text"
         fullWidth
         variant="standard"
+        defaultValue={city}
       />
       <TextField
         autoFocus
@@ -104,6 +117,7 @@ const AddUserDialog: React.FC<AddUserDialogProps> = (props) => {
         type="text"
         fullWidth
         variant="standard"
+        defaultValue={state}
       />
       <TextField
         autoFocus
@@ -115,6 +129,7 @@ const AddUserDialog: React.FC<AddUserDialogProps> = (props) => {
         type="text"
         fullWidth
         variant="standard"
+        defaultValue={zip}
       />
       <FormControl fullWidth margin="dense">
         <InputLabel id="user-type">User Type</InputLabel>
@@ -141,12 +156,12 @@ const AddUserDialog: React.FC<AddUserDialogProps> = (props) => {
           value={organization}
           label="Organization"
           onChange={handleOrganizationChange}
-          name="organizationId"
+          name="organization"
         >
           {organizations
             ?.filter((org) => org.type === userType?.split(" ")[0])
             ?.map((org) => (
-              <MenuItem key={org.id} value={org.id}>
+              <MenuItem key={org.id} value={org.name}>
                 {org.name}
               </MenuItem>
             ))}
@@ -156,4 +171,4 @@ const AddUserDialog: React.FC<AddUserDialogProps> = (props) => {
   );
 };
 
-export default AddUserDialog;
+export default UserDialog;

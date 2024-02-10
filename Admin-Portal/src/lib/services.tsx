@@ -32,11 +32,11 @@ export const getUsers = async (
 };
 
 export const updateUser = async (
-  email: string,
+  id: number,
   userData: EditUserType,
   token: string
 ) => {
-  return await fetch(`${backendUrl}/users/v1/update/${email}`, {
+  return await fetch(`${backendUrl}/users/v1/update/id/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",

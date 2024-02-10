@@ -22,10 +22,14 @@ import {
   useQueryClient,
   keepPreviousData,
 } from "@tanstack/react-query";
-import type { UserDashboardResponse, EditUserArgs } from "../types/user";
+import type {
+  UserDashboardResponse,
+  EditUserArgs,
+  UserRow,
+} from "../types/user";
 import { Button, Box } from "@mui/material";
 import FormDialog from "../components/FormDialog";
-import AddUserDialog from "../components/users/AddUserDialog";
+import UserDialog from "../components/users/UserDialog";
 import type { Organization } from "~/types/organization";
 
 const UsersPage: React.FC = () => {
@@ -35,6 +39,8 @@ const UsersPage: React.FC = () => {
   const [sortModel, setSortModel] = useState<GridSortModel | undefined>();
   const [totalNumber, setTotalNumber] = useState(0);
   const [openAddUser, setOpenAddUser] = React.useState(false);
+  const [openEditUser, setOpenEditUser] = React.useState(false);
+  const [editRow, setEditRow] = React.useState<UserRow | undefined>();
   const queryClient = useQueryClient();
 
   const handleOpenAddUser = () => {
@@ -43,6 +49,21 @@ const UsersPage: React.FC = () => {
 
   const handleCloseAddUser = () => {
     setOpenAddUser(false);
+  };
+
+  const handleOpenEditUser = (row: UserRow) => {
+    setEditRow(row);
+    setOpenEditUser(true);
+  };
+
+  const handleCloseEditUser = () => {
+    setOpenEditUser(false);
+  };
+
+  const findOrganizationId = (organizationName: string) => {
+    return organizationsQueryResponse.data?.find(
+      (organization) => organization.name === organizationName
+    )?.id;
   };
 
   const isAnyFilterValueUndefined = () => {
@@ -85,7 +106,7 @@ const UsersPage: React.FC = () => {
 
   const editMutation = useMutation({
     mutationFn: (data: EditUserArgs) =>
-      updateUser(data.email, data.userData, "token"),
+      updateUser(data.id, data.userData, "token"),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
     },
@@ -95,12 +116,32 @@ const UsersPage: React.FC = () => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const formJson = Object.fromEntries((formData as any).entries());
+    const { organization, ...rest } = formJson;
     const userData = {
-      ...formJson,
+      ...rest,
+      organizationId: findOrganizationId(formJson.organization),
       password: "password",
     };
     addMutation.mutate(userData);
     handleCloseAddUser();
+  };
+
+  const handleEditUser = (event: React.FormEvent<HTMLFormElement>) => {
+    if (!editRow) return;
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const formJson = Object.fromEntries((formData as any).entries());
+    const { organization, ...rest } = formJson;
+    const data = {
+      id: editRow.id,
+      userData: {
+        ...rest,
+        organizationId: findOrganizationId(formJson.organization),
+      } as EditUserArgs["userData"],
+      token: "token",
+    };
+    editMutation.mutate(data);
+    handleCloseEditUser();
   };
 
   const handleFilterModelChange = (model: GridFilterModel) => {
@@ -130,7 +171,6 @@ const UsersPage: React.FC = () => {
       flex: 2,
       align: "left",
       headerAlign: "left",
-      editable: true,
     },
     {
       field: "type",
@@ -140,7 +180,6 @@ const UsersPage: React.FC = () => {
       valueOptions: Object.values(USER_TYPE),
       align: "left",
       headerAlign: "left",
-      editable: true,
     },
     {
       field: "organization",
@@ -152,7 +191,6 @@ const UsersPage: React.FC = () => {
       ),
       align: "left",
       headerAlign: "left",
-      editable: true,
     },
     {
       field: "email",
@@ -160,7 +198,6 @@ const UsersPage: React.FC = () => {
       flex: 3,
       align: "left",
       headerAlign: "left",
-      editable: true,
     },
     {
       field: "phone",
@@ -168,7 +205,6 @@ const UsersPage: React.FC = () => {
       flex: 2,
       align: "left",
       headerAlign: "left",
-      editable: true,
     },
     {
       field: "address",
@@ -176,7 +212,6 @@ const UsersPage: React.FC = () => {
       flex: 3,
       align: "left",
       headerAlign: "left",
-      // editable: true,
     },
     {
       field: "actions",
@@ -185,7 +220,7 @@ const UsersPage: React.FC = () => {
         <GridActionsCellItem
           icon={<EditIcon />}
           onClick={() => {
-            console.log("edit clicked");
+            handleOpenEditUser(params.row);
           }}
           label="Edit"
         />,
@@ -233,7 +268,18 @@ const UsersPage: React.FC = () => {
         open={openAddUser}
         handleSubmit={handleAddUser}
       >
-        <AddUserDialog organizations={organizationsQueryResponse.data} />
+        <UserDialog organizations={organizationsQueryResponse.data} />
+      </FormDialog>
+      <FormDialog
+        title={"EDIT A USER"}
+        handleClose={handleCloseEditUser}
+        open={openEditUser}
+        handleSubmit={handleEditUser}
+      >
+        <UserDialog
+          organizations={organizationsQueryResponse.data}
+          editRow={editRow}
+        />
       </FormDialog>
     </Box>
   );

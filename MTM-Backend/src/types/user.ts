@@ -21,7 +21,7 @@ export interface ResponseUser {
 
 export interface UserInput {
   id: number;
-  uid: string;
+  uid?: string;
   organizationId: number;
   password: string;
   firstName: string;
