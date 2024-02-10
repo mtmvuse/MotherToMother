@@ -46,6 +46,16 @@ export const updateUser = async (
   });
 };
 
+export const deleteUser = async (id: number, token: string) => {
+  return await fetch(`${backendUrl}/users/v1/delete/id/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
 export const addUser = async (user: AddUserType) => {
   return await fetch(`${backendUrl}/registration/v1`, {
     method: "POST",

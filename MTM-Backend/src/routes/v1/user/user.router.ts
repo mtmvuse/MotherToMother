@@ -203,4 +203,20 @@ userRouter.put(
   },
 );
 
+/**
+ * delete User by ID from Admin portal
+ */
+userRouter.delete(
+  "/v1/delete/id/:id",
+  async (req: Request, res: Response, next: NextFunction) => {
+    const id = Number(req.params.id);
+    try {
+      const user = await UserService.deleteUser(id);
+      return res.status(201).json(user);
+    } catch (e) {
+      next(e);
+    }
+  },
+);
+
 export { userRouter };
