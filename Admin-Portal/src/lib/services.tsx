@@ -1,4 +1,7 @@
 import type { EditUserType, AddUserType } from "../types/user";
+import type { GridFilterModel, GridSortModel } from "@mui/x-data-grid";
+import { filterModelToApiQuery, sortModelToApiQuery } from "./utils";
+
 const mode = import.meta.env.MODE;
 const backendUrl: string =
   mode === "development"
@@ -8,18 +11,24 @@ const backendUrl: string =
 export const getUsers = async (
   token: string | undefined,
   page: number,
-  pageSize: number
+  pageSize: number,
+  filterModel?: GridFilterModel,
+  sortModel?: GridSortModel
 ) => {
-  return await fetch(
-    `${backendUrl}/users/v1?page=${page}&pageSize=${pageSize}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
+  let url = `${backendUrl}/users/v1/admin?page=${page}&pageSize=${pageSize}`;
+  if (filterModel) {
+    url += `&${filterModelToApiQuery(filterModel)}`;
+  }
+  if (sortModel) {
+    url += `&${sortModelToApiQuery(sortModel)}`;
+  }
+  return await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
 
 export const updateUser = async (
