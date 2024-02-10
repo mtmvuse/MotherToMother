@@ -14,6 +14,7 @@ import {
   updateUser,
   getOrganizations,
   addUser,
+  deleteUser,
 } from "../lib/services";
 import { USER_TYPE, PAGE_SIZE } from "../lib/constants";
 import {
@@ -29,6 +30,7 @@ import type {
 } from "../types/user";
 import { Button, Box } from "@mui/material";
 import FormDialog from "../components/FormDialog";
+import DeleteAlertModal from "../components/DeleteAlertModal";
 import UserDialog from "../components/users/UserDialog";
 import type { Organization } from "~/types/organization";
 
@@ -40,7 +42,9 @@ const UsersPage: React.FC = () => {
   const [totalNumber, setTotalNumber] = useState(0);
   const [openAddUser, setOpenAddUser] = React.useState(false);
   const [openEditUser, setOpenEditUser] = React.useState(false);
+  const [openDeleteUser, setOpenDeleteUser] = React.useState(false);
   const [editRow, setEditRow] = React.useState<UserRow | undefined>();
+  const [deleteRow, setDeleteRow] = React.useState<UserRow | undefined>();
   const queryClient = useQueryClient();
 
   const handleOpenAddUser = () => {
@@ -57,7 +61,18 @@ const UsersPage: React.FC = () => {
   };
 
   const handleCloseEditUser = () => {
+    setEditRow(undefined);
     setOpenEditUser(false);
+  };
+
+  const handleOpenDeleteUser = (row: UserRow) => {
+    setDeleteRow(row);
+    setOpenDeleteUser(true);
+  };
+
+  const handleCloseDeleteUser = () => {
+    setDeleteRow(undefined);
+    setOpenDeleteUser(false);
   };
 
   const findOrganizationId = (organizationName: string) => {
@@ -112,6 +127,13 @@ const UsersPage: React.FC = () => {
     },
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => deleteUser(id, "token"),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    },
+  });
+
   const handleAddUser = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
@@ -142,6 +164,12 @@ const UsersPage: React.FC = () => {
     };
     editMutation.mutate(data);
     handleCloseEditUser();
+  };
+
+  const handleDeleteUser = () => {
+    if (!deleteRow) return;
+    deleteMutation.mutate(deleteRow.id);
+    handleCloseDeleteUser();
   };
 
   const handleFilterModelChange = (model: GridFilterModel) => {
@@ -227,7 +255,7 @@ const UsersPage: React.FC = () => {
         <GridActionsCellItem
           icon={<DeleteIcon />}
           onClick={() => {
-            console.log("delete clicked");
+            handleOpenDeleteUser(params.row);
           }}
           label="Delete"
         />,
@@ -281,6 +309,12 @@ const UsersPage: React.FC = () => {
           editRow={editRow}
         />
       </FormDialog>
+      <DeleteAlertModal
+        scenario={"user"}
+        handleDelete={handleDeleteUser}
+        open={openDeleteUser}
+        handleClose={handleCloseDeleteUser}
+      />
     </Box>
   );
 };
