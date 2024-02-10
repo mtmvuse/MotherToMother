@@ -139,7 +139,7 @@ userRouter.put(
 );
 
 /**
- * Update User
+ * Update User by email from user app
  */
 userRouter.put(
   "/v1/update/:email",
@@ -167,6 +167,35 @@ userRouter.put(
         return res.status(401).json({ message: "Unauthorized" });
       }
       const user = await UserService.updateUserByEmail(userData, userEmail);
+      return res.status(201).json(user);
+    } catch (e) {
+      next(e);
+    }
+  },
+);
+
+/**
+ * Update User by ID from Admin portal
+ */
+userRouter.put(
+  "/v1/update/id/:id",
+  async (req: Request, res: Response, next: NextFunction) => {
+    const schema = Joi.object({
+      organizationId: Joi.number(),
+      firstName: Joi.string(),
+      lastName: Joi.string(),
+      email: Joi.string().email().required(),
+      phone: Joi.string(),
+      address: Joi.string(),
+      city: Joi.string(),
+      state: Joi.string(),
+      zip: Joi.number().integer().positive(),
+      userType: Joi.string(),
+    });
+    const id = Number(req.params.id);
+    try {
+      const userData = (await schema.validateAsync(req.body)) as UserInput;
+      const user = await UserService.updateUserById(userData, id);
       return res.status(201).json(user);
     } catch (e) {
       next(e);

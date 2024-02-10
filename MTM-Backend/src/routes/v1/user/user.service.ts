@@ -239,6 +239,29 @@ export const updateUserByEmail = async (
 };
 
 /**
+ * Update any user information that is new
+ * @param user
+ * @param id
+ * @returns the id and email of the user
+ */
+export const updateUserById = async (
+  user: UserInput,
+  id: number,
+): Promise<ResponseUser> => {
+  return db.user.update({
+    where: {
+      id: id,
+    },
+    data: user,
+    select: {
+      id: true,
+      email: true,
+      userType: true,
+    },
+  });
+};
+
+/**
  * Update user password
  * @param user
  * @returns the id and email of the user
