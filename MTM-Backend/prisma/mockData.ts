@@ -1,0 +1,88 @@
+export const userData = {
+  firstName: "John",
+  lastName: "Doe",
+  email: "john.doe@example.com",
+  hash: "hashed_password",
+  salt: "random_salt",
+  phone: "1234567890",
+  address: "123 Main St",
+  city: "Anytown",
+  state: "Anystate",
+  zip: 12345,
+  role: "User",
+  userType: "UserType",
+  household: "abc",
+  organizationId: 1,
+};
+
+export const itemData = {
+  category: "Books",
+  name: "Educational Book",
+  quantityUsed: 10,
+  quantityNew: 5,
+  valueUsed: 2.5,
+  valueNew: 5.0,
+};
+
+export const mockData = {
+  users: [
+    {
+      firstName: "NEW",
+      lastName: "USER1",
+      email: "john.doe3@example.com",
+      userType: "Individual",
+      organizationId: 1,
+      hash: "hashed_password",
+      salt: "random_salt",
+      phone: "1234567890",
+      address: "123 Main St",
+      city: "Anytown",
+      state: "Anystate",
+      zip: 12345,
+      role: "User",
+      household: "abc",
+    },
+    {
+      firstName: "NEW",
+      lastName: "USER2",
+      email: "john.doe2@example.com",
+      userType: "Individual",
+      organizationId: 1,
+      hash: "hashed_password",
+      salt: "random_salt",
+      phone: "1234567890",
+      address: "123 Main St",
+      city: "Anytown",
+      state: "Anystate",
+      zip: 12345,
+      role: "User",
+      household: "abc",
+    },
+  ],
+  items: [
+    {
+      category: "Books",
+      name: "Educational Book",
+      quantityUsed: 10,
+      quantityNew: 5,
+      valueUsed: 2.5,
+      valueNew: 5.0,
+    },
+    {
+      category: "Clothes",
+      name: "T-Shirt",
+      quantityUsed: 20,
+      quantityNew: 10,
+      valueUsed: 1.5,
+      valueNew: 3.0,
+    },
+  ],
+  donations: [
+    { userId: 1, date: new Date() },
+    { userId: 2, date: new Date() },
+  ],
+  donationDetails: [
+    { donationId: 1, itemId: 1, usedQuantity: 5, newQuantity: 3 },
+    { donationId: 2, itemId: 2, usedQuantity: 10, newQuantity: 2 },
+  ],
+};

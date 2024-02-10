@@ -1,8 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["views"]
 }
 
 datasource db {
@@ -12,18 +10,17 @@ datasource db {
 
 model Organization {
   id   Int    @id @default(autoincrement())
-  name String        @unique
+  name String @unique
   type String
   user User[]
 }
 
 model User {
-  id             Int           @id @default(autoincrement())
-  Organization   Organization @relation(fields: [organizationId], references: [id])
+  id             Int          @id @default(autoincrement())
   organizationId Int
   firstName      String
   lastName       String
-  email          String        @unique
+  email          String       @unique
   hash           String
   salt           String
   phone          String
@@ -35,31 +32,38 @@ model User {
   household      String?
   userType       String
   donation       Donation[]
+  Organization   Organization @relation(fields: [organizationId], references: [id])
+
+  @@index([organizationId], map: "User_organizationId_fkey")
 }
 
 model Donation {
-  id                    Int                     @id @default(autoincrement())
+  id                    Int                    @id @default(autoincrement())
   userId                Int
-  user                  User                    @relation(fields: [userId], references: [id])
-  date                  DateTime                @default(now())
+  date                  DateTime               @default(now())
+  user                  User                   @relation(fields: [userId], references: [id])
   DonationDetail        DonationDetail[]
-  OutgoingDonationStats OutgoingDonationStats[]
+  OutgoingDonationStats OutgoingDonationStats?
+
+  @@index([userId], map: "Donation_userId_fkey")
 }
 
 model DonationDetail {
   id           Int      @id @default(autoincrement())
   donationId   Int
-  donation     Donation @relation(fields: [donationId], references: [id])
   itemId       Int
-  item         Item     @relation(fields: [itemId], references: [id])
   usedQuantity Int
   newQuantity  Int
+  donation     Donation @relation(fields: [donationId], references: [id])
+  item         Item     @relation(fields: [itemId], references: [id])
+
+  @@index([donationId], map: "DonationDetail_donationId_fkey")
+  @@index([itemId], map: "DonationDetail_itemId_fkey")
 }
 
 model OutgoingDonationStats {
   id           Int      @id @default(autoincrement())
   donationId   Int      @unique
-  donation     Donation @relation(fields: [donationId], references: [id])
   numberServed Int
   whiteNum     Int
   latinoNum    Int
@@ -67,22 +71,34 @@ model OutgoingDonationStats {
   nativeNum    Int
   asianNum     Int
   otherNum     Int
+  donation     Donation @relation(fields: [donationId], references: [id])
 }
 
 model Item {
   id             Int              @id @default(autoincrement())
-  category       String
   name           String
   quantityUsed   Int
   quantityNew    Int
   valueUsed      Float
+  category       String
   valueNew       Float
   DonationDetail DonationDetail[]
 }
 
 model Admin {
-  id           Int        @id @default(autoincrement())
-  name         String
-  email        String     @unique
-  role         String
+  id    Int    @id @default(autoincrement())
+  name  String
+  email String @unique
+  role  String
+}
+
+/// View for user dashboard for admin portal
+view user_dashboard {
+  id           Int     @id @default(0)
+  email        String
+  name         String @db.VarChar(383)
+  phone        String
+  address      String @db.Text
+  type         String
+  organization String
 }

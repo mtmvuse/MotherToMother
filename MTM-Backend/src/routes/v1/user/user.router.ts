@@ -3,17 +3,25 @@ import express, {
   type Response,
   type NextFunction,
 } from "express";
-import type { RawUserInput, UserInput } from "../../../types/user";
+import type {
+  RawUserInput,
+  UserInput,
+  APQueryType,
+  UserDashboardDisplay,
+} from "../../../types/user";
 import * as UserService from "./user.service";
 import Joi from "joi";
+import {
+  translateFilterToPrisma,
+  translateSortToPrisma,
+} from "../../../utils/lib";
+import type { Prisma } from "@prisma/client";
 
 const userRouter = express.Router();
 
-interface QueryType {
+interface UAQueryType {
   email: string;
   organization: string;
-  page: number;
-  pageSize: number;
 }
 
 /**
@@ -27,23 +35,21 @@ interface QueryType {
  *
  * if both parameters are supplied return a user whose organization have the
  * corresponding organization type and whose email matches the email queried
+ * for user app
  */
 userRouter.get(
   "/v1",
   async (
-    req: Request<any, any, any, QueryType>,
+    req: Request<any, any, any, UAQueryType>,
     res: Response,
     next: NextFunction,
   ) => {
     const email = req.query.email;
     const organizationType = req.query.organization;
-    const page = Number(req.query.page);
-    const pageSize = Number(req.query.pageSize);
     try {
       if (email == undefined && organizationType == undefined) {
-        const users = await UserService.getUsers(page, pageSize);
-        const count = await UserService.getUserCount();
-        return res.status(200).json({ users, totalNumber: count });
+        const users = await UserService.getUsers();
+        return res.status(200).json(users);
       } else if (organizationType == undefined) {
         const user = await UserService.getUserByEmail(email);
         if (user) {
@@ -65,6 +71,47 @@ userRouter.get(
           return res.status(404).json({ message: "User not found" });
         }
       }
+    } catch (e) {
+      next(e);
+    }
+  },
+);
+
+/**
+ * Get users based on pagination, filters,
+ * and sort conditions for admin portal
+ */
+userRouter.get(
+  "/v1/admin",
+  async (
+    req: Request<any, any, any, APQueryType>,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    const query = req.query;
+    const { page, pageSize, sort, order, ...filters } = query;
+    const pageInt = Number(page);
+    const pageSizeInt = Number(pageSize);
+    const typedFilters = {
+      ...filters,
+      id: filters.id && Number(filters.id),
+    };
+    const whereClause = translateFilterToPrisma(
+      typedFilters,
+    ) as UserDashboardDisplay;
+    const orderBy = translateSortToPrisma(
+      sort,
+      order,
+    ) as Prisma.user_dashboardAvgOrderByAggregateInput;
+    try {
+      const users = await UserService.getUsersAP(
+        pageInt,
+        pageSizeInt,
+        whereClause,
+        orderBy,
+      );
+      const count = await UserService.getUserCount(whereClause);
+      return res.status(200).json({ users, totalNumber: count });
     } catch (e) {
       next(e);
     }

@@ -10,12 +10,6 @@ import {
 } from "@mui/material";
 import { USER_TYPE } from "../../lib/constants";
 import type { Organization } from "~/types/organization";
-import * as Yup from "yup";
-
-const FormSchema = Yup.object().shape({
-  email: Yup.string().email("Invalid email").required("Required"),
-  password: Yup.string().min(8, "Password is too short").required("Required"),
-});
 
 interface AddUserDialogProps {
   organizations: void | Organization[] | undefined;

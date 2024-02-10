@@ -4,6 +4,8 @@ import {
   GridActionsCellItem,
   GridColDef,
   GridRowParams,
+  type GridFilterModel,
+  type GridSortModel,
 } from "@mui/x-data-grid";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -20,20 +22,17 @@ import {
   useQueryClient,
   keepPreviousData,
 } from "@tanstack/react-query";
-import type {
-  ResponseUser,
-  UserDashboardResponse,
-  EditUserArgs,
-} from "../types/user";
+import type { UserDashboardResponse, EditUserArgs } from "../types/user";
 import { Button, Box } from "@mui/material";
 import FormDialog from "../components/FormDialog";
 import AddUserDialog from "../components/users/AddUserDialog";
 import type { Organization } from "~/types/organization";
 
 const UsersPage: React.FC = () => {
-  // TODO: Chaneg this to API call
-  const organizationOptions: string[] = ["Amazon", "Target"];
   const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(PAGE_SIZE);
+  const [filterModel, setFilterModel] = useState<GridFilterModel | undefined>();
+  const [sortModel, setSortModel] = useState<GridSortModel | undefined>();
   const [totalNumber, setTotalNumber] = useState(0);
   const [openAddUser, setOpenAddUser] = React.useState(false);
   const queryClient = useQueryClient();
@@ -46,37 +45,24 @@ const UsersPage: React.FC = () => {
     setOpenAddUser(false);
   };
 
+  const isAnyFilterValueUndefined = () => {
+    return filterModel?.items.some((item) => item.value === undefined);
+  };
+
   const usersQueryResponse = useQuery({
-    queryKey: ["users", page],
+    queryKey: ["users", page, pageSize, filterModel, sortModel],
     placeholderData: keepPreviousData,
     queryFn: () =>
-      getUsers("token", page, PAGE_SIZE)
+      getUsers("token", page, pageSize, filterModel, sortModel)
         .then((res: Response) => res.json())
         .then((data: UserDashboardResponse) => {
-          const users = data.users;
           setTotalNumber(data.totalNumber);
-          const renderUsers = users.map((user: ResponseUser) => {
-            // clean up the data for frontend presentation
-            return {
-              ...user,
-              name: user.firstName + " " + user.lastName,
-              organization: user.Organization.name,
-              type: user.userType,
-              address:
-                user.address +
-                ", " +
-                user.city +
-                ", " +
-                user.state +
-                ", " +
-                user.zip,
-            };
-          });
-          return renderUsers;
+          return data.users;
         })
         .catch((err: any) => {
           console.error(err);
         }),
+    enabled: !isAnyFilterValueUndefined(),
   });
 
   const organizationsQueryResponse = useQuery({
@@ -113,9 +99,16 @@ const UsersPage: React.FC = () => {
       ...formJson,
       password: "password",
     };
-    console.log(userData);
     addMutation.mutate(userData);
     handleCloseAddUser();
+  };
+
+  const handleFilterModelChange = (model: GridFilterModel) => {
+    setFilterModel(model);
+  };
+
+  const handleSortModelChange = (model: GridSortModel) => {
+    setSortModel(model);
   };
 
   if (usersQueryResponse.isLoading) return <div>Loading...</div>;
@@ -154,7 +147,9 @@ const UsersPage: React.FC = () => {
       headerName: "Organization",
       flex: 2,
       type: "singleSelect",
-      valueOptions: organizationOptions,
+      valueOptions: organizationsQueryResponse.data?.map(
+        (organization) => organization.name
+      ),
       align: "left",
       headerAlign: "left",
       editable: true,
@@ -179,7 +174,6 @@ const UsersPage: React.FC = () => {
       field: "address",
       headerName: "Address",
       flex: 3,
-      type: "number",
       align: "left",
       headerAlign: "left",
       // editable: true,
@@ -206,7 +200,7 @@ const UsersPage: React.FC = () => {
     },
   ];
   return (
-    <Box sx={{ height: "80%", width: "100%" }}>
+    <Box>
       <Button
         variant="contained"
         sx={{ margin: "auto 10px 10px auto" }}
@@ -218,17 +212,19 @@ const UsersPage: React.FC = () => {
         Add Organization
       </Button>
       <DataGrid
-        sx={{ width: "95%" }}
+        sx={{ width: "95%", height: "80vh" }}
         rows={usersQueryResponse.data || []}
         columns={columns}
         pagination
+        autoPageSize
         rowCount={totalNumber}
-        pageSizeOptions={[PAGE_SIZE]}
         paginationMode="server"
-        paginationModel={{ page: page, pageSize: PAGE_SIZE }}
         onPaginationModelChange={(params) => {
           setPage(params.page);
+          setPageSize(params.pageSize);
         }}
+        onFilterModelChange={handleFilterModelChange}
+        onSortModelChange={handleSortModelChange}
       />
 
       <FormDialog
