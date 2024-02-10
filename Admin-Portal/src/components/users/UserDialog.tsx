@@ -25,6 +25,9 @@ const UserDialog: React.FC<UserDialogProps> = (props) => {
   );
   const handleUserTypeChange = (event: SelectChangeEvent) => {
     setUserType(event.target.value as string);
+    if (event.target.value === USER_TYPE.PUBLIC) {
+      setOrganization("Public");
+    }
   };
   const handleOrganizationChange = (event: SelectChangeEvent) => {
     setOrganization(event.target.value as string);

@@ -4,110 +4,80 @@
  * PRISMA STUDIO - DIRECTLY, SQL WORKBENCH - DIRECTLY
  */
 import { db } from "../src/utils/db.server";
-import { userData, itemData, mockData } from "./mockData";
+import { organizationData, userDataMock, itemDataMock } from "./mockData";
 
 async function main() {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  const getRandomIndex = (arr: any) => Math.floor(Math.random() * arr.length);
   // Clear data from the database
   await clearData();
-  const org1 = await db.organization.create({
-    data: { name: "Helping Hands", type: "NGO" },
-  });
-  // Seeding User
-  const user = await db.user.create({ data: userData });
 
-  // Seeding Item
-  const item = await db.item.create({
-    data: itemData,
-  });
+  // seed organiztion data
+  const orgs = [];
+  for (const orgData of organizationData) {
+    const org = await db.organization.create({
+      data: orgData,
+    });
+    orgs.push(org);
+  }
 
-  // Seeding Donation
-  const donation = await db.donation.create({
-    data: {
-      userId: user.id,
-    },
-  });
+  // seed item data
+  const items = [];
+  for (const itemData of itemDataMock) {
+    const newItem = await db.item.create({
+      data: itemData,
+    });
+    items.push(newItem);
+  }
 
-  // Seeding DonationDetail
-  const donationDetail = await db.donationDetail.create({
-    data: {
-      donationId: donation.id,
-      itemId: item.id,
-      usedQuantity: 3,
-      newQuantity: 2,
-    },
-  });
-
-  // Seeding OutgoingDonationStats
-  const outgoingDonationStats = await db.outgoingDonationStats.create({
-    data: {
-      donationId: donation.id,
-      numberServed: 100,
-      whiteNum: 20,
-      latinoNum: 25,
-      blackNum: 15,
-      nativeNum: 10,
-      asianNum: 20,
-      otherNum: 10,
-    },
-  });
-
-  console.log(`Seeding finished.`);
-
-  // async function seedDatabase() {
-  //   for (const user of mockData.users) {
-  //     await db.user.create({ data: user });
-  //   }
-  //   for (const item of mockData.items) {
-  //     await db.item.create({ data: item });
-  //   }
-  //   for (const donation of mockData.donations) {
-  //     await db.donation.create({ data: donation });
-  //   }
-  //   for (const detail of mockData.donationDetails) {
-  //     await db.donationDetail.create({ data: detail });
-  //   }
-  //   mockData.donations.forEach(async (donation, index) => {
-  //     await db.donation.create({
-  //       data: {
-  //         ...donation,
-  //         userId: user.id, // Use the actual user IDs
-  //       },
-  //     });
-  //   });
-  // }
-  // await seedDatabase();
-
-  for (const userData of mockData.users) {
+  // seed user and donation data
+  for (const userData of userDataMock) {
     // Create user and remember the ID
     const user = await db.user.create({
       data: {
         ...userData,
-        organizationId: org1.id, // Use the ID from the created organization
+        organizationId:
+          orgs.find((org) => org.type === userData.userType.split(" ")[0])
+            ?.id || orgs[0].id,
       },
     });
 
-    // Create an item for the donation
-    const newItem = await db.item.create({
-      data: mockData.items[0],
-    });
+    // Create 3 donations for each user
+    for (let i = 0; i < 3; ++i) {
+      const newDonation = await db.donation.create({
+        data: {
+          userId: user.id,
+          date: new Date(),
+        },
+      });
 
-    // Create a donation for the user
-    const newDonation = await db.donation.create({
-      data: {
-        userId: user.id,
-        date: new Date(),
-      },
-    });
+      // Create 5 donation details for each donation
+      for (let j = 0; j < 5; ++j) {
+        await db.donationDetail.create({
+          data: {
+            donationId: newDonation.id,
+            itemId: items[getRandomIndex(items)].id,
+            usedQuantity: 3,
+            newQuantity: 2,
+          },
+        });
+      }
 
-    // Create donation details for the donation
-    await db.donationDetail.create({
-      data: {
-        donationId: newDonation.id,
-        itemId: newItem.id,
-        usedQuantity: 3,
-        newQuantity: 2,
-      },
-    });
+      if (user.userType === "Agency Partner") {
+        await db.outgoingDonationStats.create({
+          data: {
+            donationId: newDonation.id,
+            numberServed: 100,
+            whiteNum: 20,
+            latinoNum: 25,
+            blackNum: 15,
+            nativeNum: 10,
+            asianNum: 20,
+            otherNum: 10,
+          },
+        });
+      }
+    }
   }
 }
 
