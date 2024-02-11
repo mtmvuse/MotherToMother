@@ -41,7 +41,7 @@ app.use("/registration", registrationRouter);
 
 app.use("/organization", organizationRouter);
 
-app.use("/donation", donationRouter);
+app.use("/donations", donationRouter);
 
 app.use("/inventory", inventoryRouter);
 

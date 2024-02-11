@@ -99,10 +99,14 @@ userRouter.get(
     const whereClause = translateFilterToPrisma(
       typedFilters,
     ) as UserDashboardDisplay;
+    // const orderBy = translateSortToPrisma(
+    //   sort,
+    //   order,
+    // ) as Prisma.user_dashboardAvgOrderByAggregateInput;
     const orderBy = translateSortToPrisma(
       sort,
       order,
-    ) as Prisma.user_dashboardAvgOrderByAggregateInput;
+    ) as Prisma.UserAvgOrderByAggregateInput; // TODO: Make sure this is correct fix
     try {
       const users = await UserService.getUsersAP(
         pageInt,

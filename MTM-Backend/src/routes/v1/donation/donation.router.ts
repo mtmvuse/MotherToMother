@@ -5,7 +5,7 @@ import express, {
 } from "express";
 import * as DonationService from "./donation.service";
 import { getUserByEmail } from "../user/user.service";
-import { getItemsCategoryName } from "../item/item.service";
+import { getItemsCategoryName, updateItem } from "../item/item.service";
 import {
   type OutgoingDonationRequestBodyType,
   type DonationDetailType,
@@ -38,6 +38,10 @@ donationRouter.get(
     }
   },
 );
+
+const isNonNegativeInteger = (value: number) => {
+  return value >= 0 && Number.isInteger(value);
+};
 
 const createOutgoingDonation = async (
   req: Request,
@@ -87,11 +91,32 @@ const createOutgoingDonation = async (
             );
           }
 
+          // Check if quantity is valid (not negative integer)
+          if (!isNonNegativeInteger(itemDetail.newQuantity)) {
+            throw new Error("Quantity of items must be non-negative integers");
+          }
+
           donationReqBody.donationDetails[index].itemId = items[0].id;
         }
       }),
     );
 
+    // Validate the numberServed and demographic numbers
+    if (
+      !isNonNegativeInteger(donationReqBody.numberServed) ||
+      !isNonNegativeInteger(donationReqBody.whiteNum) ||
+      !isNonNegativeInteger(donationReqBody.latinoNum) ||
+      !isNonNegativeInteger(donationReqBody.blackNum) ||
+      !isNonNegativeInteger(donationReqBody.nativeNum) ||
+      !isNonNegativeInteger(donationReqBody.asianNum) ||
+      !isNonNegativeInteger(donationReqBody.otherNum)
+    ) {
+      throw new Error(
+        "NumberServed and demographic numbers must be non-negative integers",
+      );
+    }
+
+    // here is start updating the database
     const newDonation = await DonationService.createDonation(
       donationReqBody.userId,
     );
@@ -118,6 +143,17 @@ const createOutgoingDonation = async (
         donationReqBody.asianNum,
         donationReqBody.otherNum,
       );
+
+    // Update the quantity of each item
+    await Promise.all(
+      donationReqBody.donationDetails.map(async (itemDetail) => {
+        await updateItem(
+          itemDetail.itemId,
+          itemDetail.newQuantity,
+          itemDetail.usedQuantity,
+        );
+      }),
+    );
 
     return res.status(200).json(newOutgoingDonationStats);
   } catch (e) {
