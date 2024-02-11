@@ -4,8 +4,8 @@ import type {
   DonationDetailType,
   OutgoingDonationStatsType,
   DashboardDonationDetailType,
-  ProductType,
-  IncomingDonationRequestBodyType,
+  IncomingDonationTypeWithID,
+  IncomingDonationWithIDType,
 } from "../../../types/donation";
 
 export const getTransactions = async (page: number, pageSize: number) => {
@@ -145,7 +145,7 @@ export const createOutgoingDonationStats = async (
 };
 
 export const createIncomingDonation = async (
-  incomingDonation: IncomingDonationRequestBodyType,
+  incomingDonation: IncomingDonationTypeWithID,
 ) => {
   const user = await db.user.findUnique({
     where: {
@@ -215,24 +215,59 @@ export const createIncomingDonation = async (
   return donation;
 };
 
-// const updateIncomingDonation = async (
-//   donationId: number,
-//   products: Array<ProductType>,
-// ) => {
-//   const stats = await db.incomingDonationStats.update({
-//     where: {
-//       donationId,
-//     },
-//     data: {
-//       products: {
-//         createMany: {
-//           data: products.map((product) => ({
-//             name: product.name,
-//             quantity: product.quantity,
-//           })),
-//         },
-//       },
-//     },
-//   });
-//   return stats;
-// };
+export const updateIncomingDonation = async (
+  incomingDonation: IncomingDonationWithIDType,
+) => {
+  const donationExists = await db.donation.findUnique({
+    where: { id: incomingDonation.id },
+  });
+
+  if (!donationExists) {
+    return null;
+  }
+
+  // Process each donation detail
+  for (const detail of incomingDonation.donationDetails) {
+    // find and Update the corresponding item's inventory
+    const item = await db.item.findFirst({
+      where: { name: detail.item },
+      select: {
+        id: true,
+        quantityUsed: true,
+        quantityNew: true,
+      },
+    });
+    if (item) {
+      await db.item.update({
+        where: { id: item.id },
+        data: {
+          quantityNew: { increment: detail.newQuantity },
+          quantityUsed: { increment: detail.usedQuantity },
+        },
+      });
+    } else {
+      // Handle the case where the item does not exist
+      // Create a new item and donation details entry
+      const newItem = await db.item.create({
+        data: {
+          category: "TBD",
+          name: detail.item,
+          quantityUsed: detail.usedQuantity,
+          quantityNew: detail.newQuantity,
+          valueUsed: 0,
+          valueNew: 0,
+        },
+      });
+      await db.donationDetail.create({
+        data: {
+          donationId: incomingDonation.id,
+          itemId: newItem.id,
+          newQuantity: detail.newQuantity,
+          usedQuantity: detail.usedQuantity,
+        },
+      });
+    }
+  }
+  // return updated donation
+  return donationExists;
+};
