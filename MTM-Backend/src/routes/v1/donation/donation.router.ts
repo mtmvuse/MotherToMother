@@ -5,17 +5,31 @@ import express, {
 } from "express";
 import * as DonationService from "./donation.service";
 import { getUserByEmail } from "../user/user.service";
+
 import {
   getItemsCategoryName,
   updateItem,
   getItemsName,
 } from "../item/item.service";
 import {
+  
   type OutgoingDonationRequestBodyType,
   type DonationDetailType,
   type OutgoingDonationStatsType,
   type PUTOutgoingDonationRequestBodyType,
   type IncomingDonationRequestBodyType,
+  type IncomingDonationType,
+  type IncomingDonationTypeWithID,
+  type IncomingDonationWithIDType,
+import { getItemsCategoryName } from "../item/item.service";
+
+import type {
+  OutgoingDonationRequestBodyType,
+  DonationDetailType,
+  OutgoingDonationStatsType,
+  IncomingDonationType,
+  IncomingDonationTypeWithID,
+  IncomingDonationWithIDType,
 } from "../../../types/donation";
 
 interface QueryType {
@@ -308,7 +322,7 @@ donationRouter.post(
   "/v1/incoming",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const donationReqBody = req.body as IncomingDonationRequestBodyType;
+      const donationReqBody = req.body as IncomingDonationTypeWithID;
       if (!donationReqBody.userId) {
         return res.status(400).json({
           error: "User ID must be entered",
@@ -340,19 +354,36 @@ donationRouter.put(
     res: Response,
     next: NextFunction,
   ) => {
-    const id = req.query.id;
-    if (!id) {
-      return res.status(400).json({
-        error: "ID must be entered",
-      });
+    try {
+      const body = req.body as IncomingDonationType;
+      const donationId = parseInt(req.query.id);
+      if (!donationId) {
+        return res.status(400).json({
+          error: "ID must be entered",
+        });
+      }
+
+      // create object with IncomingDonationWithIDType
+      const incomingDonation: IncomingDonationWithIDType = {
+        id: donationId,
+        donationDetails: body.donationDetails,
+      };
+
+      const donations =
+        await DonationService.updateIncomingDonation(incomingDonation);
+
+      if (donations) {
+        return res.status(200).json({
+          donations,
+        });
+      } else {
+        return res.status(400).json({
+          error: "Donation does not exist",
+        });
+      }
+    } catch (e) {
+      next(e);
     }
-    const donationReqBody = req.body as IncomingDonationRequestBodyType;
-
-    await DonationService.updateIncomingDonation(id, donationReqBody);
-
-    return res.status(200).json({
-      message: "Incoming donation updated successfully",
-    });
   },
 );
 
