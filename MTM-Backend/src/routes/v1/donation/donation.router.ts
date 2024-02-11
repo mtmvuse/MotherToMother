@@ -149,7 +149,7 @@ const createOutgoingDonation = async (
       donationReqBody.donationDetails.map(async (itemDetail) => {
         await updateItem(
           itemDetail.itemId,
-          -itemDetail.newQuantity,
+          -itemDetail.usedQuantity,
           -itemDetail.newQuantity,
         );
       }),
