@@ -303,19 +303,33 @@ const updateOutgoingDonation = async (
 
 donationRouter.post("/v1/outgoing", createOutgoingDonation);
 
-<<<<<<< HEAD
 donationRouter.put("/v1/outgoing/:donationId", updateOutgoingDonation);
-=======
 donationRouter.post(
   "/v1/incoming",
   async (req: Request, res: Response, next: NextFunction) => {
-    const donationReqBody = req.body as IncomingDonationRequestBodyType;
+    try {
+      const donationReqBody = req.body as IncomingDonationRequestBodyType;
+      if (!donationReqBody.userId) {
+        return res.status(400).json({
+          error: "User ID must be entered",
+        });
+      }
+      // make sure the user exists by checking the id in the database
+      const createdDonation =
+        await DonationService.createIncomingDonation(donationReqBody);
 
-    await DonationService.createIncomingDonation(donationReqBody);
-
-    return res.status(200).json({
-      message: "Incoming donation created successfully",
-    });
+      if (createdDonation) {
+        return res.status(200).json({
+          createdDonation,
+        });
+      } else {
+        return res.status(400).json({
+          error: "User does not exist",
+        });
+      }
+    } catch (e) {
+      next(e);
+    }
   },
 );
 
@@ -341,7 +355,6 @@ donationRouter.put(
     });
   },
 );
->>>>>>> 3c524a0 (Adding Router Structure for Incoming Donations)
 
 export { donationRouter };
 

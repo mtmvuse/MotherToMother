@@ -4,6 +4,8 @@ import type {
   DonationDetailType,
   OutgoingDonationStatsType,
   DashboardDonationDetailType,
+  ProductType,
+  IncomingDonationRequestBodyType,
 } from "../../../types/donation";
 
 export const getTotalNumberDonations = async () => {
@@ -227,6 +229,7 @@ export const createOutgoingDonationStats = async (
   });
 };
 
+<<<<<<< HEAD
 export const updateOutgoingDonationStats = async (
   donationId: number,
   numberServed: number,
@@ -252,3 +255,97 @@ export const updateOutgoingDonationStats = async (
     },
   });
 };
+=======
+export const createIncomingDonation = async (
+  incomingDonation: IncomingDonationRequestBodyType,
+) => {
+  const user = await db.user.findUnique({
+    where: {
+      id: incomingDonation.userId,
+    },
+  });
+  if (!user) {
+    return null;
+  }
+  const donation = await db.donation.create({
+    data: {
+      userId: incomingDonation.userId,
+      date: new Date(),
+    },
+  });
+  // For each product, update the inventory and create donation details entries
+  for (const product of incomingDonation.products) {
+    const item = await db.item.findFirst({
+      where: { name: product.name },
+      select: {
+        id: true,
+        category: true,
+        name: true,
+        quantityUsed: true,
+        quantityNew: true,
+        valueUsed: true,
+        valueNew: true,
+        DonationDetail: true,
+      },
+    });
+    if (item) {
+      await db.item.update({
+        where: { id: item.id },
+        data: { quantityNew: { increment: product.quantity } },
+      });
+      await db.donationDetail.create({
+        data: {
+          donationId: donation.id,
+          itemId: item.id,
+          newQuantity: product.quantity,
+          usedQuantity: 0,
+        },
+      });
+    } else {
+      // Handle the case where the item does not exist
+      // Create a new item and donation details entry
+      const newItem = await db.item.create({
+        data: {
+          category: "TBD",
+          name: product.name,
+          quantityUsed: 0,
+          quantityNew: product.quantity,
+          valueUsed: 0,
+          valueNew: 0,
+        },
+      });
+      await db.donationDetail.create({
+        data: {
+          donationId: donation.id,
+          itemId: newItem.id,
+          newQuantity: product.quantity,
+          usedQuantity: 0,
+        },
+      });
+    }
+  }
+  return donation;
+};
+
+// const updateIncomingDonation = async (
+//   donationId: number,
+//   products: Array<ProductType>,
+// ) => {
+//   const stats = await db.incomingDonationStats.update({
+//     where: {
+//       donationId,
+//     },
+//     data: {
+//       products: {
+//         createMany: {
+//           data: products.map((product) => ({
+//             name: product.name,
+//             quantity: product.quantity,
+//           })),
+//         },
+//       },
+//     },
+//   });
+//   return stats;
+// };
+>>>>>>> 0d6f476 (Creating Incoming Donation POST Service Function)
