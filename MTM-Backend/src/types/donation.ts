@@ -47,3 +47,13 @@ export interface DashboardDonationDetailType {
   quantity: number;
   total: number;
 }
+
+export interface ProductType {
+  name: string;
+  quantity: number;
+}
+
+export interface IncomingDonationRequestBodyType {
+  userId: number;
+  products: Array<ProductType>;
+}
