@@ -8,7 +8,6 @@ interface AddInventoryDialogProps {
 const AddInventoryDialog: React.FC<AddInventoryDialogProps> = ({
   categories,
 }) => {
-  console.log(categories);
   return (
     <Box>
       <div>
