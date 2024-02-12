@@ -10,18 +10,56 @@ import {
 } from "@mui/material";
 import ItemsTable from "./ItemsTable";
 import DemographicTable from "./DemographicTable";
+import { demographicTypes, itemTypes } from "~/Types/DonationTypes";
+
 interface ModalContentProps {
   selectedDonation: any;
 }
 
-const DonationDetailsIncoming: React.FC<ModalContentProps> = ({
+const createItemData = (
+  id: number,
+  item: string,
+  status: string,
+  value: number,
+  quantity: number,
+): itemTypes => {
+  return { id, item, status, value, quantity };
+};
+
+const createDemographicData = (
+  id: number,
+  kidGroup: string,
+  quantity: number,
+): demographicTypes => {
+  return { id, kidGroup, quantity };
+};
+
+const initialDemographicRows: demographicTypes[] = [
+  createDemographicData(1, "White children", 10),
+  createDemographicData(2, "Black children", 20),
+  createDemographicData(3, "Asian children", 10),
+];
+
+const initialItemRows: itemTypes[] = [
+  createItemData(1, "Clothes", "Used", 4, 11),
+  createItemData(2, "Cribs", "Used", 12, 110),
+];
+
+const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
   selectedDonation,
 }) => {
+  const [itemRows, setItemRows] = useState<itemTypes[]>(initialItemRows);
+  const [editable, setEditable] = useState(false);
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+  const [idItemCounter, setIdItemCounter] = useState(2);
+  const [idDemoCounter, setIdDemoCounter] = useState(3);
+
   const dateString = selectedDonation?.date
     ? new Date(selectedDonation.date).toLocaleDateString()
     : "";
-  const [editable, setEditable] = useState(false);
-  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+  const [demographicRows, setDemographicRows] = useState<demographicTypes[]>(
+    initialDemographicRows,
+  );
 
   const handleEditButtonClick = () => {
     setEditable(!editable);
@@ -29,6 +67,8 @@ const DonationDetailsIncoming: React.FC<ModalContentProps> = ({
 
   const handleCancelButtonClick = () => {
     setEditable(false);
+    setItemRows(initialItemRows);
+    setDemographicRows(initialDemographicRows);
   };
 
   const handleSaveButtonClick = () => {
@@ -43,6 +83,55 @@ const DonationDetailsIncoming: React.FC<ModalContentProps> = ({
   const handleCancelConfirm = () => {
     setOpenConfirmDialog(false);
   };
+
+  const handleAddItemButtonClick = () => {
+    const hasEmptyFields = itemRows.some((row) =>
+      Object.values(row).some((value) => value === "" || value === 0),
+    );
+
+    if (hasEmptyFields) {
+      console.log(
+        "Please fill all fields in the current rows before adding a new row.",
+      );
+      return;
+    }
+
+    setItemRows((prevRows) => [
+      ...prevRows,
+      {
+        id: idItemCounter + 1,
+        item: "",
+        status: "",
+        value: 0,
+        quantity: 0,
+      },
+    ]);
+    setIdItemCounter(idItemCounter + 1);
+  };
+
+  const handleAddDemoButtonClick = () => {
+    const hasEmptyFields = demographicRows.some((row) =>
+      Object.values(row).some((value) => !value),
+    );
+
+    if (hasEmptyFields) {
+      console.log(
+        "Please fill all fields in the current rows before adding a new row.",
+      );
+      return;
+    }
+
+    setDemographicRows((prevRows) => [
+      ...prevRows,
+      {
+        id: idDemoCounter,
+        kidGroup: "",
+        quantity: 0,
+      },
+    ]);
+    setIdDemoCounter(idDemoCounter + 1);
+  };
+
   return (
     <Box p={2} sx={{ overflowY: "auto" }}>
       <h2>Donation Detail</h2>
@@ -66,6 +155,8 @@ const DonationDetailsIncoming: React.FC<ModalContentProps> = ({
           <>
             <Button onClick={handleSaveButtonClick}>Save</Button>
             <Button onClick={handleCancelButtonClick}>Cancel</Button>
+            <Button onClick={handleAddItemButtonClick}>Add Item</Button>
+            <Button onClick={handleAddDemoButtonClick}>Add Demographic</Button>
           </>
         )}
       </Box>
@@ -75,7 +166,7 @@ const DonationDetailsIncoming: React.FC<ModalContentProps> = ({
           borderRadius: "5px",
         }}
       >
-        <ItemsTable selectedDonation={selectedDonation} editable={editable} />
+        <ItemsTable rows={itemRows} setRows={setItemRows} editable={editable} />
       </div>
       <div
         style={{
@@ -85,7 +176,8 @@ const DonationDetailsIncoming: React.FC<ModalContentProps> = ({
         }}
       >
         <DemographicTable
-          selectedDonation={selectedDonation}
+          rows={demographicRows}
+          setRows={setDemographicRows}
           editable={editable}
         />
       </div>
@@ -105,4 +197,4 @@ const DonationDetailsIncoming: React.FC<ModalContentProps> = ({
   );
 };
 
-export default DonationDetailsIncoming;
+export default DonationDetailsOutgoing;
