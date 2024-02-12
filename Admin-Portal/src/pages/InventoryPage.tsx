@@ -8,52 +8,104 @@ import {
   GridRowParams,
   GridValueFormatterParams,
 } from "@mui/x-data-grid";
-import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { PAGE_SIZE } from "../lib/constants";
+import { addIventoryItem, addUser, getInventoryRows } from "../lib/services";
+import { ResponseInventoryItem } from "~/types/inventory";
+import FormDialog from "../components/FormDialog";
+import AddInventoryDialog from "../components/inventory/AddInventoryDialog";
 
-const exampleRows = [
-  {
-    id: 1,
-    item: "Baby Bath",
-    category: "Baby",
-    status: "New",
-    value: 20,
-    stock: 400,
-  },
-  {
-    id: 2,
-    item: "Car Seat",
-    category: "Travel",
-    status: "Used",
-    value: "40",
-    stock: 600,
-  },
-];
+export interface Row {
+  id: number;
+  itemName: String;
+  category: String;
+  newStock: number;
+  newValue: number;
+  usedStock: number;
+  usedValue: number;
+}
 
-let id_counter = 2;
-
-const categoryOptions: string[] = ["Baby", "Travel", ""];
-const statusOptions: string[] = ["New", "Used", ""];
+//TODO
+//delete reminder
+//edit button
+//get category options from the backend
+const categoryOptions: string[] = ["Baby", "Travel"];
 
 const InventoryPage: React.FC = () => {
-  const [rows, setRows] = useState(exampleRows);
+  const [rows, setRows] = useState<Row[]>([]);
+  const [page, setPage] = useState(0);
+  const [totalNumber, setTotalNumber] = useState(0);
+  const [openAddInventory, setOpenAddInventory] = React.useState(false);
+  const queryClient = useQueryClient();
 
-  const handleAddRow = () => {
-    setRows((prevRows) => [
-      ...prevRows,
-      {
-        id: ++id_counter,
-        item: "",
-        category: "",
-        status: "",
-        value: 0,
-        stock: 0,
-      },
-    ]);
+  const handleOpenAddInventory = () => {
+    setOpenAddInventory(true);
+  };
+
+  const handleCloseAddInventory = () => {
+    setOpenAddInventory(false);
+  };
+
+  const inventoryQueryResponse = useQuery({
+    queryKey: ["inventory", page, PAGE_SIZE],
+    placeholderData: keepPreviousData,
+    //define type
+    queryFn: () =>
+      getInventoryRows("token", page, PAGE_SIZE)
+        .then((response: Response) => response.json())
+        .then((data) => {
+          console.log(data.inventory);
+          setTotalNumber(data.totalNumber);
+          const renderInventories = data.inventory.map(
+            (item: ResponseInventoryItem) => ({
+              id: item.id,
+              itemName: item.name,
+              category: item.category,
+              newStock: item.quantityNew,
+              newValue: item.valueNew,
+              usedStock: item.quantityUsed,
+              usedValue: item.valueUsed,
+            })
+          );
+          return renderInventories;
+        })
+        .catch((err: any) => {
+          console.log(err);
+        }),
+  });
+
+  const addMutation = useMutation({
+    mutationFn: (data: any) => addIventoryItem(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["inventory"] });
+    },
+  });
+
+  const handleAddRow = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const formJson = Object.fromEntries((formData as any).entries());
+    const itemData = {
+      name: formJson.itemName,
+      category: formJson.category,
+      quantityNew: formJson.newStock,
+      valueNew: formJson.newValue,
+      quantityUsed: formJson.usedStock,
+      valueUsed: formJson.usedValue,
+    };
+    console.log(itemData);
+    addMutation.mutate(itemData);
+    handleCloseAddInventory();
   };
 
   const handleDeleteRow = (id: GridRowId) => () => {
-    setRows(rows.filter((row) => row.id !== id));
+    setRows(rows.filter((row: Row) => row.id !== id));
   };
 
   const columns: GridColDef[] = [
@@ -66,8 +118,8 @@ const InventoryPage: React.FC = () => {
       headerAlign: "left",
     },
     {
-      field: "item",
-      headerName: "Item",
+      field: "itemName",
+      headerName: "ITEM NAME",
       flex: 3,
       align: "left",
       headerAlign: "left",
@@ -75,7 +127,7 @@ const InventoryPage: React.FC = () => {
     },
     {
       field: "category",
-      headerName: "Category",
+      headerName: "CATEGORY",
       flex: 3,
       type: "singleSelect",
       valueOptions: categoryOptions,
@@ -84,18 +136,17 @@ const InventoryPage: React.FC = () => {
       editable: true,
     },
     {
-      field: "status",
-      headerName: "Status",
+      field: "newStock",
+      headerName: "NEW STOCK",
       flex: 3,
-      type: "singleSelect",
-      valueOptions: statusOptions,
+      type: "number",
       align: "left",
       headerAlign: "left",
       editable: true,
     },
     {
-      field: "value",
-      headerName: "Unit Value",
+      field: "newValue",
+      headerName: "NEW VALUE",
       flex: 3,
       type: "number",
       align: "left",
@@ -105,12 +156,12 @@ const InventoryPage: React.FC = () => {
         if (params.value == null) {
           return "$0";
         }
-        return `$${params.value.toLocaleString()}`;
+        return `$${params.value.toFixed(2).toLocaleString()}`;
       },
     },
     {
-      field: "stock",
-      headerName: "Stock/Amount",
+      field: "usedStock",
+      headerName: "USED STOCK",
       flex: 3,
       type: "number",
       align: "left",
@@ -118,44 +169,65 @@ const InventoryPage: React.FC = () => {
       editable: true,
     },
     {
+      field: "usedValue",
+      headerName: "USED VALUE",
+      flex: 3,
+      type: "number",
+      align: "left",
+      headerAlign: "left",
+      editable: true,
+      valueFormatter: (params: GridValueFormatterParams<number>) => {
+        if (params.value == null) {
+          return "$0";
+        }
+        return `$${params.value.toFixed(2).toLocaleString()}`;
+      },
+    },
+    {
       field: "actions",
       type: "actions",
-      getActions: (params: GridRowParams) => [
-        <GridActionsCellItem
-          icon={<EditIcon />}
-          onClick={() => {
-            console.log("edit clicked");
-          }}
-          label="Edit"
-        />,
-        <GridActionsCellItem
-          icon={<DeleteIcon />}
-          onClick={handleDeleteRow(params.id)}
-          label="Delete"
-        />,
-      ],
+      getActions: (params: GridRowParams) => {
+        return [
+          <GridActionsCellItem
+            icon={<DeleteIcon />}
+            onClick={handleDeleteRow(params.id)}
+            label="Delete"
+          />,
+        ];
+      },
     },
   ];
   return (
-    <div style={{ height: 400, width: "100%" }}>
+    <div style={{ height: "80%", width: "100%" }}>
       <Button
         variant="contained"
         sx={{ margin: "auto 10px 10px auto" }}
-        onClick={handleAddRow}
+        onClick={handleOpenAddInventory}
       >
         Add Inventory Item
       </Button>
       <DataGrid
+        editMode="row"
         sx={{ width: "95%" }}
-        rows={rows}
+        rows={inventoryQueryResponse.data || []}
         columns={columns}
-        initialState={{
-          pagination: {
-            paginationModel: { page: 0, pageSize: 10 },
-          },
+        pagination
+        rowCount={totalNumber}
+        pageSizeOptions={[PAGE_SIZE]}
+        paginationMode="server"
+        paginationModel={{ page: page, pageSize: PAGE_SIZE }}
+        onPaginationModelChange={(params) => {
+          setPage(params.page);
         }}
-        pageSizeOptions={[10, 25]}
       />
+      <FormDialog
+        title={"ADD A NEW INVENTORY ENTRY"}
+        handleClose={handleCloseAddInventory}
+        open={openAddInventory}
+        handleSubmit={handleAddRow}
+      >
+        <AddInventoryDialog categories={categoryOptions} />
+      </FormDialog>
     </div>
   );
 };
