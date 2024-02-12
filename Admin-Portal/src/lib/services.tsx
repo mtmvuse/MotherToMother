@@ -1,9 +1,35 @@
+import { AddInventoryItemType } from "~/types/inventory";
 import type { EditUserType, AddUserType } from "../types/user";
 const mode = import.meta.env.MODE;
 const backendUrl: string =
   mode === "development"
     ? (import.meta.env.VITE_LOCAL_SERVER_URL as string)
     : (import.meta.env.VITE_PRODUCTION_SERVER_URL as string);
+
+export const getInventoryRows = async (
+  token: string | undefined,
+  page: number,
+  pageSize: number
+) => {
+  return await fetch(
+    `${backendUrl}/inventory/v1?page=${page}&pageSize=${pageSize}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "appplication/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+
+export const addIventoryItem = async (inventoryItem: AddInventoryItemType) => {
+  return await fetch(`${backendUrl}/inventory/v1`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(inventoryItem),
+  });
+};
 
 export const getUsers = async (
   token: string | undefined,

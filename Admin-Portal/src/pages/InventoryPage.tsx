@@ -1,44 +1,27 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Button } from "@mui/material";
 import {
   DataGrid,
   GridActionsCellItem,
   GridColDef,
-  GridEventListener,
-  GridRowEditStopReasons,
   GridRowId,
-  GridRowModes,
-  GridRowModesModel,
   GridRowParams,
   GridValueFormatterParams,
 } from "@mui/x-data-grid";
-import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import SaveIcon from "@mui/icons-material/Save";
-import CancelIcon from "@mui/icons-material/Close";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { PAGE_SIZE } from "../lib/constants";
+import { addIventoryItem, addUser, getInventoryRows } from "../lib/services";
+import { ResponseInventoryItem } from "~/types/inventory";
+import FormDialog from "../components/FormDialog";
+import AddInventoryDialog from "../components/inventory/AddInventoryDialog";
 
-const exampleRows = [
-  {
-    id: 1,
-    itemName: "Baby Bath",
-    category: "Baby",
-    newStock: 200,
-    newValue: 40,
-    usedStock: 100,
-    usedValue: 20,
-  },
-  {
-    id: 2,
-    itemName: "Car Seat",
-    category: "Travel",
-    newStock: 200,
-    newValue: 40,
-    usedStock: 100,
-    usedValue: 20,
-  },
-];
-
-export interface Rows {
+export interface Row {
   id: number;
   itemName: String;
   category: String;
@@ -48,70 +31,81 @@ export interface Rows {
   usedValue: number;
 }
 
-let id_counter = 2;
-
-const categoryOptions: string[] = ["Baby", "Travel", ""];
-const backendUrl: String = import.meta.env.VITE_LOCAL_SERVER_URL as string;
-
-// async function editInventoryRows
-// cancel the modification when cancel is clicked
+//TODO
+//delete reminder
+//edit button
+//get category options from the backend
+const categoryOptions: string[] = ["Baby", "Travel"];
 
 const InventoryPage: React.FC = () => {
-  const [rows, setRows] = useState([]);
-  const [rowModesModel, setRowModesModel] = React.useState<GridRowModesModel>(
-    {}
-  );
+  const [rows, setRows] = useState<Row[]>([]);
+  const [page, setPage] = useState(0);
+  const [totalNumber, setTotalNumber] = useState(0);
+  const [openAddInventory, setOpenAddInventory] = React.useState(false);
+  const queryClient = useQueryClient();
 
-  async function getInventoryRows(page: number, pageSize: number) {
-    const data = await fetch(
-      `${backendUrl}/inventory/v1?page=${page}&pageSize=${pageSize}`
-    )
-      .then((response) => response.json())
-      .then((data) => setRows(data));
-  }
+  const handleOpenAddInventory = () => {
+    setOpenAddInventory(true);
+  };
 
-  useEffect(() => {
-    getInventoryRows(1, 10);
+  const handleCloseAddInventory = () => {
+    setOpenAddInventory(false);
+  };
+
+  const inventoryQueryResponse = useQuery({
+    queryKey: ["inventory", page, PAGE_SIZE],
+    placeholderData: keepPreviousData,
+    //define type
+    queryFn: () =>
+      getInventoryRows("token", page, PAGE_SIZE)
+        .then((response: Response) => response.json())
+        .then((data) => {
+          console.log(data.inventory);
+          setTotalNumber(data.totalNumber);
+          const renderInventories = data.inventory.map(
+            (item: ResponseInventoryItem) => ({
+              id: item.id,
+              itemName: item.name,
+              category: item.category,
+              newStock: item.quantityNew,
+              newValue: item.valueNew,
+              usedStock: item.quantityUsed,
+              usedValue: item.valueUsed,
+            })
+          );
+          return renderInventories;
+        })
+        .catch((err: any) => {
+          console.log(err);
+        }),
   });
 
-  const handleRowEditStop: GridEventListener<"rowEditStop"> = (
-    params,
-    event
-  ) => {
-    if (params.reason === GridRowEditStopReasons.rowFocusOut) {
-      event.defaultMuiPrevented = true;
-    }
-  };
+  const addMutation = useMutation({
+    mutationFn: (data: any) => addIventoryItem(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["inventory"] });
+    },
+  });
 
-  const handleAddRow = () => {
-    // setRows((prevRows) => [
-    //   ...prevRows,
-    //   {
-    //     id: ++id_counter,
-    //     itemName: "",
-    //     category: "",
-    //     newStock: 0,
-    //     newValue: 0,
-    //     usedStock: 0,
-    //     usedValue: 0,
-    //   },
-    // ]);
-  };
-
-  const handleEditClick = (id: GridRowId) => () => {
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
-  };
-
-  const handleSaveClick = (id: GridRowId) => () => {
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
-  };
-
-  const handleCancelClick = (id: GridRowId) => () => {
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
+  const handleAddRow = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const formJson = Object.fromEntries((formData as any).entries());
+    const itemData = {
+      name: formJson.itemName,
+      category: formJson.category,
+      quantityNew: formJson.newStock,
+      valueNew: formJson.newValue,
+      quantityUsed: formJson.usedStock,
+      valueUsed: formJson.usedValue,
+    };
+    console.log(itemData);
+    addMutation.mutate(itemData);
+    handleCloseAddInventory();
   };
 
   const handleDeleteRow = (id: GridRowId) => () => {
-    setRows(rows.filter((row: Rows) => row.id !== id));
+    setRows(rows.filter((row: Row) => row.id !== id));
   };
 
   const columns: GridColDef[] = [
@@ -193,29 +187,7 @@ const InventoryPage: React.FC = () => {
       field: "actions",
       type: "actions",
       getActions: (params: GridRowParams) => {
-        const isEditMode = rowModesModel[params.id]?.mode == GridRowModes.Edit;
-
-        if (isEditMode) {
-          return [
-            <GridActionsCellItem
-              icon={<SaveIcon />}
-              onClick={handleSaveClick(params.id)}
-              label="Save"
-            />,
-            <GridActionsCellItem
-              icon={<CancelIcon />}
-              onClick={handleCancelClick(params.id)}
-              label="Cancel"
-            />,
-          ];
-        }
-
         return [
-          <GridActionsCellItem
-            icon={<EditIcon />}
-            onClick={handleEditClick(params.id)}
-            label="Edit"
-          />,
           <GridActionsCellItem
             icon={<DeleteIcon />}
             onClick={handleDeleteRow(params.id)}
@@ -226,36 +198,38 @@ const InventoryPage: React.FC = () => {
     },
   ];
   return (
-    <div style={{ height: 400, width: "100%" }}>
+    <div style={{ height: "80%", width: "100%" }}>
       <Button
         variant="contained"
         sx={{ margin: "auto 10px 10px auto" }}
-        onClick={handleAddRow}
+        onClick={handleOpenAddInventory}
       >
         Add Inventory Item
       </Button>
       <DataGrid
         editMode="row"
         sx={{ width: "95%" }}
-        rows={rows}
+        rows={inventoryQueryResponse.data || []}
         columns={columns}
-        onRowEditStop={handleRowEditStop}
-        rowModesModel={rowModesModel}
-        initialState={{
-          pagination: {
-            paginationModel: { page: 0, pageSize: 10 },
-          },
+        pagination
+        rowCount={totalNumber}
+        pageSizeOptions={[PAGE_SIZE]}
+        paginationMode="server"
+        paginationModel={{ page: page, pageSize: PAGE_SIZE }}
+        onPaginationModelChange={(params) => {
+          setPage(params.page);
         }}
-        pageSizeOptions={[10, 25]}
       />
+      <FormDialog
+        title={"ADD A NEW INVENTORY ENTRY"}
+        handleClose={handleCloseAddInventory}
+        open={openAddInventory}
+        handleSubmit={handleAddRow}
+      >
+        <AddInventoryDialog categories={categoryOptions} />
+      </FormDialog>
     </div>
   );
 };
 
 export default InventoryPage;
-
-//delete reminder
-//edit button
-//add button
-//rows for pagination
-//get id from backend
