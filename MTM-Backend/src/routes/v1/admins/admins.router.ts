@@ -9,6 +9,8 @@ import Joi from "joi";
 
 interface QueryType {
   email: string;
+  page: number;
+  pageSize: number;
 }
 
 const adminsRouter = express.Router();
@@ -24,6 +26,15 @@ adminsRouter.get(
     next: NextFunction,
   ) => {
     const email = req.query.email;
+    const page = Number(req.query.page);
+    const pageSize = Number(req.query.pageSize);
+    // query for all admins for user dashboard
+    console.log(email, page, pageSize);
+    if (!email && page !== undefined && pageSize) {
+      const admins = AdminService.getAllAdmins(page, pageSize);
+      const totalNumber = AdminService.getAdminCount();
+      return res.status(200).json({ admins, totalNumber });
+    }
     if (!email) {
       return res.status(400).json({ error: "Email is required" });
     }

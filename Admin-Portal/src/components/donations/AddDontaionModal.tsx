@@ -9,7 +9,7 @@ import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import ItemField from "../Components/ItemField";
+import ItemField from "./ItemField";
 import { Typography } from "@mui/material";
 
 const AddDonationsModal: React.FC<{}> = () => {
@@ -59,7 +59,7 @@ const AddDonationsModal: React.FC<{}> = () => {
   const handleQuantityChange = (
     index: number,
     quantity: number,
-    price: number,
+    price: number
   ) => {
     const updatedItems = [...items];
     updatedItems[index] = { quantity, price };
@@ -86,13 +86,15 @@ const AddDonationsModal: React.FC<{}> = () => {
         </Select>
       </FormControl>
       {showCalendar && (
-
-  <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <DemoContainer components={['DatePicker']}>
-        <DatePicker onChange={handleDateChange} value={selectedDate} label="Basic date picker" />
-      </DemoContainer>
-    </LocalizationProvider>
-
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DemoContainer components={["DatePicker"]}>
+            <DatePicker
+              onChange={handleDateChange}
+              value={selectedDate}
+              label="Basic date picker"
+            />
+          </DemoContainer>
+        </LocalizationProvider>
       )}
       {showAddButton && (
         <Button

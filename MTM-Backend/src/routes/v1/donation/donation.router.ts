@@ -29,13 +29,9 @@ donationRouter.get(
     try {
       const page = parseInt(req.query.page, 10);
       const pageSize = parseInt(req.query.pageSize, 10);
-      if (!page || !pageSize || page <= 0 || pageSize <= 0) {
-        return res.status(400).json({
-          error: "Page and pageSize must be entered and greater than 0",
-        });
-      }
-      const donation = await DonationService.getTransactions(page, pageSize);
-      return res.status(200).json(donation);
+      const donations = await DonationService.getTransactions(page, pageSize);
+      const totalNumber = await DonationService.getTotalNumberDonations();
+      return res.status(200).json({ donations, totalNumber });
     } catch (e) {
       console.error(e);
       next(e);

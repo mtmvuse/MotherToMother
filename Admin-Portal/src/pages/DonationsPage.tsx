@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Button, Modal, Typography, Box } from "@mui/material";
-
 import {
   DataGrid,
   GridColDef,
   GridRowParams,
   GridValueGetterParams,
 } from "@mui/x-data-grid";
-import AddDonationModal from "../Components/AddDontaionModal";
-import DonationDetailsIncoming from "../Components/DonationDetailsIncoming";
-import DonationDetailsOutgoing from "../Components/DonationDetailsOutgoing";
+import AddDonationModal from "../components/donations/AddDontaionModal";
+import DonationDetailsIncoming from "../components/donations/DonationDetailsIncoming";
+import DonationDetailsOutgoing from "../components/donations/DonationDetailsOutgoing";
 
 const columns: GridColDef[] = [
   {
@@ -103,7 +102,7 @@ interface Donation {
 
 const DonationsPage: React.FC = () => {
   const [selectedDonation, setSelectedDonation] = useState<Donation | null>(
-    null,
+    null
   );
   const [incomingModalOpen, setIncomingModalOpen] = useState(false);
   const [outgoingModalOpen, setOutgoingModalOpen] = useState(false);

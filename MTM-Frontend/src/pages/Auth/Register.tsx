@@ -14,10 +14,6 @@ import {
   Select,
   MenuItem,
   InputLabel,
-  SelectChangeEvent,
-  RadioGroup,
-  Radio,
-  FormControlLabel,
 } from "@mui/material";
 import { registerUserOnServer, getOrganizations } from "../../lib/services";
 import type {

@@ -5,6 +5,8 @@ import type {
   PasswordCombo,
 } from "../../../types/user";
 import bcrypt from "bcrypt";
+import type { UserDashboardDisplay } from "../../../types/user";
+import type { Prisma } from "@prisma/client";
 
 export const hashPassword = async (
   password: string,
@@ -25,13 +27,8 @@ const validatePassword = async (
  * get all users in the db
  * @returns all users in the database
  */
-export const getUsers = async (
-  page: number,
-  pageSize: number,
-): Promise<ResponseUser[]> => {
+export const getUsers = async (): Promise<ResponseUser[]> => {
   return db.user.findMany({
-    skip: page * pageSize,
-    take: pageSize,
     select: {
       id: true,
       email: true,
@@ -52,8 +49,38 @@ export const getUsers = async (
   });
 };
 
-export const getUserCount = async (): Promise<number> => {
-  return db.user.count();
+/**
+ *  get count of qualified users in the db for AP
+ * @returns count of all users in the database
+ */
+export const getUserCount = async (
+  whereClause: UserDashboardDisplay,
+): Promise<number> => {
+  return db.user_dashboard.count({
+    where: whereClause,
+  });
+};
+
+/**
+ * query user data for admin portal on the customized view
+ * @param page current page number
+ * @param pageSize current page size
+ * @param whereClause where clause based on filters
+ * @param orderBy orderby based on sort
+ * @returns list of users based on the filters and sort
+ */
+export const getUsersAP = async (
+  page: number,
+  pageSize: number,
+  whereClause: UserDashboardDisplay,
+  orderBy: Prisma.user_dashboardAvgOrderByAggregateInput,
+): Promise<UserDashboardDisplay[]> => {
+  return db.user_dashboard.findMany({
+    where: whereClause,
+    take: pageSize,
+    skip: page * pageSize,
+    orderBy: orderBy,
+  });
 };
 
 /**
@@ -201,6 +228,29 @@ export const updateUserByEmail = async (
   return db.user.update({
     where: {
       email: email,
+    },
+    data: user,
+    select: {
+      id: true,
+      email: true,
+      userType: true,
+    },
+  });
+};
+
+/**
+ * Update any user information that is new
+ * @param user
+ * @param id
+ * @returns the id and email of the user
+ */
+export const updateUserById = async (
+  user: UserInput,
+  id: number,
+): Promise<ResponseUser> => {
+  return db.user.update({
+    where: {
+      id: id,
     },
     data: user,
     select: {
