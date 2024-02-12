@@ -43,8 +43,7 @@ app.use("/organization", organizationRouter);
 
 app.use("/donations", donationRouter);
 
-// app.use("/inventory", verifyToken, inventoryRouter);
-app.use("/inventory", inventoryRouter);
+app.use("/inventory", verifyToken, inventoryRouter);
 
 // Default route: Unprotected
 app.get("/", (_req: Request, res: Response) => {
