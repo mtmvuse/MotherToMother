@@ -12,4 +12,9 @@ export const USER_TYPE = {
   PUBLIC: "Public Donor",
   CORPORATE: "Corporate Donor",
 };
+export const ORGANIZATION_TYPE = {
+  AGENCY: "Agency",
+  PUBLIC: "Public",
+  CORPORATE: "Corporate",
+};
 export const PAGE_SIZE = 10;

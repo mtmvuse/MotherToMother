@@ -4,7 +4,6 @@ import cors from "cors";
 import morgan from "morgan";
 import helmet from "helmet";
 import { userRouter } from "./routes/v1/user/user.router";
-import { sessionRouter } from "./routes/v1/session/session.router";
 import { itemsRouter } from "./routes/v1/item/item.router";
 import { verifyToken } from "./middlewares/verifyToken";
 import { notFound, errorHandler } from "./middlewares/errors";
@@ -30,13 +29,12 @@ app.use(helmet());
  * Uses the verifyToken middleware to protect the "/data" route
  * Use the verifyToken to protect all the routes that require authentication
  */
-app.use("/sessions", sessionRouter);
 
 app.use("/users", userRouter);
 
 app.use("/admins", adminsRouter);
 
-app.use("/items", verifyToken, itemsRouter);
+app.use("/items", itemsRouter);
 
 // registration and organization routes are unprotected intentionally
 app.use("/registration", registrationRouter);
@@ -45,6 +43,7 @@ app.use("/organization", organizationRouter);
 
 app.use("/donation", donationRouter);
 
+// app.use("/inventory", verifyToken, inventoryRouter);
 app.use("/inventory", inventoryRouter);
 
 // Default route: Unprotected
