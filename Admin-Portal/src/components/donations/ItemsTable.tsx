@@ -43,11 +43,11 @@ const ItemsTable: React.FC<DonationTableProps> = ({
   useEffect(() => {
     const newTotalPrice = rows.reduce(
       (sum, { value, quantity }) => sum + value * quantity,
-      0,
+      0
     );
     const newTotalQuantity = rows.reduce(
       (sum, { quantity }) => sum + quantity,
-      0,
+      0
     );
     setTotalPrice(newTotalPrice);
     setTotalQuantity(newTotalQuantity);
