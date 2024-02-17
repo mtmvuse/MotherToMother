@@ -1,22 +1,26 @@
 import React, { useState } from "react";
 import {
-  Box,
   TextField,
   Select,
   MenuItem,
   FormControl,
   InputLabel,
-  SelectChangeEvent,
 } from "@mui/material";
-import { CASHDONATION_TYPE } from "../../lib/constants";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import type { Organization } from "~/types/organization";
 
-const CashDonationsDialog: React.FC = () => {
+interface CashDialogProps {
+  organizations: void | Organization[] | undefined;
+}
+
+const CashDonationsDialog: React.FC<CashDialogProps> = (props) => {
+  const { organizations } = props;
   const [total, setTotal] = useState<number>();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [organization, setOrganization] = React.useState();
 
   const handleDateChange = (date: Date | null) => {
     setSelectedDate(date);
@@ -36,10 +40,11 @@ const CashDonationsDialog: React.FC = () => {
           labelId="user-type-label"
           id="user-type-select"
           label="Donor"
+          value={organization}
         >
-          {Object.values(CASHDONATION_TYPE).map((donor) => (
-            <MenuItem key={donor} value={donor}>
-              {donor}
+          {organizations?.map((org) => (
+            <MenuItem key={org.id} value={org.name}>
+              {org.name}
             </MenuItem>
           ))}
         </Select>

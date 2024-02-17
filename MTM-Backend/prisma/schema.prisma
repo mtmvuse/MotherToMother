@@ -9,10 +9,11 @@ datasource db {
 }
 
 model Organization {
-  id   Int    @id @default(autoincrement())
-  name String @unique
-  type String
-  user User[]
+  id           Int            @id @default(autoincrement())
+  name         String         @unique
+  type         String
+  CashDonation CashDonation[]
+  user         User[]
 }
 
 model User {
@@ -42,7 +43,7 @@ model Donation {
   userId                Int
   date                  DateTime               @default(now())
   user                  User                   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  DonationDetail        DonationDetail[]      
+  DonationDetail        DonationDetail[]
   OutgoingDonationStats OutgoingDonationStats?
 
   @@index([userId], map: "Donation_userId_fkey")
@@ -78,6 +79,7 @@ model OutgoingDonationStats {
 model Item {
   id             Int              @id @default(autoincrement())
   category       String
+  category       String
   name           String
   quantityUsed   Int
   quantityNew    Int
@@ -93,13 +95,24 @@ model Admin {
   role  String
 }
 
+model CashDonation {
+  id             Int          @id @default(autoincrement())
+  organizationId Int
+  date           DateTime     @default(now())
+  total          Float
+  donor          String
+  Organization   Organization @relation(fields: [organizationId], references: [id])
+
+  @@index([organizationId], map: "CashDonation_organizationId_fkey")
+}
+
 /// View for user dashboard for admin portal
 view user_dashboard {
-  id           Int    @id @default(0)
+  id           Int     @id @default(0)
   email        String
-  name         String @default("") @db.VarChar(383)
+  name         String? @db.VarChar(383)
   phone        String
-  address      String @db.Text
+  address      String? @db.Text
   type         String
   organization String
 }
@@ -110,7 +123,7 @@ view donation_detail {
   date         DateTime @default(now())
   organization String
   total        Float
-  items        Decimal @db.Decimal(33, 0)
+  items        Decimal  @db.Decimal(33, 0)
   type         String   @default("") @db.VarChar(8)
   details      Json
 }

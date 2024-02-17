@@ -12,7 +12,9 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import FormDialog from "../components/FormDialog";
 import CashDonationsDialog from "../components/cashDonations/cashDonationDialog";
-import { CASHDONATION_TYPE } from "../lib/constants";
+import type { Organization } from "~/types/organization";
+import { useQuery } from "@tanstack/react-query";
+import { getOrganizations } from "../lib/services";
 
 const exampleRows = [
   {
@@ -47,6 +49,17 @@ const CashDonationsPage: React.FC = () => {
     handleCloseAddCashDonation();
   };
 
+  const organizationsQueryResponse = useQuery({
+    queryKey: ["organizations"],
+    queryFn: () =>
+      getOrganizations()
+        .then((res: Response) => res.json())
+        .then((data: Organization[]) => data)
+        .catch((err: any) => {
+          console.error(err);
+        }),
+  });
+
   const columns: GridColDef[] = [
     {
       field: "id",
@@ -68,7 +81,9 @@ const CashDonationsPage: React.FC = () => {
       headerName: "Donor",
       flex: 3,
       type: "singleSelect",
-      valueOptions: Object.values(CASHDONATION_TYPE),
+      valueOptions: organizationsQueryResponse.data?.map(
+        (organization) => organization.name
+      ),
       align: "left",
       headerAlign: "left",
       editable: true,
@@ -134,7 +149,7 @@ const CashDonationsPage: React.FC = () => {
         open={openAddCashDonation}
         handleSubmit={handleAddCashDonation}
       >
-        <CashDonationsDialog />
+        <CashDonationsDialog organizations={organizationsQueryResponse.data} />
       </FormDialog>
     </div>
   );
