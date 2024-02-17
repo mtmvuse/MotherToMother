@@ -16,3 +16,13 @@ export interface AddInventoryItemType {
   quantityUsed: number;
   valueUsed: number;
 }
+
+export interface inventoryRow {
+  id: number;
+  itemName: String;
+  category: String;
+  newStock: number;
+  newValue: number;
+  usedStock: number;
+  usedValue: number;
+}

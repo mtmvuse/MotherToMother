@@ -1,13 +1,17 @@
 import { TextField, Box, MenuItem } from "@mui/material";
 import * as React from "react";
+import { inventoryRow } from "~/types/inventory";
 
-interface AddInventoryDialogProps {
+interface InventoryDialogProps {
   categories: void | string[] | undefined;
+  editRow?: inventoryRow;
 }
 
-const AddInventoryDialog: React.FC<AddInventoryDialogProps> = ({
+const AddInventoryDialog: React.FC<InventoryDialogProps> = ({
   categories,
+  editRow,
 }) => {
+  console.log(editRow);
   return (
     <Box>
       <div>
@@ -20,6 +24,7 @@ const AddInventoryDialog: React.FC<AddInventoryDialogProps> = ({
           label="Item Name"
           type="text"
           variant="standard"
+          defaultValue={editRow?.itemName}
         />
         <TextField
           autoFocus
@@ -29,7 +34,7 @@ const AddInventoryDialog: React.FC<AddInventoryDialogProps> = ({
           select
           name="category"
           label="Category"
-          defaultValue={categories == undefined ? "Baby" : categories[0]}
+          defaultValue={editRow == undefined ? "" : editRow?.category}
           type="text"
           variant="standard"
         >
@@ -50,6 +55,7 @@ const AddInventoryDialog: React.FC<AddInventoryDialogProps> = ({
           label="New Stock"
           type="number"
           variant="standard"
+          defaultValue={editRow?.newStock}
         />
         <TextField
           autoFocus
@@ -60,6 +66,7 @@ const AddInventoryDialog: React.FC<AddInventoryDialogProps> = ({
           label="New Value"
           type="number"
           variant="standard"
+          defaultValue={editRow?.newValue}
         />
       </div>
       <div>
@@ -72,6 +79,7 @@ const AddInventoryDialog: React.FC<AddInventoryDialogProps> = ({
           label="Used Stock"
           type="number"
           variant="standard"
+          defaultValue={editRow?.usedStock}
         />
         <TextField
           autoFocus
@@ -82,6 +90,7 @@ const AddInventoryDialog: React.FC<AddInventoryDialogProps> = ({
           label="Used Value"
           type="number"
           variant="standard"
+          defaultValue={editRow?.usedValue}
         />
       </div>
     </Box>

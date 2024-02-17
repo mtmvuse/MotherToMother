@@ -18,32 +18,25 @@ import {
 } from "@tanstack/react-query";
 import { PAGE_SIZE } from "../lib/constants";
 import { addIventoryItem, getInventoryRows } from "../lib/services";
-import { ResponseInventoryItem } from "~/types/inventory";
+import { ResponseInventoryItem, inventoryRow } from "~/types/inventory";
 import FormDialog from "../components/FormDialog";
-import AddInventoryDialog from "../components/inventory/AddInventoryDialog";
-
-export interface Row {
-  id: number;
-  itemName: String;
-  category: String;
-  newStock: number;
-  newValue: number;
-  usedStock: number;
-  usedValue: number;
-}
+import DeleteAlertModal from "../components/DeleteAlertModal";
+import InventoryDialog from "../components/inventory/InventoryDialog";
 
 //TODO
 //delete reminder
 //edit button
-//get category options from the backend
-const categoryOptions: string[] = ["Baby", "Travel"];
+const categoryOptions: string[] = ["Books", "Clothes"];
 
 const InventoryPage: React.FC = () => {
-  const [rows, setRows] = useState<Row[]>([]);
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(PAGE_SIZE);
   const [totalNumber, setTotalNumber] = useState(0);
-  const [openAddInventory, setOpenAddInventory] = React.useState(false);
+  const [openAddInventory, setOpenAddInventory] = useState(false);
+  const [openEditInventory, setOpenEditInventory] = useState(false);
+  const [openDeleteInventory, setOpenDeleteInventory] = useState(false);
+  const [deleteRow, setDeleteRow] = useState<inventoryRow | undefined>();
+  const [editRow, setEditRow] = useState<inventoryRow | undefined>();
   const queryClient = useQueryClient();
 
   const handleOpenAddInventory = () => {
@@ -52,6 +45,25 @@ const InventoryPage: React.FC = () => {
 
   const handleCloseAddInventory = () => {
     setOpenAddInventory(false);
+  };
+
+  const handleOpenEditInventory = (row: inventoryRow) => {
+    setEditRow(row);
+    setOpenEditInventory(true);
+  };
+
+  const handleCloseEditInventory = () => {
+    setEditRow(undefined);
+    setOpenEditInventory(false);
+  };
+  const handleOpenDeleteInventory = (row: inventoryRow) => {
+    setDeleteRow(row);
+    setOpenDeleteInventory(true);
+  };
+
+  const handleCloseDeleteInventory = () => {
+    setDeleteRow(undefined);
+    setOpenDeleteInventory(false);
   };
 
   const inventoryQueryResponse = useQuery({
@@ -106,8 +118,9 @@ const InventoryPage: React.FC = () => {
     handleCloseAddInventory();
   };
 
-  const handleDeleteRow = (id: GridRowId) => () => {
-    setRows(rows.filter((row: Row) => row.id !== id));
+  const handleDeleteRow = () => {
+    if (!deleteRow) return;
+    handleCloseDeleteInventory();
   };
 
   const columns: GridColDef[] = [
@@ -190,10 +203,18 @@ const InventoryPage: React.FC = () => {
       type: "actions",
       getActions: (params: GridRowParams) => {
         return [
-          <GridActionsCellItem icon={<EditIcon />} label="Edit" />,
+          <GridActionsCellItem
+            icon={<EditIcon />}
+            onClick={() => {
+              handleOpenEditInventory(params.row);
+            }}
+            label="Edit"
+          />,
           <GridActionsCellItem
             icon={<DeleteIcon />}
-            onClick={handleDeleteRow(params.id)}
+            onClick={() => {
+              handleOpenDeleteInventory(params.row);
+            }}
             label="Delete"
           />,
         ];
@@ -229,8 +250,24 @@ const InventoryPage: React.FC = () => {
         open={openAddInventory}
         handleSubmit={handleAddRow}
       >
-        <AddInventoryDialog categories={categoryOptions} />
+        <InventoryDialog categories={categoryOptions} />
       </FormDialog>
+      <FormDialog
+        title={"EDIT A INVENTORY ENTRY"}
+        handleClose={handleCloseEditInventory}
+        open={openEditInventory}
+        handleSubmit={() => {
+          console.log("edited user");
+        }}
+      >
+        <InventoryDialog categories={categoryOptions} editRow={editRow} />
+      </FormDialog>
+      <DeleteAlertModal
+        scenario={"Inventory Entry"}
+        handleDelete={handleDeleteRow}
+        open={openDeleteInventory}
+        handleClose={handleCloseDeleteInventory}
+      />
     </Box>
   );
 };
