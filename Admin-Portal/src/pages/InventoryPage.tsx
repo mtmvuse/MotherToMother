@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import {
   DataGrid,
   GridActionsCellItem,
@@ -9,6 +9,7 @@ import {
   GridValueFormatterParams,
 } from "@mui/x-data-grid";
 import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import {
   keepPreviousData,
   useMutation,
@@ -16,7 +17,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { PAGE_SIZE } from "../lib/constants";
-import { addIventoryItem, addUser, getInventoryRows } from "../lib/services";
+import { addIventoryItem, getInventoryRows } from "../lib/services";
 import { ResponseInventoryItem } from "~/types/inventory";
 import FormDialog from "../components/FormDialog";
 import AddInventoryDialog from "../components/inventory/AddInventoryDialog";
@@ -40,6 +41,7 @@ const categoryOptions: string[] = ["Baby", "Travel"];
 const InventoryPage: React.FC = () => {
   const [rows, setRows] = useState<Row[]>([]);
   const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(PAGE_SIZE);
   const [totalNumber, setTotalNumber] = useState(0);
   const [openAddInventory, setOpenAddInventory] = React.useState(false);
   const queryClient = useQueryClient();
@@ -53,11 +55,11 @@ const InventoryPage: React.FC = () => {
   };
 
   const inventoryQueryResponse = useQuery({
-    queryKey: ["inventory", page, PAGE_SIZE],
+    queryKey: ["inventory", page, pageSize],
     placeholderData: keepPreviousData,
     //define type
     queryFn: () =>
-      getInventoryRows("token", page, PAGE_SIZE)
+      getInventoryRows("token", page, pageSize)
         .then((response: Response) => response.json())
         .then((data) => {
           console.log(data.inventory);
@@ -188,6 +190,7 @@ const InventoryPage: React.FC = () => {
       type: "actions",
       getActions: (params: GridRowParams) => {
         return [
+          <GridActionsCellItem icon={<EditIcon />} label="Edit" />,
           <GridActionsCellItem
             icon={<DeleteIcon />}
             onClick={handleDeleteRow(params.id)}
@@ -198,7 +201,7 @@ const InventoryPage: React.FC = () => {
     },
   ];
   return (
-    <div style={{ height: "80%", width: "100%" }}>
+    <Box>
       <Button
         variant="contained"
         sx={{ margin: "auto 10px 10px auto" }}
@@ -208,16 +211,16 @@ const InventoryPage: React.FC = () => {
       </Button>
       <DataGrid
         editMode="row"
-        sx={{ width: "95%" }}
+        sx={{ width: "95%", height: "80vh" }}
         rows={inventoryQueryResponse.data || []}
         columns={columns}
         pagination
+        autoPageSize
         rowCount={totalNumber}
-        pageSizeOptions={[PAGE_SIZE]}
         paginationMode="server"
-        paginationModel={{ page: page, pageSize: PAGE_SIZE }}
         onPaginationModelChange={(params) => {
           setPage(params.page);
+          setPageSize(params.pageSize);
         }}
       />
       <FormDialog
@@ -228,7 +231,7 @@ const InventoryPage: React.FC = () => {
       >
         <AddInventoryDialog categories={categoryOptions} />
       </FormDialog>
-    </div>
+    </Box>
   );
 };
 
