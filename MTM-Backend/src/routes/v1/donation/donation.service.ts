@@ -93,8 +93,21 @@ export const createDonation = async (userId: number): Promise<DonationType> => {
   });
 };
 
-export const createDonationDetails = async (
+export const getDonationDetails = async (
+  donationId: number,
   itemId: number,
+) => {
+  return db.donationDetail.findUnique({
+    where: {
+      donationId_itemId: {
+        donationId: donationId,
+        itemId: itemId,
+      },
+    },
+  });
+};
+
+export const createDonationDetails = async (
   donationId: number,
   donationDetails: DonationDetailType,
 ): Promise<DonationDetailType> => {
@@ -102,7 +115,7 @@ export const createDonationDetails = async (
     data: {
       item: {
         connect: {
-          id: itemId,
+          id: donationDetails.itemId,
         },
       },
       donation: {
@@ -112,6 +125,24 @@ export const createDonationDetails = async (
       },
       usedQuantity: donationDetails.usedQuantity,
       newQuantity: donationDetails.newQuantity,
+    },
+  });
+};
+
+export const updateDonationDetails = async (
+  donationId: number,
+  itemDetails: DonationDetailType,
+): Promise<DonationDetailType> => {
+  return db.donationDetail.update({
+    where: {
+      donationId_itemId: {
+        donationId: donationId,
+        itemId: itemDetails.itemId,
+      },
+    },
+    data: {
+      usedQuantity: itemDetails.usedQuantity,
+      newQuantity: itemDetails.newQuantity,
     },
   });
 };
@@ -133,6 +164,32 @@ export const createOutgoingDonationStats = async (
           id: donationId,
         },
       },
+      numberServed: numberServed,
+      whiteNum: whiteNum,
+      latinoNum: latinoNum,
+      blackNum: blackNum,
+      nativeNum: nativeNum,
+      asianNum: asianNum,
+      otherNum: otherNum,
+    },
+  });
+};
+
+export const updateOutgoingDonationStats = async (
+  donationId: number,
+  numberServed: number,
+  whiteNum: number,
+  latinoNum: number,
+  blackNum: number,
+  nativeNum: number,
+  asianNum: number,
+  otherNum: number,
+): Promise<OutgoingDonationStatsType> => {
+  return db.outgoingDonationStats.update({
+    where: {
+      donationId: donationId,
+    },
+    data: {
       numberServed: numberServed,
       whiteNum: whiteNum,
       latinoNum: latinoNum,
