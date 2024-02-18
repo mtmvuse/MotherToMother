@@ -74,3 +74,25 @@ export interface IncomingDonationType {
 export interface IncomingDonationWithIDType extends IncomingDonationType {
   id: number;
 }
+
+export interface DonationQueryType {
+  page: number;
+  pageSize: number;
+  sort: string;
+  order: string;
+  id: number;
+  date: Date;
+  organization: string;
+  total: number;
+  items: string;
+  type: string;
+}
+
+export interface DonationsDashboardDisplay {
+  id: number;
+  date: Date;
+  organization: string;
+  total: number;
+  items: string;
+  type: string;
+}

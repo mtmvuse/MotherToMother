@@ -105,7 +105,7 @@ view user_dashboard {
 
 /// View for donation details for admin portal
 view donation_detail {
-  id           Int      @unique @default(0)
+  id           Int      @id @default(0)
   date         DateTime @default(now())
   organization String
   total        Float?
