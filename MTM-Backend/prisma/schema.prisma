@@ -55,7 +55,7 @@ model DonationDetail {
   usedQuantity Int
   newQuantity  Int
   donation     Donation @relation(fields: [donationId], references: [id])
-  item         Item     @relation(fields: [itemId], references: [id])
+  item         Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
 
   @@index([donationId], map: "DonationDetail_donationId_fkey")
   @@index([itemId], map: "DonationDetail_itemId_fkey")

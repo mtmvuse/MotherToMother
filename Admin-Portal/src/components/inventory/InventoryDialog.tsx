@@ -1,5 +1,14 @@
-import { TextField, Box, MenuItem } from "@mui/material";
+import {
+  TextField,
+  Box,
+  MenuItem,
+  SelectChangeEvent,
+  Select,
+  FormControl,
+  InputLabel,
+} from "@mui/material";
 import * as React from "react";
+import { useState } from "react";
 import { inventoryRow } from "~/types/inventory";
 
 interface InventoryDialogProps {
@@ -11,7 +20,23 @@ const AddInventoryDialog: React.FC<InventoryDialogProps> = ({
   categories,
   editRow,
 }) => {
-  console.log(editRow);
+  const [category, setCategory] = useState<string>(
+    editRow == undefined ? "" : editRow?.category.toString()
+  );
+  const [open, setOpen] = useState<boolean>(false);
+
+  const changeCategrory = (event: SelectChangeEvent) => {
+    setCategory(event.target.value as string);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
   return (
     <Box>
       <div>
@@ -26,24 +51,30 @@ const AddInventoryDialog: React.FC<InventoryDialogProps> = ({
           variant="standard"
           defaultValue={editRow?.itemName}
         />
-        <TextField
-          autoFocus
-          required
-          margin="dense"
-          id="category"
-          select
-          name="category"
-          label="Category"
-          defaultValue={editRow == undefined ? "" : editRow?.category}
-          type="text"
-          variant="standard"
-        >
-          {categories?.map((category) => (
-            <MenuItem key={category} value={category}>
-              {category}
-            </MenuItem>
-          ))}
-        </TextField>
+        <FormControl fullWidth margin="dense">
+          <InputLabel id="inventory-category">Inventory Category</InputLabel>
+          <Select
+            autoFocus
+            required
+            margin="dense"
+            id="category"
+            name="category"
+            labelId="inventory-category"
+            open={open}
+            onClose={handleClose}
+            onOpen={handleOpen}
+            value={category}
+            label="Category"
+            variant="standard"
+            onChange={changeCategrory}
+          >
+            {categories?.map((category) => (
+              <MenuItem key={category} value={category}>
+                {category}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
       </div>
       <div>
         <TextField
