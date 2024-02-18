@@ -10,20 +10,81 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import ItemField from "./ItemField";
-import { Typography } from "@mui/material";
+import { TextField, Typography } from "@mui/material";
+import {
+  createOutgoingDonation,
+  getOrganizations,
+  getModalUsers,
+} from "../../lib/services";
+import { Organization } from "~/types/organization";
+import { ResponseUser } from "~/types/user";
 
-const AddDonationsModal: React.FC<{}> = () => {
+interface DonationItem {
+  itemId: number;
+  quantityNew: number;
+  quantityUsed: number;
+  totalValue: number;
+}
+
+interface AddDonationsModalProps {
+  handleCloseModal: () => void;
+  handleSubmissionSuccess: () => void;
+}
+
+const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
+  handleCloseModal,
+  handleSubmissionSuccess,
+}) => {
   const [donor, setDonor] = useState<string>("");
+  const [organizationList, setOrganizationList] = useState<Organization[]>([]);
+  const [userList, setUserList] = useState<ResponseUser[]>([]);
+  const [selectedOrg, setSelectedOrg] = useState<Organization | undefined>(
+    undefined
+  );
+  const [selectedUser, setSelectedUser] = useState<ResponseUser | undefined>(
+    undefined
+  );
+  const [showDonor, setShowDonor] = useState<boolean>(false);
+  const [showUser, setShowUser] = useState<boolean>(false);
+  const [donationType, setDonationType] = useState<string>("");
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [showCalendar, setShowCalendar] = useState<boolean>(false);
   const [showAddButton, setShowAddButton] = useState<boolean>(false);
-  const [items, setItems] = useState<any[]>([]);
+  const [items, setItems] = useState<DonationItem[]>([]);
   const [totalQuantity, setTotalQuantity] = useState<number>(0);
   const [totalCost, setTotalCost] = useState<number>(0);
+  const [demographicData, setDemographicData] = useState({
+    numberServed: 0,
+    whiteNum: 0,
+    latinoNum: 0,
+    blackNum: 0,
+    nativeNum: 0,
+    asianNum: 0,
+    otherNum: 0,
+  });
 
-  const handleChange = (event: SelectChangeEvent<string>) => {
-    setDonor(event.target.value);
+  const handleUserChange = (event: SelectChangeEvent<string>) => {
+    const selectedUserId = event.target.value;
+    const selectedUser = userList.find(
+      (user) => user.id === parseInt(selectedUserId)
+    );
+    setSelectedUser(selectedUser);
     setShowCalendar(true);
+  };
+
+  const handleOrgChange = (event: SelectChangeEvent<string>) => {
+    const selectedOrgId = event.target.value;
+    const selectedOrg = organizationList.find(
+      (org) => org.id === parseInt(selectedOrgId)
+    );
+    setSelectedOrg(selectedOrg);
+    setShowUser(true);
+    updateUsers(selectedOrg);
+  };
+
+  const handleTypeChange = (event: SelectChangeEvent<string>) => {
+    setDonationType(event.target.value);
+    setShowDonor(true);
   };
 
   const handleDateChange = (date: Date | null) => {
@@ -31,8 +92,31 @@ const AddDonationsModal: React.FC<{}> = () => {
     setShowAddButton(!!date);
   };
 
+  const handleChangeDemographicData =
+    (field: keyof typeof demographicData) =>
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const value = parseInt(event.target.value) || 0;
+      setDemographicData((prevData) => ({
+        ...prevData,
+        [field]: value,
+        numberServed: calculateNumberServed({ ...prevData, [field]: value }),
+      }));
+    };
+
+  const calculateNumberServed = (data: typeof demographicData) => {
+    const { whiteNum, latinoNum, blackNum, nativeNum, asianNum, otherNum } =
+      data;
+    return whiteNum + latinoNum + blackNum + nativeNum + asianNum + otherNum;
+  };
+
   const addItemField = () => {
-    setItems([...items, {}]);
+    const newItem: DonationItem = {
+      itemId: 0,
+      quantityNew: 0,
+      quantityUsed: 0,
+      totalValue: 0,
+    };
+    setItems([...items, newItem]);
   };
 
   const removeItemField = (index: number) => {
@@ -46,24 +130,105 @@ const AddDonationsModal: React.FC<{}> = () => {
     let newTotalCost = 0;
 
     items.forEach((item) => {
-      if (item.quantity && item.price) {
-        newTotalQuantity += item.quantity;
-        newTotalCost += item.quantity * item.price;
-      }
+      newTotalQuantity += item.quantityUsed + item.quantityNew;
+      newTotalCost += item.totalValue;
     });
 
     setTotalQuantity(newTotalQuantity);
     setTotalCost(newTotalCost);
   }, [items]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getOrganizations();
+        if (!response.ok) {
+          throw new Error("Failed to fetch organizations");
+        }
+        const orgList = await response.json();
+        setOrganizationList(orgList);
+      } catch (error) {
+        console.error("Error fetching organizations:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const updateUsers = async (selectedOrg: Organization | undefined) => {
+    try {
+      const response = await getModalUsers();
+      if (!response.ok) {
+        throw new Error("Failed to fetch users");
+      }
+      const fullUserList = await response.json();
+      console.log(selectedOrg?.name);
+      if (selectedOrg) {
+        const filteredUserList = fullUserList.filter(
+          (user: ResponseUser) => user.Organization.name === selectedOrg.name
+        );
+        setUserList(filteredUserList);
+      }
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
+
   const handleQuantityChange = (
     index: number,
-    quantity: number,
-    price: number
+    quantityNew: number,
+    quantityUsed: number,
+    totalValue: number
   ) => {
     const updatedItems = [...items];
-    updatedItems[index] = { quantity, price };
+    const currentItem = updatedItems[index] as DonationItem;
+    const { itemId = 0 } = currentItem;
+    updatedItems[index] = {
+      ...currentItem,
+      itemId,
+      quantityNew,
+      quantityUsed,
+      totalValue,
+    };
     setItems(updatedItems);
+  };
+
+  const handleItemChange = (index: number, itemId: number) => {
+    setItems((prevItems) =>
+      prevItems.map((item, i) => (i === index ? { ...item, itemId } : item))
+    );
+  };
+
+  const handleSubmit = async () => {
+    try {
+      if (!selectedUser) {
+        console.error("User not selected.");
+        return;
+      }
+
+      const outgoingDonationData = {
+        userId: selectedUser.id,
+        donationDetails: items.map((item) => ({
+          itemId: item.itemId,
+          usedQuantity: item.quantityUsed,
+          newQuantity: item.quantityNew,
+        })),
+        numberServed: demographicData.numberServed,
+        whiteNum: demographicData.whiteNum,
+        latinoNum: demographicData.latinoNum,
+        blackNum: demographicData.blackNum,
+        nativeNum: demographicData.nativeNum,
+        asianNum: demographicData.asianNum,
+        otherNum: demographicData.otherNum,
+      };
+      const response = await createOutgoingDonation(outgoingDonationData);
+      if (response.status === 200) {
+        handleCloseModal();
+        handleSubmissionSuccess();
+      }
+    } catch (error) {
+      console.error("Error submitting donation:", error);
+    }
   };
 
   return (
@@ -71,20 +236,73 @@ const AddDonationsModal: React.FC<{}> = () => {
       <Typography variant="h5" textAlign="center">
         Add Donation
       </Typography>
+
       <FormControl fullWidth variant="standard" sx={{ mb: 2 }}>
-        <InputLabel id="donor-select-label">Donor</InputLabel>
+        <InputLabel id="donationType-select-label">Donation Type</InputLabel>
         <Select
-          labelId="donor-select-label"
+          labelId="donationType-select-label"
           id="donor-select"
-          value={donor}
-          onChange={handleChange}
-          label="Donor"
+          value={donationType}
+          onChange={handleTypeChange}
+          label="Donation Type"
         >
-          <MenuItem value={"Target"}>Target</MenuItem>
-          <MenuItem value={"Vanderbilt"}>Vanderbilt</MenuItem>
-          <MenuItem value={"DMR"}>DMR</MenuItem>
+          <MenuItem value={"Incoming"}>Incoming</MenuItem>
+          <MenuItem value={"Outgoing"}>Outgoing</MenuItem>
         </Select>
       </FormControl>
+      {showDonor && (
+        <FormControl fullWidth variant="standard" sx={{ mb: 2 }}>
+          <InputLabel id="org-select-label">Organization</InputLabel>
+          <Select
+            labelId="org-select-label"
+            id="org-select"
+            value={selectedOrg?.name}
+            onChange={handleOrgChange}
+            label="Organization"
+          >
+            {organizationList.map((org) => (
+              <MenuItem key={org.id} value={org.id}>
+                {org.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      )}
+      {showUser && (
+        <>
+          {userList.length > 0 ? (
+            <FormControl fullWidth variant="standard" sx={{ mb: 2 }}>
+              <InputLabel id="user-select-label">User</InputLabel>
+              <Select
+                labelId="user-select-label"
+                id="user-select"
+                value={selectedUser?.firstName}
+                onChange={handleUserChange}
+                label="Donor"
+                MenuProps={{
+                  PaperProps: {
+                    style: {
+                      maxHeight: 200,
+                      overflowY: "auto",
+                    },
+                  },
+                }}
+              >
+                {userList.map((user) => (
+                  <MenuItem key={user.id} value={user.id}>
+                    {user.firstName}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          ) : (
+            <Typography>
+              No users available for the selected organization.
+            </Typography>
+          )}
+        </>
+      )}
+
       {showCalendar && (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DemoContainer components={["DatePicker"]}>
@@ -109,17 +327,65 @@ const AddDonationsModal: React.FC<{}> = () => {
         <ItemField
           key={index}
           onDelete={() => removeItemField(index)}
-          onQuantityChange={(quantity, price) =>
-            handleQuantityChange(index, quantity, price)
+          onQuantityChange={(quantityNew, quantityUsed, totalValue) =>
+            handleQuantityChange(index, quantityNew, quantityUsed, totalValue)
           }
+          onItemChange={(itemId) => handleItemChange(index, itemId)}
         />
       ))}
       {items.length > 0 && (
         <div>
           <Typography>Total Items: {totalQuantity}</Typography>
           <Typography>Total Cost: ${totalCost}</Typography>
-
-          <Button variant="contained" sx={{ mt: 2 }}>
+          {donationType == "Outgoing" && (
+            <div>
+              <Typography align={"center"} m={2}>
+                Demographic Data
+              </Typography>
+              <div>
+                <TextField
+                  label="White"
+                  type="standard"
+                  value={demographicData.whiteNum}
+                  onChange={handleChangeDemographicData("whiteNum")}
+                />
+                <TextField
+                  label="Latino"
+                  type="standard"
+                  value={demographicData.latinoNum}
+                  onChange={handleChangeDemographicData("latinoNum")}
+                />
+                <TextField
+                  label="Black"
+                  type="standard"
+                  value={demographicData.blackNum}
+                  onChange={handleChangeDemographicData("blackNum")}
+                />
+                <TextField
+                  label="Native"
+                  type="standard"
+                  value={demographicData.nativeNum}
+                  onChange={handleChangeDemographicData("nativeNum")}
+                />
+                <TextField
+                  label="Asian"
+                  type="standard"
+                  value={demographicData.asianNum}
+                  onChange={handleChangeDemographicData("asianNum")}
+                />
+                <TextField
+                  label="Other"
+                  type="standard"
+                  value={demographicData.otherNum}
+                  onChange={handleChangeDemographicData("otherNum")}
+                />
+              </div>
+              <Typography>
+                Number Served: {calculateNumberServed(demographicData)}
+              </Typography>
+            </div>
+          )}
+          <Button variant="contained" sx={{ mt: 2 }} onClick={handleSubmit}>
             Submit
           </Button>
         </div>
