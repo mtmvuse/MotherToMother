@@ -1,7 +1,8 @@
 import { AddInventoryItemType } from "~/types/inventory";
-import type { EditUserType, AddUserType } from "../types/user";
+import type { EditUserType, AddUserType } from "~/types/user";
 import type { GridFilterModel, GridSortModel } from "@mui/x-data-grid";
 import { filterModelToApiQuery, sortModelToApiQuery } from "./utils";
+import { AddOutgoingDonationType } from "~/types/DonationTypes";
 
 const mode = import.meta.env.MODE;
 const backendUrl: string =
@@ -99,5 +100,37 @@ export const getOrganizations = async (query?: string | undefined) => {
     headers: {
       "Content-Type": "application/json",
     },
+  });
+};
+
+export const getModalUsers = async (query?: string | undefined) => {
+  const fetchURL = query
+    ? `${backendUrl}/users/v1?type=${query}`
+    : `${backendUrl}/users/v1`;
+  return await fetch(fetchURL, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+};
+
+export const getModalItems = async () => {
+  const fetchURL = `${backendUrl}/items/v1`;
+  return await fetch(fetchURL, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+};
+
+export const createOutgoingDonation = async (
+  outgoingDonationData: AddOutgoingDonationType
+) => {
+  return await fetch(`${backendUrl}/donation/v1/outgoing`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(outgoingDonationData),
   });
 };
