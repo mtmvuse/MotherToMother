@@ -6,7 +6,23 @@ import type {
   DashboardDonationDetailType,
   IncomingDonationTypeWithID,
   IncomingDonationWithIDType,
+  DonationsDashboardDisplay,
 } from "../../../types/donation";
+import type { Prisma } from "@prisma/client";
+
+export const getUsersAP = async (
+  page: number,
+  pageSize: number,
+  whereClause: DonationsDashboardDisplay,
+  orderBy: Prisma.donation_detailAvgOrderByAggregateInput,
+): Promise<DonationsDashboardDisplay[]> => {
+  return db.donation_detail.findMany({
+    where: whereClause,
+    take: pageSize,
+    skip: page * pageSize,
+    orderBy: orderBy,
+  });
+};
 
 export const getTotalNumberDonations = async () => {
   return db.donation.count();

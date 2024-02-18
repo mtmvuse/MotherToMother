@@ -30,12 +30,14 @@ import type {
   IncomingDonationType,
   IncomingDonationTypeWithID,
   IncomingDonationWithIDType,
+  DonationQueryType,
+  DonationsDashboardDisplay,
 } from "../../../types/donation";
-
-interface QueryType {
-  page: string;
-  pageSize: string;
-}
+import {
+  translateFilterToPrisma,
+  translateSortToPrisma,
+} from "../../../utils/lib";
+import type { Prisma } from "@prisma/client";
 
 interface QueryTypeID {
   id: string;
@@ -46,13 +48,33 @@ const donationRouter = express.Router();
 donationRouter.get(
   "/v1",
   async (
-    req: Request<any, any, any, QueryType>,
+    req: Request<any, any, any, DonationQueryType>,
     res: Response,
     next: NextFunction,
   ) => {
     try {
-      const page = parseInt(req.query.page, 10);
-      const pageSize = parseInt(req.query.pageSize, 10);
+      const query = req.query;
+      const { page, pageSize, sort, order, ...filters } = query;
+      const pageInt = Number(page);
+      const pageSizeInt = Number(pageSize);
+      const typedFilters = {
+        ...filters,
+        id: filters.id && Number(filters.id),
+      };
+      const whereClause = translateFilterToPrisma(
+        typedFilters,
+      ) as DonationsDashboardDisplay;
+      const orderBy = translateSortToPrisma(
+        sort,
+        order,
+      ) as Prisma.user_dashboardAvgOrderByAggregateInput;
+      const donationsAP = await DonationService.getUsersAP(
+        pageInt,
+        pageSizeInt,
+        whereClause,
+        orderBy,
+      );
+
       const donations = await DonationService.getTransactions(page, pageSize);
       const totalNumber = await DonationService.getTotalNumberDonations();
       return res.status(200).json({ donations, totalNumber });
