@@ -57,6 +57,7 @@ model DonationDetail {
   donation     Donation @relation(fields: [donationId], references: [id])
   item         Item     @relation(fields: [itemId], references: [id])
 
+  @@unique([donationId, itemId])
   @@index([donationId], map: "DonationDetail_donationId_fkey")
   @@index([itemId], map: "DonationDetail_itemId_fkey")
 }
@@ -94,7 +95,7 @@ model Admin {
 
 /// View for user dashboard for admin portal
 view user_dashboard {
-  id           Int     @id @default(0)
+  id           Int    @id @default(0)
   email        String
   name         String @db.VarChar(383)
   phone        String

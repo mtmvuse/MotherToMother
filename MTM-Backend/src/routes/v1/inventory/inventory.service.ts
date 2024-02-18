@@ -3,6 +3,7 @@ import type {
   InventoryType,
   InventoryInputType,
 } from "../../../types/inventory";
+import type { Prisma } from "@prisma/client";
 
 /**
  * Get inventory by page
@@ -56,4 +57,26 @@ export const createItem = async (
     },
   });
   return createdItem;
+};
+
+export const getItemAP = async (
+  page: number,
+  pageSize: number,
+  whereClause: InventoryInputType,
+  orderBy: Prisma.ItemOrderByWithAggregationInput,
+): Promise<InventoryType[]> => {
+  return db.item.findMany({
+    where: whereClause,
+    take: pageSize,
+    skip: page * pageSize,
+    orderBy: orderBy,
+  });
+};
+
+export const getItemCount = async (
+  whereClause: InventoryInputType,
+): Promise<number> => {
+  return db.item.count({
+    where: whereClause,
+  });
 };
