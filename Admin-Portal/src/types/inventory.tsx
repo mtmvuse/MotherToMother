@@ -8,6 +8,11 @@ export interface ResponseInventoryItem {
   valueUsed: number;
 }
 
+export interface EditInventoryItemType {
+  data: AddInventoryItemType;
+  id: number;
+}
+
 export interface AddInventoryItemType {
   name: string;
   category: string;

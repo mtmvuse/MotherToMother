@@ -1,4 +1,8 @@
-import { AddInventoryItemType } from "~/types/inventory";
+import {
+  AddInventoryItemType,
+  EditInventoryItemType,
+  ResponseInventoryItem,
+} from "~/types/inventory";
 import type { EditUserType, AddUserType } from "../types/user";
 import type { Organization } from "~/types/organization";
 import type { GridFilterModel, GridSortModel } from "@mui/x-data-grid";
@@ -34,6 +38,29 @@ export const addIventoryItem = async (inventoryItem: AddInventoryItemType) => {
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify(inventoryItem),
 	});
+};
+
+export const editInventoryItem = async (editInfo: EditInventoryItemType) => {
+  const inventoryItem = editInfo.data;
+  const id = editInfo.id;
+  return await fetch(`${backendUrl}/inventory/v1/id/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(inventoryItem),
+  });
+};
+
+export const deleteInventoryItem = async (
+  inventoryId: number,
+  token: string
+) => {
+  return await fetch(`${backendUrl}/inventory/v1/delete/id/${inventoryId}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
 
 export const getUsers = async (

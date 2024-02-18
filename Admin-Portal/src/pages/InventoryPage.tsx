@@ -17,15 +17,21 @@ import {
 	useQueryClient,
 } from "@tanstack/react-query";
 import { PAGE_SIZE } from "../lib/constants";
-import { addIventoryItem, getInventoryRows } from "../lib/services";
+import {
+	addIventoryItem,
+	deleteInventoryItem,
+	editInventoryItem,
+	getInventoryRows,
+} from "../lib/services";
 import { ResponseInventoryItem, inventoryRow } from "~/types/inventory";
 import FormDialog from "../components/FormDialog";
 import DeleteAlertModal from "../components/DeleteAlertModal";
 import InventoryDialog from "../components/inventory/InventoryDialog";
 
 //TODO
-//delete reminder
-//edit button
+// edit button
+// should delete and edit affect donation details
+// tokens auth on the backend?
 const categoryOptions: string[] = ["Books", "Clothes"];
 
 const InventoryPage: React.FC = () => {
@@ -101,6 +107,20 @@ const InventoryPage: React.FC = () => {
 		},
 	});
 
+	const editMutation = useMutation({
+		mutationFn: (data: any) => editInventoryItem(data),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["inventory"] });
+		},
+	});
+
+	const deleteMutation = useMutation({
+		mutationFn: (id: number) => deleteInventoryItem(id, "token"),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["inventory"] });
+		},
+	});
+
 	const handleAddRow = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		const formData = new FormData(event.currentTarget);
@@ -113,14 +133,32 @@ const InventoryPage: React.FC = () => {
 			quantityUsed: formJson.usedStock,
 			valueUsed: formJson.usedValue,
 		};
-		console.log(itemData);
 		addMutation.mutate(itemData);
 		handleCloseAddInventory();
 	};
 
 	const handleDeleteRow = () => {
 		if (!deleteRow) return;
+		deleteMutation.mutate(deleteRow.id);
 		handleCloseDeleteInventory();
+	};
+
+	const handleEditRow = (event: React.FormEvent<HTMLFormElement>) => {
+		if (!editRow) return;
+		event.preventDefault();
+		const formData = new FormData(event.currentTarget);
+		const formJson = Object.fromEntries((formData as any).entries());
+		const itemData = {
+			name: formJson.itemName,
+			category: formJson.category,
+			quantityNew: formJson.newStock,
+			valueNew: formJson.newValue,
+			quantityUsed: formJson.usedStock,
+			valueUsed: formJson.usedValue,
+		};
+		const editData = { data: itemData, id: editRow.id };
+		editMutation.mutate(editData);
+		handleCloseEditInventory();
 	};
 
 	const columns: GridColDef[] = [
@@ -256,9 +294,7 @@ const InventoryPage: React.FC = () => {
 				title={"EDIT A INVENTORY ENTRY"}
 				handleClose={handleCloseEditInventory}
 				open={openEditInventory}
-				handleSubmit={() => {
-					console.log("edited user");
-				}}
+				handleSubmit={handleEditRow}
 			>
 				<InventoryDialog categories={categoryOptions} editRow={editRow} />
 			</FormDialog>

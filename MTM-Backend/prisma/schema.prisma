@@ -79,10 +79,10 @@ model OutgoingDonationStats {
 model Item {
   id             Int              @id @default(autoincrement())
   category       String
-<<<<<<< HEAD
+  <<<<<<< HEAD
   category       String
-=======
->>>>>>> 27ba69b (updated to autoPageSize)
+  =======
+  >>>>>>> 27ba69b (updated to autoPageSize)
   name           String
   quantityUsed   Int
   quantityNew    Int
