@@ -35,7 +35,6 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
   handleCloseModal,
   handleSubmissionSuccess,
 }) => {
-  const [donor, setDonor] = useState<string>("");
   const [organizationList, setOrganizationList] = useState<Organization[]>([]);
   const [userList, setUserList] = useState<ResponseUser[]>([]);
   const [selectedOrg, setSelectedOrg] = useState<Organization | undefined>(
@@ -110,13 +109,15 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
   };
 
   const addItemField = () => {
-    const newItem: DonationItem = {
-      itemId: 0,
-      quantityNew: 0,
-      quantityUsed: 0,
-      totalValue: 0,
-    };
-    setItems([...items, newItem]);
+    if (items.every((item) => item.totalValue > 0)) {
+      const newItem: DonationItem = {
+        itemId: 0,
+        quantityNew: 0,
+        quantityUsed: 0,
+        totalValue: 0,
+      };
+      setItems([...items, newItem]);
+    }
   };
 
   const removeItemField = (index: number) => {
@@ -205,26 +206,35 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
         console.error("User not selected.");
         return;
       }
+      const isItemsEmpty = items.some((item) => item.totalValue === 0);
 
-      const outgoingDonationData = {
-        userId: selectedUser.id,
-        donationDetails: items.map((item) => ({
-          itemId: item.itemId,
-          usedQuantity: item.quantityUsed,
-          newQuantity: item.quantityNew,
-        })),
-        numberServed: demographicData.numberServed,
-        whiteNum: demographicData.whiteNum,
-        latinoNum: demographicData.latinoNum,
-        blackNum: demographicData.blackNum,
-        nativeNum: demographicData.nativeNum,
-        asianNum: demographicData.asianNum,
-        otherNum: demographicData.otherNum,
-      };
-      const response = await createOutgoingDonation(outgoingDonationData);
-      if (response.status === 200) {
-        handleCloseModal();
-        handleSubmissionSuccess();
+      if (isItemsEmpty) {
+        console.error("Please fill all item fields.");
+        return;
+      }
+
+      if (donationType == "Outgoing") {
+        const outgoingDonationData = {
+          userId: selectedUser.id,
+          donationDetails: items.map((item) => ({
+            itemId: item.itemId,
+            usedQuantity: item.quantityUsed,
+            newQuantity: item.quantityNew,
+          })),
+          numberServed: demographicData.numberServed,
+          whiteNum: demographicData.whiteNum,
+          latinoNum: demographicData.latinoNum,
+          blackNum: demographicData.blackNum,
+          nativeNum: demographicData.nativeNum,
+          asianNum: demographicData.asianNum,
+          otherNum: demographicData.otherNum,
+        };
+        const response = await createOutgoingDonation(outgoingDonationData);
+
+        if (response.status === 200) {
+          handleCloseModal();
+          handleSubmissionSuccess();
+        }
       }
     } catch (error) {
       console.error("Error submitting donation:", error);
