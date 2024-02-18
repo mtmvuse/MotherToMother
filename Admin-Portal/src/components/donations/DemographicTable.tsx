@@ -6,7 +6,7 @@ import {
   GridRowId,
   GridRowParams,
 } from "@mui/x-data-grid";
-import { itemTypes } from "~/Types/DonationTypes";
+import { itemTypes } from "~/types/DonationTypes";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 interface DonationTableProps {
@@ -20,7 +20,6 @@ const DemographicTable: React.FC<DonationTableProps> = ({
   setRows,
   editable,
 }) => {
-
   const [totalKids, setTotalKids] = useState(0);
   const kidOptions = [
     "Black Children",

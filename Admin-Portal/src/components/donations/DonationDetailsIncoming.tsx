@@ -9,7 +9,7 @@ import {
   DialogTitle,
 } from "@mui/material";
 import ItemsTable from "./ItemsTable";
-import { itemTypes } from "~/Types/DonationTypes";
+import { itemTypes } from "~/types/DonationTypes";
 
 interface ModalContentProps {
   selectedDonation: any;
@@ -20,7 +20,7 @@ const createItemData = (
   item: string,
   status: string,
   value: number,
-  quantity: number,
+  quantity: number
 ): itemTypes => {
   return { id, item, status, value, quantity };
 };
@@ -66,12 +66,12 @@ const DonationDetailsIncoming: React.FC<ModalContentProps> = ({
 
   const handleAddItemButtonClick = () => {
     const hasEmptyFields = itemRows.some((row) =>
-      Object.values(row).some((value) => value === "" || value === 0),
+      Object.values(row).some((value) => value === "" || value === 0)
     );
 
     if (hasEmptyFields) {
       console.log(
-        "Please fill all fields in the current rows before adding a new row.",
+        "Please fill all fields in the current rows before adding a new row."
       );
       return;
     }
