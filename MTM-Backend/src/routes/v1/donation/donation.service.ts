@@ -301,27 +301,6 @@ export const createIncomingDonation = async (
           usedQuantity: 0,
         },
       });
-    } else {
-      // Handle the case where the item does not exist
-      // Create a new item and donation details entry
-      const newItem = await db.item.create({
-        data: {
-          category: "TBD",
-          name: product.name,
-          quantityUsed: 0,
-          quantityNew: product.quantity,
-          valueUsed: 0,
-          valueNew: 0,
-        },
-      });
-      await db.donationDetail.create({
-        data: {
-          donationId: donation.id,
-          itemId: newItem.id,
-          newQuantity: product.quantity,
-          usedQuantity: 0,
-        },
-      });
     }
   }
   return donation;
@@ -355,27 +334,6 @@ export const updateIncomingDonation = async (
         data: {
           quantityNew: { increment: detail.newQuantity },
           quantityUsed: { increment: detail.usedQuantity },
-        },
-      });
-    } else {
-      // Handle the case where the item does not exist
-      // Create a new item and donation details entry
-      const newItem = await db.item.create({
-        data: {
-          category: "TBD",
-          name: detail.item,
-          quantityUsed: detail.usedQuantity,
-          quantityNew: detail.newQuantity,
-          valueUsed: 0,
-          valueNew: 0,
-        },
-      });
-      await db.donationDetail.create({
-        data: {
-          donationId: incomingDonation.id,
-          itemId: newItem.id,
-          newQuantity: detail.newQuantity,
-          usedQuantity: detail.usedQuantity,
         },
       });
     }
