@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Modal, Typography, Box } from "@mui/material";
+import { Button, Modal, Typography, Box, Alert } from "@mui/material";
 import {
   DataGrid,
   GridColDef,
@@ -107,6 +107,12 @@ const DonationsPage: React.FC = () => {
   const [incomingModalOpen, setIncomingModalOpen] = useState(false);
   const [outgoingModalOpen, setOutgoingModalOpen] = useState(false);
   const [addDonationModal, setAddDonationModalOpen] = React.useState(false);
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+
+  const handleSubmissionSuccess = () => {
+    setShowSuccessAlert(true);
+  };
+
   const handleAddDonation = () => setAddDonationModalOpen(true);
 
   const handleRowClick = (params: GridRowParams) => {
@@ -154,9 +160,17 @@ const DonationsPage: React.FC = () => {
       </Modal>
       <Modal open={addDonationModal} onClose={handleCloseModal}>
         <Box sx={modalStyle}>
-          <AddDonationModal />
+          <AddDonationModal
+            handleCloseModal={handleCloseModal}
+            handleSubmissionSuccess={handleSubmissionSuccess}
+          />
         </Box>
       </Modal>
+      {showSuccessAlert && (
+        <Alert severity="success" onClose={() => setShowSuccessAlert(false)}>
+          Donation submitted successfully!
+        </Alert>
+      )}
     </div>
   );
 };
