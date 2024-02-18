@@ -128,11 +128,10 @@ const createOutgoingDonation = async (
 
     donationReqBody.donationDetails.forEach(
       async (donationDetail: DonationDetailType) => {
-        const newDonationDetail: DonationDetailType =
-          await DonationService.createDonationDetails(
-            newDonation.id,
-            donationDetail,
-          );
+        await DonationService.createDonationDetails(
+          newDonation.id,
+          donationDetail,
+        );
       },
     );
 
@@ -219,8 +218,6 @@ const updateOutgoingDonation = async (
         );
       }
     }
-
-    console.log("Done with validations");
 
     // Updating the OutgoingDonationStats Table
     await DonationService.updateOutgoingDonationStats(
