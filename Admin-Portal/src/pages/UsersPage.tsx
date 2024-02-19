@@ -93,6 +93,9 @@ const UsersPage: React.FC = () => {
         .then((res: Response) => res.json())
         .then((data: UserDashboardResponse) => {
           setTotalNumber(data.totalNumber);
+          if (data === undefined) {
+            throw new Error("Internal Server Error");
+          }
           return data.users;
         })
         .catch((err: any) => {
