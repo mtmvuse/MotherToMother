@@ -16,6 +16,7 @@ import { ResponseInventoryItem } from "~/types/inventory";
 
 interface ItemFieldProps {
   onDelete: () => void;
+  isSubmitted: boolean;
   onQuantityChange: (
     quantityNew: number,
     quantityUsed: number,
@@ -28,6 +29,7 @@ const ItemField: React.FC<ItemFieldProps> = ({
   onDelete,
   onQuantityChange,
   onItemChange,
+  isSubmitted,
 }) => {
   const [itemList, setItemList] = useState<ResponseInventoryItem[]>([]);
   const [selectedItem, setSelectedItem] =
@@ -37,6 +39,7 @@ const ItemField: React.FC<ItemFieldProps> = ({
   const [valueUsed, setValueUsed] = useState<number>(0);
   const [valueNew, setValueNew] = useState<number>(0);
   const [totalValue, setTotalValue] = useState<number>(0);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     setOptions();
@@ -87,6 +90,14 @@ const ItemField: React.FC<ItemFieldProps> = ({
     }
   };
 
+  useEffect(() => {
+    if (isSubmitted && !selectedItem) {
+      setError("Please select a donation.");
+    } else {
+      setError(null);
+    }
+  }, [isSubmitted, selectedItem]);
+
   return (
     <Box
       display="flex"
@@ -107,6 +118,7 @@ const ItemField: React.FC<ItemFieldProps> = ({
           label="Item"
           value={selectedItem ? selectedItem.name : ""}
           onChange={handleItemChange}
+          error={!!error}
         >
           {itemList.map((item) => (
             <MenuItem key={item.id} value={item.name}>
@@ -118,6 +130,7 @@ const ItemField: React.FC<ItemFieldProps> = ({
       <>
         <Typography>Value Used: ${valueUsed}</Typography>
         <TextField
+          error={isSubmitted && totalValue === 0}
           variant="standard"
           id="outlined-number"
           label="Quantity Used"
@@ -129,6 +142,7 @@ const ItemField: React.FC<ItemFieldProps> = ({
         />
         <Typography>Value New: ${valueNew}</Typography>
         <TextField
+          error={isSubmitted && totalValue === 0}
           variant="standard"
           id="outlined-number"
           label="Quantity New"

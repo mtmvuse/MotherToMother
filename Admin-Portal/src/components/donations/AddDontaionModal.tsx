@@ -10,7 +10,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import ItemField from "./ItemField";
-import { TextField, Typography } from "@mui/material";
+import { Alert, TextField, Typography } from "@mui/material";
 import {
   createOutgoingDonation,
   getOrganizations,
@@ -61,6 +61,9 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
     asianNum: 0,
     otherNum: 0,
   });
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+  const [showError, setShowError] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
 
   const handleUserChange = (event: SelectChangeEvent<string>) => {
     const selectedUserId = event.target.value;
@@ -200,7 +203,17 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
     );
   };
 
+  const setAlert = () => {
+    if (items.some((item) => item.totalValue === 0)) {
+      setError("Please fill in all item fields.");
+      setShowError(true);
+      return;
+    }
+  };
+
   const handleSubmit = async () => {
+    setIsSubmitted(true);
+    setAlert();
     try {
       if (!selectedUser) {
         console.error("User not selected.");
@@ -336,6 +349,7 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
       {items.map((item, index) => (
         <ItemField
           key={index}
+          isSubmitted={isSubmitted}
           onDelete={() => removeItemField(index)}
           onQuantityChange={(quantityNew, quantityUsed, totalValue) =>
             handleQuantityChange(index, quantityNew, quantityUsed, totalValue)
@@ -395,6 +409,7 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
               </Typography>
             </div>
           )}
+          {showError && <Alert severity="error">{error}</Alert>}
           <Button variant="contained" sx={{ mt: 2 }} onClick={handleSubmit}>
             Submit
           </Button>
