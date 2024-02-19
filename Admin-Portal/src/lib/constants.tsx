@@ -17,4 +17,10 @@ export const ORGANIZATION_TYPE = {
   PUBLIC: "Public",
   CORPORATE: "Corporate",
 };
+export const CASHDONATION_TYPE = {
+  AGENCY: "Agency Partner",
+  PUBLIC: "Public Donor",
+  CORPORATE: "Corporate Donor",
+};
+
 export const PAGE_SIZE = 10;

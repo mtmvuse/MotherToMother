@@ -9,10 +9,11 @@ datasource db {
 }
 
 model Organization {
-  id   Int    @id @default(autoincrement())
-  name String @unique
-  type String
-  user User[]
+  id           Int            @id @default(autoincrement())
+  name         String         @unique
+  type         String
+  CashDonation CashDonation[]
+  user         User[]
 }
 
 model User {
@@ -77,11 +78,11 @@ model OutgoingDonationStats {
 
 model Item {
   id             Int              @id @default(autoincrement())
+  category       String
   name           String
   quantityUsed   Int
   quantityNew    Int
   valueUsed      Float
-  category       String
   valueNew       Float
   DonationDetail DonationDetail[]
 }
@@ -93,13 +94,24 @@ model Admin {
   role  String
 }
 
+model CashDonation {
+  id             Int          @id @default(autoincrement())
+  organizationId Int
+  date           DateTime     @default(now())
+  total          Float
+  donor          String
+  Organization   Organization @relation(fields: [organizationId], references: [id])
+
+  @@index([organizationId], map: "CashDonation_organizationId_fkey")
+}
+
 /// View for user dashboard for admin portal
 view user_dashboard {
   id           Int    @id @default(0)
   email        String
-  name         String @db.VarChar(383)
+  name         String? @db.VarChar(383)
   phone        String
-  address      String @db.Text
+  address      String? @db.Text
   type         String
   organization String
 }
