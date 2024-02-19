@@ -56,7 +56,7 @@ async function main() {
         await db.donationDetail.create({
           data: {
             donationId: newDonation.id,
-            itemId: items[getRandomIndex(items)].id,
+            itemId: items[j].id,
             usedQuantity: 3,
             newQuantity: 2,
           },

@@ -26,6 +26,7 @@ import {
 import type {
   UserDashboardResponse,
   EditUserArgs,
+  AddUserType,
   UserRow,
 } from "../types/user";
 import { Button, Box } from "@mui/material";
@@ -33,6 +34,8 @@ import FormDialog from "../components/FormDialog";
 import DeleteAlertModal from "../components/DeleteAlertModal";
 import UserDialog from "../components/users/UserDialog";
 import type { Organization } from "~/types/organization";
+import { ErrorMessage } from "../components/ErrorMessage";
+import { SuccessMessage } from "../components/SuccessMessage";
 
 const UsersPage: React.FC = () => {
   const [page, setPage] = useState(0);
@@ -45,6 +48,8 @@ const UsersPage: React.FC = () => {
   const [openDeleteUser, setOpenDeleteUser] = React.useState(false);
   const [editRow, setEditRow] = React.useState<UserRow | undefined>();
   const [deleteRow, setDeleteRow] = React.useState<UserRow | undefined>();
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<boolean | null>(null);
   const queryClient = useQueryClient();
 
   const handleOpenAddUser = () => {
@@ -93,6 +98,9 @@ const UsersPage: React.FC = () => {
         .then((res: Response) => res.json())
         .then((data: UserDashboardResponse) => {
           setTotalNumber(data.totalNumber);
+          if (data === undefined) {
+            throw new Error("No data: Internal Server Error");
+          }
           return data.users;
         })
         .catch((err: any) => {
@@ -113,24 +121,54 @@ const UsersPage: React.FC = () => {
   });
 
   const addMutation = useMutation({
-    mutationFn: (data: any) => addUser(data),
-    onSuccess: () => {
+    mutationFn: (data: AddUserType) => addUser(data),
+    onSuccess: (result: Response) => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
+      if (result.status === 400 || result.status === 500) {
+        setError("Cannot delete user");
+      } else {
+        setSuccess(true);
+      }
+      handleCloseAddUser();
+    },
+    onError: (error: any) => {
+      console.error(error);
+      setError(error.message);
     },
   });
 
   const editMutation = useMutation({
     mutationFn: (data: EditUserArgs) =>
       updateUser(data.id, data.userData, "token"),
-    onSuccess: () => {
+    onSuccess: (result: Response) => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
+      if (result.status === 400 || result.status === 500) {
+        setError("Cannot delete user");
+      } else {
+        setSuccess(true);
+      }
+      handleCloseEditUser();
+    },
+    onError: (error: Error) => {
+      console.error(error);
+      setError(error.message);
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) => deleteUser(id, "token"),
-    onSuccess: () => {
+    onSuccess: (result: Response) => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
+      if (result.status === 400 || result.status === 500) {
+        setError("Cannot delete user");
+      } else {
+        setSuccess(true);
+      }
+      handleCloseDeleteUser();
+    },
+    onError: (error: Error) => {
+      console.error("here");
+      setError(error.message);
     },
   });
 
@@ -143,9 +181,8 @@ const UsersPage: React.FC = () => {
       ...rest,
       organizationId: findOrganizationId(formJson.organization),
       password: "password",
-    };
+    } as AddUserType;
     addMutation.mutate(userData);
-    handleCloseAddUser();
   };
 
   const handleEditUser = (event: React.FormEvent<HTMLFormElement>) => {
@@ -163,13 +200,11 @@ const UsersPage: React.FC = () => {
       token: "token",
     };
     editMutation.mutate(data);
-    handleCloseEditUser();
   };
 
   const handleDeleteUser = () => {
     if (!deleteRow) return;
     deleteMutation.mutate(deleteRow.id);
-    handleCloseDeleteUser();
   };
 
   const handleFilterModelChange = (model: GridFilterModel) => {
@@ -182,7 +217,20 @@ const UsersPage: React.FC = () => {
 
   if (usersQueryResponse.isLoading) return <div>Loading...</div>;
   if (usersQueryResponse.error)
-    return <div>Error: {usersQueryResponse.error.message}</div>;
+    return (
+      <ErrorMessage
+        error={usersQueryResponse.error.message}
+        setError={setError}
+      />
+    );
+  if (organizationsQueryResponse.isLoading) return <div>Loading...</div>;
+  if (organizationsQueryResponse.error)
+    return (
+      <ErrorMessage
+        error={organizationsQueryResponse.error.message}
+        setError={setError}
+      />
+    );
 
   const columns: GridColDef[] = [
     {
@@ -264,6 +312,8 @@ const UsersPage: React.FC = () => {
   ];
   return (
     <Box>
+      {error && <ErrorMessage error={error} setError={setError} />}
+      {success && <SuccessMessage success={success} setSuccess={setSuccess} />}
       <Button
         variant="contained"
         sx={{ margin: "auto 10px 10px auto" }}
