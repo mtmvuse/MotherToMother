@@ -60,7 +60,6 @@ const InventoryPage: React.FC = () => {
 			getInventoryRows("token", page, PAGE_SIZE)
 				.then((response: Response) => response.json())
 				.then((data) => {
-					console.log(data.inventory);
 					setTotalNumber(data.totalNumber);
 					const renderInventories = data.inventory.map(
 						(item: ResponseInventoryItem) => ({

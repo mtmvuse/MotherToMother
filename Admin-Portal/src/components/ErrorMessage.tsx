@@ -1,12 +1,15 @@
 import React from "react";
 import { Snackbar, Alert } from "@mui/material";
 
-interface ErrorProps {
+interface ErrorMessageProps {
   error: string | null;
   setError: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
-export const Error: React.FC<ErrorProps> = ({ error, setError }) => {
+export const ErrorMessage: React.FC<ErrorMessageProps> = ({
+  error,
+  setError,
+}) => {
   const handleClose = () => {
     setError(null);
   };
