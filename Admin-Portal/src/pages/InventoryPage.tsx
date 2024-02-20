@@ -4,8 +4,10 @@ import {
 	DataGrid,
 	GridActionsCellItem,
 	GridColDef,
+	GridFilterModel,
 	GridRowId,
 	GridRowParams,
+	GridSortModel,
 	GridValueFormatterParams,
 } from "@mui/x-data-grid";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -29,14 +31,14 @@ import DeleteAlertModal from "../components/DeleteAlertModal";
 import InventoryDialog from "../components/inventory/InventoryDialog";
 
 //TODO
-// edit button
-// should delete and edit affect donation details
 // tokens auth on the backend?
 const categoryOptions: string[] = ["Books", "Clothes"];
 
 const InventoryPage: React.FC = () => {
 	const [page, setPage] = useState(0);
 	const [pageSize, setPageSize] = useState(PAGE_SIZE);
+	const [filterModel, setFilterModel] = useState<GridFilterModel | undefined>();
+	const [sortModel, setSortModel] = useState<GridSortModel | undefined>();
 	const [totalNumber, setTotalNumber] = useState(0);
 	const [openAddInventory, setOpenAddInventory] = useState(false);
 	const [openEditInventory, setOpenEditInventory] = useState(false);
@@ -72,12 +74,20 @@ const InventoryPage: React.FC = () => {
 		setOpenDeleteInventory(false);
 	};
 
+	const handleFilterModelChange = (model: GridFilterModel) => {
+		setFilterModel(model);
+	};
+
+	const handleSortModelChange = (model: GridSortModel) => {
+		setSortModel(model);
+	};
+
 	const inventoryQueryResponse = useQuery({
-		queryKey: ["inventory", page, pageSize],
+		queryKey: ["inventory", page, pageSize, filterModel, sortModel],
 		placeholderData: keepPreviousData,
 		//define type
 		queryFn: () =>
-			getInventoryRows("token", page, pageSize)
+			getInventoryRows("token", page, pageSize, filterModel, sortModel)
 				.then((response: Response) => response.json())
 				.then((data) => {
 					console.log(data.inventory);
@@ -281,6 +291,8 @@ const InventoryPage: React.FC = () => {
 					setPage(params.page);
 					setPageSize(params.pageSize);
 				}}
+				onFilterModelChange={handleFilterModelChange}
+				onSortModelChange={handleSortModelChange}
 			/>
 			<FormDialog
 				title={"ADD A NEW INVENTORY ENTRY"}
