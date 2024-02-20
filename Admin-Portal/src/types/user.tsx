@@ -25,6 +25,7 @@ export interface AddUserType {
   zip: number;
   state: string;
   organizationId: number;
+  password: string;
 }
 
 export interface UserDashboardResponse {
