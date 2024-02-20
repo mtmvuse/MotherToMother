@@ -27,6 +27,19 @@ export interface OutgoingDonationRequestBodyType {
   donationDetails: Array<DonationDetailType>;
 }
 
+export interface PUTOutgoingDonationRequestBodyType {
+  // userId: number;
+  // email: string; // TOOD: Why no provide email in PUT request?
+  numberServed: number;
+  whiteNum: number;
+  latinoNum: number;
+  blackNum: number;
+  nativeNum: number;
+  asianNum: number;
+  otherNum: number;
+  donationDetails: Array<DonationDetailType>;
+}
+
 export interface OutgoingDonationStatsType {
   id: number;
   donationId: number;
