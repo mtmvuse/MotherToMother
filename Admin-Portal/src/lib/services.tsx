@@ -16,18 +16,24 @@ const backendUrl: string =
 export const getInventoryRows = async (
   token: string | undefined,
   page: number,
-  pageSize: number
+  pageSize: number,
+  filterModel?: GridFilterModel,
+  sortModel?: GridSortModel
 ) => {
-  return await fetch(
-    `${backendUrl}/inventory/v1?page=${page}&pageSize=${pageSize}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "appplication/json",
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
+  let url = `${backendUrl}/inventory/v1?page=${page}&pageSize=${pageSize}`;
+  if (filterModel) {
+    url += `&${filterModelToApiQuery(filterModel)}`;
+  }
+  if (sortModel) {
+    url += `&${sortModelToApiQuery(sortModel)}`;
+  }
+  return await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "appplication/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
 
 export const addIventoryItem = async (inventoryItem: AddInventoryItemType) => {
