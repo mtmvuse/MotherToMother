@@ -94,12 +94,12 @@ const InventoryPage: React.FC = () => {
           const renderInventories = data.inventory.map(
             (item: ResponseInventoryItem) => ({
               id: item.id,
-              itemName: item.name,
+              name: item.name,
               category: item.category,
-              newStock: item.quantityNew,
-              newValue: item.valueNew,
-              usedStock: item.quantityUsed,
-              usedValue: item.valueUsed,
+              quantityNew: item.quantityNew,
+              valueNew: item.valueNew,
+              quantityUsed: item.quantityUsed,
+              valueUsed: item.valueUsed,
             })
           );
           return renderInventories;
@@ -107,6 +107,7 @@ const InventoryPage: React.FC = () => {
         .catch((err: any) => {
           console.log(err);
         }),
+    enabled: !filterModel,
   });
 
   const addMutation = useMutation({
@@ -135,12 +136,12 @@ const InventoryPage: React.FC = () => {
     const formData = new FormData(event.currentTarget);
     const formJson = Object.fromEntries((formData as any).entries());
     const itemData = {
-      name: formJson.itemName,
+      name: formJson.name,
       category: formJson.category,
-      quantityNew: formJson.newStock,
-      valueNew: formJson.newValue,
-      quantityUsed: formJson.usedStock,
-      valueUsed: formJson.usedValue,
+      quantityNew: formJson.quantityNew,
+      valueNew: formJson.valueNew,
+      quantityUsed: formJson.quantityUsed,
+      valueUsed: formJson.valueUsed,
     };
     addMutation.mutate(itemData);
     handleCloseAddInventory();
@@ -158,12 +159,12 @@ const InventoryPage: React.FC = () => {
     const formData = new FormData(event.currentTarget);
     const formJson = Object.fromEntries((formData as any).entries());
     const itemData = {
-      name: formJson.itemName,
+      name: formJson.name,
       category: formJson.category,
-      quantityNew: formJson.newStock,
-      valueNew: formJson.newValue,
-      quantityUsed: formJson.usedStock,
-      valueUsed: formJson.usedValue,
+      quantityNew: formJson.quantityNew,
+      valueNew: formJson.valueNew,
+      quantityUsed: formJson.quantityUsed,
+      valueUsed: formJson.valueUsed,
     };
     const editData = { data: itemData, id: editRow.id };
     editMutation.mutate(editData);
@@ -180,7 +181,7 @@ const InventoryPage: React.FC = () => {
       headerAlign: "left",
     },
     {
-      field: "itemName",
+      field: "name",
       headerName: "ITEM NAME",
       flex: 3,
       align: "left",
@@ -198,7 +199,7 @@ const InventoryPage: React.FC = () => {
       editable: true,
     },
     {
-      field: "newStock",
+      field: "quantityNew",
       headerName: "NEW STOCK",
       flex: 3,
       type: "number",
@@ -207,7 +208,7 @@ const InventoryPage: React.FC = () => {
       editable: true,
     },
     {
-      field: "newValue",
+      field: "valueNew",
       headerName: "NEW VALUE",
       flex: 3,
       type: "number",
@@ -222,7 +223,7 @@ const InventoryPage: React.FC = () => {
       },
     },
     {
-      field: "usedStock",
+      field: "quantityUsed",
       headerName: "USED STOCK",
       flex: 3,
       type: "number",
@@ -231,7 +232,7 @@ const InventoryPage: React.FC = () => {
       editable: true,
     },
     {
-      field: "usedValue",
+      field: "valueUsed",
       headerName: "USED VALUE",
       flex: 3,
       type: "number",
@@ -290,6 +291,9 @@ const InventoryPage: React.FC = () => {
           setPage(params.page);
           setPageSize(params.pageSize);
         }}
+        sortModel={sortModel}
+        filterModel={filterModel}
+        sortingOrder={["desc", "asc"]}
         onFilterModelChange={handleFilterModelChange}
         onSortModelChange={handleSortModelChange}
       />

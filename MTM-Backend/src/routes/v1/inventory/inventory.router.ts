@@ -36,7 +36,6 @@ inventoryRouter.get(
       sort as string,
       order as string,
     ) as Prisma.ItemOrderByWithAggregationInput;
-
     try {
       const inventory = await ItemService.getItemAP(
         pageInt,
