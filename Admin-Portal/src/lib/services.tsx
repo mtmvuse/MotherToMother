@@ -1,5 +1,6 @@
 import { AddInventoryItemType } from "~/types/inventory";
 import type { EditUserType, AddUserType } from "../types/user";
+import type { Organization } from "~/types/organization";
 import type { GridFilterModel, GridSortModel } from "@mui/x-data-grid";
 import { filterModelToApiQuery, sortModelToApiQuery } from "./utils";
 
@@ -99,5 +100,19 @@ export const getOrganizations = async (query?: string | undefined) => {
     headers: {
       "Content-Type": "application/json",
     },
+  });
+};
+
+export const addOrganization = async (
+  organization: Organization,
+  token: string
+) => {
+  return await fetch(`${backendUrl}/organization/v1`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(organization),
   });
 };
