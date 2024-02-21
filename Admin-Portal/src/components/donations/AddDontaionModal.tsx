@@ -18,6 +18,8 @@ import {
 } from "../../lib/services";
 import { Organization } from "~/types/organization";
 import { ResponseUser } from "~/types/user";
+import { ErrorMessage } from "../ErrorMessage";
+import { SuccessMessage } from "../SuccessMessage";
 
 interface DonationItem {
   itemId: number;
@@ -62,8 +64,8 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
     otherNum: 0,
   });
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
-  const [showError, setShowError] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<boolean | null>(null);
 
   const handleUserChange = (event: SelectChangeEvent<string>) => {
     const selectedUserId = event.target.value;
@@ -147,12 +149,12 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
       try {
         const response = await getOrganizations();
         if (!response.ok) {
-          throw new Error("Failed to fetch organizations");
+          setError("Failed to fetch organizations");
         }
         const orgList = await response.json();
         setOrganizationList(orgList);
       } catch (error) {
-        console.error("Error fetching organizations:", error);
+        setError("Error fetching organizations:");
       }
     };
 
@@ -166,7 +168,6 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
         throw new Error("Failed to fetch users");
       }
       const fullUserList = await response.json();
-      console.log(selectedOrg?.name);
       if (selectedOrg) {
         const filteredUserList = fullUserList.filter(
           (user: ResponseUser) => user.Organization.name === selectedOrg.name
@@ -174,7 +175,7 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
         setUserList(filteredUserList);
       }
     } catch (error) {
-      console.error("Error fetching users:", error);
+      setError("Error fetching users:");
     }
   };
 
@@ -206,7 +207,6 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
   const setAlert = () => {
     if (items.some((item) => item.totalValue === 0)) {
       setError("Please fill in all item fields.");
-      setShowError(true);
       return;
     }
   };
@@ -216,13 +216,13 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
     setAlert();
     try {
       if (!selectedUser) {
-        console.error("User not selected.");
+        setError("User not selected.");
         return;
       }
       const isItemsEmpty = items.some((item) => item.totalValue === 0);
 
       if (isItemsEmpty) {
-        console.error("Please fill all item fields.");
+        setError("Please fill all item fields.");
         return;
       }
 
@@ -250,12 +250,14 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
         }
       }
     } catch (error) {
-      console.error("Error submitting donation:", error);
+      setError("Error submitting donation:");
     }
   };
 
   return (
     <Box p={2} sx={{ overflowY: "auto" }}>
+      {error && <ErrorMessage error={error} setError={setError} />}
+      {success && <SuccessMessage success={success} setSuccess={setSuccess} />}
       <Typography variant="h5" textAlign="center">
         Add Donation
       </Typography>
@@ -409,7 +411,6 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
               </Typography>
             </div>
           )}
-          {showError && <Alert severity="error">{error}</Alert>}
           <Button variant="contained" sx={{ mt: 2 }} onClick={handleSubmit}>
             Submit
           </Button>
