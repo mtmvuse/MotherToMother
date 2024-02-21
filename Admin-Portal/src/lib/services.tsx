@@ -1,4 +1,8 @@
-import { AddInventoryItemType } from "~/types/inventory";
+import {
+  AddInventoryItemType,
+  EditInventoryItemType,
+  ResponseInventoryItem,
+} from "~/types/inventory";
 import type { EditUserType, AddUserType } from "../types/user";
 import type { Organization } from "~/types/organization";
 import type { GridFilterModel, GridSortModel } from "@mui/x-data-grid";
@@ -13,18 +17,24 @@ const backendUrl: string =
 export const getInventoryRows = async (
   token: string | undefined,
   page: number,
-  pageSize: number
+  pageSize: number,
+  filterModel?: GridFilterModel,
+  sortModel?: GridSortModel
 ) => {
-  return await fetch(
-    `${backendUrl}/inventory/v1?page=${page}&pageSize=${pageSize}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "appplication/json",
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
+  let url = `${backendUrl}/inventory/v1?page=${page}&pageSize=${pageSize}`;
+  if (filterModel) {
+    url += `&${filterModelToApiQuery(filterModel)}`;
+  }
+  if (sortModel) {
+    url += `&${sortModelToApiQuery(sortModel)}`;
+  }
+  return await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "appplication/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
 
 export const addIventoryItem = async (inventoryItem: AddInventoryItemType) => {
@@ -32,6 +42,29 @@ export const addIventoryItem = async (inventoryItem: AddInventoryItemType) => {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(inventoryItem),
+  });
+};
+
+export const editInventoryItem = async (editInfo: EditInventoryItemType) => {
+  const inventoryItem = editInfo.data;
+  const id = editInfo.id;
+  return await fetch(`${backendUrl}/inventory/v1/id/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(inventoryItem),
+  });
+};
+
+export const deleteInventoryItem = async (
+  inventoryId: number,
+  token: string
+) => {
+  return await fetch(`${backendUrl}/inventory/v1/delete/id/${inventoryId}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
   });
 };
 

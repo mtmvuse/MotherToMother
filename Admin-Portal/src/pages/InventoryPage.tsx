@@ -1,14 +1,17 @@
 import React, { useState } from "react";
-import { Button } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import {
   DataGrid,
   GridActionsCellItem,
   GridColDef,
+  GridFilterModel,
   GridRowId,
   GridRowParams,
+  GridSortModel,
   GridValueFormatterParams,
 } from "@mui/x-data-grid";
 import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import {
   keepPreviousData,
   useMutation,
@@ -16,32 +19,32 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { PAGE_SIZE } from "../lib/constants";
-import { addIventoryItem, addUser, getInventoryRows } from "../lib/services";
-import { ResponseInventoryItem } from "~/types/inventory";
+import {
+  addIventoryItem,
+  deleteInventoryItem,
+  editInventoryItem,
+  getInventoryRows,
+} from "../lib/services";
+import { ResponseInventoryItem, inventoryRow } from "~/types/inventory";
 import FormDialog from "../components/FormDialog";
-import AddInventoryDialog from "../components/inventory/AddInventoryDialog";
-
-export interface Row {
-  id: number;
-  itemName: String;
-  category: String;
-  newStock: number;
-  newValue: number;
-  usedStock: number;
-  usedValue: number;
-}
+import DeleteAlertModal from "../components/DeleteAlertModal";
+import InventoryDialog from "../components/inventory/InventoryDialog";
 
 //TODO
-//delete reminder
-//edit button
-//get category options from the backend
-const categoryOptions: string[] = ["Baby", "Travel"];
+// tokens auth on the backend?
+const categoryOptions: string[] = ["Books", "Clothes"];
 
 const InventoryPage: React.FC = () => {
-  const [rows, setRows] = useState<Row[]>([]);
   const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(PAGE_SIZE);
+  const [filterModel, setFilterModel] = useState<GridFilterModel | undefined>();
+  const [sortModel, setSortModel] = useState<GridSortModel | undefined>();
   const [totalNumber, setTotalNumber] = useState(0);
-  const [openAddInventory, setOpenAddInventory] = React.useState(false);
+  const [openAddInventory, setOpenAddInventory] = useState(false);
+  const [openEditInventory, setOpenEditInventory] = useState(false);
+  const [openDeleteInventory, setOpenDeleteInventory] = useState(false);
+  const [deleteRow, setDeleteRow] = useState<inventoryRow | undefined>();
+  const [editRow, setEditRow] = useState<inventoryRow | undefined>();
   const queryClient = useQueryClient();
 
   const handleOpenAddInventory = () => {
@@ -52,24 +55,51 @@ const InventoryPage: React.FC = () => {
     setOpenAddInventory(false);
   };
 
+  const handleOpenEditInventory = (row: inventoryRow) => {
+    setEditRow(row);
+    setOpenEditInventory(true);
+  };
+
+  const handleCloseEditInventory = () => {
+    setEditRow(undefined);
+    setOpenEditInventory(false);
+  };
+  const handleOpenDeleteInventory = (row: inventoryRow) => {
+    setDeleteRow(row);
+    setOpenDeleteInventory(true);
+  };
+
+  const handleCloseDeleteInventory = () => {
+    setDeleteRow(undefined);
+    setOpenDeleteInventory(false);
+  };
+
+  const handleFilterModelChange = (model: GridFilterModel) => {
+    setFilterModel(model);
+  };
+
+  const handleSortModelChange = (model: GridSortModel) => {
+    setSortModel(model);
+  };
+
   const inventoryQueryResponse = useQuery({
-    queryKey: ["inventory", page, PAGE_SIZE],
+    queryKey: ["inventory", page, pageSize, filterModel, sortModel],
     placeholderData: keepPreviousData,
     //define type
     queryFn: () =>
-      getInventoryRows("token", page, PAGE_SIZE)
+      getInventoryRows("token", page, pageSize, filterModel, sortModel)
         .then((response: Response) => response.json())
         .then((data) => {
           setTotalNumber(data.totalNumber);
           const renderInventories = data.inventory.map(
             (item: ResponseInventoryItem) => ({
               id: item.id,
-              itemName: item.name,
+              name: item.name,
               category: item.category,
-              newStock: item.quantityNew,
-              newValue: item.valueNew,
-              usedStock: item.quantityUsed,
-              usedValue: item.valueUsed,
+              quantityNew: item.quantityNew,
+              valueNew: item.valueNew,
+              quantityUsed: item.quantityUsed,
+              valueUsed: item.valueUsed,
             })
           );
           return renderInventories;
@@ -77,10 +107,25 @@ const InventoryPage: React.FC = () => {
         .catch((err: any) => {
           console.log(err);
         }),
+    enabled: !filterModel,
   });
 
   const addMutation = useMutation({
     mutationFn: (data: any) => addIventoryItem(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["inventory"] });
+    },
+  });
+
+  const editMutation = useMutation({
+    mutationFn: (data: any) => editInventoryItem(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["inventory"] });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => deleteInventoryItem(id, "token"),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["inventory"] });
     },
@@ -91,20 +136,39 @@ const InventoryPage: React.FC = () => {
     const formData = new FormData(event.currentTarget);
     const formJson = Object.fromEntries((formData as any).entries());
     const itemData = {
-      name: formJson.itemName,
+      name: formJson.name,
       category: formJson.category,
-      quantityNew: formJson.newStock,
-      valueNew: formJson.newValue,
-      quantityUsed: formJson.usedStock,
-      valueUsed: formJson.usedValue,
+      quantityNew: formJson.quantityNew,
+      valueNew: formJson.valueNew,
+      quantityUsed: formJson.quantityUsed,
+      valueUsed: formJson.valueUsed,
     };
-    console.log(itemData);
     addMutation.mutate(itemData);
     handleCloseAddInventory();
   };
 
-  const handleDeleteRow = (id: GridRowId) => () => {
-    setRows(rows.filter((row: Row) => row.id !== id));
+  const handleDeleteRow = () => {
+    if (!deleteRow) return;
+    deleteMutation.mutate(deleteRow.id);
+    handleCloseDeleteInventory();
+  };
+
+  const handleEditRow = (event: React.FormEvent<HTMLFormElement>) => {
+    if (!editRow) return;
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const formJson = Object.fromEntries((formData as any).entries());
+    const itemData = {
+      name: formJson.name,
+      category: formJson.category,
+      quantityNew: formJson.quantityNew,
+      valueNew: formJson.valueNew,
+      quantityUsed: formJson.quantityUsed,
+      valueUsed: formJson.valueUsed,
+    };
+    const editData = { data: itemData, id: editRow.id };
+    editMutation.mutate(editData);
+    handleCloseEditInventory();
   };
 
   const columns: GridColDef[] = [
@@ -117,7 +181,7 @@ const InventoryPage: React.FC = () => {
       headerAlign: "left",
     },
     {
-      field: "itemName",
+      field: "name",
       headerName: "ITEM NAME",
       flex: 3,
       align: "left",
@@ -135,7 +199,7 @@ const InventoryPage: React.FC = () => {
       editable: true,
     },
     {
-      field: "newStock",
+      field: "quantityNew",
       headerName: "NEW STOCK",
       flex: 3,
       type: "number",
@@ -144,7 +208,7 @@ const InventoryPage: React.FC = () => {
       editable: true,
     },
     {
-      field: "newValue",
+      field: "valueNew",
       headerName: "NEW VALUE",
       flex: 3,
       type: "number",
@@ -159,7 +223,7 @@ const InventoryPage: React.FC = () => {
       },
     },
     {
-      field: "usedStock",
+      field: "quantityUsed",
       headerName: "USED STOCK",
       flex: 3,
       type: "number",
@@ -168,7 +232,7 @@ const InventoryPage: React.FC = () => {
       editable: true,
     },
     {
-      field: "usedValue",
+      field: "valueUsed",
       headerName: "USED VALUE",
       flex: 3,
       type: "number",
@@ -188,8 +252,17 @@ const InventoryPage: React.FC = () => {
       getActions: (params: GridRowParams) => {
         return [
           <GridActionsCellItem
+            icon={<EditIcon />}
+            onClick={() => {
+              handleOpenEditInventory(params.row);
+            }}
+            label="Edit"
+          />,
+          <GridActionsCellItem
             icon={<DeleteIcon />}
-            onClick={handleDeleteRow(params.id)}
+            onClick={() => {
+              handleOpenDeleteInventory(params.row);
+            }}
             label="Delete"
           />,
         ];
@@ -197,7 +270,7 @@ const InventoryPage: React.FC = () => {
     },
   ];
   return (
-    <div style={{ height: "80%", width: "100%" }}>
+    <Box>
       <Button
         variant="contained"
         sx={{ margin: "auto 10px 10px auto" }}
@@ -207,17 +280,22 @@ const InventoryPage: React.FC = () => {
       </Button>
       <DataGrid
         editMode="row"
-        sx={{ width: "95%" }}
+        sx={{ width: "95%", height: "80vh" }}
         rows={inventoryQueryResponse.data || []}
         columns={columns}
         pagination
+        autoPageSize
         rowCount={totalNumber}
-        pageSizeOptions={[PAGE_SIZE]}
         paginationMode="server"
-        paginationModel={{ page: page, pageSize: PAGE_SIZE }}
         onPaginationModelChange={(params) => {
           setPage(params.page);
+          setPageSize(params.pageSize);
         }}
+        sortModel={sortModel}
+        filterModel={filterModel}
+        sortingOrder={["desc", "asc"]}
+        onFilterModelChange={handleFilterModelChange}
+        onSortModelChange={handleSortModelChange}
       />
       <FormDialog
         title={"ADD A NEW INVENTORY ENTRY"}
@@ -225,9 +303,23 @@ const InventoryPage: React.FC = () => {
         open={openAddInventory}
         handleSubmit={handleAddRow}
       >
-        <AddInventoryDialog categories={categoryOptions} />
+        <InventoryDialog categories={categoryOptions} />
       </FormDialog>
-    </div>
+      <FormDialog
+        title={"EDIT A INVENTORY ENTRY"}
+        handleClose={handleCloseEditInventory}
+        open={openEditInventory}
+        handleSubmit={handleEditRow}
+      >
+        <InventoryDialog categories={categoryOptions} editRow={editRow} />
+      </FormDialog>
+      <DeleteAlertModal
+        scenario={"Inventory Entry"}
+        handleDelete={handleDeleteRow}
+        open={openDeleteInventory}
+        handleClose={handleCloseDeleteInventory}
+      />
+    </Box>
   );
 };
 
