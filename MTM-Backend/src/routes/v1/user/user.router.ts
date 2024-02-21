@@ -104,12 +104,17 @@ userRouter.get(
       order,
     ) as Prisma.user_dashboardAvgOrderByAggregateInput;
     try {
-      const users = await UserService.getUsersAP(
-        pageInt,
-        pageSizeInt,
-        whereClause,
-        orderBy,
-      );
+      let users;
+      if (pageInt == -1 && pageSizeInt == -1) {
+        users = await UserService.getAllUsersAP(whereClause, orderBy);
+      } else {
+        users = await UserService.getUsersAP(
+          pageInt,
+          pageSizeInt,
+          whereClause,
+          orderBy,
+        );
+      }
       const count = await UserService.getUserCount(whereClause);
       return res.status(200).json({ users, totalNumber: count });
     } catch (e) {

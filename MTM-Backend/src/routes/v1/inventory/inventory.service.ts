@@ -6,6 +6,55 @@ import type {
 import type { Prisma } from "@prisma/client";
 
 /**
+ * delete an inventory by its id
+ * @param id id of the inventory to be deleted
+ */
+export const deleteInventoryById = async (id: number): Promise<void> => {
+  try {
+    await db.item.delete({
+      where: {
+        id,
+      },
+    });
+  } catch (e) {
+    throw e;
+  }
+};
+
+export const editInventoryById = async (
+  id: number,
+  item: InventoryInputType,
+): Promise<InventoryType> => {
+  try {
+    const editResult = await db.item.update({
+      where: {
+        id: id,
+      },
+      data: {
+        category: item.category,
+        name: item.name,
+        quantityUsed: item.quantityUsed,
+        quantityNew: item.quantityNew,
+        valueNew: item.valueNew,
+        valueUsed: item.valueUsed,
+      },
+      select: {
+        id: true,
+        category: true,
+        name: true,
+        quantityUsed: true,
+        quantityNew: true,
+        valueNew: true,
+        valueUsed: true,
+      },
+    });
+    return editResult;
+  } catch (e) {
+    throw e;
+  }
+};
+
+/**
  * Get inventory by page
  * @param page page number starting from 1
  * @param pageSize number of items per page

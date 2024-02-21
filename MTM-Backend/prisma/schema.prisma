@@ -109,9 +109,9 @@ model CashDonation {
 view user_dashboard {
   id           Int    @id @default(0)
   email        String
-  name         String? @db.VarChar(383)
+  name         String @db.VarChar(383)
   phone        String
-  address      String? @db.Text
+  address      String @db.Text
   type         String
   organization String
 }
