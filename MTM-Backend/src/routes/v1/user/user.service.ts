@@ -84,6 +84,22 @@ export const getUsersAP = async (
 };
 
 /**
+ * query all user data for admin portal on the customized view
+ * @param whereClause where clause based on filters
+ * @param orderBy orderby based on sort
+ * @returns list of users based on the filters and sort
+ */
+export const getAllUsersAP = async (
+  whereClause: UserDashboardDisplay,
+  orderBy: Prisma.user_dashboardAvgOrderByAggregateInput,
+): Promise<UserDashboardDisplay[]> => {
+  return db.user_dashboard.findMany({
+    where: whereClause,
+    orderBy: orderBy,
+  });
+};
+
+/**
  * Get a user by id
  * @param id
  * @returns a user given id or null if not found
