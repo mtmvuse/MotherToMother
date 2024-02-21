@@ -10,7 +10,7 @@ import {
 } from "@mui/x-data-grid";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-import { itemTypes } from "~/Types/DonationTypes";
+import { itemTypes } from "~/types/DonationTypes";
 
 const statusOptions: string[] = ["Used", "New"];
 

@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import ItemsTable from "./ItemsTable";
 import DemographicTable from "./DemographicTable";
-import { demographicTypes, itemTypes } from "~/Types/DonationTypes";
+import { demographicTypes, itemTypes } from "~/types/DonationTypes";
 
 interface ModalContentProps {
   selectedDonation: any;
@@ -21,7 +21,7 @@ const createItemData = (
   item: string,
   status: string,
   value: number,
-  quantity: number,
+  quantity: number
 ): itemTypes => {
   return { id, item, status, value, quantity };
 };
@@ -29,7 +29,7 @@ const createItemData = (
 const createDemographicData = (
   id: number,
   kidGroup: string,
-  quantity: number,
+  quantity: number
 ): demographicTypes => {
   return { id, kidGroup, quantity };
 };
@@ -58,7 +58,7 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
     ? new Date(selectedDonation.date).toLocaleDateString()
     : "";
   const [demographicRows, setDemographicRows] = useState<demographicTypes[]>(
-    initialDemographicRows,
+    initialDemographicRows
   );
 
   const handleEditButtonClick = () => {
@@ -86,12 +86,12 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
 
   const handleAddItemButtonClick = () => {
     const hasEmptyFields = itemRows.some((row) =>
-      Object.values(row).some((value) => value === "" || value === 0),
+      Object.values(row).some((value) => value === "" || value === 0)
     );
 
     if (hasEmptyFields) {
       console.log(
-        "Please fill all fields in the current rows before adding a new row.",
+        "Please fill all fields in the current rows before adding a new row."
       );
       return;
     }
@@ -111,12 +111,12 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
 
   const handleAddDemoButtonClick = () => {
     const hasEmptyFields = demographicRows.some((row) =>
-      Object.values(row).some((value) => !value),
+      Object.values(row).some((value) => !value)
     );
 
     if (hasEmptyFields) {
       console.log(
-        "Please fill all fields in the current rows before adding a new row.",
+        "Please fill all fields in the current rows before adding a new row."
       );
       return;
     }
