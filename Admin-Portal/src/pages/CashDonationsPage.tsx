@@ -125,8 +125,12 @@ const CashDonationsPage: React.FC = () => {
   ];
   return (
     <div style={{ height: 400, width: "100%" }}>
-      <Button className="table-add-button" onClick={handleOpenAddCashDonation}>
-        Add Donation
+      <Button
+        className="table-add-button"
+        onClick={handleOpenAddCashDonation}
+        endIcon={<AddIcon />}
+      >
+        Add
       </Button>
       <div className="grid-container">
         <DataGrid
