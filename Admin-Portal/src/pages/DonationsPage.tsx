@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Modal, Box, Alert } from "@mui/material";
+import { Button, Modal, Box } from "@mui/material";
 import {
   DataGrid,
   GridColDef,
@@ -10,6 +10,8 @@ import {
 import AddDonationModal from "../components/donations/AddDontaionModal";
 import DonationDetailsIncoming from "../components/donations/DonationDetailsIncoming";
 import DonationDetailsOutgoing from "../components/donations/DonationDetailsOutgoing";
+import { ErrorMessage } from "../components/ErrorMessage";
+import { SuccessMessage } from "../components/SuccessMessage";
 import editIcon from "../assets/edit-icon.png";
 import deleteIcon from "../assets/delete-icon.png";
 import AddIcon from "@mui/icons-material/Add";
@@ -75,7 +77,9 @@ const DonationsPage: React.FC = () => {
   const [incomingModalOpen, setIncomingModalOpen] = useState(false);
   const [outgoingModalOpen, setOutgoingModalOpen] = useState(false);
   const [addDonationModal, setAddDonationModalOpen] = React.useState(false);
-  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+  const [showSuccessAlert, setShowSuccessAlert] = useState<boolean | null>(
+    null
+  );
 
   const handleSubmissionSuccess = () => {
     setShowSuccessAlert(true);
@@ -158,6 +162,12 @@ const DonationsPage: React.FC = () => {
 
   return (
     <Box>
+      {showSuccessAlert && (
+        <SuccessMessage
+          success={showSuccessAlert}
+          setSuccess={setShowSuccessAlert}
+        />
+      )}
       <Button
         onClick={handleAddDonation}
         className="table-add-button"
@@ -193,11 +203,6 @@ const DonationsPage: React.FC = () => {
           />
         </Box>
       </Modal>
-      {showSuccessAlert && (
-        <Alert severity="success" onClose={() => setShowSuccessAlert(false)}>
-          Donation submitted successfully!
-        </Alert>
-      )}
     </Box>
   );
 };
