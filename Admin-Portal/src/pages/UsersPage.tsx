@@ -7,8 +7,9 @@ import {
   type GridFilterModel,
   type GridSortModel,
 } from "@mui/x-data-grid";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
+import editIcon from "../assets/edit-icon.png";
+import deleteIcon from "../assets/delete-icon.png";
+import AddIcon from "@mui/icons-material/Add";
 import {
   getUsers,
   updateUser,
@@ -294,14 +295,14 @@ const UsersPage: React.FC = () => {
       type: "actions",
       getActions: (params: GridRowParams) => [
         <GridActionsCellItem
-          icon={<EditIcon />}
+          icon={<img src={editIcon} />}
           onClick={() => {
             handleOpenEditUser(params.row);
           }}
           label="Edit"
         />,
         <GridActionsCellItem
-          icon={<DeleteIcon />}
+          icon={<img src={deleteIcon} />}
           onClick={() => {
             handleOpenDeleteUser(params.row);
           }}
@@ -314,31 +315,38 @@ const UsersPage: React.FC = () => {
     <Box>
       {error && <ErrorMessage error={error} setError={setError} />}
       {success && <SuccessMessage success={success} setSuccess={setSuccess} />}
-      <Button
-        variant="contained"
-        sx={{ margin: "auto 10px 10px auto" }}
-        onClick={handleOpenAddUser}
-      >
-        Add User
-      </Button>
-      <Button variant="contained" sx={{ margin: "auto 10px 10px auto" }}>
-        Add Organization
-      </Button>
-      <DataGrid
-        sx={{ width: "95%", height: "80vh" }}
-        rows={usersQueryResponse.data || []}
-        columns={columns}
-        pagination
-        autoPageSize
-        rowCount={totalNumber}
-        paginationMode="server"
-        onPaginationModelChange={(params) => {
-          setPage(params.page);
-          setPageSize(params.pageSize);
-        }}
-        onFilterModelChange={handleFilterModelChange}
-        onSortModelChange={handleSortModelChange}
-      />
+      <div style={{ display: "flex" }}>
+        <Button className="table-add-org-button" endIcon={<AddIcon />}>
+          Add Organization
+        </Button>
+
+        <Button
+          className="table-add-button-second"
+          onClick={handleOpenAddUser}
+          endIcon={<AddIcon />}
+        >
+          Add User
+        </Button>
+      </div>
+
+      <div className="grid-container">
+        <DataGrid
+          className="mtm-datagrid"
+          rowHeight={40}
+          rows={usersQueryResponse.data || []}
+          columns={columns}
+          pagination
+          autoPageSize
+          rowCount={totalNumber}
+          paginationMode="server"
+          onPaginationModelChange={(params) => {
+            setPage(params.page);
+            setPageSize(params.pageSize);
+          }}
+          onFilterModelChange={handleFilterModelChange}
+          onSortModelChange={handleSortModelChange}
+        />
+      </div>
 
       <FormDialog
         title={"ADD A NEW USER"}

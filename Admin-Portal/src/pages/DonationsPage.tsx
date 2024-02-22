@@ -1,51 +1,19 @@
 import React, { useState } from "react";
 import { Button, Modal, Typography, Box } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 import {
   DataGrid,
   GridColDef,
   GridRowParams,
   GridValueGetterParams,
+  GridActionsCellItem,
 } from "@mui/x-data-grid";
 import AddDonationModal from "../components/donations/AddDontaionModal";
 import DonationDetailsIncoming from "../components/donations/DonationDetailsIncoming";
 import DonationDetailsOutgoing from "../components/donations/DonationDetailsOutgoing";
-
-const columns: GridColDef[] = [
-  {
-    field: "id",
-    headerName: "ID",
-    flex: 2,
-  },
-  {
-    field: "date",
-    headerName: "Date",
-    type: "date",
-    flex: 3,
-    valueGetter: (params: GridValueGetterParams) => new Date(params.row.date),
-  },
-  { field: "organization", headerName: "Organization", flex: 4 },
-  {
-    field: "items",
-    headerName: "Items",
-    type: "number",
-    flex: 3,
-    align: "left",
-    headerAlign: "left",
-  },
-  {
-    field: "total",
-    headerName: "Total",
-    type: "number",
-    flex: 3,
-    align: "left",
-    headerAlign: "left",
-  },
-  {
-    field: "type",
-    headerName: "Type",
-    flex: 3,
-  },
-];
+import editIcon from "../assets/edit-icon.png";
+import deleteIcon from "../assets/delete-icon.png";
+import "./table.css";
 
 const rows = [
   {
@@ -109,9 +77,9 @@ const DonationsPage: React.FC = () => {
   const [addDonationModal, setAddDonationModalOpen] = React.useState(false);
   const handleAddDonation = () => setAddDonationModalOpen(true);
 
-  const handleRowClick = (params: GridRowParams) => {
+  const handleOpenEditUser = (params: GridRowParams) => {
     setSelectedDonation(params.row as Donation);
-    if (params.row.type === "Incoming") {
+    if (selectedDonation?.type === "Incoming") {
       setIncomingModalOpen(true);
     } else {
       setOutgoingModalOpen(true);
@@ -125,23 +93,84 @@ const DonationsPage: React.FC = () => {
     setAddDonationModalOpen(false);
   };
 
+  const columns: GridColDef[] = [
+    {
+      field: "id",
+      headerName: "ID",
+      flex: 2,
+    },
+    {
+      field: "date",
+      headerName: "DATE",
+      type: "date",
+      flex: 3,
+      valueGetter: (params: GridValueGetterParams) => new Date(params.row.date),
+    },
+    { field: "organization", headerName: "ORGANIZATION", flex: 4 },
+    {
+      field: "items",
+      headerName: "ITEMS",
+      type: "number",
+      flex: 3,
+      align: "left",
+      headerAlign: "left",
+    },
+    {
+      field: "total",
+      headerName: "TOTAL",
+      type: "number",
+      flex: 3,
+      align: "left",
+      headerAlign: "left",
+    },
+    {
+      field: "type",
+      headerName: "TYPE",
+      flex: 3,
+      cellClassName: "super-app-theme--cell",
+    },
+    {
+      field: "actions",
+      type: "actions",
+      getActions: (params: GridRowParams) => [
+        <GridActionsCellItem
+          icon={<img src={editIcon} />}
+          onClick={() => {
+            handleOpenEditUser(params.row);
+          }}
+          label="Edit"
+        />,
+        <GridActionsCellItem
+          icon={<img src={deleteIcon} />}
+          onClick={() => {
+            // handleOpenDeleteUser(params.row);
+          }}
+          label="Delete"
+        />,
+      ],
+    },
+  ];
+
   return (
     <div style={{ height: 400, width: "100%" }}>
       <Button
         onClick={handleAddDonation}
-        variant="contained"
-        sx={{ margin: "auto 10px 10px auto" }}
+        className="table-add-button"
+        endIcon={<AddIcon />}
       >
-        Add Donation
+        Add
       </Button>
-      <DataGrid
-        sx={{ width: "95%" }}
-        rows={rows}
-        columns={columns}
-        pagination
-        pageSizeOptions={[10, 25]}
-        onRowClick={handleRowClick}
-      />
+      <div className="grid-container">
+        <DataGrid
+          rows={rows}
+          rowHeight={40}
+          columns={columns}
+          pagination
+          pageSizeOptions={[10, 25]}
+          className="mtm-datagrid"
+        />
+      </div>
+
       <Modal open={incomingModalOpen} onClose={handleCloseModal}>
         <Box sx={modalStyle}>
           <DonationDetailsIncoming selectedDonation={selectedDonation} />

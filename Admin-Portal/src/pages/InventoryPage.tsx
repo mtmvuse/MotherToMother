@@ -20,6 +20,9 @@ import { addIventoryItem, addUser, getInventoryRows } from "../lib/services";
 import { ResponseInventoryItem } from "~/types/inventory";
 import FormDialog from "../components/FormDialog";
 import AddInventoryDialog from "../components/inventory/AddInventoryDialog";
+import AddIcon from "@mui/icons-material/Add";
+import editIcon from "../assets/edit-icon.png";
+import deleteIcon from "../assets/delete-icon.png";
 
 export interface Row {
   id: number;
@@ -185,40 +188,48 @@ const InventoryPage: React.FC = () => {
     {
       field: "actions",
       type: "actions",
-      getActions: (params: GridRowParams) => {
-        return [
-          <GridActionsCellItem
-            icon={<DeleteIcon />}
-            onClick={handleDeleteRow(params.id)}
-            label="Delete"
-          />,
-        ];
-      },
+      getActions: (params: GridRowParams) => [
+        <GridActionsCellItem
+          icon={<img src={editIcon} />}
+          onClick={() => {}}
+          label="Edit"
+        />,
+        <GridActionsCellItem
+          icon={<img src={deleteIcon} />}
+          onClick={() => {
+            handleDeleteRow(params.row);
+          }}
+          label="Delete"
+        />,
+      ],
     },
   ];
   return (
     <div style={{ height: "80%", width: "100%" }}>
       <Button
-        variant="contained"
-        sx={{ margin: "auto 10px 10px auto" }}
+        className="table-add-button"
+        endIcon={<AddIcon />}
         onClick={handleOpenAddInventory}
       >
-        Add Inventory Item
+        Add
       </Button>
-      <DataGrid
-        editMode="row"
-        sx={{ width: "95%" }}
-        rows={inventoryQueryResponse.data || []}
-        columns={columns}
-        pagination
-        rowCount={totalNumber}
-        pageSizeOptions={[PAGE_SIZE]}
-        paginationMode="server"
-        paginationModel={{ page: page, pageSize: PAGE_SIZE }}
-        onPaginationModelChange={(params) => {
-          setPage(params.page);
-        }}
-      />
+      <div className="grid-container">
+        <DataGrid
+          className="mtm-datagrid"
+          rowHeight={40}
+          editMode="row"
+          rows={inventoryQueryResponse.data || []}
+          columns={columns}
+          pagination
+          rowCount={totalNumber}
+          pageSizeOptions={[PAGE_SIZE]}
+          paginationMode="server"
+          paginationModel={{ page: page, pageSize: PAGE_SIZE }}
+          onPaginationModelChange={(params) => {
+            setPage(params.page);
+          }}
+        />
+      </div>
       <FormDialog
         title={"ADD A NEW INVENTORY ENTRY"}
         handleClose={handleCloseAddInventory}

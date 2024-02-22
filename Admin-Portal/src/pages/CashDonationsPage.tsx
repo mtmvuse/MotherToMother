@@ -8,13 +8,14 @@ import {
   GridRowParams,
   GridValueFormatterParams,
 } from "@mui/x-data-grid";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
 import FormDialog from "../components/FormDialog";
 import CashDonationsDialog from "../components/cashDonations/cashDonationDialog";
 import type { Organization } from "~/types/organization";
 import { useQuery } from "@tanstack/react-query";
 import { getOrganizations } from "../lib/services";
+import editIcon from "../assets/edit-icon.png";
+import deleteIcon from "../assets/delete-icon.png";
+import AddIcon from "@mui/icons-material/Add";
 
 const exampleRows = [
   {
@@ -108,14 +109,14 @@ const CashDonationsPage: React.FC = () => {
       type: "actions",
       getActions: (params: GridRowParams) => [
         <GridActionsCellItem
-          icon={<EditIcon />}
+          icon={<img src={editIcon} />}
           onClick={() => {
             console.log("edit clicked");
           }}
           label="Edit"
         />,
         <GridActionsCellItem
-          icon={<DeleteIcon />}
+          icon={<img src={deleteIcon} />}
           onClick={handleDeleteRow(params.id)}
           label="Delete"
         />,
@@ -124,24 +125,23 @@ const CashDonationsPage: React.FC = () => {
   ];
   return (
     <div style={{ height: 400, width: "100%" }}>
-      <Button
-        variant="contained"
-        sx={{ margin: "auto 10px 10px auto" }}
-        onClick={handleOpenAddCashDonation}
-      >
+      <Button className="table-add-button" onClick={handleOpenAddCashDonation}>
         Add Donation
       </Button>
-      <DataGrid
-        sx={{ width: "95%" }}
-        rows={rows}
-        columns={columns}
-        initialState={{
-          pagination: {
-            paginationModel: { page: 0, pageSize: 10 },
-          },
-        }}
-        pageSizeOptions={[10, 25]}
-      />
+      <div className="grid-container">
+        <DataGrid
+          className="mtm-datagrid"
+          rowHeight={40}
+          rows={rows}
+          columns={columns}
+          initialState={{
+            pagination: {
+              paginationModel: { page: 0, pageSize: 10 },
+            },
+          }}
+          pageSizeOptions={[10, 25]}
+        />
+      </div>
 
       <FormDialog
         title={"ADD A CASH DONATION"}
