@@ -61,6 +61,21 @@
   justify-content: centter;
 }
 
+.css-a1ywpm-MuiButtonBase-root-MuiButton-root {
+  background-color: #f3f3f3 !important;
+  border: none;
+  color: #6d6d6d !important;
+  text-decoration: none;
+  border-radius: 20px !important;
+  box-shadow: none !important;
+  margin-left: 20px !important;
+  height: 40px;
+  width: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: centter;
+}
+
 .grid-container {
   background-color: #f3f3f3;
   padding: 20px;
