@@ -10,8 +10,6 @@ import {
 	GridSortModel,
 	GridValueFormatterParams,
 } from "@mui/x-data-grid";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
 import {
 	keepPreviousData,
 	useMutation,
@@ -32,9 +30,9 @@ import InventoryDialog from "../components/inventory/InventoryDialog";
 import editIcon from "../assets/edit-icon.png";
 import deleteIcon from "../assets/delete-icon.png";
 import AddIcon from "@mui/icons-material/Add";
+import "./styles/datagrid.css";
 
-//TODO
-// tokens auth on the backend?
+// TODO: make this into a constant in the constants file
 const categoryOptions: string[] = ["Books", "Clothes"];
 
 const InventoryPage: React.FC = () => {

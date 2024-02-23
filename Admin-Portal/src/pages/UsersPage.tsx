@@ -7,8 +7,6 @@ import {
   type GridFilterModel,
   type GridSortModel,
 } from "@mui/x-data-grid";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
 import {
   getUsers,
   updateUser,
@@ -44,6 +42,7 @@ import ExportButton from "../components/ExportButton";
 import editIcon from "../assets/edit-icon.png";
 import deleteIcon from "../assets/delete-icon.png";
 import AddIcon from "@mui/icons-material/Add";
+import "./styles/datagrid.css";
 
 const UsersPage: React.FC = () => {
   const [page, setPage] = useState(0);
@@ -392,6 +391,7 @@ const UsersPage: React.FC = () => {
           }}
           onFilterModelChange={handleFilterModelChange}
           onSortModelChange={handleSortModelChange}
+          sx={{ width: "100%", height: "68vh" }}
         />
       </div>
       <FormDialog
