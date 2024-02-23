@@ -3,6 +3,7 @@ import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { Box, Tab, Tabs, Typography, Button } from "@mui/material";
 import { CAPTIONS } from "../lib/constants";
 import { useAuth } from "../lib/contexts";
+import "./styles/datagrid.css";
 
 interface LinkTabProps {
   label?: string;

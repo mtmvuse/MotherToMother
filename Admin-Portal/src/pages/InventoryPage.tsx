@@ -5,13 +5,10 @@ import {
   GridActionsCellItem,
   GridColDef,
   GridFilterModel,
-  GridRowId,
   GridRowParams,
   GridSortModel,
   GridValueFormatterParams,
 } from "@mui/x-data-grid";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
 import {
   keepPreviousData,
   useMutation,
@@ -32,9 +29,9 @@ import InventoryDialog from "../components/inventory/InventoryDialog";
 import editIcon from "../assets/edit-icon.png";
 import deleteIcon from "../assets/delete-icon.png";
 import AddIcon from "@mui/icons-material/Add";
+import "./styles/datagrid.css";
 
-//TODO
-// tokens auth on the backend?
+// TODO: make this into a constant in the constants file
 const categoryOptions: string[] = ["Books", "Clothes"];
 
 const InventoryPage: React.FC = () => {
@@ -285,7 +282,7 @@ const InventoryPage: React.FC = () => {
         <DataGrid
           editMode="row"
           rowHeight={40}
-          sx={{ width: "100%", height: "80vh" }}
+          sx={{ width: "100%", height: "68vh" }}
           rows={inventoryQueryResponse.data || []}
           columns={columns}
           pagination

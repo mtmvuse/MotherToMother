@@ -17,6 +17,7 @@ import editIcon from "../assets/edit-icon.png";
 import deleteIcon from "../assets/delete-icon.png";
 import AddIcon from "@mui/icons-material/Add";
 import { Add } from "@mui/icons-material";
+import "./styles/datagrid.css";
 
 const exampleRows = [
   {
