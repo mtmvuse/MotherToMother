@@ -1,51 +1,21 @@
 import React, { useState } from "react";
-import { Button, Modal, Typography, Box, Alert } from "@mui/material";
+import { Button, Modal, Box } from "@mui/material";
 import {
   DataGrid,
   GridColDef,
   GridRowParams,
   GridValueGetterParams,
+  GridActionsCellItem,
 } from "@mui/x-data-grid";
 import AddDonationModal from "../components/donations/AddDontaionModal";
 import DonationDetailsIncoming from "../components/donations/DonationDetailsIncoming";
 import DonationDetailsOutgoing from "../components/donations/DonationDetailsOutgoing";
-
-const columns: GridColDef[] = [
-  {
-    field: "id",
-    headerName: "ID",
-    flex: 2,
-  },
-  {
-    field: "date",
-    headerName: "Date",
-    type: "date",
-    flex: 3,
-    valueGetter: (params: GridValueGetterParams) => new Date(params.row.date),
-  },
-  { field: "organization", headerName: "Organization", flex: 4 },
-  {
-    field: "items",
-    headerName: "Items",
-    type: "number",
-    flex: 3,
-    align: "left",
-    headerAlign: "left",
-  },
-  {
-    field: "total",
-    headerName: "Total",
-    type: "number",
-    flex: 3,
-    align: "left",
-    headerAlign: "left",
-  },
-  {
-    field: "type",
-    headerName: "Type",
-    flex: 3,
-  },
-];
+import { ErrorMessage } from "../components/ErrorMessage";
+import { SuccessMessage } from "../components/SuccessMessage";
+import editIcon from "../assets/edit-icon.png";
+import deleteIcon from "../assets/delete-icon.png";
+import AddIcon from "@mui/icons-material/Add";
+import "./styles/datagrid.css";
 
 const rows = [
   {
@@ -107,7 +77,9 @@ const DonationsPage: React.FC = () => {
   const [incomingModalOpen, setIncomingModalOpen] = useState(false);
   const [outgoingModalOpen, setOutgoingModalOpen] = useState(false);
   const [addDonationModal, setAddDonationModalOpen] = React.useState(false);
-  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+  const [showSuccessAlert, setShowSuccessAlert] = useState<boolean | null>(
+    null
+  );
 
   const handleSubmissionSuccess = () => {
     setShowSuccessAlert(true);
@@ -115,9 +87,9 @@ const DonationsPage: React.FC = () => {
 
   const handleAddDonation = () => setAddDonationModalOpen(true);
 
-  const handleRowClick = (params: GridRowParams) => {
+  const handleOpenEdit = (params: GridRowParams) => {
     setSelectedDonation(params.row as Donation);
-    if (params.row.type === "Incoming") {
+    if (selectedDonation?.type === "Incoming") {
       setIncomingModalOpen(true);
     } else {
       setOutgoingModalOpen(true);
@@ -131,23 +103,88 @@ const DonationsPage: React.FC = () => {
     setAddDonationModalOpen(false);
   };
 
+  const columns: GridColDef[] = [
+    {
+      field: "id",
+      headerName: "ID",
+      flex: 2,
+    },
+    {
+      field: "date",
+      headerName: "Date",
+      type: "date",
+      flex: 3,
+      valueGetter: (params: GridValueGetterParams) => new Date(params.row.date),
+    },
+    { field: "organization", headerName: "Organization", flex: 4 },
+    {
+      field: "items",
+      headerName: "Items",
+      type: "number",
+      flex: 3,
+      align: "left",
+      headerAlign: "left",
+    },
+    {
+      field: "total",
+      headerName: "Total",
+      type: "number",
+      flex: 3,
+      align: "left",
+      headerAlign: "left",
+    },
+    {
+      field: "type",
+      headerName: "Type",
+      flex: 3,
+    },
+    {
+      field: "actions",
+      type: "actions",
+      getActions: (params: GridRowParams) => [
+        <GridActionsCellItem
+          icon={<img src={editIcon} />}
+          onClick={() => {
+            handleOpenEdit(params.row);
+          }}
+          label="Edit"
+        />,
+        <GridActionsCellItem
+          icon={<img src={deleteIcon} />}
+          onClick={() => {
+            // TODO once API is finished
+          }}
+          label="Delete"
+        />,
+      ],
+    },
+  ];
+
   return (
-    <div style={{ height: 400, width: "100%" }}>
+    <Box>
+      {showSuccessAlert && (
+        <SuccessMessage
+          success={showSuccessAlert}
+          setSuccess={setShowSuccessAlert}
+        />
+      )}
       <Button
         onClick={handleAddDonation}
-        variant="contained"
-        sx={{ margin: "auto 10px 10px auto" }}
+        className="table-add-button"
+        endIcon={<AddIcon />}
       >
-        Add Donation
+        Add
       </Button>
-      <DataGrid
-        sx={{ width: "95%" }}
-        rows={rows}
-        columns={columns}
-        pagination
-        pageSizeOptions={[10, 25]}
-        onRowClick={handleRowClick}
-      />
+      <div className="grid-container">
+        <DataGrid
+          rowHeight={40}
+          rows={rows}
+          columns={columns}
+          pagination
+          pageSizeOptions={[10, 25]}
+        />
+      </div>
+
       <Modal open={incomingModalOpen} onClose={handleCloseModal}>
         <Box sx={modalStyle}>
           <DonationDetailsIncoming selectedDonation={selectedDonation} />
@@ -166,12 +203,7 @@ const DonationsPage: React.FC = () => {
           />
         </Box>
       </Modal>
-      {showSuccessAlert && (
-        <Alert severity="success" onClose={() => setShowSuccessAlert(false)}>
-          Donation submitted successfully!
-        </Alert>
-      )}
-    </div>
+    </Box>
   );
 };
 

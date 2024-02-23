@@ -5,13 +5,10 @@ import {
   GridActionsCellItem,
   GridColDef,
   GridFilterModel,
-  GridRowId,
   GridRowParams,
   GridSortModel,
   GridValueFormatterParams,
 } from "@mui/x-data-grid";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
 import {
   keepPreviousData,
   useMutation,
@@ -29,9 +26,12 @@ import { ResponseInventoryItem, inventoryRow } from "~/types/inventory";
 import FormDialog from "../components/FormDialog";
 import DeleteAlertModal from "../components/DeleteAlertModal";
 import InventoryDialog from "../components/inventory/InventoryDialog";
+import editIcon from "../assets/edit-icon.png";
+import deleteIcon from "../assets/delete-icon.png";
+import AddIcon from "@mui/icons-material/Add";
+import "./styles/datagrid.css";
 
-//TODO
-// tokens auth on the backend?
+// TODO: make this into a constant in the constants file
 const categoryOptions: string[] = ["Books", "Clothes"];
 
 const InventoryPage: React.FC = () => {
@@ -252,14 +252,14 @@ const InventoryPage: React.FC = () => {
       getActions: (params: GridRowParams) => {
         return [
           <GridActionsCellItem
-            icon={<EditIcon />}
+            icon={<img src={editIcon} />}
             onClick={() => {
               handleOpenEditInventory(params.row);
             }}
             label="Edit"
           />,
           <GridActionsCellItem
-            icon={<DeleteIcon />}
+            icon={<img src={deleteIcon} />}
             onClick={() => {
               handleOpenDeleteInventory(params.row);
             }}
@@ -272,31 +272,34 @@ const InventoryPage: React.FC = () => {
   return (
     <Box>
       <Button
-        variant="contained"
-        sx={{ margin: "auto 10px 10px auto" }}
+        className="table-add-button"
+        endIcon={<AddIcon />}
         onClick={handleOpenAddInventory}
       >
-        Add Inventory Item
+        Add
       </Button>
-      <DataGrid
-        editMode="row"
-        sx={{ width: "95%", height: "80vh" }}
-        rows={inventoryQueryResponse.data || []}
-        columns={columns}
-        pagination
-        autoPageSize
-        rowCount={totalNumber}
-        paginationMode="server"
-        onPaginationModelChange={(params) => {
-          setPage(params.page);
-          setPageSize(params.pageSize);
-        }}
-        sortModel={sortModel}
-        filterModel={filterModel}
-        sortingOrder={["desc", "asc"]}
-        onFilterModelChange={handleFilterModelChange}
-        onSortModelChange={handleSortModelChange}
-      />
+      <div className="grid-container">
+        <DataGrid
+          editMode="row"
+          rowHeight={40}
+          sx={{ width: "100%", height: "68vh" }}
+          rows={inventoryQueryResponse.data || []}
+          columns={columns}
+          pagination
+          autoPageSize
+          rowCount={totalNumber}
+          paginationMode="server"
+          onPaginationModelChange={(params) => {
+            setPage(params.page);
+            setPageSize(params.pageSize);
+          }}
+          sortModel={sortModel}
+          filterModel={filterModel}
+          sortingOrder={["desc", "asc"]}
+          onFilterModelChange={handleFilterModelChange}
+          onSortModelChange={handleSortModelChange}
+        />
+      </div>
       <FormDialog
         title={"ADD A NEW INVENTORY ENTRY"}
         handleClose={handleCloseAddInventory}
