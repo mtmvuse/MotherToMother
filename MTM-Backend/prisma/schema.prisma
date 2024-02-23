@@ -33,7 +33,7 @@ model User {
   household      String?
   userType       String
   donation       Donation[]
-  Organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  Organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@index([organizationId], map: "User_organizationId_fkey")
 }
@@ -42,8 +42,8 @@ model Donation {
   id                    Int                    @id @default(autoincrement())
   userId                Int
   date                  DateTime               @default(now())
-  user                  User                   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  DonationDetail        DonationDetail[]      
+  user                  User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  DonationDetail        DonationDetail[]
   OutgoingDonationStats OutgoingDonationStats?
 
   @@index([userId], map: "Donation_userId_fkey")
@@ -55,8 +55,8 @@ model DonationDetail {
   itemId       Int
   usedQuantity Int
   newQuantity  Int
-  donation     Donation @relation(fields: [donationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  item         Item     @relation(fields: [itemId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  donation     Donation @relation(fields: [donationId], references: [id], onDelete: Cascade)
+  item         Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
 
   @@unique([donationId, itemId])
   @@index([donationId], map: "DonationDetail_donationId_fkey")
@@ -73,7 +73,7 @@ model OutgoingDonationStats {
   nativeNum    Int
   asianNum     Int
   otherNum     Int
-  donation     Donation @relation(fields: [donationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  donation     Donation @relation(fields: [donationId], references: [id], onDelete: Cascade)
 }
 
 model Item {
@@ -95,12 +95,11 @@ model Admin {
 }
 
 model CashDonation {
-  id             Int          @id @default(autoincrement())
-  organizationId Int
-  date           DateTime     @default(now())
+  id             Int           @id @default(autoincrement())
+  organizationId Int?
+  date           DateTime      @default(now())
   total          Float
-  donor          String
-  Organization   Organization @relation(fields: [organizationId], references: [id])
+  Organization   Organization? @relation(fields: [organizationId], references: [id])
 
   @@index([organizationId], map: "CashDonation_organizationId_fkey")
 }
@@ -109,9 +108,17 @@ model CashDonation {
 view user_dashboard {
   id           Int    @id @default(0)
   email        String
-  name         String @db.VarChar(383)
+  name         String @default("") @db.VarChar(383)
   phone        String
   address      String @db.Text
   type         String
   organization String
+}
+
+/// View for cash donation dashboard for admin portal
+view cashDonation_dashboard {
+  id           Int      @unique @default(0)
+  date         DateTime @default(now())
+  organization String
+  total        Float
 }
