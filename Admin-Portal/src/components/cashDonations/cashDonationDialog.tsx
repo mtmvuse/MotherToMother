@@ -5,6 +5,7 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  SelectChangeEvent,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
@@ -14,21 +15,28 @@ import type { Organization } from "~/types/organization";
 
 interface CashDialogProps {
   organizations: void | Organization[] | undefined;
+  selectedDate: Date | null; // New prop for selected date
+  onOrgIdChange: (orgId: number | null) => void; // Function to handle date change
+  onDateChange: (date: Date | null) => void;
 }
 
 const CashDonationsDialog: React.FC<CashDialogProps> = (props) => {
-  const { organizations } = props;
+  const { organizations, selectedDate, onDateChange, onOrgIdChange } = props;
   const [total, setTotal] = useState<number>();
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [organization, setOrganization] = React.useState();
 
   const handleDateChange = (date: Date | null) => {
-    setSelectedDate(date);
+    onDateChange(date);
   };
 
   const handleTotalChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const input = parseFloat(event.target.value);
     setTotal(input);
+  };
+
+  const handleOrganizationChange = (event: SelectChangeEvent) => {
+    console.log("Selected organization ID:", event.target.value);
+    const input = parseFloat(event.target.value);
+    onOrgIdChange(input);
   };
 
   return (
@@ -40,10 +48,10 @@ const CashDonationsDialog: React.FC<CashDialogProps> = (props) => {
           labelId="user-type-label"
           id="user-type-select"
           label="Donor"
-          value={organization}
+          onChange={handleOrganizationChange}
         >
           {organizations?.map((org) => (
-            <MenuItem key={org.id} value={org.name}>
+            <MenuItem key={org.id} value={org.id}>
               {org.name}
             </MenuItem>
           ))}

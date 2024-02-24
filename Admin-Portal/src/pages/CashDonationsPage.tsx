@@ -11,13 +11,14 @@ import {
 import FormDialog from "../components/FormDialog";
 import CashDonationsDialog from "../components/cashDonations/cashDonationDialog";
 import type { Organization } from "~/types/organization";
-import { useQuery } from "@tanstack/react-query";
-import { getOrganizations } from "../lib/services";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { addCashDonation, getOrganizations } from "../lib/services";
 import editIcon from "../assets/edit-icon.png";
 import deleteIcon from "../assets/delete-icon.png";
 import AddIcon from "@mui/icons-material/Add";
 import { Add } from "@mui/icons-material";
 import "./styles/datagrid.css";
+import type { AddCashDonationType } from "~/types/cashDonationTypes";
 
 const exampleRows = [
   {
@@ -33,6 +34,19 @@ let id_counter = 2;
 const CashDonationsPage: React.FC = () => {
   const [rows, setRows] = useState(exampleRows);
   const [openAddCashDonation, setOpenAddCashDonation] = React.useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<boolean | null>(null);
+  const queryClient = useQueryClient();
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedOrgId, setselectedOrgId] = useState<number | null>(null);
+
+  const handleDateChange = (date: Date | null) => {
+    setSelectedDate(date); // Update selectedDate state
+  };
+
+  const handleOrgChange = (orgId: number | null) => {
+    setselectedOrgId(orgId); // Update selectedDate state
+  };
 
   const handleOpenAddCashDonation = () => {
     setOpenAddCashDonation(true);
@@ -47,9 +61,35 @@ const CashDonationsPage: React.FC = () => {
     setOpenAddCashDonation(false);
   };
 
+  const addMutation = useMutation({
+    mutationFn: (data: AddCashDonationType) => addCashDonation(data),
+    onSuccess: (result: Response) => {
+      queryClient.invalidateQueries({ queryKey: ["cashDonation"] });
+      if (result.status === 400 || result.status === 500) {
+        setError("Cannot add user");
+      } else {
+        setSuccess(true);
+      }
+      handleCloseAddCashDonation();
+    },
+    onError: (error: Error) => {
+      setError(error.message);
+    },
+  });
+
   const handleAddCashDonation = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    handleCloseAddCashDonation();
+    const formData = new FormData(event.currentTarget);
+    const formJson = Object.fromEntries((formData as any).entries());
+    const { organization, ...rest } = formJson;
+    const cashDonationData = {
+      ...rest,
+      organizationId: selectedOrgId,
+      total: Number(formJson.total),
+      date: selectedDate,
+    } as AddCashDonationType;
+
+    addMutation.mutate(cashDonationData);
   };
 
   const organizationsQueryResponse = useQuery({
@@ -80,7 +120,7 @@ const CashDonationsPage: React.FC = () => {
       headerAlign: "left",
     },
     {
-      field: "donor",
+      field: "organization",
       headerName: "Donor",
       flex: 3,
       type: "singleSelect",
@@ -154,7 +194,12 @@ const CashDonationsPage: React.FC = () => {
         open={openAddCashDonation}
         handleSubmit={handleAddCashDonation}
       >
-        <CashDonationsDialog organizations={organizationsQueryResponse.data} />
+        <CashDonationsDialog
+          organizations={organizationsQueryResponse.data}
+          selectedDate={selectedDate}
+          onOrgIdChange={handleOrgChange}
+          onDateChange={handleDateChange}
+        />
       </FormDialog>
     </div>
   );
