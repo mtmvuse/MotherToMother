@@ -41,11 +41,11 @@ const CashDonationsPage: React.FC = () => {
   const [selectedOrgId, setselectedOrgId] = useState<number | null>(null);
 
   const handleDateChange = (date: Date | null) => {
-    setSelectedDate(date); // Update selectedDate state
+    setSelectedDate(date);
   };
 
   const handleOrgChange = (orgId: number | null) => {
-    setselectedOrgId(orgId); // Update selectedDate state
+    setselectedOrgId(orgId);
   };
 
   const handleOpenAddCashDonation = () => {

@@ -3,7 +3,7 @@ import express, {
   type Response,
   type NextFunction,
 } from "express";
-import * as CashDonationService from "../cashDonation/cashDonation.service"; // Import your CashDonationService module
+import * as CashDonationService from "../cashDonation/cashDonation.service";
 import Joi from "joi";
 import type { CashDonationInput } from "../../../types/cashDonation";
 
@@ -28,16 +28,13 @@ cashDonationRouter.post(
       total: Joi.number().positive().required(),
     });
     try {
-      // Validate the request body against the schema
       const validatedData = (await schema.validateAsync(
         req.body,
       )) as CashDonationInput;
 
-      // Call the service function to add the cash donation
       const result =
         await CashDonationService.createCashDonation(validatedData);
 
-      // Return the result with status 201 (Created)
       return res.status(201).json(result);
     } catch (error) {
       next(error);

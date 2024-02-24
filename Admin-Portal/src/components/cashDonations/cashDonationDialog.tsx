@@ -15,8 +15,8 @@ import type { Organization } from "~/types/organization";
 
 interface CashDialogProps {
   organizations: void | Organization[] | undefined;
-  selectedDate: Date | null; // New prop for selected date
-  onOrgIdChange: (orgId: number | null) => void; // Function to handle date change
+  selectedDate: Date | null;
+  onOrgIdChange: (orgId: number | null) => void;
   onDateChange: (date: Date | null) => void;
 }
 
@@ -34,7 +34,6 @@ const CashDonationsDialog: React.FC<CashDialogProps> = (props) => {
   };
 
   const handleOrganizationChange = (event: SelectChangeEvent) => {
-    console.log("Selected organization ID:", event.target.value);
     const input = parseFloat(event.target.value);
     onOrgIdChange(input);
   };

@@ -34,7 +34,6 @@ export const createCashDonation = async (
       },
     });
 
-    // Return the relevant fields of the created cash donation
     return {
       id: newDonation.id,
       date: newDonation.date,
@@ -42,7 +41,6 @@ export const createCashDonation = async (
       organization: input.organization,
     };
   } catch (error) {
-    // Handle any errors that occur during the creation of the cash donation
     console.error(error);
     throw new Error("Failed to create cash donation");
   }
