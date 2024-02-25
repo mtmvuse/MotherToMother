@@ -142,6 +142,18 @@ export const getOrganizations = async (query?: string | undefined) => {
   });
 };
 
+export const getCashDonations = async (query?: string | undefined) => {
+  const fetchURL = query
+    ? `${backendUrl}/cashDonation/v1?type=${query}`
+    : `${backendUrl}/cashDonation/v1`;
+  return await fetch(fetchURL, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+};
+
 export const getModalUsers = async (query?: string | undefined) => {
   const fetchURL = query
     ? `${backendUrl}/users/v1?type=${query}`

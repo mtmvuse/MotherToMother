@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import {
   DataGrid,
   GridActionsCellItem,
@@ -11,34 +11,44 @@ import {
 import FormDialog from "../components/FormDialog";
 import CashDonationsDialog from "../components/cashDonations/cashDonationDialog";
 import type { Organization } from "~/types/organization";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { addCashDonation, getOrganizations } from "../lib/services";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+import {
+  addCashDonation,
+  getCashDonations,
+  getOrganizations,
+  getUsers,
+} from "../lib/services";
 import editIcon from "../assets/edit-icon.png";
+import { PAGE_SIZE } from "../lib/constants";
 import deleteIcon from "../assets/delete-icon.png";
 import AddIcon from "@mui/icons-material/Add";
 import { Add } from "@mui/icons-material";
 import "./styles/datagrid.css";
-import type { AddCashDonationType } from "~/types/cashDonationTypes";
-
-const exampleRows = [
-  {
-    id: 1,
-    date: "2/5/2024",
-    donor: "Donor 1",
-    total: 100,
-  },
-];
+import { ErrorMessage } from "../components/ErrorMessage";
+import type {
+  AddCashDonationType,
+  CashDashboardResponse,
+  ResponseCashDonation,
+} from "~/types/cashDonationTypes";
+import { SuccessMessage } from "../components/SuccessMessage";
 
 let id_counter = 2;
 
 const CashDonationsPage: React.FC = () => {
-  const [rows, setRows] = useState(exampleRows);
+  const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(PAGE_SIZE);
   const [openAddCashDonation, setOpenAddCashDonation] = React.useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean | null>(null);
   const queryClient = useQueryClient();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedOrgId, setselectedOrgId] = useState<number | null>(null);
+  const [totalNumber, setTotalNumber] = useState(0);
 
   const handleDateChange = (date: Date | null) => {
     setSelectedDate(date);
@@ -92,6 +102,18 @@ const CashDonationsPage: React.FC = () => {
     addMutation.mutate(cashDonationData);
   };
 
+  const cashDonationsQueryResponse = useQuery({
+    queryKey: ["cashDonation"],
+    placeholderData: keepPreviousData,
+    queryFn: () =>
+      getCashDonations("token")
+        .then((res: Response) => res.json())
+        .then((data: CashDashboardResponse[]) => data)
+        .catch((err: any) => {
+          console.error(err);
+        }),
+  });
+
   const organizationsQueryResponse = useQuery({
     queryKey: ["organizations"],
     queryFn: () =>
@@ -102,6 +124,24 @@ const CashDonationsPage: React.FC = () => {
           console.error(err);
         }),
   });
+
+  if (cashDonationsQueryResponse.isLoading) return <div>Loading...</div>;
+  if (cashDonationsQueryResponse.error)
+    return (
+      <ErrorMessage
+        error={cashDonationsQueryResponse.error.message}
+        setError={setError}
+      />
+    );
+
+  if (organizationsQueryResponse.isLoading) return <div>Loading...</div>;
+  if (organizationsQueryResponse.error)
+    return (
+      <ErrorMessage
+        error={organizationsQueryResponse.error.message}
+        setError={setError}
+      />
+    );
 
   const columns: GridColDef[] = [
     {
@@ -129,6 +169,9 @@ const CashDonationsPage: React.FC = () => {
       ),
       align: "left",
       headerAlign: "left",
+      valueGetter: (params: GridValueFormatterParams<ResponseCashDonation>) => {
+        return params.row.Organization.name;
+      },
       editable: true,
     },
     {
@@ -166,25 +209,32 @@ const CashDonationsPage: React.FC = () => {
     },
   ];
   return (
-    <div style={{ height: 400, width: "100%" }}>
-      <Button
-        className="table-add-button"
-        onClick={handleOpenAddCashDonation}
-        endIcon={<AddIcon />}
-      >
-        Add
-      </Button>
+    <Box>
+      {error && <ErrorMessage error={error} setError={setError} />}
+      {success && <SuccessMessage success={success} setSuccess={setSuccess} />}
+      <div style={{ display: "flex " }}>
+        <Button
+          className="table-add-button"
+          onClick={handleOpenAddCashDonation}
+          endIcon={<AddIcon />}
+        >
+          Add
+        </Button>
+      </div>
       <div className="grid-container">
         <DataGrid
           rowHeight={40}
-          rows={rows}
+          rows={cashDonationsQueryResponse.data || []}
           columns={columns}
-          initialState={{
-            pagination: {
-              paginationModel: { page: 0, pageSize: 10 },
-            },
+          pagination
+          autoPageSize
+          rowCount={totalNumber}
+          paginationMode="server"
+          onPaginationModelChange={(params) => {
+            setPage(params.page);
+            setPageSize(params.pageSize);
           }}
-          pageSizeOptions={[10, 25]}
+          sx={{ width: "100%", height: "68vh" }}
         />
       </div>
 
@@ -201,7 +251,7 @@ const CashDonationsPage: React.FC = () => {
           onDateChange={handleDateChange}
         />
       </FormDialog>
-    </div>
+    </Box>
   );
 };
 
