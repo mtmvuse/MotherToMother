@@ -7,14 +7,13 @@ import {
   type GridFilterModel,
   type GridSortModel,
 } from "@mui/x-data-grid";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
 import {
   getUsers,
   updateUser,
   getOrganizations,
   addUser,
   deleteUser,
+  addOrganization,
 } from "../lib/services";
 import { USER_TYPE, PAGE_SIZE } from "../lib/constants";
 import {
@@ -26,13 +25,24 @@ import {
 import type {
   UserDashboardResponse,
   EditUserArgs,
+  AddUserType,
   UserRow,
 } from "../types/user";
 import { Button, Box } from "@mui/material";
 import FormDialog from "../components/FormDialog";
 import DeleteAlertModal from "../components/DeleteAlertModal";
 import UserDialog from "../components/users/UserDialog";
-import type { Organization } from "~/types/organization";
+import OrganizationDialog from "../components/users/OrganizationDialog";
+import type { Organization } from "../types/organization";
+import { ErrorMessage } from "../components/ErrorMessage";
+import { SuccessMessage } from "../components/SuccessMessage";
+import { saveAs } from "file-saver";
+import Papa from "papaparse";
+import ExportButton from "../components/ExportButton";
+import editIcon from "../assets/edit-icon.png";
+import deleteIcon from "../assets/delete-icon.png";
+import AddIcon from "@mui/icons-material/Add";
+import "./styles/datagrid.css";
 
 const UsersPage: React.FC = () => {
   const [page, setPage] = useState(0);
@@ -41,10 +51,13 @@ const UsersPage: React.FC = () => {
   const [sortModel, setSortModel] = useState<GridSortModel | undefined>();
   const [totalNumber, setTotalNumber] = useState(0);
   const [openAddUser, setOpenAddUser] = React.useState(false);
+  const [openAddOrganization, setOpenAddOrganization] = React.useState(false);
   const [openEditUser, setOpenEditUser] = React.useState(false);
   const [openDeleteUser, setOpenDeleteUser] = React.useState(false);
   const [editRow, setEditRow] = React.useState<UserRow | undefined>();
   const [deleteRow, setDeleteRow] = React.useState<UserRow | undefined>();
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<boolean | null>(null);
   const queryClient = useQueryClient();
 
   const handleOpenAddUser = () => {
@@ -53,6 +66,14 @@ const UsersPage: React.FC = () => {
 
   const handleCloseAddUser = () => {
     setOpenAddUser(false);
+  };
+
+  const handleOpenAddOrganization = () => {
+    setOpenAddOrganization(true);
+  };
+
+  const handleCloseAddOrganization = () => {
+    setOpenAddOrganization(false);
   };
 
   const handleOpenEditUser = (row: UserRow) => {
@@ -93,10 +114,10 @@ const UsersPage: React.FC = () => {
         .then((res: Response) => res.json())
         .then((data: UserDashboardResponse) => {
           setTotalNumber(data.totalNumber);
+          if (data === undefined) {
+            throw new Error("No data: Internal Server Error");
+          }
           return data.users;
-        })
-        .catch((err: any) => {
-          console.error(err);
         }),
     enabled: !isAnyFilterValueUndefined(),
   });
@@ -106,33 +127,85 @@ const UsersPage: React.FC = () => {
     queryFn: () =>
       getOrganizations()
         .then((res: Response) => res.json())
-        .then((data: Organization[]) => data)
-        .catch((err: any) => {
-          console.error(err);
-        }),
+        .then((data: Organization[]) => data),
   });
 
   const addMutation = useMutation({
-    mutationFn: (data: any) => addUser(data),
-    onSuccess: () => {
+    mutationFn: (data: AddUserType) => addUser(data),
+    onSuccess: (result: Response) => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
+      if (result.status === 400 || result.status === 500) {
+        setError("Cannot add user");
+      } else {
+        setSuccess(true);
+      }
+      handleCloseAddUser();
+    },
+    onError: (error: Error) => {
+      setError(error.message);
+    },
+  });
+
+  const addOrganizationMutation = useMutation({
+    mutationFn: (data: Organization) => addOrganization(data, "token"),
+    onSuccess: (result: Response) => {
+      queryClient.invalidateQueries({ queryKey: ["organizations"] });
+      if (result.status === 400 || result.status === 500) {
+        setError("Cannot add organization");
+      } else {
+        setSuccess(true);
+      }
+      handleCloseAddOrganization();
+    },
+    onError: (error: Error) => {
+      setError(error.message);
     },
   });
 
   const editMutation = useMutation({
     mutationFn: (data: EditUserArgs) =>
       updateUser(data.id, data.userData, "token"),
-    onSuccess: () => {
+    onSuccess: (result: Response) => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
+      if (result.status === 400 || result.status === 500) {
+        setError("Cannot edit user");
+      } else {
+        setSuccess(true);
+      }
+      handleCloseEditUser();
+    },
+    onError: (error: Error) => {
+      setError(error.message);
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) => deleteUser(id, "token"),
-    onSuccess: () => {
+    onSuccess: (result: Response) => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
+      if (result.status === 400 || result.status === 500) {
+        setError("Cannot delete user");
+      } else {
+        setSuccess(true);
+      }
+      handleCloseDeleteUser();
+    },
+    onError: (error: Error) => {
+      setError(error.message);
     },
   });
+
+  const handleExport = async () => {
+    try {
+      const response = await getUsers("token", -1, -1, filterModel, sortModel);
+      const data = await response.json();
+      const csv = Papa.unparse(data.users);
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      saveAs(blob, "MTM users.csv");
+    } catch (error: any) {
+      setError(`Export failed with error: ${error.message}`);
+    }
+  };
 
   const handleAddUser = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -143,9 +216,17 @@ const UsersPage: React.FC = () => {
       ...rest,
       organizationId: findOrganizationId(formJson.organization),
       password: "password",
-    };
+    } as AddUserType;
     addMutation.mutate(userData);
-    handleCloseAddUser();
+  };
+
+  const handleAddOrganization = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const formJson = Object.fromEntries(
+      (formData as any).entries()
+    ) as Organization;
+    addOrganizationMutation.mutate(formJson);
   };
 
   const handleEditUser = (event: React.FormEvent<HTMLFormElement>) => {
@@ -163,13 +244,11 @@ const UsersPage: React.FC = () => {
       token: "token",
     };
     editMutation.mutate(data);
-    handleCloseEditUser();
   };
 
   const handleDeleteUser = () => {
     if (!deleteRow) return;
     deleteMutation.mutate(deleteRow.id);
-    handleCloseDeleteUser();
   };
 
   const handleFilterModelChange = (model: GridFilterModel) => {
@@ -182,7 +261,20 @@ const UsersPage: React.FC = () => {
 
   if (usersQueryResponse.isLoading) return <div>Loading...</div>;
   if (usersQueryResponse.error)
-    return <div>Error: {usersQueryResponse.error.message}</div>;
+    return (
+      <ErrorMessage
+        error={usersQueryResponse.error.message}
+        setError={setError}
+      />
+    );
+  if (organizationsQueryResponse.isLoading) return <div>Loading...</div>;
+  if (organizationsQueryResponse.error)
+    return (
+      <ErrorMessage
+        error={organizationsQueryResponse.error.message}
+        setError={setError}
+      />
+    );
 
   const columns: GridColDef[] = [
     {
@@ -246,14 +338,14 @@ const UsersPage: React.FC = () => {
       type: "actions",
       getActions: (params: GridRowParams) => [
         <GridActionsCellItem
-          icon={<EditIcon />}
+          icon={<img src={editIcon} />}
           onClick={() => {
             handleOpenEditUser(params.row);
           }}
           label="Edit"
         />,
         <GridActionsCellItem
-          icon={<DeleteIcon />}
+          icon={<img src={deleteIcon} />}
           onClick={() => {
             handleOpenDeleteUser(params.row);
           }}
@@ -264,32 +356,44 @@ const UsersPage: React.FC = () => {
   ];
   return (
     <Box>
-      <Button
-        variant="contained"
-        sx={{ margin: "auto 10px 10px auto" }}
-        onClick={handleOpenAddUser}
-      >
-        Add User
-      </Button>
-      <Button variant="contained" sx={{ margin: "auto 10px 10px auto" }}>
-        Add Organization
-      </Button>
-      <DataGrid
-        sx={{ width: "95%", height: "80vh" }}
-        rows={usersQueryResponse.data || []}
-        columns={columns}
-        pagination
-        autoPageSize
-        rowCount={totalNumber}
-        paginationMode="server"
-        onPaginationModelChange={(params) => {
-          setPage(params.page);
-          setPageSize(params.pageSize);
-        }}
-        onFilterModelChange={handleFilterModelChange}
-        onSortModelChange={handleSortModelChange}
-      />
+      {error && <ErrorMessage error={error} setError={setError} />}
+      {success && <SuccessMessage success={success} setSuccess={setSuccess} />}
+      <div style={{ display: "flex " }}>
+        <Button
+          className="table-add-org-button"
+          onClick={handleOpenAddOrganization}
+          endIcon={<AddIcon />}
+        >
+          Add Organization
+        </Button>
+        <Button
+          className="table-add-button-second"
+          onClick={handleOpenAddUser}
+          endIcon={<AddIcon />}
+        >
+          Add
+        </Button>
 
+        <ExportButton handleExport={handleExport} />
+      </div>
+      <div className="grid-container">
+        <DataGrid
+          rowHeight={40}
+          rows={usersQueryResponse.data || []}
+          columns={columns}
+          pagination
+          autoPageSize
+          rowCount={totalNumber}
+          paginationMode="server"
+          onPaginationModelChange={(params) => {
+            setPage(params.page);
+            setPageSize(params.pageSize);
+          }}
+          onFilterModelChange={handleFilterModelChange}
+          onSortModelChange={handleSortModelChange}
+          sx={{ width: "100%", height: "68vh" }}
+        />
+      </div>
       <FormDialog
         title={"ADD A NEW USER"}
         handleClose={handleCloseAddUser}
@@ -297,6 +401,14 @@ const UsersPage: React.FC = () => {
         handleSubmit={handleAddUser}
       >
         <UserDialog organizations={organizationsQueryResponse.data} />
+      </FormDialog>
+      <FormDialog
+        title={"ADD A NEW ORGANIZATION"}
+        handleClose={handleCloseAddOrganization}
+        open={openAddOrganization}
+        handleSubmit={handleAddOrganization}
+      >
+        <OrganizationDialog />
       </FormDialog>
       <FormDialog
         title={"EDIT A USER"}

@@ -8,8 +8,16 @@ import {
   GridRowParams,
   GridValueFormatterParams,
 } from "@mui/x-data-grid";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
+import FormDialog from "../components/FormDialog";
+import CashDonationsDialog from "../components/cashDonations/cashDonationDialog";
+import type { Organization } from "~/types/organization";
+import { useQuery } from "@tanstack/react-query";
+import { getOrganizations } from "../lib/services";
+import editIcon from "../assets/edit-icon.png";
+import deleteIcon from "../assets/delete-icon.png";
+import AddIcon from "@mui/icons-material/Add";
+import { Add } from "@mui/icons-material";
+import "./styles/datagrid.css";
 
 const exampleRows = [
   {
@@ -18,37 +26,42 @@ const exampleRows = [
     donor: "Donor 1",
     total: 100,
   },
-  {
-    id: 2,
-    date: "1/30/2024",
-    donor: "Donor 1",
-    total: 100,
-  },
 ];
 
 let id_counter = 2;
 
-const donorOptions: string[] = ["Donor 1", "Donor 2", "Donor 3"];
-
 const CashDonationsPage: React.FC = () => {
   const [rows, setRows] = useState(exampleRows);
+  const [openAddCashDonation, setOpenAddCashDonation] = React.useState(false);
 
-  const handleAddRow = () => {
-    setRows((prevRows) => [
-      ...prevRows,
-      {
-        id: ++id_counter,
-        date: "1/1/2024",
-        donor: "Donor 1",
-        total: 0,
-      },
-    ]);
+  const handleOpenAddCashDonation = () => {
+    setOpenAddCashDonation(true);
   };
 
   const handleDeleteRow = (id: GridRowId) => () => {
     setRows(rows.filter((row) => row.id !== id));
     --id_counter;
   };
+
+  const handleCloseAddCashDonation = () => {
+    setOpenAddCashDonation(false);
+  };
+
+  const handleAddCashDonation = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    handleCloseAddCashDonation();
+  };
+
+  const organizationsQueryResponse = useQuery({
+    queryKey: ["organizations"],
+    queryFn: () =>
+      getOrganizations()
+        .then((res: Response) => res.json())
+        .then((data: Organization[]) => data)
+        .catch((err: any) => {
+          console.error(err);
+        }),
+  });
 
   const columns: GridColDef[] = [
     {
@@ -71,7 +84,9 @@ const CashDonationsPage: React.FC = () => {
       headerName: "Donor",
       flex: 3,
       type: "singleSelect",
-      valueOptions: donorOptions,
+      valueOptions: organizationsQueryResponse.data?.map(
+        (organization) => organization.name
+      ),
       align: "left",
       headerAlign: "left",
       editable: true,
@@ -96,14 +111,14 @@ const CashDonationsPage: React.FC = () => {
       type: "actions",
       getActions: (params: GridRowParams) => [
         <GridActionsCellItem
-          icon={<EditIcon />}
+          icon={<img src={editIcon} />}
           onClick={() => {
             console.log("edit clicked");
           }}
           label="Edit"
         />,
         <GridActionsCellItem
-          icon={<DeleteIcon />}
+          icon={<img src={deleteIcon} />}
           onClick={handleDeleteRow(params.id)}
           label="Delete"
         />,
@@ -113,23 +128,34 @@ const CashDonationsPage: React.FC = () => {
   return (
     <div style={{ height: 400, width: "100%" }}>
       <Button
-        variant="contained"
-        sx={{ margin: "auto 10px 10px auto" }}
-        onClick={handleAddRow}
+        className="table-add-button"
+        onClick={handleOpenAddCashDonation}
+        endIcon={<AddIcon />}
       >
-        Add Donation
+        Add
       </Button>
-      <DataGrid
-        sx={{ width: "95%" }}
-        rows={rows}
-        columns={columns}
-        initialState={{
-          pagination: {
-            paginationModel: { page: 0, pageSize: 10 },
-          },
-        }}
-        pageSizeOptions={[10, 25]}
-      />
+      <div className="grid-container">
+        <DataGrid
+          rowHeight={40}
+          rows={rows}
+          columns={columns}
+          initialState={{
+            pagination: {
+              paginationModel: { page: 0, pageSize: 10 },
+            },
+          }}
+          pageSizeOptions={[10, 25]}
+        />
+      </div>
+
+      <FormDialog
+        title={"ADD A CASH DONATION"}
+        handleClose={handleCloseAddCashDonation}
+        open={openAddCashDonation}
+        handleSubmit={handleAddCashDonation}
+      >
+        <CashDonationsDialog organizations={organizationsQueryResponse.data} />
+      </FormDialog>
     </div>
   );
 };

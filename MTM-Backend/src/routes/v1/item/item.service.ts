@@ -102,3 +102,33 @@ export const getItemsCategoryName = async (
 
   return items;
 };
+
+/**
+ * Increment or decrement the quantity of an item
+ * @param itemId
+ * @param quantityUsedChange positive or negative number to change the quantityUsed
+ * @param quantityNewChange positive or negative number to change the quantityNew
+ *
+ * @returns the updated item
+ */
+export const updateItem = async (
+  itemId: number,
+  quantityUsedChange: number,
+  quantityNewChange: number,
+): Promise<ItemType | null> => {
+  const item: ItemType | null = await db.item.update({
+    where: {
+      id: itemId,
+    },
+    data: {
+      quantityUsed: {
+        increment: quantityUsedChange,
+      },
+      quantityNew: {
+        increment: quantityNewChange,
+      },
+    },
+  });
+
+  return item;
+};

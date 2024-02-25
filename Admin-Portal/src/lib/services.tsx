@@ -1,7 +1,9 @@
-import { AddInventoryItemType } from "~/types/inventory";
+import { AddInventoryItemType, EditInventoryItemType } from "~/types/inventory";
 import type { EditUserType, AddUserType } from "../types/user";
+import type { Organization } from "~/types/organization";
 import type { GridFilterModel, GridSortModel } from "@mui/x-data-grid";
 import { filterModelToApiQuery, sortModelToApiQuery } from "./utils";
+import { AddOutgoingDonationType } from "~/types/DonationTypes";
 
 const mode = import.meta.env.MODE;
 const backendUrl: string =
@@ -12,18 +14,24 @@ const backendUrl: string =
 export const getInventoryRows = async (
   token: string | undefined,
   page: number,
-  pageSize: number
+  pageSize: number,
+  filterModel?: GridFilterModel,
+  sortModel?: GridSortModel
 ) => {
-  return await fetch(
-    `${backendUrl}/inventory/v1?page=${page}&pageSize=${pageSize}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "appplication/json",
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
+  let url = `${backendUrl}/inventory/v1?page=${page}&pageSize=${pageSize}`;
+  if (filterModel) {
+    url += `&${filterModelToApiQuery(filterModel)}`;
+  }
+  if (sortModel) {
+    url += `&${sortModelToApiQuery(sortModel)}`;
+  }
+  return await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "appplication/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
 
 export const addIventoryItem = async (inventoryItem: AddInventoryItemType) => {
@@ -31,6 +39,29 @@ export const addIventoryItem = async (inventoryItem: AddInventoryItemType) => {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(inventoryItem),
+  });
+};
+
+export const editInventoryItem = async (editInfo: EditInventoryItemType) => {
+  const inventoryItem = editInfo.data;
+  const id = editInfo.id;
+  return await fetch(`${backendUrl}/inventory/v1/id/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(inventoryItem),
+  });
+};
+
+export const deleteInventoryItem = async (
+  inventoryId: number,
+  token: string
+) => {
+  return await fetch(`${backendUrl}/inventory/v1/delete/id/${inventoryId}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
   });
 };
 
@@ -99,5 +130,51 @@ export const getOrganizations = async (query?: string | undefined) => {
     headers: {
       "Content-Type": "application/json",
     },
+  });
+};
+
+export const getModalUsers = async (query?: string | undefined) => {
+  const fetchURL = query
+    ? `${backendUrl}/users/v1?type=${query}`
+    : `${backendUrl}/users/v1`;
+  return await fetch(fetchURL, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+};
+
+export const getModalItems = async () => {
+  const fetchURL = `${backendUrl}/items/v1`;
+  return await fetch(fetchURL, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+};
+
+export const createOutgoingDonation = async (
+  outgoingDonationData: AddOutgoingDonationType
+) => {
+  return await fetch(`${backendUrl}/donation/v1/outgoing`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(outgoingDonationData),
+  });
+};
+
+export const addOrganization = async (
+  organization: Organization,
+  token: string
+) => {
+  return await fetch(`${backendUrl}/organization/v1`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(organization),
   });
 };
