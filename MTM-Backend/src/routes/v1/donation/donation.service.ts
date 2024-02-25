@@ -16,13 +16,14 @@ export const getDonationsAP = async (
   whereClause: Prisma.donation_detailWhereInput,
   orderBy: Prisma.DonationDetailOrderByWithRelationInput,
 ): Promise<DonationsDashboardDisplay[]> => {
-  console.log("whereClause", whereClause);
+  // console.log("whereClause", whereClause);
   const donationDetails = await db.donation_detail.findMany({
     where: whereClause,
     take: pageSize,
     skip: page * pageSize,
     orderBy: orderBy,
   });
+  //  console.log(donationDetails);
 
   return donationDetails.map((detail) => ({
     id: detail.id,
