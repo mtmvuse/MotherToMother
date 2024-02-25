@@ -57,10 +57,9 @@ donationRouter.get(
         whereClause,
         orderBy,
       );
-
-      const donations = await DonationService.getTransactions(page, pageSize);
-      const totalNumber = await DonationService.getTotalNumberDonations();
-      return res.status(200).json({ donations, totalNumber });
+      const count =
+        await DonationService.getDonationDashboardCount(whereClause);
+      return res.status(200).json({ donationsAP, totalNumber: count });
     } catch (e) {
       console.error(e);
       next(e);
