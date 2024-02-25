@@ -10,7 +10,7 @@ import type {
 } from "../../../types/donation";
 import type { Prisma } from "@prisma/client";
 
-export const getUsersAP = async (
+export const getDonationsAP = async (
   page: number,
   pageSize: number,
   whereClause: Prisma.donation_detailWhereInput,

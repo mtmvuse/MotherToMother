@@ -51,7 +51,7 @@ donationRouter.get(
         sort,
         order,
       ) as Prisma.user_dashboardAvgOrderByAggregateInput;
-      const donationsAP = await DonationService.getUsersAP(
+      const donationsAP = await DonationService.getDonationsAP(
         pageInt,
         pageSizeInt,
         whereClause,
