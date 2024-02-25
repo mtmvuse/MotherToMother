@@ -108,8 +108,8 @@ view donation_detail {
   id           Int      @id @default(0)
   date         DateTime @default(now())
   organization String
-  total        Float?
-  items        Decimal? @db.Decimal(33, 0)
+  total        Float
+  items        Decimal @db.Decimal(33, 0)
   type         String   @default("") @db.VarChar(8)
-  details      Json?
+  details      Json
 }
