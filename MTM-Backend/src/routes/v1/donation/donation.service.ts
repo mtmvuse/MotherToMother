@@ -13,19 +13,38 @@ import type { Prisma } from "@prisma/client";
 export const getUsersAP = async (
   page: number,
   pageSize: number,
-  whereClause: DonationsDashboardDisplay,
-  orderBy: Prisma.donation_detailAvgOrderByAggregateInput,
+  whereClause: Prisma.donation_detailWhereInput,
+  orderBy: Prisma.DonationDetailOrderByWithRelationInput,
 ): Promise<DonationsDashboardDisplay[]> => {
-  return db.donation_detail.findMany({
+  console.log("whereClause", whereClause);
+  const donationDetails = await db.donation_detail.findMany({
     where: whereClause,
     take: pageSize,
     skip: page * pageSize,
     orderBy: orderBy,
   });
+
+  return donationDetails.map((detail) => ({
+    id: detail.id,
+    date: detail.date,
+    organization: detail.organization,
+    total: detail.total ? detail.total : 0,
+    items:
+      detail.items !== null
+        ? typeof detail.items === "number"
+          ? detail.items
+          : detail.items.toNumber()
+        : 0,
+    type: detail.type,
+  }));
 };
 
-export const getTotalNumberDonations = async () => {
-  return db.donation.count();
+export const getDonationDashboardCount = async (
+  whereClause: Prisma.donation_detailWhereInput,
+): Promise<number> => {
+  return db.donation_detail.count({
+    where: whereClause,
+  });
 };
 
 export const getTransactions = async (page: number, pageSize: number) => {

@@ -96,7 +96,7 @@ export interface DonationQueryType {
   id: number;
   date: Date;
   organization: string;
-  total: number;
+  total: number | null;
   items: string;
   type: string;
 }
@@ -106,6 +106,6 @@ export interface DonationsDashboardDisplay {
   date: Date;
   organization: string;
   total: number;
-  items: string;
+  items: number;
   type: string;
 }
