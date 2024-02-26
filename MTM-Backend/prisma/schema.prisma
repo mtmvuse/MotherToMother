@@ -115,10 +115,13 @@ view user_dashboard {
   organization String
 }
 
-/// View for cash donation dashboard for admin portal
-view cashDonation_dashboard {
-  id           Int      @unique @default(0)
+/// View for donation details for admin portal
+view donation_detail {
+  id           Int      @id @default(0)
   date         DateTime @default(now())
   organization String
   total        Float
+  items        Decimal  @db.Decimal(33, 0)
+  type         String   @default("") @db.VarChar(8)
+  details      Json
 }

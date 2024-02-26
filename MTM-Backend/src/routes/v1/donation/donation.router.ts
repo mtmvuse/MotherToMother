@@ -10,16 +10,25 @@ import {
   updateItem,
   getItemsName,
 } from "../item/item.service";
-import {
-  type OutgoingDonationRequestBodyType,
-  type DonationDetailType,
-  type OutgoingDonationStatsType,
-  type PUTOutgoingDonationRequestBodyType,
+import type {
+  OutgoingDonationRequestBodyType,
+  DonationDetailType,
+  OutgoingDonationStatsType,
+  IncomingDonationType,
+  IncomingDonationTypeWithID,
+  IncomingDonationWithIDType,
+  DonationQueryType,
+  DonationsDashboardDisplay,
+  PUTOutgoingDonationRequestBodyType,
 } from "../../../types/donation";
+import {
+  translateFilterToPrisma,
+  translateSortToPrisma,
+} from "../../../utils/lib";
+import type { Prisma } from "@prisma/client";
 
-interface QueryType {
-  page: string;
-  pageSize: string;
+interface QueryTypeID {
+  id: string;
 }
 
 const donationRouter = express.Router();
@@ -27,16 +36,35 @@ const donationRouter = express.Router();
 donationRouter.get(
   "/v1",
   async (
-    req: Request<any, any, any, QueryType>,
+    req: Request<any, any, any, DonationQueryType>,
     res: Response,
     next: NextFunction,
   ) => {
     try {
-      const page = parseInt(req.query.page, 10);
-      const pageSize = parseInt(req.query.pageSize, 10);
-      const donations = await DonationService.getTransactions(page, pageSize);
-      const totalNumber = await DonationService.getTotalNumberDonations();
-      return res.status(200).json({ donations, totalNumber });
+      const query = req.query;
+      const { page, pageSize, sort, order, ...filters } = query;
+      const pageInt = Number(page);
+      const pageSizeInt = Number(pageSize);
+      const typedFilters = {
+        ...filters,
+        id: filters.id && Number(filters.id),
+      };
+      const whereClause = translateFilterToPrisma(
+        typedFilters,
+      ) as DonationsDashboardDisplay;
+      const orderBy = translateSortToPrisma(
+        sort,
+        order,
+      ) as Prisma.user_dashboardAvgOrderByAggregateInput;
+      const donationsAP = await DonationService.getDonationsAP(
+        pageInt,
+        pageSizeInt,
+        whereClause,
+        orderBy,
+      );
+      const count =
+        await DonationService.getDonationDashboardCount(whereClause);
+      return res.status(200).json({ donationsAP, totalNumber: count });
     } catch (e) {
       console.error(e);
       next(e);
@@ -264,7 +292,74 @@ const updateOutgoingDonation = async (
 
 donationRouter.post("/v1/outgoing", createOutgoingDonation);
 
-donationRouter.put("/v1/outgoing/:donationId", updateOutgoingDonation);
+donationRouter.post(
+  "/v1/incoming",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const donationReqBody = req.body as IncomingDonationTypeWithID;
+      if (!donationReqBody.userId) {
+        return res.status(400).json({
+          error: "User ID must be entered",
+        });
+      }
+      // make sure the user exists by checking the id in the database
+      const createdDonation =
+        await DonationService.createIncomingDonation(donationReqBody);
+
+      if (createdDonation) {
+        return res.status(200).json({
+          createdDonation,
+        });
+      } else {
+        return res.status(400).json({
+          error: "User does not exist",
+        });
+      }
+    } catch (e) {
+      next(e);
+    }
+  },
+);
+
+donationRouter.put(
+  "/v1/incoming",
+  async (
+    req: Request<any, any, any, QueryTypeID>,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const body = req.body as IncomingDonationType;
+      const donationId = parseInt(req.query.id);
+      if (!donationId) {
+        return res.status(400).json({
+          error: "ID must be entered",
+        });
+      }
+
+      // create object with IncomingDonationWithIDType
+      const incomingDonation: IncomingDonationWithIDType = {
+        id: donationId,
+        donationDetails: body.donationDetails,
+      };
+
+      const donations =
+        await DonationService.updateIncomingDonation(incomingDonation);
+
+      if (donations) {
+        return res.status(200).json({
+          donations,
+        });
+      } else {
+        return res.status(400).json({
+          error: "Donation does not exist",
+        });
+      }
+    } catch (e) {
+      next(e);
+    }
+  },
+);
 
 export { donationRouter };
 

@@ -62,10 +62,7 @@ const CashDonationsPage: React.FC = () => {
     setOpenAddCashDonation(true);
   };
 
-  const handleDeleteRow = (id: GridRowId) => () => {
-    setRows(rows.filter((row) => row.id !== id));
-    --id_counter;
-  };
+  const handleDeleteRow = (id: GridRowId) => () => {};
 
   const handleCloseAddCashDonation = () => {
     setOpenAddCashDonation(false);

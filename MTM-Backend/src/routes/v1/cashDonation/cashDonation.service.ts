@@ -3,6 +3,7 @@ import type {
   ResponseCashDonation,
   CashDonationInput,
 } from "../../../types/cashDonation";
+
 /**
  * get all cashDonations in the db
  * @returns all cashDonations in the database
