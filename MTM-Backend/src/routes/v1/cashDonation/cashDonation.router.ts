@@ -9,20 +9,14 @@ import type { CashDonationInput } from "../../../types/cashDonation";
 
 const cashDonationRouter = express.Router();
 
-cashDonationRouter.get(
-  "/v1",
-  async (req: Request<any, any, any>, res: Response, next: NextFunction) => {
-    const cashDonation = req.query;
-    try {
-      if (cashDonation == undefined) {
-        const cashDonations = await CashDonationService.getCashDonations();
-        return res.status(200).json(cashDonations);
-      }
-    } catch (e) {
-      next(e);
-    }
-  },
-);
+cashDonationRouter.get("/v1", async (req, res, next) => {
+  try {
+    const cashDonations = await CashDonationService.getCashDonations();
+    res.status(200).json(cashDonations);
+  } catch (error) {
+    next(error);
+  }
+});
 
 // Route handler for adding a cash donation
 cashDonationRouter.post(
