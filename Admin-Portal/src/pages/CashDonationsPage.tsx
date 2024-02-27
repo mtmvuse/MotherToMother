@@ -12,13 +12,22 @@ import FormDialog from "../components/FormDialog";
 import CashDonationsDialog from "../components/cashDonations/cashDonationDialog";
 import type { Organization } from "~/types/organization";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { addCashDonation, getOrganizations } from "../lib/services";
+import {
+  addCashDonation,
+  getCashDonations,
+  getOrganizations,
+} from "../lib/services";
 import editIcon from "../assets/edit-icon.png";
 import deleteIcon from "../assets/delete-icon.png";
 import AddIcon from "@mui/icons-material/Add";
 import { Add } from "@mui/icons-material";
 import "./styles/datagrid.css";
-import type { AddCashDonationType } from "~/types/cashDonationTypes";
+import type {
+  AddCashDonationType,
+  CashDonation,
+  CashDonationDashboard,
+} from "~/types/cashDonationTypes";
+import { PAGE_SIZE } from "../lib/constants";
 
 const exampleRows = [
   {
@@ -39,6 +48,9 @@ const CashDonationsPage: React.FC = () => {
   const queryClient = useQueryClient();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedOrgId, setselectedOrgId] = useState<number | null>(null);
+  const [totalNumber, setTotalNumber] = useState(0);
+  const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(PAGE_SIZE);
 
   const handleDateChange = (date: Date | null) => {
     setSelectedDate(date);
@@ -100,6 +112,17 @@ const CashDonationsPage: React.FC = () => {
         }),
   });
 
+  const cashDonationsQueryResponse = useQuery({
+    queryKey: ["cashDonations"],
+    queryFn: () =>
+      getCashDonations()
+        .then((res: Response) => res.json())
+        .then((data: CashDonation[]) => data)
+        .catch((err: any) => {
+          console.error(err);
+        }),
+  });
+
   const columns: GridColDef[] = [
     {
       field: "id",
@@ -126,7 +149,9 @@ const CashDonationsPage: React.FC = () => {
       ),
       align: "left",
       headerAlign: "left",
-      editable: true,
+      valueGetter: (params: GridValueFormatterParams<CashDonation>) => {
+        return params.row.Organization.name;
+      },
     },
     {
       field: "total",
@@ -174,14 +199,17 @@ const CashDonationsPage: React.FC = () => {
       <div className="grid-container">
         <DataGrid
           rowHeight={40}
-          rows={rows}
+          rows={cashDonationsQueryResponse.data || []}
           columns={columns}
-          initialState={{
-            pagination: {
-              paginationModel: { page: 0, pageSize: 10 },
-            },
+          pagination
+          autoPageSize
+          rowCount={totalNumber}
+          paginationMode="server"
+          onPaginationModelChange={(params) => {
+            setPage(params.page);
+            setPageSize(params.pageSize);
           }}
-          pageSizeOptions={[10, 25]}
+          sx={{ width: "100%", height: "68vh" }}
         />
       </div>
 
