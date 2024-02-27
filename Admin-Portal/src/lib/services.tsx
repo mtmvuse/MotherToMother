@@ -57,6 +57,11 @@ export const deleteInventoryItem = async (
   inventoryId: number,
   token: string
 ) => {
+  console.log(
+    "LOOK INVENTORY",
+    `${backendUrl}/inventory/v1/delete/id/${inventoryId}`
+  );
+
   return await fetch(`${backendUrl}/inventory/v1/delete/id/${inventoryId}`, {
     method: "DELETE",
     headers: {
@@ -105,7 +110,23 @@ export const updateUser = async (
 };
 
 export const deleteUser = async (id: number, token: string) => {
+  console.log("LOOK", `${backendUrl}/users/v1/delete/id/${id}`);
   return await fetch(`${backendUrl}/users/v1/delete/id/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+export const deleteCashDonation = async (id: number, token: string) => {
+  console.log(
+    "LOOK CASHHHHHHHHHHHHHHHHHHHHHHHHHHH",
+    `${backendUrl}/cashDonation/v1/delete/id/${id}`
+  );
+
+  return await fetch(`${backendUrl}/cashDonation/v1/delete/id/${id}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",

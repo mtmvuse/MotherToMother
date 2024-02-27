@@ -42,4 +42,17 @@ cashDonationRouter.post(
   },
 );
 
+cashDonationRouter.delete(
+  "/v1/delete/id/:id",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const idc = Number(req.params.id);
+      await CashDonationService.deleteCashDonation(idc);
+      return res.status(204).json(idc);
+    } catch (e) {
+      next(e);
+    }
+  },
+);
+
 export { cashDonationRouter };

@@ -4,6 +4,18 @@ import type {
   CashDonationInput,
 } from "../../../types/cashDonation";
 
+export const deleteCashDonation = async (id: number): Promise<void> => {
+  try {
+    await db.cashDonation.delete({
+      where: {
+        id,
+      },
+    });
+  } catch (e) {
+    throw e;
+  }
+};
+
 /**
  * get all cashDonations in the db
  * @returns all cashDonations in the database

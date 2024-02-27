@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import {
   DataGrid,
   GridActionsCellItem,
@@ -14,20 +14,24 @@ import type { Organization } from "~/types/organization";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   addCashDonation,
+  deleteCashDonation,
   getCashDonations,
   getOrganizations,
 } from "../lib/services";
 import editIcon from "../assets/edit-icon.png";
 import deleteIcon from "../assets/delete-icon.png";
 import AddIcon from "@mui/icons-material/Add";
+import DeleteAlertModal from "../components/DeleteAlertModal";
 import { Add } from "@mui/icons-material";
 import "./styles/datagrid.css";
 import type {
   AddCashDonationType,
   CashDonation,
-  CashDonationDashboard,
+  CashDonationRow,
 } from "~/types/cashDonationTypes";
 import { PAGE_SIZE } from "../lib/constants";
+import { ErrorMessage } from "../components/ErrorMessage";
+import { SuccessMessage } from "../components/SuccessMessage";
 
 const exampleRows = [
   {
@@ -52,6 +56,12 @@ const CashDonationsPage: React.FC = () => {
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(PAGE_SIZE);
 
+  const [openDeleteCashDonation, setOpenDeleteCashDonation] =
+    React.useState(false);
+  const [deleteRow, setDeleteRow] = React.useState<
+    CashDonationRow | undefined
+  >();
+
   const handleDateChange = (date: Date | null) => {
     setSelectedDate(date);
   };
@@ -70,12 +80,22 @@ const CashDonationsPage: React.FC = () => {
     setOpenAddCashDonation(false);
   };
 
+  const handleOpenDeleteCashDonation = (row: CashDonationRow) => {
+    setDeleteRow(row);
+    setOpenDeleteCashDonation(true);
+  };
+
+  const handleCloseDeleteCashDonation = () => {
+    setDeleteRow(undefined);
+    setOpenDeleteCashDonation(false);
+  };
+
   const addMutation = useMutation({
     mutationFn: (data: AddCashDonationType) => addCashDonation(data),
     onSuccess: (result: Response) => {
       queryClient.invalidateQueries({ queryKey: ["cashDonation"] });
       if (result.status === 400 || result.status === 500) {
-        setError("Cannot add user");
+        setError("Cannot add cash donation");
       } else {
         setSuccess(true);
       }
@@ -85,6 +105,27 @@ const CashDonationsPage: React.FC = () => {
       setError(error.message);
     },
   });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => deleteCashDonation(id, "token"),
+    onSuccess: (result: Response) => {
+      queryClient.invalidateQueries({ queryKey: ["cashDonation"] });
+      if (result.status === 400 || result.status === 500) {
+        setError("Cannot delete cash donation");
+      } else {
+        setSuccess(true);
+      }
+      handleCloseDeleteCashDonation();
+    },
+    onError: (error: Error) => {
+      setError(error.message);
+    },
+  });
+
+  const handleDeleteCashDonation = () => {
+    if (!deleteRow) return;
+    deleteMutation.mutate(deleteRow.id);
+  };
 
   const handleAddCashDonation = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -122,6 +163,23 @@ const CashDonationsPage: React.FC = () => {
           console.error(err);
         }),
   });
+
+  if (cashDonationsQueryResponse.isLoading) return <div>Loading...</div>;
+  if (cashDonationsQueryResponse.error)
+    return (
+      <ErrorMessage
+        error={cashDonationsQueryResponse.error.message}
+        setError={setError}
+      />
+    );
+  if (organizationsQueryResponse.isLoading) return <div>Loading...</div>;
+  if (organizationsQueryResponse.error)
+    return (
+      <ErrorMessage
+        error={organizationsQueryResponse.error.message}
+        setError={setError}
+      />
+    );
 
   const columns: GridColDef[] = [
     {
@@ -181,21 +239,28 @@ const CashDonationsPage: React.FC = () => {
         />,
         <GridActionsCellItem
           icon={<img src={deleteIcon} />}
-          onClick={handleDeleteRow(params.id)}
+          onClick={() => {
+            handleOpenDeleteCashDonation(params.row);
+          }}
           label="Delete"
         />,
       ],
     },
   ];
   return (
-    <div style={{ height: 400, width: "100%" }}>
-      <Button
-        className="table-add-button"
-        onClick={handleOpenAddCashDonation}
-        endIcon={<AddIcon />}
-      >
-        Add
-      </Button>
+    <Box>
+      {error && <ErrorMessage error={error} setError={setError} />}
+      {success && <SuccessMessage success={success} setSuccess={setSuccess} />}
+      <div style={{ display: "flex " }}>
+        <Button
+          className="table-add-button"
+          onClick={handleOpenAddCashDonation}
+          endIcon={<AddIcon />}
+        >
+          Add
+        </Button>
+      </div>
+
       <div className="grid-container">
         <DataGrid
           rowHeight={40}
@@ -226,7 +291,13 @@ const CashDonationsPage: React.FC = () => {
           onDateChange={handleDateChange}
         />
       </FormDialog>
-    </div>
+      <DeleteAlertModal
+        scenario={"cash donation"}
+        handleDelete={handleDeleteCashDonation}
+        open={openDeleteCashDonation}
+        handleClose={handleCloseDeleteCashDonation}
+      />
+    </Box>
   );
 };
 

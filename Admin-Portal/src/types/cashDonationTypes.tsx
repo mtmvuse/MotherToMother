@@ -12,3 +12,10 @@ export interface CashDonation {
     name: string;
   };
 }
+
+export type CashDonationRow = {
+  id: number;
+  date: Date;
+  total: number;
+  organization: string;
+};
