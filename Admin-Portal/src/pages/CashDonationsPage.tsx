@@ -17,17 +17,18 @@ import {
   deleteCashDonation,
   getCashDonations,
   getOrganizations,
+  updateCashDonation,
 } from "../lib/services";
 import editIcon from "../assets/edit-icon.png";
 import deleteIcon from "../assets/delete-icon.png";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteAlertModal from "../components/DeleteAlertModal";
-import { Add } from "@mui/icons-material";
 import "./styles/datagrid.css";
 import type {
   AddCashDonationType,
   CashDonation,
   CashDonationRow,
+  EditCashArgs,
 } from "~/types/cashDonationTypes";
 import { PAGE_SIZE } from "../lib/constants";
 import { ErrorMessage } from "../components/ErrorMessage";
@@ -55,6 +56,8 @@ const CashDonationsPage: React.FC = () => {
   const [totalNumber, setTotalNumber] = useState(0);
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(PAGE_SIZE);
+  const [editRow, setEditRow] = useState<CashDonationRow | undefined>();
+  const [openEditCashDonation, setOpenEditCashDonation] = React.useState(false);
 
   const [openDeleteCashDonation, setOpenDeleteCashDonation] =
     React.useState(false);
@@ -106,6 +109,28 @@ const CashDonationsPage: React.FC = () => {
     },
   });
 
+  const handleCloseEditCashDonation = () => {
+    setEditRow(undefined);
+    setOpenEditCashDonation(false);
+  };
+
+  const editMutation = useMutation({
+    mutationFn: (data: EditCashArgs) =>
+      updateCashDonation(data.id, data.cashData, "token"),
+    onSuccess: (result: Response) => {
+      queryClient.invalidateQueries({ queryKey: ["cashDonation"] });
+      if (result.status === 400 || result.status === 500) {
+        setError("Cannot edit user");
+      } else {
+        setSuccess(true);
+      }
+      handleCloseEditCashDonation();
+    },
+    onError: (error: Error) => {
+      setError(error.message);
+    },
+  });
+
   const deleteMutation = useMutation({
     mutationFn: (id: number) => deleteCashDonation(id, "token"),
     onSuccess: (result: Response) => {
@@ -125,6 +150,11 @@ const CashDonationsPage: React.FC = () => {
   const handleDeleteCashDonation = () => {
     if (!deleteRow) return;
     deleteMutation.mutate(deleteRow.id);
+  };
+
+  const handleOpenEditCashDonation = (row: CashDonationRow) => {
+    setEditRow(row);
+    setOpenEditCashDonation(true);
   };
 
   const handleAddCashDonation = (event: React.FormEvent<HTMLFormElement>) => {
@@ -163,6 +193,25 @@ const CashDonationsPage: React.FC = () => {
           console.error(err);
         }),
   });
+
+  const handleEditRow = (event: React.FormEvent<HTMLFormElement>) => {
+    if (!editRow) return;
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const formJson = Object.fromEntries((formData as any).entries());
+    const { organization, ...rest } = formJson;
+    const data = {
+      id: editRow.id,
+      cashData: {
+        ...rest,
+        organizationId: selectedOrgId,
+        total: Number(formJson.total),
+        date: selectedDate,
+      } as EditCashArgs["cashData"],
+      token: "token",
+    };
+    editMutation.mutate(data);
+  };
 
   if (cashDonationsQueryResponse.isLoading) return <div>Loading...</div>;
   if (cashDonationsQueryResponse.error)
@@ -233,7 +282,7 @@ const CashDonationsPage: React.FC = () => {
         <GridActionsCellItem
           icon={<img src={editIcon} />}
           onClick={() => {
-            console.log("edit clicked");
+            handleOpenEditCashDonation(params.row);
           }}
           label="Edit"
         />,
@@ -289,6 +338,20 @@ const CashDonationsPage: React.FC = () => {
           selectedDate={selectedDate}
           onOrgIdChange={handleOrgChange}
           onDateChange={handleDateChange}
+        />
+      </FormDialog>
+      <FormDialog
+        title={"EDIT A DONATION"}
+        handleClose={handleCloseEditCashDonation}
+        open={openEditCashDonation}
+        handleSubmit={handleEditRow}
+      >
+        <CashDonationsDialog
+          organizations={organizationsQueryResponse.data}
+          selectedDate={selectedDate}
+          onOrgIdChange={handleOrgChange}
+          onDateChange={handleDateChange}
+          editRow={editRow}
         />
       </FormDialog>
       <DeleteAlertModal

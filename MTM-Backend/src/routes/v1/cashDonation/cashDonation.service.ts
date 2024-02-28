@@ -16,6 +16,23 @@ export const deleteCashDonation = async (id: number): Promise<void> => {
   }
 };
 
+export const updateCashById = async (
+  cash: CashDonationInput,
+  id: number,
+): Promise<ResponseCashDonation> => {
+  return db.cashDonation.update({
+    where: {
+      id: id,
+    },
+    data: cash,
+    select: {
+      id: true,
+      date: true,
+      total: true,
+    },
+  });
+};
+
 /**
  * get all cashDonations in the db
  * @returns all cashDonations in the database

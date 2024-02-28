@@ -115,13 +115,10 @@ view user_dashboard {
   organization String
 }
 
-/// View for donation details for admin portal
-view donation_detail {
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view cashDonation_dashboard {
   id           Int      @id @default(0)
   date         DateTime @default(now())
   organization String
   total        Float
-  items        Decimal  @db.Decimal(33, 0)
-  type         String   @default("") @db.VarChar(8)
-  details      Json
 }

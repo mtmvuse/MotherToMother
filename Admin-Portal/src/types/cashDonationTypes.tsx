@@ -19,3 +19,16 @@ export type CashDonationRow = {
   total: number;
   organization: string;
 };
+
+export type EditCashType = {
+  id: number;
+  date?: Date;
+  total?: number;
+  organizationId?: number;
+};
+
+export type EditCashArgs = {
+  id: number;
+  cashData: EditCashType;
+  token: string;
+};

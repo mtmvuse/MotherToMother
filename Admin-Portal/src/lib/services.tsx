@@ -4,7 +4,11 @@ import type { Organization } from "~/types/organization";
 import type { GridFilterModel, GridSortModel } from "@mui/x-data-grid";
 import { filterModelToApiQuery, sortModelToApiQuery } from "./utils";
 import { AddOutgoingDonationType } from "~/types/DonationTypes";
-import { AddCashDonationType } from "~/types/cashDonationTypes";
+import {
+  AddCashDonationType,
+  EditCashArgs,
+  EditCashType,
+} from "~/types/cashDonationTypes";
 
 const mode = import.meta.env.MODE;
 const backendUrl: string =
@@ -109,8 +113,22 @@ export const updateUser = async (
   });
 };
 
+export const updateCashDonation = async (
+  id: number,
+  cashData: EditCashType,
+  token: string
+) => {
+  return await fetch(`${backendUrl}/cashdonation/v1/update/id/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(cashData),
+  });
+};
+
 export const deleteUser = async (id: number, token: string) => {
-  console.log("LOOK", `${backendUrl}/users/v1/delete/id/${id}`);
   return await fetch(`${backendUrl}/users/v1/delete/id/${id}`, {
     method: "DELETE",
     headers: {
@@ -121,11 +139,6 @@ export const deleteUser = async (id: number, token: string) => {
 };
 
 export const deleteCashDonation = async (id: number, token: string) => {
-  console.log(
-    "LOOK CASHHHHHHHHHHHHHHHHHHHHHHHHHHH",
-    `${backendUrl}/cashDonation/v1/delete/id/${id}`
-  );
-
   return await fetch(`${backendUrl}/cashDonation/v1/delete/id/${id}`, {
     method: "DELETE",
     headers: {

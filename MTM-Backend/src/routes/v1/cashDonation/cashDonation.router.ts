@@ -42,6 +42,30 @@ cashDonationRouter.post(
   },
 );
 
+/**
+ * Update User by ID from Admin portal
+ */
+cashDonationRouter.put(
+  "/v1/update/id/:id",
+  async (req: Request, res: Response, next: NextFunction) => {
+    const schema = Joi.object({
+      organizationId: Joi.number().integer().positive(),
+      date: Joi.date().iso().required(),
+      total: Joi.number().positive().required(),
+    });
+    const id = Number(req.params.id);
+    try {
+      const cashData = (await schema.validateAsync(
+        req.body,
+      )) as CashDonationInput;
+      const cash = await CashDonationService.updateCashById(cashData, id);
+      return res.status(201).json(cash);
+    } catch (e) {
+      next(e);
+    }
+  },
+);
+
 cashDonationRouter.delete(
   "/v1/delete/id/:id",
   async (req: Request, res: Response, next: NextFunction) => {
