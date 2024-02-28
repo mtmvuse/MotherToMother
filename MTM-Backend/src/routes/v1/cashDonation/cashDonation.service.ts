@@ -1,8 +1,15 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/require-await */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { db } from "../../../utils/db.server";
 import type {
   ResponseCashDonation,
   CashDonationInput,
 } from "../../../types/cashDonation";
+import type { cdDashboardDisplay } from "../../../types/cashDonation";
+import { type Prisma } from "@prisma/client";
 
 export const deleteCashDonation = async (id: number): Promise<void> => {
   try {
@@ -33,10 +40,6 @@ export const updateCashById = async (
   });
 };
 
-/**
- * get all cashDonations in the db
- * @returns all cashDonations in the database
- */
 export const getCashDonations = async (): Promise<ResponseCashDonation[]> => {
   return db.cashDonation.findMany({
     select: {
@@ -68,10 +71,41 @@ export const createCashDonation = async (
       id: newDonation.id,
       date: newDonation.date,
       total: newDonation.total,
-      organization: input.organization,
     };
   } catch (error) {
     console.error(error);
     throw new Error("Failed to create cash donation");
   }
+};
+
+export const getCdAP = async (
+  page: number,
+  pageSize: number,
+  whereClause: cdDashboardDisplay,
+  orderBy: Prisma.cashDonation_dashboardAvgOrderByAggregateInput,
+): Promise<cdDashboardDisplay[]> => {
+  return db.cashDonation_dashboard.findMany({
+    where: whereClause,
+    take: pageSize,
+    skip: page * pageSize,
+    orderBy: orderBy,
+  });
+};
+
+export const getAllCdAP = async (
+  whereClause: cdDashboardDisplay,
+  orderBy: Prisma.cashDonation_dashboardAvgOrderByAggregateInput,
+): Promise<cdDashboardDisplay[]> => {
+  return db.cashDonation_dashboard.findMany({
+    where: whereClause,
+    orderBy: orderBy,
+  });
+};
+
+export const getCdCount = async (
+  whereClause: cdDashboardDisplay,
+): Promise<number> => {
+  return db.cashDonation_dashboard.count({
+    where: whereClause,
+  });
 };

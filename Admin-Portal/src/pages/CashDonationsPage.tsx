@@ -4,14 +4,21 @@ import {
   DataGrid,
   GridActionsCellItem,
   GridColDef,
+  GridFilterModel,
   GridRowId,
   GridRowParams,
+  GridSortModel,
   GridValueFormatterParams,
 } from "@mui/x-data-grid";
 import FormDialog from "../components/FormDialog";
 import CashDonationsDialog from "../components/cashDonations/cashDonationDialog";
 import type { Organization } from "~/types/organization";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import {
   addCashDonation,
   deleteCashDonation,
@@ -26,9 +33,9 @@ import DeleteAlertModal from "../components/DeleteAlertModal";
 import "./styles/datagrid.css";
 import type {
   AddCashDonationType,
-  CashDonation,
   CashDonationRow,
   EditCashArgs,
+  cdDashboardResponse,
 } from "~/types/cashDonationTypes";
 import { PAGE_SIZE } from "../lib/constants";
 import { ErrorMessage } from "../components/ErrorMessage";
@@ -47,15 +54,20 @@ let id_counter = 2;
 
 const CashDonationsPage: React.FC = () => {
   const [rows, setRows] = useState(exampleRows);
+
+  const [filterModel, setFilterModel] = useState<GridFilterModel | undefined>();
+  const [sortModel, setSortModel] = useState<GridSortModel | undefined>();
+  const [totalNumber, setTotalNumber] = useState(0);
+  const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(PAGE_SIZE);
+
   const [openAddCashDonation, setOpenAddCashDonation] = React.useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean | null>(null);
   const queryClient = useQueryClient();
+
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [selectedOrgId, setselectedOrgId] = useState<number | null>(null);
-  const [totalNumber, setTotalNumber] = useState(0);
-  const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(PAGE_SIZE);
+
   const [editRow, setEditRow] = useState<CashDonationRow | undefined>();
   const [openEditCashDonation, setOpenEditCashDonation] = React.useState(false);
 
@@ -67,10 +79,6 @@ const CashDonationsPage: React.FC = () => {
 
   const handleDateChange = (date: Date | null) => {
     setSelectedDate(date);
-  };
-
-  const handleOrgChange = (orgId: number | null) => {
-    setselectedOrgId(orgId);
   };
 
   const handleOpenAddCashDonation = () => {
@@ -157,6 +165,20 @@ const CashDonationsPage: React.FC = () => {
     setOpenEditCashDonation(true);
   };
 
+  const handleFilterModelChange = (model: GridFilterModel) => {
+    setFilterModel(model);
+  };
+
+  const handleSortModelChange = (model: GridSortModel) => {
+    setSortModel(model);
+  };
+
+  const findOrganizationId = (organizationName: string) => {
+    return organizationsQueryResponse.data?.find(
+      (organization) => organization.name === organizationName
+    )?.id;
+  };
+
   const handleAddCashDonation = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
@@ -164,7 +186,7 @@ const CashDonationsPage: React.FC = () => {
     const { organization, ...rest } = formJson;
     const cashDonationData = {
       ...rest,
-      organizationId: selectedOrgId,
+      organizationId: findOrganizationId(formJson.organization),
       total: Number(formJson.total),
       date: selectedDate,
     } as AddCashDonationType;
@@ -183,15 +205,24 @@ const CashDonationsPage: React.FC = () => {
         }),
   });
 
-  const cashDonationsQueryResponse = useQuery({
-    queryKey: ["cashDonations"],
+  const isAnyFilterValueUndefined = () => {
+    return filterModel?.items.some((item) => item.value === undefined);
+  };
+
+  const cdQueryResponse = useQuery({
+    queryKey: ["cashDonation", page, pageSize, filterModel, sortModel],
+    placeholderData: keepPreviousData,
     queryFn: () =>
-      getCashDonations()
+      getCashDonations("token", page, pageSize, filterModel, sortModel)
         .then((res: Response) => res.json())
-        .then((data: CashDonation[]) => data)
-        .catch((err: any) => {
-          console.error(err);
+        .then((data: cdDashboardResponse) => {
+          setTotalNumber(data.totalNumber);
+          if (data === undefined) {
+            throw new Error("No data: Internal Server Error");
+          }
+          return data.cashDonation;
         }),
+    enabled: !isAnyFilterValueUndefined(),
   });
 
   const handleEditRow = (event: React.FormEvent<HTMLFormElement>) => {
@@ -204,7 +235,7 @@ const CashDonationsPage: React.FC = () => {
       id: editRow.id,
       cashData: {
         ...rest,
-        organizationId: selectedOrgId,
+        organizationId: findOrganizationId(formJson.organization),
         total: Number(formJson.total),
         date: selectedDate,
       } as EditCashArgs["cashData"],
@@ -213,15 +244,15 @@ const CashDonationsPage: React.FC = () => {
     editMutation.mutate(data);
   };
 
-  if (cashDonationsQueryResponse.isLoading) return <div>Loading...</div>;
-  if (cashDonationsQueryResponse.error)
+  if (cdQueryResponse.isLoading) return <div>Loading...</div>;
+
+  if (cdQueryResponse.error)
     return (
-      <ErrorMessage
-        error={cashDonationsQueryResponse.error.message}
-        setError={setError}
-      />
+      <ErrorMessage error={cdQueryResponse.error.message} setError={setError} />
     );
+
   if (organizationsQueryResponse.isLoading) return <div>Loading...</div>;
+
   if (organizationsQueryResponse.error)
     return (
       <ErrorMessage
@@ -256,9 +287,6 @@ const CashDonationsPage: React.FC = () => {
       ),
       align: "left",
       headerAlign: "left",
-      valueGetter: (params: GridValueFormatterParams<CashDonation>) => {
-        return params.row.Organization.name;
-      },
     },
     {
       field: "total",
@@ -313,7 +341,7 @@ const CashDonationsPage: React.FC = () => {
       <div className="grid-container">
         <DataGrid
           rowHeight={40}
-          rows={cashDonationsQueryResponse.data || []}
+          rows={cdQueryResponse.data || []}
           columns={columns}
           pagination
           autoPageSize
@@ -323,6 +351,8 @@ const CashDonationsPage: React.FC = () => {
             setPage(params.page);
             setPageSize(params.pageSize);
           }}
+          onFilterModelChange={handleFilterModelChange}
+          onSortModelChange={handleSortModelChange}
           sx={{ width: "100%", height: "68vh" }}
         />
       </div>
@@ -336,7 +366,6 @@ const CashDonationsPage: React.FC = () => {
         <CashDonationsDialog
           organizations={organizationsQueryResponse.data}
           selectedDate={selectedDate}
-          onOrgIdChange={handleOrgChange}
           onDateChange={handleDateChange}
         />
       </FormDialog>
@@ -349,7 +378,6 @@ const CashDonationsPage: React.FC = () => {
         <CashDonationsDialog
           organizations={organizationsQueryResponse.data}
           selectedDate={selectedDate}
-          onOrgIdChange={handleOrgChange}
           onDateChange={handleDateChange}
           editRow={editRow}
         />

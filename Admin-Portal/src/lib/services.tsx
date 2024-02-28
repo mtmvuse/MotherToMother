@@ -98,6 +98,29 @@ export const getUsers = async (
   });
 };
 
+export const getCashDonations = async (
+  token: string | undefined,
+  page: number,
+  pageSize: number,
+  filterModel?: GridFilterModel,
+  sortModel?: GridSortModel
+) => {
+  let url = `${backendUrl}/cashDonation/v1?page=${page}&pageSize=${pageSize}`;
+  if (filterModel) {
+    url += `&${filterModelToApiQuery(filterModel)}`;
+  }
+  if (sortModel) {
+    url += `&${sortModelToApiQuery(sortModel)}`;
+  }
+  return await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
 export const updateUser = async (
   id: number,
   userData: EditUserType,
@@ -168,18 +191,6 @@ export const getOrganizations = async (query?: string | undefined) => {
   const fetchURL = query
     ? `${backendUrl}/organization/v1?type=${query}`
     : `${backendUrl}/organization/v1`;
-  return await fetch(fetchURL, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-};
-
-export const getCashDonations = async (query?: string | undefined) => {
-  const fetchURL = query
-    ? `${backendUrl}/cashDonation/v1?type=${query}`
-    : `${backendUrl}/cashDonation/v1`;
   return await fetch(fetchURL, {
     method: "GET",
     headers: {

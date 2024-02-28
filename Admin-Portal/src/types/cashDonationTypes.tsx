@@ -4,15 +4,6 @@ export interface AddCashDonationType {
   total: number;
 }
 
-export interface CashDonation {
-  id: number;
-  date: Date;
-  total: number;
-  Organization: {
-    name: string;
-  };
-}
-
 export type CashDonationRow = {
   id: number;
   date: Date;
@@ -32,3 +23,17 @@ export type EditCashArgs = {
   cashData: EditCashType;
   token: string;
 };
+
+export interface cdDashboardResponse {
+  totalNumber: number;
+  cashDonation: ResponseCd[];
+}
+
+export interface ResponseCd {
+  id: number;
+  date: Date;
+  total: number;
+  Organization: {
+    name: string;
+  };
+}

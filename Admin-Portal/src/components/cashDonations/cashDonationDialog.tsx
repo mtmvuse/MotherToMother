@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   TextField,
   Select,
@@ -17,26 +17,20 @@ import { CashDonationRow } from "~/types/cashDonationTypes";
 interface CashDialogProps {
   organizations: void | Organization[] | undefined;
   selectedDate: Date | null;
-  onOrgIdChange: (orgId: number | null) => void;
   onDateChange: (date: Date | null) => void;
   editRow?: CashDonationRow;
 }
 
 const CashDonationsDialog: React.FC<CashDialogProps> = (props) => {
-  const { organizations, selectedDate, onDateChange, onOrgIdChange, editRow } =
-    props;
-  console.log("EditRow!!!", editRow);
-  console.log("EditRow!!!", editRow?.organization);
+  const { organizations, selectedDate, onDateChange, editRow } = props;
+
   const [total, setTotal] = useState<number>(
     editRow == undefined ? 0 : Number(editRow?.total)
   );
 
-  const [organization, setOrganization] = React.useState(
-    editRow?.organization || ""
-  );
+  const [organization, setOrganization] = React.useState(editRow?.organization);
 
   const handleDateChange = (date: Date | null) => {
-    console.log(date);
     onDateChange(date);
   };
 
@@ -46,12 +40,7 @@ const CashDonationsDialog: React.FC<CashDialogProps> = (props) => {
   };
 
   const handleOrganizationChange = (event: SelectChangeEvent) => {
-    const input = parseFloat(event.target.value);
-    {
-      console.log(event.target.value as string);
-    }
     setOrganization(event.target.value as string);
-    onOrgIdChange(input);
   };
 
   return (
@@ -65,10 +54,9 @@ const CashDonationsDialog: React.FC<CashDialogProps> = (props) => {
           value={organization}
           label="Donor"
           onChange={handleOrganizationChange}
-          defaultValue={editRow?.organization}
         >
           {organizations?.map((org) => (
-            <MenuItem key={org.id} value={org.id}>
+            <MenuItem key={org.id} value={org.name}>
               {org.name}
             </MenuItem>
           ))}
@@ -79,7 +67,6 @@ const CashDonationsDialog: React.FC<CashDialogProps> = (props) => {
               value={selectedDate}
               onChange={handleDateChange}
               label="Select a date"
-              defaultValue={editRow?.date}
             />
           </DemoContainer>
         </LocalizationProvider>
