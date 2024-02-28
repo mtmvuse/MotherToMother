@@ -110,7 +110,6 @@ const DonationsPage: React.FC = () => {
       getDonations("token", page, pageSize, filterModel, sortModel)
         .then((response: Response) => response.json())
         .then((data) => {
-          console.log(data);
           setTotalNumber(data.totalNumber);
           const renderDonations = data.donationsAP.map(
             (donation: ResponseDonation) => ({
@@ -122,7 +121,6 @@ const DonationsPage: React.FC = () => {
               items: donation.items,
             })
           );
-          console.log(renderDonations);
           return renderDonations;
         })
         .catch((err: any) => {
