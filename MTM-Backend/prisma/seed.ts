@@ -58,7 +58,7 @@ async function main() {
             donationId: newDonation.id,
             itemId: items[j].id,
             usedQuantity: 3,
-            newQuantity: 2,
+            newQuantity: j % 2 == 0 ? 0 : 1,
           },
         });
       }
