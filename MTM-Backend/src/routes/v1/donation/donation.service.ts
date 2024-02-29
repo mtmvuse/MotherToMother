@@ -4,10 +4,48 @@ import type {
   DonationDetailType,
   OutgoingDonationStatsType,
   DashboardDonationDetailType,
+  IncomingDonationTypeWithID,
+  IncomingDonationWithIDType,
+  DonationsDashboardDisplay,
 } from "../../../types/donation";
+import type { Prisma } from "@prisma/client";
 
-export const getTotalNumberDonations = async () => {
-  return db.donation.count();
+export const getDonationsAP = async (
+  page: number,
+  pageSize: number,
+  whereClause: Prisma.donation_detailWhereInput,
+  orderBy: Prisma.DonationDetailOrderByWithRelationInput,
+): Promise<DonationsDashboardDisplay[]> => {
+  // console.log("whereClause", whereClause);
+  const donationDetails = await db.donation_detail.findMany({
+    where: whereClause,
+    take: pageSize,
+    skip: page * pageSize,
+    orderBy: orderBy,
+  });
+  //  console.log(donationDetails);
+
+  return donationDetails.map((detail) => ({
+    id: detail.id,
+    date: detail.date,
+    organization: detail.organization,
+    total: detail.total ? detail.total : 0,
+    items:
+      detail.items !== null
+        ? typeof detail.items === "number"
+          ? detail.items
+          : detail.items.toNumber()
+        : 0,
+    type: detail.type,
+  }));
+};
+
+export const getDonationDashboardCount = async (
+  whereClause: Prisma.donation_detailWhereInput,
+): Promise<number> => {
+  return db.donation_detail.count({
+    where: whereClause,
+  });
 };
 
 export const getTransactions = async (page: number, pageSize: number) => {
@@ -199,4 +237,90 @@ export const updateOutgoingDonationStats = async (
       otherNum: otherNum,
     },
   });
+};
+
+export const createIncomingDonation = async (
+  incomingDonation: IncomingDonationTypeWithID,
+) => {
+  const user = await db.user.findUnique({
+    where: {
+      id: incomingDonation.userId,
+    },
+  });
+  if (!user) {
+    return null;
+  }
+  const donation = await db.donation.create({
+    data: {
+      userId: incomingDonation.userId,
+      date: new Date(),
+    },
+  });
+  // For each product, update the inventory and create donation details entries
+  for (const product of incomingDonation.products) {
+    const item = await db.item.findFirst({
+      where: { name: product.name },
+      select: {
+        id: true,
+        category: true,
+        name: true,
+        quantityUsed: true,
+        quantityNew: true,
+        valueUsed: true,
+        valueNew: true,
+        DonationDetail: true,
+      },
+    });
+    if (item) {
+      await db.item.update({
+        where: { id: item.id },
+        data: { quantityNew: { increment: product.quantity } },
+      });
+      await db.donationDetail.create({
+        data: {
+          donationId: donation.id,
+          itemId: item.id,
+          newQuantity: product.quantity,
+          usedQuantity: 0,
+        },
+      });
+    }
+  }
+  return donation;
+};
+
+export const updateIncomingDonation = async (
+  incomingDonation: IncomingDonationWithIDType,
+) => {
+  const donationExists = await db.donation.findUnique({
+    where: { id: incomingDonation.id },
+  });
+
+  if (!donationExists) {
+    return null;
+  }
+
+  // Process each donation detail
+  for (const detail of incomingDonation.donationDetails) {
+    // find and Update the corresponding item's inventory
+    const item = await db.item.findFirst({
+      where: { name: detail.item },
+      select: {
+        id: true,
+        quantityUsed: true,
+        quantityNew: true,
+      },
+    });
+    if (item) {
+      await db.item.update({
+        where: { id: item.id },
+        data: {
+          quantityNew: { increment: detail.newQuantity },
+          quantityUsed: { increment: detail.usedQuantity },
+        },
+      });
+    }
+  }
+  // return updated donation
+  return donationExists;
 };

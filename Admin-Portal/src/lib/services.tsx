@@ -185,3 +185,26 @@ export const getReports = async (
 		},
 	});
 };
+
+export const getDonations = async (
+  token: string | undefined,
+  page: number,
+  pageSize: number,
+  filterModel?: GridFilterModel,
+  sortModel?: GridSortModel
+) => {
+  let url = `${backendUrl}/donation/v1?page=${page}&pageSize=${pageSize}`;
+  if (filterModel) {
+    url += `&${filterModelToApiQuery(filterModel)}`;
+  }
+  if (sortModel) {
+    url += `&${sortModelToApiQuery(sortModel)}`;
+  }
+  return await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};

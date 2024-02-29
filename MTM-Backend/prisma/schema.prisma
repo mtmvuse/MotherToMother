@@ -115,15 +115,26 @@ view user_dashboard {
   organization String
 }
 
+<<<<<<< HEAD
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+=======
+/// View for donation details for admin portal
+>>>>>>> 450d863b2100f4be5febc127688a95a2ed3f4c39
 view donation_detail {
   id           Int      @id @default(0)
   date         DateTime @default(now())
   organization String
+<<<<<<< HEAD
   total        Float?
   items        Decimal? @db.Decimal(33, 0)
   type         String   @default("") @db.VarChar(8)
   details      Json?
 
   @@ignore
+=======
+  total        Float
+  items        Decimal @db.Decimal(33, 0)
+  type         String   @default("") @db.VarChar(8)
+  details      Json
+>>>>>>> 450d863b2100f4be5febc127688a95a2ed3f4c39
 }
