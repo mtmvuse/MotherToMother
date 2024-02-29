@@ -61,11 +61,6 @@ export const deleteInventoryItem = async (
   inventoryId: number,
   token: string
 ) => {
-  console.log(
-    "LOOK INVENTORY",
-    `${backendUrl}/inventory/v1/delete/id/${inventoryId}`
-  );
-
   return await fetch(`${backendUrl}/inventory/v1/delete/id/${inventoryId}`, {
     method: "DELETE",
     headers: {

@@ -41,20 +41,9 @@ import { PAGE_SIZE } from "../lib/constants";
 import { ErrorMessage } from "../components/ErrorMessage";
 import { SuccessMessage } from "../components/SuccessMessage";
 
-const exampleRows = [
-  {
-    id: 1,
-    date: "2/5/2024",
-    donor: "Donor 1",
-    total: 100,
-  },
-];
-
 let id_counter = 2;
 
 const CashDonationsPage: React.FC = () => {
-  const [rows, setRows] = useState(exampleRows);
-
   const [filterModel, setFilterModel] = useState<GridFilterModel | undefined>();
   const [sortModel, setSortModel] = useState<GridSortModel | undefined>();
   const [totalNumber, setTotalNumber] = useState(0);
@@ -84,8 +73,6 @@ const CashDonationsPage: React.FC = () => {
   const handleOpenAddCashDonation = () => {
     setOpenAddCashDonation(true);
   };
-
-  const handleDeleteRow = (id: GridRowId) => () => {};
 
   const handleCloseAddCashDonation = () => {
     setOpenAddCashDonation(false);

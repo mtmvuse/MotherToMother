@@ -33,7 +33,7 @@ model User {
   household      String?
   userType       String
   donation       Donation[]
-  Organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  Organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@index([organizationId], map: "User_organizationId_fkey")
 }
@@ -96,7 +96,7 @@ model Admin {
 
 model CashDonation {
   id             Int           @id @default(autoincrement())
-  organizationId Int?
+  organizationId Int
   date           DateTime      @default(now())
   total          Float
   Organization   Organization? @relation(fields: [organizationId], references: [id])
@@ -131,5 +131,5 @@ view donation_detail {
   total        Float?
   items        Decimal? @db.Decimal(33, 0)
   type         String   @default("") @db.VarChar(8)
-  details      Json?
+  details      Json
 }
