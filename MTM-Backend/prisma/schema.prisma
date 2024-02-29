@@ -109,9 +109,20 @@ model CashDonation {
 view user_dashboard {
   id           Int    @id @default(0)
   email        String
-  name         String @db.VarChar(383)
+  name         String @default("") @db.VarChar(383)
   phone        String
   address      String @db.Text
   type         String
   organization String
+}
+
+/// View for donation details for admin portal
+view donation_detail {
+  id           Int      @id @default(0)
+  date         DateTime @default(now())
+  organization String
+  total        Float
+  items        Decimal @db.Decimal(33, 0)
+  type         String   @default("") @db.VarChar(8)
+  details      Json
 }

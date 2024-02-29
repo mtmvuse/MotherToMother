@@ -1,3 +1,17 @@
+export interface ResponseDonation {
+  id: number;
+  date: Date;
+  organization: string;
+  total: number;
+  items: number;
+  type: string;
+}
+
+export interface DonationDashboardResponse {
+  donations: ResponseDonation[];
+  totalNumber: number;
+}
+
 export interface itemTypes {
   id: number;
   item: string;
