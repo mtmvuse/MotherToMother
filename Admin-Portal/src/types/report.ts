@@ -1,13 +1,12 @@
 export interface Report {
 	id: number;
-	agency: string;
+	org_name: string;
 	date: Date;
-	items: string;
+	item_name: string;
 	quantity: number;
-	value: number;
-	total: number;
-	status: String;
-	type: String;
+	value: number | null;
+	total: number | null;
+	status: string;
 }
 
 export interface ReportResponse {

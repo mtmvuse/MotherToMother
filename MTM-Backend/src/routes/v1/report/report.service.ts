@@ -1,5 +1,5 @@
 import { db } from "../../../utils/db.server";
-import type { ReportResponse } from "../../../types/report";
+import type { Report } from "../../../types/report";
 import type { Prisma } from "@prisma/client";
 
 /**
@@ -11,21 +11,23 @@ import type { Prisma } from "@prisma/client";
 export const getReportByPage = async (
   page: number,
   pageSize: number,
-  // whereClause: ReportType,
-  // orderBy: Prisma.ItemOrderByWithAggregationInput,
-): Promise<ReportResponse | null> => {
+  whereClause: Report,
+  orderBy: Prisma.report_dashboardOrderByWithAggregationInput,
+): Promise<Report[] | null> => {
   return db.report_dashboard.findMany({
-    // where: whereClause,
-    // orderBy: orderBy,
-    // take: pageSize,
-    // skip: page,
+    where: whereClause,
+    take: pageSize,
+    skip: page * pageSize,
+    orderBy: orderBy,
   });
 };
 
 /**
- * Get total number of inventory items
- * @returns total number of inventory items
+ *  get count of qualified reports in the db for AP
+ * @returns count of all users in the database
  */
-export const getTotalNumberInventory = async (): Promise<number> => {
-  return db.item.count();
+export const getReportCount = async (whereClause: Report): Promise<number> => {
+  return db.report_dashboard.count({
+    where: whereClause,
+  });
 };

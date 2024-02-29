@@ -3,8 +3,8 @@ import express, {
   type Response,
   type NextFunction,
 } from "express";
-import { getReportByPage } from "./report.service";
-import type { ReportType } from "../../../types/report";
+import * as ReportService from "./report.service";
+import type { Report } from "../../../types/report";
 import Joi from "joi";
 import {
   translateFilterToPrisma,
@@ -29,21 +29,21 @@ reportRouter.get(
       ...filters,
       id: filters.id && Number(filters.id),
     };
-
-    const whereClause = translateFilterToPrisma(typedFilters) as ReportType;
+    const whereClause = translateFilterToPrisma(typedFilters) as Report;
     const orderBy = translateSortToPrisma(
       sort as string,
       order as string,
-    ) as Prisma.ItemOrderByWithAggregationInput;
+    ) as Prisma.report_dashboardOrderByWithAggregationInput;
+
     try {
-      const report = await getReportByPage(
+      const report = await ReportService.getReportByPage(
         pageInt,
         pageSizeInt,
-        // whereClause,
-        // orderBy,
+        whereClause,
+        orderBy,
       );
-      // const count = await ItemService.getItemCount(whereClause);
-      return res.status(200).json({ report, totalNumber: 1 });
+      const count = await ReportService.getReportCount(whereClause);
+      return res.status(200).json({ report, totalNumber: count });
     } catch (e) {
       next(e);
     }

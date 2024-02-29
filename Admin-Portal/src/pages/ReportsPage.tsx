@@ -14,7 +14,7 @@ import {
 import { getReports } from '../lib/services';
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { PAGE_SIZE } from '../lib/constants';
-import { ReportResponse, ReportDisplay } from '~/types/report';
+import { ReportResponse, Report } from '~/types/report';
 import FormDialog from '../components/FormDialog';
 import DeleteAlertModal from '../components/DeleteAlertModal';
 import InventoryDialog from '../components/inventory/InventoryDialog';
@@ -23,100 +23,6 @@ import deleteIcon from '../assets/delete-icon.png';
 import AddIcon from '@mui/icons-material/Add';
 import './styles/datagrid.css';
 import { report } from 'process';
-
-// Seed data for testing
-// const rows = [
-// 	{
-// 		id: 1,
-// 		agency: 'Baby to Baby',
-// 		date: Date(),
-// 		items: 'Car Seat',
-// 		quantity: 20,
-// 		value: 180,
-// 		total: 3600,
-// 		type: 'Outgoing',
-// 	},
-// 	{
-// 		id: 2,
-// 		agency: 'VUMC',
-// 		date: Date(),
-// 		items: 'Baby Bottles',
-// 		quantity: 30,
-// 		value: 400,
-// 		total: 12000,
-// 		type: 'Incoming',
-// 	},
-// 	{
-// 		id: 3,
-// 		agency: 'Diaper',
-// 		date: Date(),
-// 		items: 'Diapers',
-// 		quantity: 50,
-// 		value: 2,
-// 		total: 100,
-// 		type: 'Incoming',
-// 	},
-// 	{
-// 		id: 4,
-// 		agency: 'Baby to Baby',
-// 		date: Date(),
-// 		items: 'Car Seat',
-// 		quantity: 20,
-// 		value: 180,
-// 		total: 3600,
-// 		type: 'Outgoing',
-// 	},
-// 	{
-// 		id: 5,
-// 		agency: 'VUMC',
-// 		date: Date(),
-// 		items: 'Baby Bottles',
-// 		quantity: 30,
-// 		value: 400,
-// 		total: 12000,
-// 		type: 'Incoming',
-// 	},
-// 	{
-// 		id: 6,
-// 		agency: 'Diaper',
-// 		date: Date(),
-// 		items: 'Diapers',
-// 		quantity: 50,
-// 		value: 2,
-// 		total: 100,
-// 		type: 'Incoming',
-// 	},
-// 	{
-// 		id: 7,
-// 		agency: 'Baby to Baby',
-// 		date: Date(),
-// 		items: 'Car Seat',
-// 		quantity: 20,
-// 		value: 180,
-// 		total: 3600,
-// 		type: 'Outgoing',
-// 	},
-// 	{
-// 		id: 8,
-// 		agency: 'VUMC',
-// 		date: Date(),
-// 		items: 'Baby Bottles',
-// 		quantity: 30,
-// 		value: 400,
-// 		total: 12000,
-// 		type: 'Incoming',
-// 	},
-// 	{
-// 		id: 9,
-// 		agency: 'Diaper',
-// 		date: Date(),
-// 		items: 'Diapers',
-// 		quantity: 50,
-// 		value: 2,
-// 		total: 100,
-// 		type: 'Incoming',
-// 	},
-// ];
 
 const ReportsPage: React.FC = () => {
 	const [page, setPage] = useState(0);
@@ -152,47 +58,25 @@ const ReportsPage: React.FC = () => {
 					if (data === undefined) {
 						throw new Error('No data: Internal Server Error');
 					}
+
+					const renderReport = data.report.map((item: Report) => ({
+						id: item.id,
+						agency: item.org_name,
+						date: item.date,
+						items: item.item_name,
+						quantity: item.quantity,
+						value: item.value,
+						total: item.total,
+						status: item.status,
+						type: 'Incoming',
+					}));
+
 					setTotalNumber(data.totalNumber);
-					console.log('queryRequest');
-					console.log(data);
-					return data;
+
+					return renderReport;
 				}),
 		enabled: !isAnyFilterValueUndefined(),
 	});
-
-	const transformReportData = (data: ReportResponse | undefined): ReportDisplay[] => {
-		const reports: ReportDisplay[] = [];
-		console.log('transform');
-		if (data && data.report) {
-			data.report.forEach((report) => {
-				const agency = report.Organization.name;
-
-				report.donation.forEach((donation) => {
-					const date = new Date(donation.date);
-
-					donation.DonationDetail.forEach((detail) => {
-						const { name, quantityUsed, quantityNew, valueUsed, valueNew } = detail.item;
-
-						const reportDisplay: ReportDisplay = {
-							id: reports.length + 1,
-							agency,
-							date,
-							items: name,
-							quantity: quantityNew,
-							value: valueNew,
-							total: valueNew * quantityNew,
-							type: 'Donation',
-						};
-
-						reports.push(reportDisplay);
-					});
-				});
-			});
-		}
-		return reports;
-	};
-
-	const rows = transformReportData(reportQueryResponse.data).slice(10);
 
 	const columns: GridColDef[] = [
 		{
@@ -242,6 +126,14 @@ const ReportsPage: React.FC = () => {
 			field: 'total',
 			headerName: 'TOTAL',
 			flex: 3,
+			align: 'left',
+			headerAlign: 'left',
+			editable: true,
+		},
+		{
+			field: 'status',
+			headerName: 'STATUS',
+			flex: 3,
 			type: 'number',
 			align: 'left',
 			headerAlign: 'left',
@@ -261,22 +153,13 @@ const ReportsPage: React.FC = () => {
 		<>
 			<div className='grid-container'>
 				<DataGrid
-					slots={{ toolbar: GridToolbar }}
 					rowHeight={40}
-					rows={rows}
+					rows={reportQueryResponse.data || []}
 					columns={columns}
 					pagination
+					autoPageSize
+					rowCount={totalNumber}
 					paginationMode='server'
-					// initialState={{
-					// 	pagination: {
-					// 		paginationModel: {
-					// 			pageSize: 5,
-					// 		},
-					// 	},
-					// }}
-					// pageSizeOptions={[5, 10, 20]}
-					// autoPageSize
-					rowCount={rows.length}
 					onPaginationModelChange={(params) => {
 						setPage(params.page);
 						setPageSize(params.pageSize);

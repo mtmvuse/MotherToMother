@@ -1,5 +1,8 @@
 SELECT
-  row_number() OVER () AS `id`,
+  row_number() OVER (
+    ORDER BY
+      `t2`.`date`
+  ) AS `id`,
   `t2`.`org_name` AS `org_name`,
   `t2`.`date` AS `date`,
   `t2`.`item_name` AS `item_name`,
