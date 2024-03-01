@@ -6,7 +6,7 @@ import {
   GridRowId,
   GridRowParams,
 } from "@mui/x-data-grid";
-import { itemTypes } from "~/types/DonationTypes";
+import { DemographicDetails, ItemDetails } from "~/types/DonationTypes";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 interface DonationTableProps {
@@ -26,9 +26,10 @@ const DemographicTable: React.FC<DonationTableProps> = ({
     "White Children",
     "Black Children",
     "Asian Children",
+    "Other Children",
   ];
 
-  const handleProcessRowUpdate = (updatedRow: itemTypes) => {
+  const handleProcessRowUpdate = (updatedRow: DemographicDetails) => {
     const rowIndex = rows.findIndex((row) => row.id === updatedRow.id);
     const updatedRows = [...rows];
     updatedRows[rowIndex] = updatedRow;

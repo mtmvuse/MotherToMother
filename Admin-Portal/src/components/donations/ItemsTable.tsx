@@ -10,13 +10,11 @@ import {
 } from "@mui/x-data-grid";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-import { itemTypes } from "~/types/DonationTypes";
-
-const statusOptions: string[] = ["Used", "New"];
+import { ItemDetails } from "~/types/DonationTypes";
 
 interface DonationTableProps {
   editable: boolean;
-  rows: itemTypes[];
+  rows: ItemDetails[];
   setRows: any;
 }
 
@@ -28,7 +26,7 @@ const ItemsTable: React.FC<DonationTableProps> = ({
   const [totalPrice, setTotalPrice] = useState(0);
   const [totalQuantity, setTotalQuantity] = useState(0);
 
-  const handleProcessRowUpdate = (updatedRow: itemTypes) => {
+  const handleProcessRowUpdate = (updatedRow: ItemDetails) => {
     const rowIndex = rows.findIndex((row) => row.id === updatedRow.id);
     const updatedRows = [...rows];
     updatedRows[rowIndex] = updatedRow;
@@ -39,14 +37,17 @@ const ItemsTable: React.FC<DonationTableProps> = ({
   const handleDeleteRow = (id: GridRowId) => () => {
     setRows(rows.filter((row) => row.id !== id));
   };
-
   useEffect(() => {
     const newTotalPrice = rows.reduce(
-      (sum, { value, quantity }) => sum + value * quantity,
+      (sum, { valueNew, valueUsed, quantityNew, quantityUsed }) => {
+        const totalValueNew = valueNew * quantityNew;
+        const totalValueUsed = valueUsed * quantityUsed;
+        return sum + totalValueNew + totalValueUsed;
+      },
       0
     );
     const newTotalQuantity = rows.reduce(
-      (sum, { quantity }) => sum + quantity,
+      (sum, { quantityNew, quantityUsed }) => sum + quantityNew + quantityUsed,
       0
     );
     setTotalPrice(newTotalPrice);
@@ -55,40 +56,36 @@ const ItemsTable: React.FC<DonationTableProps> = ({
 
   const columns: GridColDef[] = [
     {
-      field: "item",
-      headerName: "Item",
+      field: "name",
+      headerName: "name",
       type: "string",
       flex: 2,
       editable: true,
     },
     {
-      field: "status",
-      headerName: "Status",
-      type: "singleSelect",
-      valueOptions: statusOptions,
-      editable: true,
-      flex: 2,
-    },
-    {
-      field: "value",
-      headerName: "Value",
-      align: "left",
-      headerAlign: "left",
+      field: "quantityUsed",
+      headerName: "quantityUsed",
       type: "number",
       editable: true,
       flex: 2,
-      valueFormatter: (params: GridValueFormatterParams<number>) => {
-        if (params.value == null) {
-          return "$0";
-        }
-        return `$${params.value.toLocaleString()}`;
-      },
     },
     {
-      field: "quantity",
-      headerName: "Quantity",
-      align: "left",
-      headerAlign: "left",
+      field: "quantityNew",
+      headerName: "quantityNew",
+      type: "number",
+      editable: true,
+      flex: 2,
+    },
+    {
+      field: "valueNew",
+      headerName: "valueNew",
+      type: "number",
+      editable: true,
+      flex: 2,
+    },
+    {
+      field: "valueUsed",
+      headerName: "valueUsed",
       type: "number",
       editable: true,
       flex: 2,
