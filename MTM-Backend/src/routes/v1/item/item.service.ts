@@ -22,6 +22,30 @@ export const getAllItems = async (): Promise<ItemType[] | null> => {
 };
 
 /**
+ * Get an item by its ID
+ * @param itemId The ID of the item to retrieve
+ * @returns The item with the specified ID, or null if not found
+ */
+export const getItemById = async (itemId: number): Promise<ItemType | null> => {
+  const item: ItemType | null = await db.item.findUnique({
+    where: {
+      id: itemId,
+    },
+    select: {
+      id: true,
+      category: true,
+      name: true,
+      quantityUsed: true,
+      quantityNew: true,
+      valueNew: true,
+      valueUsed: true,
+    },
+  });
+
+  return item;
+};
+
+/**
  * Get a items by category
  * @param category
  * @returns an array of items based upon the given category
