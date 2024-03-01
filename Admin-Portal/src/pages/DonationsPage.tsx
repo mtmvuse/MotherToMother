@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Modal, Box } from "@mui/material";
 import {
   DataGrid,
@@ -50,15 +50,6 @@ const modalStyle = {
   outline: "none",
 };
 
-interface Donation {
-  id: number;
-  date: Date;
-  organization: string;
-  items: number;
-  total: number;
-  type: string;
-}
-
 const DonationsPage: React.FC = () => {
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(PAGE_SIZE);
@@ -66,9 +57,8 @@ const DonationsPage: React.FC = () => {
   const [sortModel, setSortModel] = useState<GridSortModel | undefined>();
   const [totalNumber, setTotalNumber] = useState(0);
 
-  const [selectedDonation, setSelectedDonation] = useState<Donation | null>(
-    null
-  );
+  const [selectedDonation, setSelectedDonation] = useState<ResponseDonation>();
+
   const [incomingModalOpen, setIncomingModalOpen] = useState(false);
   const [outgoingModalOpen, setOutgoingModalOpen] = useState(false);
   const [addDonationModal, setAddDonationModalOpen] = React.useState(false);
@@ -86,17 +76,22 @@ const DonationsPage: React.FC = () => {
 
   const handleAddDonation = () => setAddDonationModalOpen(true);
 
-  const handleOpenEdit = (params: GridRowParams) => {
-    setSelectedDonation(params.row as Donation);
-    if (selectedDonation?.type === "Incoming") {
-      setIncomingModalOpen(true);
-    } else {
-      setOutgoingModalOpen(true);
+  useEffect(() => {
+    if (selectedDonation) {
+      if (selectedDonation.type === "Incoming") {
+        setIncomingModalOpen(true);
+      } else {
+        setOutgoingModalOpen(true);
+      }
     }
+  }, [selectedDonation]);
+
+  const handleOpenEdit = (params: GridRowParams) => {
+    setSelectedDonation(params.row as ResponseDonation);
   };
 
   const handleCloseModal = () => {
-    setSelectedDonation(null);
+    setSelectedDonation(undefined);
     setIncomingModalOpen(false);
     setOutgoingModalOpen(false);
     setAddDonationModalOpen(false);
@@ -214,6 +209,7 @@ const DonationsPage: React.FC = () => {
           rowHeight={40}
           rows={donationsQueryResponse.data || []}
           columns={columns}
+          onRowClick={handleOpenEdit}
           pagination
           autoPageSize
           rowCount={totalNumber}
@@ -230,12 +226,16 @@ const DonationsPage: React.FC = () => {
 
       <Modal open={incomingModalOpen} onClose={handleCloseModal}>
         <Box sx={modalStyle}>
-          <DonationDetailsIncoming selectedDonation={selectedDonation} />
+          {selectedDonation && (
+            <DonationDetailsIncoming selectedDonation={selectedDonation} />
+          )}
         </Box>
       </Modal>
       <Modal open={outgoingModalOpen} onClose={handleCloseModal}>
         <Box sx={modalStyle}>
-          <DonationDetailsOutgoing selectedDonation={selectedDonation} />
+          {selectedDonation && (
+            <DonationDetailsOutgoing selectedDonation={selectedDonation} />
+          )}
         </Box>
       </Modal>
       <Modal open={addDonationModal} onClose={handleCloseModal}>

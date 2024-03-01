@@ -12,15 +12,16 @@ export interface DonationDashboardResponse {
   totalNumber: number;
 }
 
-export interface itemTypes {
+export interface ItemDetails {
   id: number;
-  item: string;
-  status: string;
-  value: number;
-  quantity: number;
+  name: string;
+  quantityNew: number;
+  quantityUsed: number;
+  valueNew: number;
+  valueUsed: number;
 }
 
-export interface demographicTypes {
+export interface DemographicDetails {
   id: number;
   kidGroup: string;
   quantity: number;

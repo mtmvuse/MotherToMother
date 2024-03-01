@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -10,56 +10,103 @@ import {
 } from "@mui/material";
 import ItemsTable from "./ItemsTable";
 import DemographicTable from "./DemographicTable";
-import { demographicTypes, itemTypes } from "~/types/DonationTypes";
+import {
+  DemographicDetails,
+  ItemDetails,
+  ResponseDonation,
+} from "~/types/DonationTypes";
+import {
+  getDonationDemographics,
+  getDonationDetails,
+} from "../../lib/services";
 
 interface ModalContentProps {
-  selectedDonation: any;
+  selectedDonation: ResponseDonation;
 }
-
-const createItemData = (
-  id: number,
-  item: string,
-  status: string,
-  value: number,
-  quantity: number
-): itemTypes => {
-  return { id, item, status, value, quantity };
-};
-
-const createDemographicData = (
-  id: number,
-  kidGroup: string,
-  quantity: number
-): demographicTypes => {
-  return { id, kidGroup, quantity };
-};
-
-const initialDemographicRows: demographicTypes[] = [
-  createDemographicData(1, "White children", 10),
-  createDemographicData(2, "Black children", 20),
-  createDemographicData(3, "Asian children", 10),
-];
-
-const initialItemRows: itemTypes[] = [
-  createItemData(1, "Clothes", "Used", 4, 11),
-  createItemData(2, "Cribs", "Used", 12, 110),
-];
 
 const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
   selectedDonation,
 }) => {
-  const [itemRows, setItemRows] = useState<itemTypes[]>(initialItemRows);
+  const [itemRows, setItemRows] = useState<ItemDetails[]>([]);
+  const [initialItemRows, setInitialItemRows] = useState<ItemDetails[]>([]);
+  const [initialDemographicRows, setInitialDemographicRows] = useState<
+    DemographicDetails[]
+  >([]);
+
+  const [demographicRows, setDemographicRows] = useState<DemographicDetails[]>(
+    []
+  );
   const [editable, setEditable] = useState(false);
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
-  const [idItemCounter, setIdItemCounter] = useState(2);
-  const [idDemoCounter, setIdDemoCounter] = useState(3);
+  const [idItemCounter, setIdItemCounter] = useState(1);
+  const [idDemoCounter, setIdDemoCounter] = useState(1);
+
+  useEffect(() => {
+    if (itemRows.length > 0) {
+      setIdItemCounter(Math.max(...itemRows.map((item) => item.id)) + 1);
+    }
+
+    if (demographicRows.length > 0) {
+      setIdDemoCounter(Math.max(...demographicRows.map((demo) => demo.id)) + 1);
+    }
+  }, [itemRows, demographicRows]);
+
+  useEffect(() => {
+    const fetchItemRows = async () => {
+      try {
+        const response = await getDonationDetails(selectedDonation.id);
+        if (response.ok) {
+          const data = await response.json();
+          const fetchedData: ItemDetails[] = data.map(
+            (itemData: ItemDetails) => ({
+              id: itemData.id,
+              name: itemData.name,
+              quantityNew: itemData.quantityNew,
+              quantityUsed: itemData.quantityUsed,
+              valueNew: itemData.valueNew,
+              valueUsed: itemData.valueUsed,
+            })
+          );
+          setItemRows(fetchedData);
+          setInitialItemRows(fetchedData);
+        } else {
+          throw new Error("Failed to fetch item rows");
+        }
+      } catch (error) {
+        console.error("Error fetching item rows:", error);
+      }
+    };
+
+    const fetchDemographicRows = async () => {
+      try {
+        const response = await getDonationDemographics(selectedDonation.id);
+        if (response.ok) {
+          const data = await response.json();
+          const fetchedData: DemographicDetails[] = [
+            { id: 1, kidGroup: "White children", quantity: data.whiteNum },
+            { id: 2, kidGroup: "Latino children", quantity: data.latinoNum },
+            { id: 3, kidGroup: "Black children", quantity: data.blackNum },
+            { id: 4, kidGroup: "Native children", quantity: data.nativeNum },
+            { id: 5, kidGroup: "Asian children", quantity: data.asianNum },
+            { id: 6, kidGroup: "Other children", quantity: data.otherNum },
+          ];
+          setDemographicRows(fetchedData);
+          setInitialDemographicRows(fetchedData);
+        } else {
+          throw new Error("Failed to fetch demographic rows");
+        }
+      } catch (error) {
+        console.error("Error fetching demographic rows:", error);
+      }
+    };
+
+    fetchItemRows();
+    fetchDemographicRows();
+  }, [selectedDonation]);
 
   const dateString = selectedDonation?.date
     ? new Date(selectedDonation.date).toLocaleDateString()
     : "";
-  const [demographicRows, setDemographicRows] = useState<demographicTypes[]>(
-    initialDemographicRows
-  );
 
   const handleEditButtonClick = () => {
     setEditable(!editable);
@@ -78,6 +125,8 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
   const handleConfirmSave = () => {
     setEditable(false);
     setOpenConfirmDialog(false);
+    setInitialItemRows(itemRows);
+    setInitialDemographicRows(demographicRows);
   };
 
   const handleCancelConfirm = () => {
@@ -100,10 +149,11 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
       ...prevRows,
       {
         id: idItemCounter + 1,
-        item: "",
-        status: "",
-        value: 0,
-        quantity: 0,
+        name: "",
+        valueNew: 0,
+        valueUsed: 0,
+        quantityNew: 0,
+        quantityUsed: 0,
       },
     ]);
     setIdItemCounter(idItemCounter + 1);
@@ -124,7 +174,7 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
     setDemographicRows((prevRows) => [
       ...prevRows,
       {
-        id: idDemoCounter,
+        id: idDemoCounter + 1,
         kidGroup: "",
         quantity: 0,
       },
