@@ -201,3 +201,23 @@ export const getDonations = async (
     },
   });
 };
+
+export const getDonationDetails = (donationId: number): Promise<Response> => {
+  return fetch(`${backendUrl}/donation/v1/details/${donationId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+};
+
+export const getDonationDemographics = (
+  donationId: number
+): Promise<Response> => {
+  return fetch(`${backendUrl}/donation/v1/demographics/${donationId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+};
