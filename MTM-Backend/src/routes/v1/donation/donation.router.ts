@@ -150,6 +150,7 @@ const createOutgoingDonation = async (
     // Update the quantity of each item
     await Promise.all(
       donationReqBody.donationDetails.map(async (itemDetail) => {
+        // Check if stock would go negative
         await updateItem(
           itemDetail.itemId,
           -itemDetail.usedQuantity,
@@ -307,4 +308,3 @@ donationRouter.put("/v1/outgoing/:donationId", updateOutgoingDonation);
 export { donationRouter };
 
 // TODO: What if donationID doesn't exist
-// TODO: Do I have to check that user taking out more than stock?
