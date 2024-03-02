@@ -156,11 +156,10 @@ const createOutgoingDonation = async (
 
     donationReqBody.donationDetails.forEach(
       async (donationDetail: DonationDetailType) => {
-        const newDonationDetail: DonationDetailType =
-          await DonationService.createDonationDetails(
-            newDonation.id,
-            donationDetail,
-          );
+        await DonationService.createDonationDetails(
+          newDonation.id,
+          donationDetail,
+        );
       },
     );
 
@@ -297,11 +296,6 @@ const updateOutgoingDonation = async (
       const getAllItemsInDonation =
         await DonationService.getAllItemsInDonation(donationId);
       getAllItemsInDonation.forEach(async (item) => {
-        const itemInPrevDonation = await DonationService.getDonationDetails(
-          donationId,
-          item.itemId,
-        );
-
         const itemInNewDonation = donationReqBody.donationDetails.find(
           (itemDetail) => itemDetail.itemId === item.itemId,
         );
@@ -329,8 +323,6 @@ const updateOutgoingDonation = async (
     next(e);
   }
 };
-
-donationRouter.post("/v1/outgoing", createOutgoingDonation);
 
 donationRouter.post(
   "/v1/incoming",
@@ -403,4 +395,5 @@ donationRouter.put(
 
 export { donationRouter };
 
-// TODO: What if donationID doesn't exist
+donationRouter.post("/v1/outgoing", createOutgoingDonation);
+donationRouter.put("/v1/outgoing/:donationId", updateOutgoingDonation);
