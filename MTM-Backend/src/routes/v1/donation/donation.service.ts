@@ -131,6 +131,20 @@ export const createDonation = async (userId: number): Promise<DonationType> => {
   });
 };
 
+export const updateDonationDate = async (
+  donationId: number,
+  date: Date,
+): Promise<DonationType> => {
+  return db.donation.update({
+    where: {
+      id: donationId,
+    },
+    data: {
+      date: date,
+    },
+  });
+};
+
 export const getDonationDetails = async (
   donationId: number,
   itemId: number,
