@@ -16,7 +16,7 @@ import { inventoryRouter } from "./routes/v1/inventory/inventory.router";
 dotenv.config();
 
 const app: Express = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3023;
 
 app.use(cors()); // Allow cross-origin requests (for frontend to communicate with backend on different ports/address)
 app.use(express.json()); // Parses incoming JSON requests and uts the parsed data in req
