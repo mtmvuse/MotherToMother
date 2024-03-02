@@ -308,6 +308,14 @@ const updateOutgoingDonation = async (
       const getAllItemsInDonation =
         await DonationService.getAllItemsInDonation(donationId);
       getAllItemsInDonation.forEach(async (item) => {
+<<<<<<< HEAD
+=======
+        const itemInPrevDonation = await DonationService.getDonationDetails(
+          donationId,
+          item.itemId,
+        );
+
+>>>>>>> 0b2a41c (Solving Merge Conflict)
         const itemInNewDonation = donationReqBody.donationDetails.find(
           (itemDetail) => itemDetail.itemId === item.itemId,
         );
@@ -411,3 +419,7 @@ donationRouter.put(
 export { donationRouter };
 
 // TODO: What if donationID doesn't exist
+<<<<<<< HEAD
+=======
+// TODO: Do I have to check that user taking out more than stock?
+>>>>>>> 0b2a41c (Solving Merge Conflict)

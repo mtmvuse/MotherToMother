@@ -5,7 +5,10 @@ import {
 	GridActionsCellItem,
 	GridColDef,
 	GridFilterModel,
+<<<<<<< HEAD
 	GridRowId,
+=======
+>>>>>>> 0b2a41c (Solving Merge Conflict)
 	GridRowParams,
 	GridSortModel,
 	GridValueFormatterParams,
@@ -283,7 +286,11 @@ const InventoryPage: React.FC = () => {
 				<DataGrid
 					editMode="row"
 					rowHeight={40}
+<<<<<<< HEAD
 					sx={{ width: "100%", height: "80vh" }}
+=======
+					sx={{ width: "100%", height: "68vh" }}
+>>>>>>> 0b2a41c (Solving Merge Conflict)
 					rows={inventoryQueryResponse.data || []}
 					columns={columns}
 					pagination
