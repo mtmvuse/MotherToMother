@@ -15,11 +15,16 @@ import {
   type DonationDetailType,
   type OutgoingDonationStatsType,
   type PUTOutgoingDonationRequestBodyType,
+  type IncomingDonationRequestBodyType,
 } from "../../../types/donation";
 
 interface QueryType {
   page: string;
   pageSize: string;
+}
+
+interface QueryTypeID {
+  id: string;
 }
 
 const donationRouter = express.Router();
@@ -298,7 +303,45 @@ const updateOutgoingDonation = async (
 
 donationRouter.post("/v1/outgoing", createOutgoingDonation);
 
+<<<<<<< HEAD
 donationRouter.put("/v1/outgoing/:donationId", updateOutgoingDonation);
+=======
+donationRouter.post(
+  "/v1/incoming",
+  async (req: Request, res: Response, next: NextFunction) => {
+    const donationReqBody = req.body as IncomingDonationRequestBodyType;
+
+    await DonationService.createIncomingDonation(donationReqBody);
+
+    return res.status(200).json({
+      message: "Incoming donation created successfully",
+    });
+  },
+);
+
+donationRouter.put(
+  "/v1/incoming",
+  async (
+    req: Request<any, any, any, QueryTypeID>,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    const id = req.query.id;
+    if (!id) {
+      return res.status(400).json({
+        error: "ID must be entered",
+      });
+    }
+    const donationReqBody = req.body as IncomingDonationRequestBodyType;
+
+    await DonationService.updateIncomingDonation(id, donationReqBody);
+
+    return res.status(200).json({
+      message: "Incoming donation updated successfully",
+    });
+  },
+);
+>>>>>>> 3c524a0 (Adding Router Structure for Incoming Donations)
 
 export { donationRouter };
 
