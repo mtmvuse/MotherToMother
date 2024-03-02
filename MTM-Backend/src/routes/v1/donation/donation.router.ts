@@ -404,6 +404,3 @@ donationRouter.put(
 export { donationRouter };
 
 // TODO: What if donationID doesn't exist
-// TODO: What if try to edit item which they didn't take out?
-// Are they allow to update outgoing donation and add new items?
-// TODO: Do I have to check that user taking out more than stock?
