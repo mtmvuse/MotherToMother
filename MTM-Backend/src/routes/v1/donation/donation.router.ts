@@ -149,7 +149,7 @@ const createOutgoingDonation = async (
       );
     }
 
-    // ----------------------- Here is start updating the database -------------------------------
+    // ----------------------- Here, it start updating the database -------------------------------
     const newDonation = await DonationService.createDonation(
       donationReqBody.userId,
     );
@@ -202,7 +202,7 @@ const updateOutgoingDonation = async (
     const donationReqBody = req.body as PUTOutgoingDonationRequestBodyType;
     const donationIdString = req.params.donationId;
 
-    // Validations
+    // ------------------------------------ Validations ------------------------------------
     if (!donationIdString) {
       throw new Error("Missing donationId");
     } else if (!isNonNegativeInteger(parseInt(donationIdString, 10))) {
@@ -224,6 +224,7 @@ const updateOutgoingDonation = async (
       );
     }
 
+    // -------------------------- Item Validation ------------------------------
     for (const donationDetail of donationReqBody.donationDetails) {
       if (
         !isNonNegativeInteger(donationDetail.usedQuantity) ||
@@ -265,24 +266,60 @@ const updateOutgoingDonation = async (
     // Update the DonationDetails Table and the Item Table
     await Promise.all(
       donationReqBody.donationDetails.map(async (donationDetail) => {
+        const itemFromName = await getItemsName(donationDetail.item!);
+        donationDetail.itemId = itemFromName![0].id;
+
         const prevDonationDetail = await DonationService.getDonationDetails(
           donationId,
           donationDetail.itemId,
         );
 
-        const itemFromName = await getItemsName(donationDetail.item!);
-
-        donationDetail.itemId = itemFromName![0].id;
-
         await DonationService.updateDonationDetails(donationId, donationDetail);
 
-        await updateItem(
-          donationDetail.itemId,
-          prevDonationDetail!.usedQuantity - donationDetail.usedQuantity,
-          prevDonationDetail!.newQuantity - donationDetail.newQuantity,
-        );
+        if (prevDonationDetail) {
+          await updateItem(
+            donationDetail.itemId,
+            prevDonationDetail.usedQuantity - donationDetail.usedQuantity,
+            prevDonationDetail.newQuantity - donationDetail.newQuantity,
+          );
+        } else {
+          await updateItem(
+            donationDetail.itemId,
+            -donationDetail.usedQuantity,
+            -donationDetail.newQuantity,
+          );
+        }
       }),
     );
+
+    // If an item is removed from donation when updating, then item is added back to the inventory
+    const updatedDeletedItems = async () => {
+      const getAllItemsInDonation =
+        await DonationService.getAllItemsInDonation(donationId);
+      getAllItemsInDonation.forEach(async (item) => {
+        const itemInPrevDonation = await DonationService.getDonationDetails(
+          donationId,
+          item.itemId,
+        );
+
+        const itemInNewDonation = donationReqBody.donationDetails.find(
+          (itemDetail) => itemDetail.itemId === item.itemId,
+        );
+
+        // Reset back the quantity of the item in the inventory
+        if (!itemInNewDonation) {
+          await updateItem(item.itemId, item.usedQuantity, item.newQuantity);
+
+          // Update the deleted items in the DonationDetails Table
+          await DonationService.deleteRowInDonationDetails(
+            donationId,
+            item.itemId,
+          );
+        }
+      });
+    };
+
+    await updatedDeletedItems();
 
     // Update Date in Donation Table
     await DonationService.updateDonationDate(donationId, new Date());
