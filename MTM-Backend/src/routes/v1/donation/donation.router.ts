@@ -268,11 +268,6 @@ const updateOutgoingDonation = async (
       const getAllItemsInDonation =
         await DonationService.getAllItemsInDonation(donationId);
       getAllItemsInDonation.forEach(async (item) => {
-        const itemInPrevDonation = await DonationService.getDonationDetails(
-          donationId,
-          item.itemId,
-        );
-
         const itemInNewDonation = donationReqBody.donationDetails.find(
           (itemDetail) => itemDetail.itemId === item.itemId,
         );
