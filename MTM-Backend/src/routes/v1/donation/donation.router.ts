@@ -253,6 +253,9 @@ const updateOutgoingDonation = async (
       }),
     );
 
+    // Update Date in Donation Table
+    await DonationService.updateDonationDate(donationId, new Date());
+
     return res.status(200).json({ message: "Outgoing Donation Updated" });
   } catch (e) {
     next(e);
