@@ -26,6 +26,11 @@ import {
   AddOutgoingDonationType,
 } from "~/types/DonationTypes";
 
+// TODO Add figma styling
+// TODO Cleanup/ Add global errors
+// TODO Add Put (edit) donation API integration
+// TODO Integrate Edit Icon button
+
 interface DonationItem {
   itemId: number;
   quantityNew: number;
@@ -149,24 +154,33 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
     setTotalCost(newTotalCost);
   }, [items]);
 
-  // TODO: When user selects outgoing only show outgoing orginzations / users.
-
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await getOrganizations();
         if (!response.ok) {
           setError("Failed to fetch organizations");
+          return;
         }
         const orgList = await response.json();
-        setOrganizationList(orgList);
+
+        const filteredOrgList = orgList.filter((org: Organization) => {
+          if (donationType === "Incoming") {
+            return org.type === "Public" || org.type == "Corporate";
+          } else if (donationType === "Outgoing") {
+            return org.type === "Agency";
+          }
+          return true;
+        });
+
+        setOrganizationList(filteredOrgList);
       } catch (error) {
         setError("Error fetching organizations:");
       }
     };
 
     fetchData();
-  }, []);
+  }, [donationType]);
 
   const updateUsers = async (selectedOrg: Organization | undefined) => {
     try {
@@ -231,6 +245,22 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
       if (isItemsEmpty) {
         setError("Please fill all item fields.");
         return;
+      }
+
+      if (donationType === "Outgoing") {
+        const isDemographicEmpty =
+          demographicData.numberServed === 0 &&
+          demographicData.whiteNum === 0 &&
+          demographicData.latinoNum === 0 &&
+          demographicData.blackNum === 0 &&
+          demographicData.nativeNum === 0 &&
+          demographicData.asianNum === 0 &&
+          demographicData.otherNum === 0;
+
+        if (isDemographicEmpty) {
+          setError("Please fill in at least one demographic field.");
+          return;
+        }
       }
 
       if (donationType == "Outgoing") {
