@@ -131,6 +131,20 @@ export const createDonation = async (userId: number): Promise<DonationType> => {
   });
 };
 
+export const updateDonationDate = async (
+  donationId: number,
+  date: Date,
+): Promise<DonationType> => {
+  return db.donation.update({
+    where: {
+      id: donationId,
+    },
+    data: {
+      date: date,
+    },
+  });
+};
+
 export const getDonationDetails = async (
   donationId: number,
   itemId: number,
@@ -161,6 +175,17 @@ export const getDemographicDetailsId = async (donationId: number) => {
   });
 };
 
+export const getAllItemsInDonation = async (donationId: number) => {
+  return db.donationDetail.findMany({
+    where: {
+      donationId: donationId,
+    },
+    include: {
+      item: true,
+    },
+  });
+};
+
 export const createDonationDetails = async (
   donationId: number,
   donationDetails: DonationDetailType,
@@ -187,16 +212,43 @@ export const updateDonationDetails = async (
   donationId: number,
   itemDetails: DonationDetailType,
 ): Promise<DonationDetailType> => {
-  return db.donationDetail.update({
+  const isDonationId_itemIdInDb = await db.donationDetail.findUnique({
     where: {
       donationId_itemId: {
         donationId: donationId,
         itemId: itemDetails.itemId,
       },
     },
-    data: {
-      usedQuantity: itemDetails.usedQuantity,
-      newQuantity: itemDetails.newQuantity,
+  });
+
+  if (isDonationId_itemIdInDb) {
+    return db.donationDetail.update({
+      where: {
+        donationId_itemId: {
+          donationId: donationId,
+          itemId: itemDetails.itemId,
+        },
+      },
+      data: {
+        usedQuantity: itemDetails.usedQuantity,
+        newQuantity: itemDetails.newQuantity,
+      },
+    });
+  } else {
+    return createDonationDetails(donationId, itemDetails);
+  }
+};
+
+export const deleteRowInDonationDetails = async (
+  donationId: number,
+  itemId: number,
+) => {
+  return db.donationDetail.delete({
+    where: {
+      donationId_itemId: {
+        donationId: donationId,
+        itemId: itemId,
+      },
     },
   });
 };

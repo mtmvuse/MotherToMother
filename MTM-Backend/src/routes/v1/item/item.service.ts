@@ -22,14 +22,14 @@ export const getAllItems = async (): Promise<ItemType[] | null> => {
 };
 
 /**
- * Get an item by its ID
- * @param itemId The ID of the item to retrieve
- * @returns The item with the specified ID, or null if not found
+ * Get a item by id
+ * @param id
+ * @returns an item based upon the given id
  */
-export const getItemById = async (itemId: number): Promise<ItemType | null> => {
+export const getItemFromID = async (id: number): Promise<ItemType | null> => {
   const item: ItemType | null = await db.item.findUnique({
     where: {
-      id: itemId,
+      id: id,
     },
     select: {
       id: true,
@@ -140,6 +140,25 @@ export const updateItem = async (
   quantityUsedChange: number,
   quantityNewChange: number,
 ): Promise<ItemType | null> => {
+  // Check that stock will not go negative
+  const itemFromID = await getItemFromID(itemId);
+
+  if (itemFromID === null) {
+    throw new Error(`Item [ID: ${itemId}] not found`);
+  }
+
+  if (itemFromID.quantityUsed + quantityUsedChange < 0) {
+    throw new Error(
+      `Quantity Used for [ID: ${itemId}] ${itemFromID.name} will go negative`,
+    );
+  }
+
+  if (itemFromID.quantityNew + quantityNewChange < 0) {
+    throw new Error(
+      `Quantity New for [ID: ${itemId}] ${itemFromID.name} will go negative`,
+    );
+  }
+
   const item: ItemType | null = await db.item.update({
     where: {
       id: itemId,
