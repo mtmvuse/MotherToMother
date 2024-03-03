@@ -149,6 +149,33 @@ const createOutgoingDonation = async (
       );
     }
 
+    // Check that stock amount is enough for each item
+    await Promise.all(
+      donationReqBody.donationDetails.map(async (itemDetail) => {
+        const item = await getItemsName(itemDetail.item!);
+
+        if (!item) {
+          throw new Error(`No item with the given name: ${itemDetail.item}`);
+        } else if (item.length > 1) {
+          throw new Error(
+            `More than one item found by the given name: ${itemDetail.item}`,
+          );
+        }
+
+        if (item[0].quantityNew < itemDetail.newQuantity) {
+          throw new Error(
+            `Not enough stock for the new item: ${itemDetail.item}. Stock: ${item[0].quantityNew}`,
+          );
+        }
+
+        if (item[0].quantityUsed < itemDetail.usedQuantity) {
+          throw new Error(
+            `Not enough stock for the used item: ${itemDetail.item}. Stock: ${item[0].quantityUsed}`,
+          );
+        }
+      }),
+    );
+
     // ----------------------- Here, it start updating the database -------------------------------
     const newDonation = await DonationService.createDonation(
       donationReqBody.userId,
@@ -250,7 +277,71 @@ const updateOutgoingDonation = async (
 
     console.log("Done with validations");
 
-    // Updating the OutgoingDonationStats Table
+    // Check that stock amount is enough for each item
+    await Promise.all(
+      donationReqBody.donationDetails.map(async (donationDetail) => {
+        const item = await getItemsName(donationDetail.item!);
+
+        if (!item) {
+          throw new Error(
+            `No item with the given name: ${donationDetail.item}`,
+          );
+        } else if (item.length > 1) {
+          throw new Error(
+            `More than one item found by the given name: ${donationDetail.item}`,
+          );
+        }
+
+        const prevDonationDetail = await DonationService.getDonationDetails(
+          donationId,
+          item[0].id,
+        );
+
+        if (!prevDonationDetail) {
+          // If it is new item is not in the donation
+          if (item[0].quantityNew < donationDetail.newQuantity) {
+            throw new Error(
+              `Not enough stock for the new item: ${donationDetail.item}. Stock: ${item[0].quantityNew}`,
+            );
+          }
+
+          if (item[0].quantityUsed < donationDetail.usedQuantity) {
+            throw new Error(
+              `Not enough stock for the used item: ${donationDetail.item}. Stock: ${item[0].quantityUsed}`,
+            );
+          }
+        } else {
+          // If it is an existing item in the donation, update by the difference
+          if (
+            item[0].quantityNew + prevDonationDetail.newQuantity <
+            donationDetail.newQuantity
+          ) {
+            throw new Error(
+              `Not enough stock for the new item: ${
+                donationDetail.item
+              }. Stock: ${
+                item[0].quantityNew + prevDonationDetail.newQuantity
+              }`,
+            );
+          }
+
+          if (
+            item[0].quantityUsed + prevDonationDetail.usedQuantity <
+            donationDetail.usedQuantity
+          ) {
+            throw new Error(
+              `Not enough stock for the used item: ${
+                donationDetail.item
+              }. Stock: ${
+                item[0].quantityUsed + prevDonationDetail.usedQuantity
+              }`,
+            );
+          }
+        }
+      }),
+    );
+
+    // ---------------------- Updating the OutgoingDonationStats Table -------------------------
     await DonationService.updateOutgoingDonationStats(
       donationId,
       donationReqBody.numberServed,

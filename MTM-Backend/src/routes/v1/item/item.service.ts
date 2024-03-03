@@ -147,18 +147,6 @@ export const updateItem = async (
     throw new Error(`Item [ID: ${itemId}] not found`);
   }
 
-  if (itemFromID.quantityUsed + quantityUsedChange < 0) {
-    throw new Error(
-      `Quantity Used for [ID: ${itemId}] ${itemFromID.name} will go negative`,
-    );
-  }
-
-  if (itemFromID.quantityNew + quantityNewChange < 0) {
-    throw new Error(
-      `Quantity New for [ID: ${itemId}] ${itemFromID.name} will go negative`,
-    );
-  }
-
   const item: ItemType | null = await db.item.update({
     where: {
       id: itemId,
