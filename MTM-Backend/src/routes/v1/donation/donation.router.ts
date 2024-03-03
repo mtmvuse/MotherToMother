@@ -9,6 +9,7 @@ import {
   getItemsCategoryName,
   updateItem,
   getItemsName,
+  getItemFromID,
 } from "../item/item.service";
 import type {
   OutgoingDonationRequestBodyType,
@@ -389,6 +390,61 @@ donationRouter.put(
       }
     } catch (e) {
       next(e);
+    }
+  },
+);
+
+donationRouter.get(
+  "/v1/details/:donationId",
+  async (
+    req: Request<any, any, any, any>,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const donationId = req.params.donationId;
+
+      const donationDetails = await DonationService.getDonationDetailsId(
+        parseInt(donationId),
+      );
+
+      const itemDetails = [];
+
+      for (const detail of donationDetails) {
+        const itemId = detail.itemId;
+
+        const item = await getItemFromID(itemId);
+
+        itemDetails.push({
+          id: itemId,
+          name: item?.name,
+          quantityUsed: detail.usedQuantity,
+          quantityNew: detail.newQuantity,
+          valueUsed: item?.valueUsed,
+          valueNew: item?.valueNew,
+        });
+      }
+
+      return res.status(200).json(itemDetails);
+    } catch (error) {
+      console.error("Error:", error);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  },
+);
+
+donationRouter.get(
+  "/v1/demographics/:donationId",
+  async (req: Request<any, any, any, any>, res: Response) => {
+    try {
+      const donationId = req.params.donationId;
+      const donationDetails = await DonationService.getDemographicDetailsId(
+        parseInt(donationId),
+      );
+      return res.status(200).json(donationDetails);
+    } catch (error) {
+      console.error("Error:", error);
+      return res.status(500).json({ error: "Internal server error" });
     }
   },
 );

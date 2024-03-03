@@ -159,6 +159,22 @@ export const getDonationDetails = async (
   });
 };
 
+export const getDonationDetailsId = async (donationId: number) => {
+  return db.donationDetail.findMany({
+    where: {
+      donationId: donationId,
+    },
+  });
+};
+
+export const getDemographicDetailsId = async (donationId: number) => {
+  return db.outgoingDonationStats.findUnique({
+    where: {
+      donationId: donationId,
+    },
+  });
+};
+
 export const getAllItemsInDonation = async (donationId: number) => {
   return db.donationDetail.findMany({
     where: {

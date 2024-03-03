@@ -15,11 +15,21 @@ import {
   createOutgoingDonation,
   getOrganizations,
   getModalUsers,
+  createIncomingDonation,
 } from "../../lib/services";
 import { Organization } from "~/types/organization";
 import { ResponseUser } from "~/types/user";
 import { ErrorMessage } from "../ErrorMessage";
 import { SuccessMessage } from "../SuccessMessage";
+import {
+  AddIncomingDonationType,
+  AddOutgoingDonationType,
+} from "~/types/DonationTypes";
+
+// TODO Add figma styling
+// TODO Cleanup/ Add global errors
+// TODO Add Put (edit) donation API integration
+// TODO Integrate Edit Icon button
 
 interface DonationItem {
   itemId: number;
@@ -150,16 +160,27 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
         const response = await getOrganizations();
         if (!response.ok) {
           setError("Failed to fetch organizations");
+          return;
         }
         const orgList = await response.json();
-        setOrganizationList(orgList);
+
+        const filteredOrgList = orgList.filter((org: Organization) => {
+          if (donationType === "Incoming") {
+            return org.type === "Public" || org.type == "Corporate";
+          } else if (donationType === "Outgoing") {
+            return org.type === "Agency";
+          }
+          return true;
+        });
+
+        setOrganizationList(filteredOrgList);
       } catch (error) {
         setError("Error fetching organizations:");
       }
     };
 
     fetchData();
-  }, []);
+  }, [donationType]);
 
   const updateUsers = async (selectedOrg: Organization | undefined) => {
     try {
@@ -226,9 +247,25 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
         return;
       }
 
+      if (donationType === "Outgoing") {
+        const isDemographicEmpty =
+          demographicData.numberServed === 0 &&
+          demographicData.whiteNum === 0 &&
+          demographicData.latinoNum === 0 &&
+          demographicData.blackNum === 0 &&
+          demographicData.nativeNum === 0 &&
+          demographicData.asianNum === 0 &&
+          demographicData.otherNum === 0;
+
+        if (isDemographicEmpty) {
+          setError("Please fill in at least one demographic field.");
+          return;
+        }
+      }
+
       if (donationType == "Outgoing") {
-        const outgoingDonationData = {
-          userId: selectedUser.id,
+        const outgoingDonationData: AddOutgoingDonationType = {
+          userId: 40,
           donationDetails: items.map((item) => ({
             itemId: item.itemId,
             usedQuantity: item.quantityUsed,
@@ -243,6 +280,25 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
           otherNum: demographicData.otherNum,
         };
         const response = await createOutgoingDonation(outgoingDonationData);
+        console.log(outgoingDonationData);
+
+        if (response.status === 200) {
+          handleCloseModal();
+          handleSubmissionSuccess();
+        }
+      }
+
+      if (donationType == "Incoming") {
+        const incomingDonationData: AddIncomingDonationType = {
+          userId: 40,
+          donationDetails: items.map((item) => ({
+            itemId: item.itemId,
+            usedQuantity: item.quantityUsed,
+            newQuantity: item.quantityNew,
+          })),
+        };
+        const response = await createIncomingDonation(incomingDonationData);
+        console.log(incomingDonationData);
 
         if (response.status === 200) {
           handleCloseModal();

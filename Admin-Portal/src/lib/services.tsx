@@ -3,7 +3,10 @@ import type { EditUserType, AddUserType } from "../types/user";
 import type { Organization } from "~/types/organization";
 import type { GridFilterModel, GridSortModel } from "@mui/x-data-grid";
 import { filterModelToApiQuery, sortModelToApiQuery } from "./utils";
-import { AddOutgoingDonationType } from "~/types/DonationTypes";
+import {
+  AddIncomingDonationType,
+  AddOutgoingDonationType,
+} from "~/types/DonationTypes";
 
 const mode = import.meta.env.MODE;
 const backendUrl: string =
@@ -165,6 +168,16 @@ export const createOutgoingDonation = async (
   });
 };
 
+export const createIncomingDonation = async (
+  outgoingDonationData: AddIncomingDonationType
+) => {
+  return await fetch(`${backendUrl}/donation/v1/incoming`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(outgoingDonationData),
+  });
+};
+
 export const addOrganization = async (
   organization: Organization,
   token: string
@@ -198,6 +211,26 @@ export const getDonations = async (
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+export const getDonationDetails = (donationId: number): Promise<Response> => {
+  return fetch(`${backendUrl}/donation/v1/details/${donationId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+};
+
+export const getDonationDemographics = (
+  donationId: number
+): Promise<Response> => {
+  return fetch(`${backendUrl}/donation/v1/demographics/${donationId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
     },
   });
 };
