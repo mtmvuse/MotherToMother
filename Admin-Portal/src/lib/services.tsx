@@ -3,7 +3,10 @@ import type { EditUserType, AddUserType } from "../types/user";
 import type { Organization } from "~/types/organization";
 import type { GridFilterModel, GridSortModel } from "@mui/x-data-grid";
 import { filterModelToApiQuery, sortModelToApiQuery } from "./utils";
-import { AddOutgoingDonationType } from "~/types/DonationTypes";
+import {
+  AddIncomingDonationType,
+  AddOutgoingDonationType,
+} from "~/types/DonationTypes";
 
 const mode = import.meta.env.MODE;
 const backendUrl: string =
@@ -159,6 +162,16 @@ export const createOutgoingDonation = async (
   outgoingDonationData: AddOutgoingDonationType
 ) => {
   return await fetch(`${backendUrl}/donation/v1/outgoing`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(outgoingDonationData),
+  });
+};
+
+export const createIncomingDonation = async (
+  outgoingDonationData: AddIncomingDonationType
+) => {
+  return await fetch(`${backendUrl}/donation/v1/incoming`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(outgoingDonationData),

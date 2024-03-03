@@ -42,3 +42,12 @@ export interface AddOutgoingDonationType {
   asianNum: number;
   otherNum: number;
 }
+
+export interface AddIncomingDonationType {
+  userId: number;
+  donationDetails: {
+    itemId: number;
+    usedQuantity: number;
+    newQuantity: number;
+  }[];
+}

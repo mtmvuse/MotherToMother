@@ -15,11 +15,16 @@ import {
   createOutgoingDonation,
   getOrganizations,
   getModalUsers,
+  createIncomingDonation,
 } from "../../lib/services";
 import { Organization } from "~/types/organization";
 import { ResponseUser } from "~/types/user";
 import { ErrorMessage } from "../ErrorMessage";
 import { SuccessMessage } from "../SuccessMessage";
+import {
+  AddIncomingDonationType,
+  AddOutgoingDonationType,
+} from "~/types/DonationTypes";
 
 interface DonationItem {
   itemId: number;
@@ -144,6 +149,8 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
     setTotalCost(newTotalCost);
   }, [items]);
 
+  // TODO: When user selects outgoing only show outgoing orginzations / users.
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -227,8 +234,8 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
       }
 
       if (donationType == "Outgoing") {
-        const outgoingDonationData = {
-          userId: selectedUser.id,
+        const outgoingDonationData: AddOutgoingDonationType = {
+          userId: 40,
           donationDetails: items.map((item) => ({
             itemId: item.itemId,
             usedQuantity: item.quantityUsed,
@@ -243,6 +250,25 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
           otherNum: demographicData.otherNum,
         };
         const response = await createOutgoingDonation(outgoingDonationData);
+        console.log(outgoingDonationData);
+
+        if (response.status === 200) {
+          handleCloseModal();
+          handleSubmissionSuccess();
+        }
+      }
+
+      if (donationType == "Incoming") {
+        const incomingDonationData: AddIncomingDonationType = {
+          userId: 40,
+          donationDetails: items.map((item) => ({
+            itemId: item.itemId,
+            usedQuantity: item.quantityUsed,
+            newQuantity: item.quantityNew,
+          })),
+        };
+        const response = await createIncomingDonation(incomingDonationData);
+        console.log(incomingDonationData);
 
         if (response.status === 200) {
           handleCloseModal();
