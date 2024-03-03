@@ -30,6 +30,7 @@ reportRouter.get(
       id: filters.id && Number(filters.id),
     };
     const whereClause = translateFilterToPrisma(typedFilters) as Report;
+    console.log(whereClause);
     const orderBy = translateSortToPrisma(
       sort as string,
       order as string,

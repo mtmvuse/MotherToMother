@@ -3,7 +3,7 @@ SELECT
     ORDER BY
       `t2`.`date`
   ) AS `id`,
-  `t2`.`org_name` AS `org_name`,
+  `t2`.`agency` AS `agency`,
   `t2`.`date` AS `date`,
   `t2`.`item_name` AS `item_name`,
   `t1`.`quantity` AS `quantity`,
@@ -43,7 +43,7 @@ FROM
     JOIN (
       SELECT
         `mtm`.`DonationDetail`.`id` AS `id`,
-        `mtm`.`Organization`.`name` AS `org_name`,
+        `mtm`.`Organization`.`name` AS `agency`,
         `mtm`.`Donation`.`date` AS `date`,
         `mtm`.`Item`.`name` AS `item_name`,
         `mtm`.`Item`.`valueUsed` AS `valueUsed`,

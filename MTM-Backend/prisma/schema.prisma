@@ -94,8 +94,8 @@ model Admin {
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 view report_dashboard {
-  id        BigInt   @id @default(0) @db.UnsignedBigInt
-  org_name  String
+  id        Int   @id @default(0) 
+  agency    String
   date      DateTime @default(dbgenerated("'0000-00-00 00:00:00.000'"))
   item_name String
   quantity  Int      @default(0)

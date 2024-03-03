@@ -1,6 +1,6 @@
 export interface Report {
   id: number;
-  org_name: string;
+  agency: string;
   date: Date;
   item_name: string;
   quantity: number;
