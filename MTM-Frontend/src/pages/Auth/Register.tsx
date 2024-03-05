@@ -126,6 +126,9 @@ const Register: React.FC<SharedStates> = ({ setSavedUserType }) => {
         state: "state",
         zip: parseInt(values.zip, 10),
         userType: values.userType,
+        organizationId: values.affiliation
+          ? parseInt(values.affiliation, 10)
+          : undefined,
       } as UserType;
 
       const response = await registerUserOnServer(user);
@@ -457,7 +460,7 @@ const Register: React.FC<SharedStates> = ({ setSavedUserType }) => {
                       error={!!errors.affiliation}
                     >
                       {organizations.map((organization, index) => (
-                        <MenuItem value={organization.name} key={index}>
+                        <MenuItem value={organization.id} key={index}>
                           {organization.name}
                         </MenuItem>
                       ))}
