@@ -11,7 +11,7 @@ export interface UserType {
   role: string;
   household: string;
   userType: string;
-  organizationId: number | undefined;
+  organizationId: number;
 }
 
 export interface Organization {
