@@ -18,7 +18,14 @@ import {
 import {
   getDonationDemographics,
   getDonationDetails,
+  editOutgoingDonation,
 } from "../../lib/services";
+
+// TODO Cleanup
+// TODO Add global erros
+// TODO Add dialoge for add item row
+// Remove Add Demographic
+// TODO Styling
 
 interface ModalContentProps {
   selectedDonation: ResponseDonation;
@@ -122,11 +129,51 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
     setOpenConfirmDialog(true);
   };
 
-  const handleConfirmSave = () => {
-    setEditable(false);
-    setOpenConfirmDialog(false);
-    setInitialItemRows(itemRows);
-    setInitialDemographicRows(demographicRows);
+  const totalQuantity = demographicRows
+    .filter((row) => row.kidGroup)
+    .reduce((total, row) => total + row.quantity, 0);
+
+  const handleConfirmSave = async () => {
+    try {
+      const response = await editOutgoingDonation(selectedDonation.id, {
+        numberServed: totalQuantity,
+
+        whiteNum:
+          demographicRows.find((row) => row.kidGroup === "White children")
+            ?.quantity || 0,
+        latinoNum:
+          demographicRows.find((row) => row.kidGroup === "Latino children")
+            ?.quantity || 0,
+        blackNum:
+          demographicRows.find((row) => row.kidGroup === "Black children")
+            ?.quantity || 0,
+        nativeNum:
+          demographicRows.find((row) => row.kidGroup === "Native children")
+            ?.quantity || 0,
+        asianNum:
+          demographicRows.find((row) => row.kidGroup === "Asian children")
+            ?.quantity || 0,
+        otherNum:
+          demographicRows.find((row) => row.kidGroup === "Other children")
+            ?.quantity || 0,
+        donationDetails: itemRows.map((item) => ({
+          item: item.name,
+          usedQuantity: item.quantityNew,
+          newQuantity: item.quantityUsed,
+        })),
+      });
+
+      if (response.ok) {
+        setInitialItemRows(itemRows);
+        setInitialDemographicRows(demographicRows);
+        setOpenConfirmDialog(false);
+      } else {
+        throw new Error("Failed to save changes");
+      }
+    } catch (error) {
+      console.error("Error saving changes:", error);
+      // Handle error
+    }
   };
 
   const handleCancelConfirm = () => {
