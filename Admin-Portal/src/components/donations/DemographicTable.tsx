@@ -21,13 +21,6 @@ const DemographicTable: React.FC<DonationTableProps> = ({
   editable,
 }) => {
   const [totalKids, setTotalKids] = useState(0);
-  const kidOptions = [
-    "Black Children",
-    "White Children",
-    "Black Children",
-    "Asian Children",
-    "Other Children",
-  ];
 
   const handleProcessRowUpdate = (updatedRow: DemographicDetails) => {
     const rowIndex = rows.findIndex((row) => row.id === updatedRow.id);
@@ -51,9 +44,8 @@ const DemographicTable: React.FC<DonationTableProps> = ({
       field: "kidGroup",
       headerName: "Group",
       flex: 2,
-      editable: true,
-      type: "singleSelect",
-      valueOptions: kidOptions,
+      editable: false,
+      type: "string",
     },
     {
       field: "quantity",
@@ -61,24 +53,10 @@ const DemographicTable: React.FC<DonationTableProps> = ({
       align: "left",
       headerAlign: "left",
       type: "number",
-      editable: true,
+      editable: editable,
       flex: 2,
     },
   ];
-
-  if (editable) {
-    columns.push({
-      field: "actions",
-      type: "actions",
-      getActions: (params: GridRowParams) => [
-        <GridActionsCellItem
-          icon={<DeleteIcon />}
-          label="Delete"
-          onClick={handleDeleteRow(params.id)}
-        />,
-      ],
-    });
-  }
 
   return (
     <div>
