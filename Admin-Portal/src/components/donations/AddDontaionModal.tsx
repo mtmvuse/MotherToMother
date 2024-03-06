@@ -265,7 +265,7 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
 
       if (donationType == "Outgoing") {
         const outgoingDonationData: AddOutgoingDonationType = {
-          userId: 40,
+          userId: selectedUser.id,
           donationDetails: items.map((item) => ({
             itemId: item.itemId,
             usedQuantity: item.quantityUsed,
@@ -290,7 +290,7 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
 
       if (donationType == "Incoming") {
         const incomingDonationData: AddIncomingDonationType = {
-          userId: 40,
+          userId: selectedUser.id,
           donationDetails: items.map((item) => ({
             itemId: item.itemId,
             usedQuantity: item.quantityUsed,
