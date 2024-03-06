@@ -6,6 +6,7 @@ import { filterModelToApiQuery, sortModelToApiQuery } from "./utils";
 import {
   AddIncomingDonationType,
   AddOutgoingDonationType,
+  UpdateOutgoingDonationType,
 } from "~/types/DonationTypes";
 
 const mode = import.meta.env.MODE;
@@ -232,5 +233,16 @@ export const getDonationDemographics = (
     headers: {
       "Content-Type": "application/json",
     },
+  });
+};
+
+export const editOutgoingDonation = async (
+  donationId: number,
+  outgoingDonationData: UpdateOutgoingDonationType
+) => {
+  return await fetch(`${backendUrl}/donation/v1/outgoing/${donationId}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(outgoingDonationData),
   });
 };

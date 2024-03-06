@@ -51,3 +51,18 @@ export interface AddIncomingDonationType {
     newQuantity: number;
   }[];
 }
+
+export interface UpdateOutgoingDonationType {
+  donationDetails: {
+    item: string;
+    usedQuantity: number;
+    newQuantity: number;
+  }[];
+  numberServed: number;
+  whiteNum: number;
+  latinoNum: number;
+  blackNum: number;
+  nativeNum: number;
+  asianNum: number;
+  otherNum: number;
+}
