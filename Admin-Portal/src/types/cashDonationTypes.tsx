@@ -26,14 +26,5 @@ export type EditCashArgs = {
 
 export interface cdDashboardResponse {
   totalNumber: number;
-  cashDonation: ResponseCd[];
-}
-
-export interface ResponseCd {
-  id: number;
-  date: Date;
-  total: number;
-  Organization: {
-    name: string;
-  };
+  cashDonation: CashDonationRow[];
 }
