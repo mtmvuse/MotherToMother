@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Modal, Box } from "@mui/material";
 import {
   DataGrid,
@@ -6,7 +6,17 @@ import {
   GridRowParams,
   GridValueGetterParams,
   GridActionsCellItem,
+  type GridFilterModel,
+  type GridSortModel,
 } from "@mui/x-data-grid";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { PAGE_SIZE } from "../lib/constants";
+import { getDonations } from "../lib/services";
 import AddDonationModal from "../components/donations/AddDontaionModal";
 import DonationDetailsIncoming from "../components/donations/DonationDetailsIncoming";
 import DonationDetailsOutgoing from "../components/donations/DonationDetailsOutgoing";
@@ -16,33 +26,12 @@ import editIcon from "../assets/edit-icon.png";
 import deleteIcon from "../assets/delete-icon.png";
 import AddIcon from "@mui/icons-material/Add";
 import "./styles/datagrid.css";
-
-const rows = [
-  {
-    id: 1,
-    date: Date(),
-    organization: "Baby to Baby",
-    items: 35,
-    total: 1000,
-    type: "Outgoing",
-  },
-  {
-    id: 2,
-    date: Date(),
-    organization: "VUMC",
-    items: 45,
-    total: 1030,
-    type: "Incoming",
-  },
-  {
-    id: 3,
-    date: Date(),
-    organization: "Public",
-    items: 4,
-    total: 10,
-    type: "Incoming",
-  },
-];
+import {
+  DonationDashboardResponse,
+  ResponseDonation,
+} from "~/types/DonationTypes";
+import { UserDashboardResponse } from "~/types/user";
+import { ResolveModulePreloadDependenciesFn } from "vite";
 
 const modalStyle = {
   backgroundColor: "#fefefe",
@@ -61,19 +50,15 @@ const modalStyle = {
   outline: "none",
 };
 
-interface Donation {
-  id: number;
-  date: Date;
-  organization: string;
-  items: number;
-  total: number;
-  type: string;
-}
-
 const DonationsPage: React.FC = () => {
-  const [selectedDonation, setSelectedDonation] = useState<Donation | null>(
-    null
-  );
+  const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(PAGE_SIZE);
+  const [filterModel, setFilterModel] = useState<GridFilterModel | undefined>();
+  const [sortModel, setSortModel] = useState<GridSortModel | undefined>();
+  const [totalNumber, setTotalNumber] = useState(0);
+
+  const [selectedDonation, setSelectedDonation] = useState<ResponseDonation>();
+
   const [incomingModalOpen, setIncomingModalOpen] = useState(false);
   const [outgoingModalOpen, setOutgoingModalOpen] = useState(false);
   const [addDonationModal, setAddDonationModalOpen] = React.useState(false);
@@ -81,26 +66,70 @@ const DonationsPage: React.FC = () => {
     null
   );
 
+  const isAnyFilterValueUndefined = () => {
+    return filterModel?.items.some((item) => item.value === undefined);
+  };
+
   const handleSubmissionSuccess = () => {
     setShowSuccessAlert(true);
   };
 
   const handleAddDonation = () => setAddDonationModalOpen(true);
 
-  const handleOpenEdit = (params: GridRowParams) => {
-    setSelectedDonation(params.row as Donation);
-    if (selectedDonation?.type === "Incoming") {
-      setIncomingModalOpen(true);
-    } else {
-      setOutgoingModalOpen(true);
+  useEffect(() => {
+    if (selectedDonation) {
+      if (selectedDonation.type === "Incoming") {
+        setIncomingModalOpen(true);
+      } else {
+        setOutgoingModalOpen(true);
+      }
     }
+  }, [selectedDonation]);
+
+  const handleOpenEdit = (params: GridRowParams) => {
+    setSelectedDonation(params.row as ResponseDonation);
   };
 
   const handleCloseModal = () => {
-    setSelectedDonation(null);
+    setSelectedDonation(undefined);
     setIncomingModalOpen(false);
     setOutgoingModalOpen(false);
     setAddDonationModalOpen(false);
+  };
+
+  const donationsQueryResponse = useQuery({
+    queryKey: ["donation", page, pageSize, filterModel, sortModel],
+    placeholderData: keepPreviousData,
+    //define type
+    queryFn: () =>
+      getDonations("token", page, pageSize, filterModel, sortModel)
+        .then((response: Response) => response.json())
+        .then((data) => {
+          setTotalNumber(data.totalNumber);
+          const renderDonations = data.donationsAP.map(
+            (donation: ResponseDonation) => ({
+              id: donation.id,
+              date: donation.date,
+              organization: donation.organization,
+              type: donation.type,
+              total: donation.total,
+              items: donation.items,
+            })
+          );
+          return renderDonations;
+        })
+        .catch((err: any) => {
+          console.log(err);
+        }),
+    enabled: !filterModel,
+  });
+
+  const handleFilterModelChange = (model: GridFilterModel) => {
+    setFilterModel(model);
+  };
+
+  const handleSortModelChange = (model: GridSortModel) => {
+    setSortModel(model);
   };
 
   const columns: GridColDef[] = [
@@ -178,21 +207,35 @@ const DonationsPage: React.FC = () => {
       <div className="grid-container">
         <DataGrid
           rowHeight={40}
-          rows={rows}
+          rows={donationsQueryResponse.data || []}
           columns={columns}
+          onRowClick={handleOpenEdit}
           pagination
-          pageSizeOptions={[10, 25]}
+          autoPageSize
+          rowCount={totalNumber}
+          paginationMode="server"
+          onPaginationModelChange={(params) => {
+            setPage(params.page);
+            setPageSize(params.pageSize);
+          }}
+          onFilterModelChange={handleFilterModelChange}
+          onSortModelChange={handleSortModelChange}
+          sx={{ width: "100%", height: "68vh" }}
         />
       </div>
 
       <Modal open={incomingModalOpen} onClose={handleCloseModal}>
         <Box sx={modalStyle}>
-          <DonationDetailsIncoming selectedDonation={selectedDonation} />
+          {selectedDonation && (
+            <DonationDetailsIncoming selectedDonation={selectedDonation} />
+          )}
         </Box>
       </Modal>
       <Modal open={outgoingModalOpen} onClose={handleCloseModal}>
         <Box sx={modalStyle}>
-          <DonationDetailsOutgoing selectedDonation={selectedDonation} />
+          {selectedDonation && (
+            <DonationDetailsOutgoing selectedDonation={selectedDonation} />
+          )}
         </Box>
       </Modal>
       <Modal open={addDonationModal} onClose={handleCloseModal}>
