@@ -42,7 +42,7 @@ model Donation {
   id                    Int                    @id @default(autoincrement())
   userId                Int
   date                  DateTime               @default(now())
-  user                  User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                  User                   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   DonationDetail        DonationDetail[]
   OutgoingDonationStats OutgoingDonationStats?
 
@@ -55,8 +55,8 @@ model DonationDetail {
   itemId       Int
   usedQuantity Int
   newQuantity  Int
-  donation     Donation @relation(fields: [donationId], references: [id], onDelete: Cascade)
-  item         Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  donation     Donation @relation(fields: [donationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  item         Item     @relation(fields: [itemId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@unique([donationId, itemId])
   @@index([donationId], map: "DonationDetail_donationId_fkey")
@@ -73,7 +73,7 @@ model OutgoingDonationStats {
   nativeNum    Int
   asianNum     Int
   otherNum     Int
-  donation     Donation @relation(fields: [donationId], references: [id], onDelete: Cascade)
+  donation     Donation @relation(fields: [donationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Item {
@@ -99,7 +99,7 @@ model CashDonation {
   organizationId Int
   date           DateTime      @default(now())
   total          Float
-  Organization   Organization? @relation(fields: [organizationId], references: [id])
+  Organization   Organization @relation(fields: [organizationId], references: [id])
 
   @@index([organizationId], map: "CashDonation_organizationId_fkey")
 }
@@ -128,8 +128,8 @@ view donation_detail {
   id           Int      @id @default(0)
   date         DateTime @default(now())
   organization String
-  total        Float?
-  items        Decimal? @db.Decimal(33, 0)
+  total        Float
+  items        Decimal @db.Decimal(33, 0)
   type         String   @default("") @db.VarChar(8)
   details      Json
 }

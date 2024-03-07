@@ -24,18 +24,16 @@ interface CashDialogProps {
 const CashDonationsDialog: React.FC<CashDialogProps> = (props) => {
   const { organizations, selectedDate, onDateChange, editRow } = props;
 
-  const [total, setTotal] = useState<number>(
-    editRow == undefined ? 0 : Number(editRow?.total)
-  );
+  const [total, setTotal] = useState(editRow?.total || "");
 
-  const [organization, setOrganization] = React.useState(editRow?.organization);
+  const [organization, setOrganization] = useState(editRow?.organization || "");
 
   const handleDateChange = (date: Date | null) => {
     onDateChange(date);
   };
 
   const handleTotalChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const input = parseFloat(event.target.value);
+    const input = event.target.value;
     setTotal(input);
   };
 
@@ -54,6 +52,7 @@ const CashDonationsDialog: React.FC<CashDialogProps> = (props) => {
           value={organization}
           label="Donor"
           onChange={handleOrganizationChange}
+          name="organization"
         >
           {organizations?.map((org) => (
             <MenuItem key={org.id} value={org.name}>
@@ -61,29 +60,30 @@ const CashDonationsDialog: React.FC<CashDialogProps> = (props) => {
             </MenuItem>
           ))}
         </Select>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DemoContainer components={["DatePicker"]}>
-            <DatePicker
-              value={selectedDate}
-              onChange={handleDateChange}
-              label="Select a date"
-            />
-          </DemoContainer>
-        </LocalizationProvider>
-        <TextField
-          autoFocus
-          required={true}
-          margin="dense"
-          id="total"
-          name="total"
-          label="$"
-          type="number"
-          fullWidth
-          variant="standard"
-          value={total}
-          onChange={handleTotalChange}
-        />
       </FormControl>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <DemoContainer components={["DatePicker"]}>
+          <DatePicker
+            value={selectedDate}
+            onChange={handleDateChange}
+            label="Select a date"
+            name="date"
+          />
+        </DemoContainer>
+      </LocalizationProvider>
+      <TextField
+        autoFocus
+        required={true}
+        margin="dense"
+        id="total"
+        name="total"
+        label="$"
+        type="number"
+        fullWidth
+        variant="standard"
+        value={total}
+        onChange={handleTotalChange}
+      />
     </>
   );
 };
