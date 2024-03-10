@@ -26,11 +26,10 @@ import {
   editOutgoingDonation,
   getModalItems,
 } from "../../lib/services";
+import { ErrorMessage } from "../../components/ErrorMessage";
+import { SuccessMessage } from "../../components/SuccessMessage";
 
-// TODO Cleanup
 // TODO Add global erros
-// TODO Add dialoge for add item row
-// Remove Add Demographic
 // TODO Styling
 
 interface ModalContentProps {
@@ -50,6 +49,8 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
   );
   const [itemList, setItemList] = useState<ItemSelection[]>([]);
   const [filteredItemList, setFilteredItemList] = useState<ItemSelection[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<boolean | null>(null);
   const [categoryList, setCategoryList] = useState<string[]>([]);
   const [editable, setEditable] = useState(false);
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
@@ -86,33 +87,29 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
           setItemRows(fetchedData);
           setInitialItemRows(fetchedData);
         } else {
-          throw new Error("Failed to fetch item rows");
+          setError("Failed to fetch item rows");
         }
       } catch (error) {
-        console.error("Error fetching item rows:", error);
+        setError("Error fetching item rows:");
       }
     };
 
     const fetchDemographicRows = async () => {
-      try {
-        const response = await getDonationDemographics(selectedDonation.id);
-        if (response.ok) {
-          const data = await response.json();
-          const fetchedData: DemographicDetails[] = [
-            { id: 1, kidGroup: "White children", quantity: data.whiteNum },
-            { id: 2, kidGroup: "Latino children", quantity: data.latinoNum },
-            { id: 3, kidGroup: "Black children", quantity: data.blackNum },
-            { id: 4, kidGroup: "Native children", quantity: data.nativeNum },
-            { id: 5, kidGroup: "Asian children", quantity: data.asianNum },
-            { id: 6, kidGroup: "Other children", quantity: data.otherNum },
-          ];
-          setDemographicRows(fetchedData);
-          setInitialDemographicRows(fetchedData);
-        } else {
-          throw new Error("Failed to fetch demographic rows");
-        }
-      } catch (error) {
-        console.error("Error fetching demographic rows:", error);
+      const response = await getDonationDemographics(selectedDonation.id);
+      if (response.ok) {
+        const data = await response.json();
+        const fetchedData: DemographicDetails[] = [
+          { id: 1, kidGroup: "White children", quantity: data.whiteNum },
+          { id: 2, kidGroup: "Latino children", quantity: data.latinoNum },
+          { id: 3, kidGroup: "Black children", quantity: data.blackNum },
+          { id: 4, kidGroup: "Native children", quantity: data.nativeNum },
+          { id: 5, kidGroup: "Asian children", quantity: data.asianNum },
+          { id: 6, kidGroup: "Other children", quantity: data.otherNum },
+        ];
+        setDemographicRows(fetchedData);
+        setInitialDemographicRows(fetchedData);
+      } else {
+        setError("Failed to fetch demographic rows");
       }
     };
 
@@ -122,28 +119,24 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
 
   useEffect(() => {
     const fetchItems = async () => {
-      try {
-        const response = await getModalItems();
-        if (response.ok) {
-          const data = await response.json();
-          const fetchedItems: ItemSelection[] = data.map(
-            (items: ItemSelection) => ({
-              name: items.name,
-              category: items.category,
-              valueNew: items.valueNew,
-              valueUsed: items.valueUsed,
-            })
-          );
-          const fetchedCategories: string[] = Array.from(
-            new Set(data.map((items: ItemSelection) => items.category))
-          );
-          setItemList(fetchedItems);
-          setCategoryList(fetchedCategories);
-        } else {
-          throw new Error("Failed to fetch items");
-        }
-      } catch (error) {
-        console.error("Error fetching items:", error);
+      const response = await getModalItems();
+      if (response.ok) {
+        const data = await response.json();
+        const fetchedItems: ItemSelection[] = data.map(
+          (items: ItemSelection) => ({
+            name: items.name,
+            category: items.category,
+            valueNew: items.valueNew,
+            valueUsed: items.valueUsed,
+          })
+        );
+        const fetchedCategories: string[] = Array.from(
+          new Set(data.map((items: ItemSelection) => items.category))
+        );
+        setItemList(fetchedItems);
+        setCategoryList(fetchedCategories);
+      } else {
+        setError("Failed to fetch items");
       }
     };
     fetchItems();
@@ -193,46 +186,60 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
     .filter((row) => row.kidGroup)
     .reduce((total, row) => total + row.quantity, 0);
 
+  const hasEmptyFields = itemRows.some(
+    (row) => row.quantityNew === 0 && row.quantityUsed === 0
+  );
+
   const handleConfirmSave = async () => {
-    try {
-      const response = await editOutgoingDonation(selectedDonation.id, {
-        numberServed: totalQuantity,
+    if (totalQuantity === 0) {
+      setOpenConfirmDialog(false);
+      setError("Number served cannot be zero.");
+      return;
+    }
 
-        whiteNum:
-          demographicRows.find((row) => row.kidGroup === "White children")
-            ?.quantity || 0,
-        latinoNum:
-          demographicRows.find((row) => row.kidGroup === "Latino children")
-            ?.quantity || 0,
-        blackNum:
-          demographicRows.find((row) => row.kidGroup === "Black children")
-            ?.quantity || 0,
-        nativeNum:
-          demographicRows.find((row) => row.kidGroup === "Native children")
-            ?.quantity || 0,
-        asianNum:
-          demographicRows.find((row) => row.kidGroup === "Asian children")
-            ?.quantity || 0,
-        otherNum:
-          demographicRows.find((row) => row.kidGroup === "Other children")
-            ?.quantity || 0,
-        donationDetails: itemRows.map((item) => ({
-          item: item.name,
-          usedQuantity: item.quantityNew,
-          newQuantity: item.quantityUsed,
-        })),
-      });
+    if (hasEmptyFields) {
+      setOpenConfirmDialog(false);
+      setError("Please fill all fields in the current rows before saving.");
+      return;
+    }
 
-      if (response.ok) {
-        setInitialItemRows(itemRows);
-        setInitialDemographicRows(demographicRows);
-        setOpenConfirmDialog(false);
-        setEditable(false);
-      } else {
-        throw new Error("Failed to save changes");
-      }
-    } catch (error) {
-      console.error("Error saving changes:", error);
+    const response = await editOutgoingDonation(selectedDonation.id, {
+      numberServed: totalQuantity,
+
+      whiteNum:
+        demographicRows.find((row) => row.kidGroup === "White children")
+          ?.quantity || 0,
+      latinoNum:
+        demographicRows.find((row) => row.kidGroup === "Latino children")
+          ?.quantity || 0,
+      blackNum:
+        demographicRows.find((row) => row.kidGroup === "Black children")
+          ?.quantity || 0,
+      nativeNum:
+        demographicRows.find((row) => row.kidGroup === "Native children")
+          ?.quantity || 0,
+      asianNum:
+        demographicRows.find((row) => row.kidGroup === "Asian children")
+          ?.quantity || 0,
+      otherNum:
+        demographicRows.find((row) => row.kidGroup === "Other children")
+          ?.quantity || 0,
+      donationDetails: itemRows.map((item) => ({
+        item: item.name,
+        usedQuantity: item.quantityNew,
+        newQuantity: item.quantityUsed,
+      })),
+    });
+
+    if (response.ok) {
+      setInitialItemRows(itemRows);
+      setInitialDemographicRows(demographicRows);
+      setOpenConfirmDialog(false);
+      setEditable(false);
+      setSuccess(true);
+    } else {
+      setOpenConfirmDialog(false);
+      setError("Failed to save changes");
     }
   };
 
@@ -241,11 +248,8 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
   };
 
   const handleAddItemButtonClick = () => {
-    const hasEmptyFields = itemRows.some(
-      (row) => row.quantityNew === 0 && row.quantityUsed === 0
-    );
     if (hasEmptyFields) {
-      console.log(
+      setError(
         "Please fill all fields in the current rows before adding a new row."
       );
     } else {
@@ -283,6 +287,8 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
 
   return (
     <Box p={2} sx={{ overflowY: "auto" }}>
+      {error && <ErrorMessage error={error} setError={setError} />}
+      {success && <SuccessMessage success={success} setSuccess={setSuccess} />}
       <h2>Donation Detail</h2>
       <Box display="flex" justifyContent="space-between" mb={1}>
         <p>{dateString}</p>
