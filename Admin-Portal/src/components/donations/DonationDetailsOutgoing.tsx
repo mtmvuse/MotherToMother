@@ -12,7 +12,6 @@ import {
   MenuItem,
 } from "@mui/material";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
-
 import ItemsTable from "./ItemsTable";
 import DemographicTable from "./DemographicTable";
 import {
@@ -51,13 +50,14 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
   );
   const [itemList, setItemList] = useState<ItemSelection[]>([]);
   const [filteredItemList, setFilteredItemList] = useState<ItemSelection[]>([]);
-  const [categoryList, setCategoryList] = useState<String[]>([]);
+  const [categoryList, setCategoryList] = useState<string[]>([]);
   const [editable, setEditable] = useState(false);
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
   const [idItemCounter, setIdItemCounter] = useState(1);
   const [openAddItemDialog, setOpenAddItemDialog] = useState(false);
-  const [selectedCategorySelection, setSelectedCategorySelection] =
-    useState("");
+  const [selectedCategorySelection, setSelectedCategorySelection] = useState<
+    string | null
+  >();
   const [selectedItemSelection, setSelectedItemSelection] =
     useState<ItemSelection | null>(null);
 
@@ -275,7 +275,7 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
     setSelectedItemSelection(null);
   };
 
-  const handleCloseAddItemDialog = () => {
+  const handleCloseAddDialog = () => {
     setSelectedCategorySelection("");
     setSelectedItemSelection(null);
     setOpenAddItemDialog(false);
@@ -329,17 +329,17 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
           editable={editable}
         />
       </div>
-      <Dialog open={openAddItemDialog} onClose={handleCloseAddItemDialog}>
+      <Dialog open={openAddItemDialog} onClose={handleCloseAddDialog}>
         <DialogTitle>Add Item</DialogTitle>
         <DialogContent>
           <FormControl fullWidth>
-            <InputLabel id="item-type-label">Item Type</InputLabel>
+            <InputLabel id="category-label">Category</InputLabel>
             <Select
-              labelId="item-type-label"
-              id="item-type"
-              value={selectedCategorySelection}
+              labelId="category-label"
+              id="category"
+              value={selectedCategorySelection ? selectedCategorySelection : ""}
               onChange={handleCategorySelectionChange}
-              label="Item Type"
+              label="category"
             >
               {categoryList.map((category, index) => (
                 <MenuItem key={index} value={category.toString()}>
@@ -349,13 +349,13 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
             </Select>
           </FormControl>
           <FormControl fullWidth disabled={!selectedCategorySelection}>
-            <InputLabel id="item-type-label">Item Type</InputLabel>
+            <InputLabel id="item-selection-label">Item</InputLabel>
             <Select
-              labelId="item-type-label"
-              id="item-type"
+              labelId="item-selection-label"
+              id="item-selection"
               value={selectedItemSelection ? selectedItemSelection.name : ""}
               onChange={handleItemSelectionChange}
-              label="Item Type"
+              label="Item"
             >
               {filteredItemList.map((item) => (
                 <MenuItem value={item.name}>{item.name}</MenuItem>
@@ -364,7 +364,7 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
           </FormControl>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseAddItemDialog}>Cancel</Button>
+          <Button onClick={handleCloseAddDialog}>Cancel</Button>
           <Button
             onClick={() => {
               handleAddDialog();
