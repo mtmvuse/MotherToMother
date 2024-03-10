@@ -7,18 +7,25 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  FormControl,
+  InputLabel,
+  MenuItem,
 } from "@mui/material";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+
 import ItemsTable from "./ItemsTable";
 import DemographicTable from "./DemographicTable";
 import {
   DemographicDetails,
   ItemDetails,
   ResponseDonation,
+  ItemSelection,
 } from "~/types/DonationTypes";
 import {
   getDonationDemographics,
   getDonationDetails,
   editOutgoingDonation,
+  getModalItems,
 } from "../../lib/services";
 
 // TODO Cleanup
@@ -39,24 +46,26 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
   const [initialDemographicRows, setInitialDemographicRows] = useState<
     DemographicDetails[]
   >([]);
-
   const [demographicRows, setDemographicRows] = useState<DemographicDetails[]>(
     []
   );
+  const [itemList, setItemList] = useState<ItemSelection[]>([]);
+  const [filteredItemList, setFilteredItemList] = useState<ItemSelection[]>([]);
+  const [categoryList, setCategoryList] = useState<String[]>([]);
   const [editable, setEditable] = useState(false);
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
   const [idItemCounter, setIdItemCounter] = useState(1);
-  const [idDemoCounter, setIdDemoCounter] = useState(1);
+  const [openAddItemDialog, setOpenAddItemDialog] = useState(false);
+  const [selectedCategorySelection, setSelectedCategorySelection] =
+    useState("");
+  const [selectedItemSelection, setSelectedItemSelection] =
+    useState<ItemSelection | null>(null);
 
   useEffect(() => {
     if (itemRows.length > 0) {
       setIdItemCounter(Math.max(...itemRows.map((item) => item.id)) + 1);
     }
-
-    if (demographicRows.length > 0) {
-      setIdDemoCounter(Math.max(...demographicRows.map((demo) => demo.id)) + 1);
-    }
-  }, [itemRows, demographicRows]);
+  }, [itemRows]);
 
   useEffect(() => {
     const fetchItemRows = async () => {
@@ -111,6 +120,46 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
     fetchDemographicRows();
   }, [selectedDonation]);
 
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        const response = await getModalItems();
+        if (response.ok) {
+          const data = await response.json();
+          const fetchedItems: ItemSelection[] = data.map(
+            (items: ItemSelection) => ({
+              name: items.name,
+              category: items.category,
+              valueNew: items.valueNew,
+              valueUsed: items.valueUsed,
+            })
+          );
+          const fetchedCategories: string[] = Array.from(
+            new Set(data.map((items: ItemSelection) => items.category))
+          );
+          setItemList(fetchedItems);
+          setCategoryList(fetchedCategories);
+        } else {
+          throw new Error("Failed to fetch items");
+        }
+      } catch (error) {
+        console.error("Error fetching items:", error);
+      }
+    };
+    fetchItems();
+  }, []);
+
+  useEffect(() => {
+    if (selectedCategorySelection) {
+      const filteredItems = itemList.filter(
+        (item) => item.category === selectedCategorySelection
+      );
+      setFilteredItemList(filteredItems);
+    } else {
+      setFilteredItemList(itemList);
+    }
+  }, [selectedCategorySelection, itemList]);
+
   const dateString = selectedDonation?.date
     ? new Date(selectedDonation.date).toLocaleDateString()
     : "";
@@ -127,6 +176,17 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
 
   const handleSaveButtonClick = () => {
     setOpenConfirmDialog(true);
+  };
+
+  const handleItemSelectionChange = (event: SelectChangeEvent<string>) => {
+    const selectedItem = itemList.find(
+      (item) => item.name === event.target.value
+    );
+    setSelectedItemSelection(selectedItem || null);
+  };
+
+  const handleCategorySelectionChange = (event: SelectChangeEvent<string>) => {
+    setSelectedCategorySelection(event.target.value as string);
   };
 
   const totalQuantity = demographicRows
@@ -167,12 +227,12 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
         setInitialItemRows(itemRows);
         setInitialDemographicRows(demographicRows);
         setOpenConfirmDialog(false);
+        setEditable(false);
       } else {
         throw new Error("Failed to save changes");
       }
     } catch (error) {
       console.error("Error saving changes:", error);
-      // Handle error
     }
   };
 
@@ -181,14 +241,20 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
   };
 
   const handleAddItemButtonClick = () => {
-    const hasEmptyFields = itemRows.some((row) =>
-      Object.values(row).some((value) => value === "" || value === 0)
+    const hasEmptyFields = itemRows.some(
+      (row) => row.quantityNew === 0 && row.quantityUsed === 0
     );
-
     if (hasEmptyFields) {
       console.log(
         "Please fill all fields in the current rows before adding a new row."
       );
+    } else {
+      setOpenAddItemDialog(true);
+    }
+  };
+
+  const handleAddDialog = () => {
+    if (!selectedItemSelection) {
       return;
     }
 
@@ -196,37 +262,23 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
       ...prevRows,
       {
         id: idItemCounter + 1,
-        name: "",
-        valueNew: 0,
-        valueUsed: 0,
+        name: selectedItemSelection.name,
+        valueNew: selectedItemSelection.valueNew || 0,
+        valueUsed: selectedItemSelection.valueUsed || 0,
         quantityNew: 0,
         quantityUsed: 0,
       },
     ]);
     setIdItemCounter(idItemCounter + 1);
+    setOpenAddItemDialog(false);
+    setSelectedCategorySelection("");
+    setSelectedItemSelection(null);
   };
 
-  const handleAddDemoButtonClick = () => {
-    const hasEmptyFields = demographicRows.some((row) =>
-      Object.values(row).some((value) => !value)
-    );
-
-    if (hasEmptyFields) {
-      console.log(
-        "Please fill all fields in the current rows before adding a new row."
-      );
-      return;
-    }
-
-    setDemographicRows((prevRows) => [
-      ...prevRows,
-      {
-        id: idDemoCounter + 1,
-        kidGroup: "",
-        quantity: 0,
-      },
-    ]);
-    setIdDemoCounter(idDemoCounter + 1);
+  const handleCloseAddItemDialog = () => {
+    setSelectedCategorySelection("");
+    setSelectedItemSelection(null);
+    setOpenAddItemDialog(false);
   };
 
   return (
@@ -253,7 +305,6 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
             <Button onClick={handleSaveButtonClick}>Save</Button>
             <Button onClick={handleCancelButtonClick}>Cancel</Button>
             <Button onClick={handleAddItemButtonClick}>Add Item</Button>
-            <Button onClick={handleAddDemoButtonClick}>Add Demographic</Button>
           </>
         )}
       </Box>
@@ -278,6 +329,51 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
           editable={editable}
         />
       </div>
+      <Dialog open={openAddItemDialog} onClose={handleCloseAddItemDialog}>
+        <DialogTitle>Add Item</DialogTitle>
+        <DialogContent>
+          <FormControl fullWidth>
+            <InputLabel id="item-type-label">Item Type</InputLabel>
+            <Select
+              labelId="item-type-label"
+              id="item-type"
+              value={selectedCategorySelection}
+              onChange={handleCategorySelectionChange}
+              label="Item Type"
+            >
+              {categoryList.map((category, index) => (
+                <MenuItem key={index} value={category.toString()}>
+                  {category}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl fullWidth disabled={!selectedCategorySelection}>
+            <InputLabel id="item-type-label">Item Type</InputLabel>
+            <Select
+              labelId="item-type-label"
+              id="item-type"
+              value={selectedItemSelection ? selectedItemSelection.name : ""}
+              onChange={handleItemSelectionChange}
+              label="Item Type"
+            >
+              {filteredItemList.map((item) => (
+                <MenuItem value={item.name}>{item.name}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseAddItemDialog}>Cancel</Button>
+          <Button
+            onClick={() => {
+              handleAddDialog();
+            }}
+          >
+            Add
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Dialog open={openConfirmDialog} onClose={handleCancelConfirm}>
         <DialogTitle>Confirm Save</DialogTitle>
         <DialogContent>
