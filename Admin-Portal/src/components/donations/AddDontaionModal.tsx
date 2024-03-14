@@ -10,7 +10,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import ItemField from "./ItemField";
-import { Alert, TextField, Typography } from "@mui/material";
+import { Alert, IconButton, TextField, Typography } from "@mui/material";
 import {
   createOutgoingDonation,
   getOrganizations,
@@ -25,6 +25,8 @@ import {
   AddIncomingDonationType,
   AddOutgoingDonationType,
 } from "~/types/DonationTypes";
+import "./styles/AddDonation.css";
+import addItemIcon from "../../assets/add-item-icon.png";
 
 // TODO Add figma styling
 // TODO Cleanup/ Add global errors
@@ -311,168 +313,261 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
   };
 
   return (
-    <Box p={2} sx={{ overflowY: "auto" }}>
-      {error && <ErrorMessage error={error} setError={setError} />}
-      {success && <SuccessMessage success={success} setSuccess={setSuccess} />}
-      <Typography variant="h5" textAlign="center">
-        Add Donation
-      </Typography>
-
-      <FormControl fullWidth variant="standard" sx={{ mb: 2 }}>
-        <InputLabel id="donationType-select-label">Donation Type</InputLabel>
-        <Select
-          labelId="donationType-select-label"
-          id="donor-select"
-          value={donationType}
-          onChange={handleTypeChange}
-          label="Donation Type"
+    <div className="add-modal">
+      <Box p={2} sx={{ overflowY: "auto" }}>
+        {error && <ErrorMessage error={error} setError={setError} />}
+        {success && (
+          <SuccessMessage success={success} setSuccess={setSuccess} />
+        )}
+        <Typography variant="h5" textAlign="left">
+          Add Donation
+        </Typography>
+        <div
+          style={{
+            backgroundColor: "lightgrey",
+            borderRadius: "10px",
+            padding: "25px",
+          }}
         >
-          <MenuItem value={"Incoming"}>Incoming</MenuItem>
-          <MenuItem value={"Outgoing"}>Outgoing</MenuItem>
-        </Select>
-      </FormControl>
-      {showDonor && (
-        <FormControl fullWidth variant="standard" sx={{ mb: 2 }}>
-          <InputLabel id="org-select-label">Organization</InputLabel>
-          <Select
-            labelId="org-select-label"
-            id="org-select"
-            value={selectedOrg?.name}
-            onChange={handleOrgChange}
-            label="Organization"
+          <div
+            style={{ display: "flex", alignItems: "center", marginTop: "20px" }}
           >
-            {organizationList.map((org) => (
-              <MenuItem key={org.id} value={org.id}>
-                {org.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      )}
-      {showUser && (
-        <>
-          {userList.length > 0 ? (
-            <FormControl fullWidth variant="standard" sx={{ mb: 2 }}>
-              <InputLabel id="user-select-label">User</InputLabel>
-              <Select
-                labelId="user-select-label"
-                id="user-select"
-                value={selectedUser?.firstName}
-                onChange={handleUserChange}
-                label="Donor"
-                MenuProps={{
-                  PaperProps: {
-                    style: {
-                      maxHeight: 200,
-                      overflowY: "auto",
-                    },
-                  },
-                }}
-              >
-                {userList.map((user) => (
-                  <MenuItem key={user.id} value={user.id}>
-                    {user.firstName}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          ) : (
-            <Typography>
-              No users available for the selected organization.
-            </Typography>
-          )}
-        </>
-      )}
+            <Typography fontSize={20}>Donor</Typography>
 
-      {showCalendar && (
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DemoContainer components={["DatePicker"]}>
-            <DatePicker
-              onChange={handleDateChange}
-              value={selectedDate}
-              label="Basic date picker"
-            />
-          </DemoContainer>
-        </LocalizationProvider>
-      )}
-      {showAddButton && (
-        <Button
-          variant="contained"
-          onClick={addItemField}
-          sx={{ mt: 2, mb: 1 }}
-        >
-          Add Item
-        </Button>
-      )}
-      {items.map((item, index) => (
-        <ItemField
-          key={index}
-          isSubmitted={isSubmitted}
-          onDelete={() => removeItemField(index)}
-          onQuantityChange={(quantityNew, quantityUsed, totalValue) =>
-            handleQuantityChange(index, quantityNew, quantityUsed, totalValue)
-          }
-          onItemChange={(itemId) => handleItemChange(index, itemId)}
-        />
-      ))}
-      {items.length > 0 && (
-        <div>
-          <Typography>Total Items: {totalQuantity}</Typography>
-          <Typography>Total Cost: ${totalCost}</Typography>
-          {donationType == "Outgoing" && (
-            <div>
-              <Typography align={"center"} m={2}>
-                Demographic Data
-              </Typography>
-              <div>
-                <TextField
-                  label="White"
-                  type="standard"
-                  value={demographicData.whiteNum}
-                  onChange={handleChangeDemographicData("whiteNum")}
-                />
-                <TextField
-                  label="Latino"
-                  type="standard"
-                  value={demographicData.latinoNum}
-                  onChange={handleChangeDemographicData("latinoNum")}
-                />
-                <TextField
-                  label="Black"
-                  type="standard"
-                  value={demographicData.blackNum}
-                  onChange={handleChangeDemographicData("blackNum")}
-                />
-                <TextField
-                  label="Native"
-                  type="standard"
-                  value={demographicData.nativeNum}
-                  onChange={handleChangeDemographicData("nativeNum")}
-                />
-                <TextField
-                  label="Asian"
-                  type="standard"
-                  value={demographicData.asianNum}
-                  onChange={handleChangeDemographicData("asianNum")}
-                />
-                <TextField
-                  label="Other"
-                  type="standard"
-                  value={demographicData.otherNum}
-                  onChange={handleChangeDemographicData("otherNum")}
-                />
-              </div>
-              <Typography>
-                Number Served: {calculateNumberServed(demographicData)}
-              </Typography>
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "flex-end",
+              }}
+            >
+              <FormControl
+                variant="standard"
+                sx={{ width: 400, marginRight: "50px" }}
+              >
+                <Select id="donor-select" onChange={handleTypeChange}>
+                  <MenuItem value={"Incoming"}>Incoming</MenuItem>
+                  <MenuItem value={"Outgoing"}>Outgoing</MenuItem>
+                </Select>
+              </FormControl>
             </div>
-          )}
-          <Button variant="contained" sx={{ mt: 2 }} onClick={handleSubmit}>
-            Submit
-          </Button>
+          </div>
+
+          <div
+            style={{ display: "flex", alignItems: "center", marginTop: "20px" }}
+          >
+            <Typography fontSize={20}>Organization</Typography>
+
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "flex-end",
+              }}
+            >
+              <FormControl
+                fullWidth
+                variant="standard"
+                sx={{ width: 400, marginRight: "50px" }}
+                disabled={!showDonor}
+              >
+                <Select id="org-select" onChange={handleOrgChange}>
+                  {organizationList.map((org) => (
+                    <MenuItem key={org.id} value={org.id}>
+                      {org.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </div>
+          </div>
+
+          <div
+            style={{ display: "flex", alignItems: "center", marginTop: "20px" }}
+          >
+            <Typography fontSize={20}>User</Typography>
+
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "flex-end",
+              }}
+            >
+              <FormControl
+                disabled={!showUser || userList.length === 0}
+                fullWidth
+                variant="standard"
+                sx={{ width: 400, marginRight: "50px" }}
+              >
+                {/* {selectedOrg && userList.length > 0 ? (
+          <InputLabel id="user-select-label">User</InputLabel>
+        ) : (
+          <InputLabel id="user-select-label">
+            No users available for the selected organization.
+          </InputLabel>
+        )} */}
+                <Select
+                  labelId="user-select-label"
+                  id="user-select"
+                  onChange={handleUserChange}
+                  label="Donor"
+                  MenuProps={{
+                    PaperProps: {
+                      style: {
+                        maxHeight: 200,
+                        overflowY: "auto",
+                      },
+                    },
+                  }}
+                >
+                  {userList.map((user) => (
+                    <MenuItem key={user.id} value={user.id}>
+                      {user.firstName}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </div>
+          </div>
+
+          <div
+            style={{ display: "flex", alignItems: "center", marginTop: "20px" }}
+          >
+            <Typography fontSize={20}>Date</Typography>
+
+            <div
+              className="date-picker"
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "flex-end",
+              }}
+            >
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DemoContainer
+                  components={["DatePicker"]}
+                  sx={{ width: 400, marginRight: "50px" }}
+                >
+                  <DatePicker
+                    disabled={!showCalendar}
+                    onChange={handleDateChange}
+                    value={selectedDate}
+                  />
+                </DemoContainer>
+              </LocalizationProvider>
+            </div>
+          </div>
         </div>
-      )}
-    </Box>
+
+        {showAddButton && (
+          <IconButton onClick={addItemField} sx={{ mt: 2, mb: 1 }}>
+            <img
+              className="add-item-icon"
+              src={addItemIcon}
+              alt="Add Item Icon"
+            />
+          </IconButton>
+        )}
+        {items.map((item, index) => (
+          <ItemField
+            key={index}
+            isSubmitted={isSubmitted}
+            onDelete={() => removeItemField(index)}
+            onQuantityChange={(quantityNew, quantityUsed, totalValue) =>
+              handleQuantityChange(index, quantityNew, quantityUsed, totalValue)
+            }
+            onItemChange={(itemId) => handleItemChange(index, itemId)}
+          />
+        ))}
+        {items.length > 0 && (
+          <div>
+            <Typography>Total Items: {totalQuantity}</Typography>
+            <Typography>Total Cost: ${totalCost}</Typography>
+            {donationType == "Outgoing" && (
+              <div>
+                <Typography align={"center"} m={2}>
+                  Demographic Data
+                </Typography>
+                <div
+                  style={{
+                    backgroundColor: "lightgray",
+                    padding: "25px",
+                    borderRadius: "10px",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <TextField
+                      label="White"
+                      variant="standard"
+                      value={demographicData.whiteNum}
+                      onChange={handleChangeDemographicData("whiteNum")}
+                      sx={{ marginRight: "30px" }}
+                    />
+                    <TextField
+                      label="Latino"
+                      variant="standard"
+                      value={demographicData.latinoNum}
+                      onChange={handleChangeDemographicData("latinoNum")}
+                      sx={{ marginRight: "30px" }}
+                    />
+                    <TextField
+                      label="Black"
+                      variant="standard"
+                      value={demographicData.blackNum}
+                      onChange={handleChangeDemographicData("blackNum")}
+                      sx={{ marginRight: "30px" }}
+                    />
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      marginTop: "10px",
+                    }}
+                  >
+                    <TextField
+                      label="Native"
+                      variant="standard"
+                      value={demographicData.nativeNum}
+                      onChange={handleChangeDemographicData("nativeNum")}
+                      sx={{ marginRight: "30px" }}
+                    />
+                    <TextField
+                      label="Asian"
+                      variant="standard"
+                      value={demographicData.asianNum}
+                      onChange={handleChangeDemographicData("asianNum")}
+                      sx={{ marginRight: "30px" }}
+                    />
+                    <TextField
+                      label="Other"
+                      variant="standard"
+                      value={demographicData.otherNum}
+                      onChange={handleChangeDemographicData("otherNum")}
+                      sx={{ marginRight: "30px" }}
+                    />
+                  </div>
+                </div>
+                <Typography>
+                  Number Served: {calculateNumberServed(demographicData)}
+                </Typography>
+              </div>
+            )}
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              <button className="submit-button" onClick={handleSubmit}>
+                Submit
+              </button>
+            </div>
+          </div>
+        )}
+      </Box>
+    </div>
   );
 };
 
