@@ -81,13 +81,23 @@ const CategoryGen: React.FC<CategoryGenProps> = ({ broadCategories }) => {
 
 interface GeneralSectionProps {
   step: number;
+  currPanel: string;
+  setCurrPanel: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const GeneralSection: React.FC<GeneralSectionProps> = ({ step }) => {
+const GeneralSection: React.FC<GeneralSectionProps> = ({
+  step,
+  currPanel,
+  setCurrPanel,
+}) => {
   const { logout, currentUser } = useAuth();
   const [broadCategories, setBroadCategories] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+
+  const handlePanelChange = () => {
+    setCurrPanel("GeneralSection");
+  };
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -122,16 +132,16 @@ const GeneralSection: React.FC<GeneralSectionProps> = ({ step }) => {
     <>
       <CssBaseline />
       <ThemeProvider theme={PrimaryMainTheme}>
-        <Box width="85%">
+        <Box width="100%" onClick={handlePanelChange}>
           <FormHeader number={step} header="Choose a category" />
-        </Box>
 
-        <ErrorMessage error={error} setError={setError} />
-        {isLoading ? (
-          <CircularProgress />
-        ) : (
-          <CategoryGen broadCategories={broadCategories} />
-        )}
+          <ErrorMessage error={error} setError={setError} />
+          {isLoading ? (
+            <CircularProgress />
+          ) : (
+            <CategoryGen broadCategories={broadCategories} />
+          )}
+        </Box>
       </ThemeProvider>
     </>
   );
