@@ -28,11 +28,6 @@ import {
 import "./styles/AddDonation.css";
 import addItemIcon from "../../assets/add-item-icon.png";
 
-// TODO Add figma styling
-// TODO Cleanup/ Add global errors
-// TODO Add Put (edit) donation API integration
-// TODO Integrate Edit Icon button
-
 interface DonationItem {
   itemId: number;
   quantityNew: number;
@@ -96,6 +91,7 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
     setSelectedOrg(selectedOrg);
     setShowUser(true);
     updateUsers(selectedOrg);
+    setSelectedUser(undefined);
   };
 
   const handleTypeChange = (event: SelectChangeEvent<string>) => {
@@ -126,15 +122,24 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
   };
 
   const addItemField = () => {
-    if (items.every((item) => item.totalValue > 0)) {
-      const newItem: DonationItem = {
-        itemId: 0,
-        quantityNew: 0,
-        quantityUsed: 0,
-        totalValue: 0,
-      };
-      setItems([...items, newItem]);
+    if (!selectedDate) {
+      setError("Fill in all fields");
+      return;
     }
+
+    if (items.some((item) => item.totalValue <= 0)) {
+      setError("Fill in all items");
+      return;
+    }
+
+    const newItem: DonationItem = {
+      itemId: 0,
+      quantityNew: 0,
+      quantityUsed: 0,
+      totalValue: 0,
+    };
+    setItems([...items, newItem]);
+    setIsSubmitted(false);
   };
 
   const removeItemField = (index: number) => {
@@ -227,88 +232,80 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
     );
   };
 
-  const setAlert = () => {
-    if (items.some((item) => item.totalValue === 0)) {
-      setError("Please fill in all item fields.");
-      return;
-    }
-  };
-
   const handleSubmit = async () => {
     setIsSubmitted(true);
-    setAlert();
-    try {
-      if (!selectedUser) {
-        setError("User not selected.");
+    if (!selectedUser) {
+      setError("User not selected.");
+      return;
+    }
+
+    if (!selectedOrg) {
+      setError("Organization not selected.");
+      return;
+    }
+
+    if (!selectedDate) {
+      setError("Date not selected.");
+      return;
+    }
+
+    if (items.some((item) => item.totalValue === 0)) {
+      setError("Please fill all item fields.");
+      return;
+    }
+
+    if (donationType === "Outgoing") {
+      if (calculateNumberServed(demographicData) === 0) {
+        setError("Please fill in at least one demographic field.");
         return;
       }
-      const isItemsEmpty = items.some((item) => item.totalValue === 0);
+    }
 
-      if (isItemsEmpty) {
-        setError("Please fill all item fields.");
-        return;
+    if (donationType == "Outgoing") {
+      const outgoingDonationData: AddOutgoingDonationType = {
+        userId: selectedUser.id,
+        donationDetails: items.map((item) => ({
+          itemId: item.itemId,
+          usedQuantity: item.quantityUsed,
+          newQuantity: item.quantityNew,
+        })),
+        numberServed: demographicData.numberServed,
+        whiteNum: demographicData.whiteNum,
+        latinoNum: demographicData.latinoNum,
+        blackNum: demographicData.blackNum,
+        nativeNum: demographicData.nativeNum,
+        asianNum: demographicData.asianNum,
+        otherNum: demographicData.otherNum,
+      };
+      const response = await createOutgoingDonation(outgoingDonationData);
+      console.log(outgoingDonationData);
+
+      if (response.status === 200) {
+        handleCloseModal();
+        handleSubmissionSuccess();
+      } else {
+        setError("Error Creating Donation");
       }
+    }
 
-      if (donationType === "Outgoing") {
-        const isDemographicEmpty =
-          demographicData.numberServed === 0 &&
-          demographicData.whiteNum === 0 &&
-          demographicData.latinoNum === 0 &&
-          demographicData.blackNum === 0 &&
-          demographicData.nativeNum === 0 &&
-          demographicData.asianNum === 0 &&
-          demographicData.otherNum === 0;
+    if (donationType == "Incoming") {
+      const incomingDonationData: AddIncomingDonationType = {
+        userId: selectedUser.id,
+        donationDetails: items.map((item) => ({
+          itemId: item.itemId,
+          usedQuantity: item.quantityUsed,
+          newQuantity: item.quantityNew,
+        })),
+      };
+      const response = await createIncomingDonation(incomingDonationData);
+      console.log(incomingDonationData);
 
-        if (isDemographicEmpty) {
-          setError("Please fill in at least one demographic field.");
-          return;
-        }
+      if (response.status === 200) {
+        handleCloseModal();
+        handleSubmissionSuccess();
+      } else {
+        setError("Error Creating Donation");
       }
-
-      if (donationType == "Outgoing") {
-        const outgoingDonationData: AddOutgoingDonationType = {
-          userId: selectedUser.id,
-          donationDetails: items.map((item) => ({
-            itemId: item.itemId,
-            usedQuantity: item.quantityUsed,
-            newQuantity: item.quantityNew,
-          })),
-          numberServed: demographicData.numberServed,
-          whiteNum: demographicData.whiteNum,
-          latinoNum: demographicData.latinoNum,
-          blackNum: demographicData.blackNum,
-          nativeNum: demographicData.nativeNum,
-          asianNum: demographicData.asianNum,
-          otherNum: demographicData.otherNum,
-        };
-        const response = await createOutgoingDonation(outgoingDonationData);
-        console.log(outgoingDonationData);
-
-        if (response.status === 200) {
-          handleCloseModal();
-          handleSubmissionSuccess();
-        }
-      }
-
-      if (donationType == "Incoming") {
-        const incomingDonationData: AddIncomingDonationType = {
-          userId: selectedUser.id,
-          donationDetails: items.map((item) => ({
-            itemId: item.itemId,
-            usedQuantity: item.quantityUsed,
-            newQuantity: item.quantityNew,
-          })),
-        };
-        const response = await createIncomingDonation(incomingDonationData);
-        console.log(incomingDonationData);
-
-        if (response.status === 200) {
-          handleCloseModal();
-          handleSubmissionSuccess();
-        }
-      }
-    } catch (error) {
-      setError("Error submitting donation:");
     }
   };
 
@@ -426,13 +423,12 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
                 variant="standard"
                 sx={{ width: 300, marginRight: "260px" }}
               >
-                {/* {selectedOrg && userList.length > 0 ? (
-          <InputLabel id="user-select-label">User</InputLabel>
-        ) : (
-          <InputLabel id="user-select-label">
-            No users available for the selected organization.
-          </InputLabel>
-        )} */}
+                {selectedOrg && userList.length === 0 && (
+                  <Typography fontSize={13}>
+                    No users available for the selected organization.
+                  </Typography>
+                )}
+
                 <Select
                   labelId="user-select-label"
                   id="user-select"
@@ -492,15 +488,14 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
           </div>
         </div>
 
-        {showAddButton && (
-          <IconButton onClick={addItemField} sx={{ mt: 2, mb: 1 }}>
-            <img
-              className="add-item-icon"
-              src={addItemIcon}
-              alt="Add Item Icon"
-            />
-          </IconButton>
-        )}
+        <IconButton onClick={addItemField} sx={{ mt: 2, mb: 1 }}>
+          <img
+            className="add-item-icon"
+            src={addItemIcon}
+            alt="Add Item Icon"
+          />
+        </IconButton>
+
         {items.map((item, index) => (
           <ItemField
             key={index}

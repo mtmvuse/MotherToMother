@@ -145,6 +145,7 @@ const ItemField: React.FC<ItemFieldProps> = ({
             label="ItemType"
             onChange={handleItemTypeChange}
             value={itemType}
+            disabled={!selectedItem}
           >
             <MenuItem value={"Used"}>Used</MenuItem>
             <MenuItem value={"New"}>New</MenuItem>
@@ -174,6 +175,7 @@ const ItemField: React.FC<ItemFieldProps> = ({
           variant="standard"
           label="Quantity"
           type="number"
+          disabled={!itemType}
           InputLabelProps={{
             shrink: true,
           }}
