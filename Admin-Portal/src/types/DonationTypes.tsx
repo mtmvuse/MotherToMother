@@ -12,15 +12,16 @@ export interface DonationDashboardResponse {
   totalNumber: number;
 }
 
-export interface itemTypes {
+export interface ItemDetails {
   id: number;
-  item: string;
-  status: string;
-  value: number;
-  quantity: number;
+  name: string;
+  quantityNew: number;
+  quantityUsed: number;
+  valueNew: number;
+  valueUsed: number;
 }
 
-export interface demographicTypes {
+export interface DemographicDetails {
   id: number;
   kidGroup: string;
   quantity: number;
@@ -30,6 +31,30 @@ export interface AddOutgoingDonationType {
   userId: number;
   donationDetails: {
     itemId: number;
+    usedQuantity: number;
+    newQuantity: number;
+  }[];
+  numberServed: number;
+  whiteNum: number;
+  latinoNum: number;
+  blackNum: number;
+  nativeNum: number;
+  asianNum: number;
+  otherNum: number;
+}
+
+export interface AddIncomingDonationType {
+  userId: number;
+  donationDetails: {
+    itemId: number;
+    usedQuantity: number;
+    newQuantity: number;
+  }[];
+}
+
+export interface UpdateOutgoingDonationType {
+  donationDetails: {
+    item: string;
     usedQuantity: number;
     newQuantity: number;
   }[];

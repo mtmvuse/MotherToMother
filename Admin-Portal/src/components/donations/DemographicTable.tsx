@@ -6,7 +6,7 @@ import {
   GridRowId,
   GridRowParams,
 } from "@mui/x-data-grid";
-import { itemTypes } from "~/types/DonationTypes";
+import { DemographicDetails, ItemDetails } from "~/types/DonationTypes";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 interface DonationTableProps {
@@ -21,14 +21,8 @@ const DemographicTable: React.FC<DonationTableProps> = ({
   editable,
 }) => {
   const [totalKids, setTotalKids] = useState(0);
-  const kidOptions = [
-    "Black Children",
-    "White Children",
-    "Black Children",
-    "Asian Children",
-  ];
 
-  const handleProcessRowUpdate = (updatedRow: itemTypes) => {
+  const handleProcessRowUpdate = (updatedRow: DemographicDetails) => {
     const rowIndex = rows.findIndex((row) => row.id === updatedRow.id);
     const updatedRows = [...rows];
     updatedRows[rowIndex] = updatedRow;
@@ -50,9 +44,8 @@ const DemographicTable: React.FC<DonationTableProps> = ({
       field: "kidGroup",
       headerName: "Group",
       flex: 2,
-      editable: true,
-      type: "singleSelect",
-      valueOptions: kidOptions,
+      editable: false,
+      type: "string",
     },
     {
       field: "quantity",
@@ -60,24 +53,10 @@ const DemographicTable: React.FC<DonationTableProps> = ({
       align: "left",
       headerAlign: "left",
       type: "number",
-      editable: true,
+      editable: editable,
       flex: 2,
     },
   ];
-
-  if (editable) {
-    columns.push({
-      field: "actions",
-      type: "actions",
-      getActions: (params: GridRowParams) => [
-        <GridActionsCellItem
-          icon={<DeleteIcon />}
-          label="Delete"
-          onClick={handleDeleteRow(params.id)}
-        />,
-      ],
-    });
-  }
 
   return (
     <div>

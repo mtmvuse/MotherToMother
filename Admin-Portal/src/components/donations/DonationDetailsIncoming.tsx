@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -9,34 +9,60 @@ import {
   DialogTitle,
 } from "@mui/material";
 import ItemsTable from "./ItemsTable";
-import { itemTypes } from "~/types/DonationTypes";
+import DemographicTable from "./DemographicTable";
+import {
+  DemographicDetails,
+  ItemDetails,
+  ResponseDonation,
+} from "~/types/DonationTypes";
+import {
+  getDonationDemographics,
+  getDonationDetails,
+} from "../../lib/services";
 
 interface ModalContentProps {
-  selectedDonation: any;
+  selectedDonation: ResponseDonation;
 }
-
-const createItemData = (
-  id: number,
-  item: string,
-  status: string,
-  value: number,
-  quantity: number
-): itemTypes => {
-  return { id, item, status, value, quantity };
-};
-
-const initialRows: itemTypes[] = [
-  createItemData(1, "Clothes", "Used", 4, 11),
-  createItemData(2, "Cribs", "Used", 12, 110),
-];
 
 const DonationDetailsIncoming: React.FC<ModalContentProps> = ({
   selectedDonation,
 }) => {
-  const [itemRows, setItemRows] = useState<itemTypes[]>(initialRows);
+  const [itemRows, setItemRows] = useState<ItemDetails[]>([]);
+  const [demographicRows, setDemographicRows] = useState<DemographicDetails[]>(
+    []
+  );
   const [editable, setEditable] = useState(false);
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
-  const [idItemCounter, setIdItemCounter] = useState(2);
+  const [idItemCounter, setIdItemCounter] = useState(20);
+  const [idDemoCounter, setIdDemoCounter] = useState(30);
+
+  useEffect(() => {
+    const fetchItemRows = async () => {
+      try {
+        const response = await getDonationDetails(selectedDonation.id);
+        if (response.ok) {
+          const data = await response.json();
+          const mappedData: ItemDetails[] = data.map(
+            (itemData: ItemDetails) => ({
+              id: itemData.id,
+              name: itemData.name,
+              quantityNew: itemData.quantityNew,
+              quantityUsed: itemData.quantityUsed,
+              valueNew: itemData.valueNew,
+              valueUsed: itemData.valueUsed,
+            })
+          );
+          setItemRows(mappedData);
+        } else {
+          throw new Error("Failed to fetch item rows");
+        }
+      } catch (error) {
+        console.error("Error fetching item rows:", error);
+      }
+    };
+
+    fetchItemRows();
+  }, [selectedDonation]);
 
   const dateString = selectedDonation?.date
     ? new Date(selectedDonation.date).toLocaleDateString()
@@ -48,7 +74,8 @@ const DonationDetailsIncoming: React.FC<ModalContentProps> = ({
 
   const handleCancelButtonClick = () => {
     setEditable(false);
-    setItemRows(initialRows);
+    setItemRows(itemRows);
+    setDemographicRows(demographicRows);
   };
 
   const handleSaveButtonClick = () => {
@@ -80,13 +107,37 @@ const DonationDetailsIncoming: React.FC<ModalContentProps> = ({
       ...prevRows,
       {
         id: idItemCounter + 1,
-        item: "",
-        status: "",
-        value: 0,
+        name: "",
+        valueNew: 0,
+        valueUsed: 0,
+        quantityNew: 0,
+        quantityUsed: 0,
+      },
+    ]);
+    setIdItemCounter(idItemCounter + 1);
+  };
+
+  const handleAddDemoButtonClick = () => {
+    const hasEmptyFields = demographicRows.some((row) =>
+      Object.values(row).some((value) => !value)
+    );
+
+    if (hasEmptyFields) {
+      console.log(
+        "Please fill all fields in the current rows before adding a new row."
+      );
+      return;
+    }
+
+    setDemographicRows((prevRows) => [
+      ...prevRows,
+      {
+        id: idDemoCounter + 1,
+        kidGroup: "",
         quantity: 0,
       },
     ]);
-    setIdItemCounter(idItemCounter + 1); // Update the id counter after adding a new row
+    setIdDemoCounter(idDemoCounter + 1);
   };
 
   return (
@@ -113,6 +164,7 @@ const DonationDetailsIncoming: React.FC<ModalContentProps> = ({
             <Button onClick={handleSaveButtonClick}>Save</Button>
             <Button onClick={handleCancelButtonClick}>Cancel</Button>
             <Button onClick={handleAddItemButtonClick}>Add Item</Button>
+            <Button onClick={handleAddDemoButtonClick}>Add Demographic</Button>
           </>
         )}
       </Box>
@@ -122,7 +174,7 @@ const DonationDetailsIncoming: React.FC<ModalContentProps> = ({
           borderRadius: "5px",
         }}
       >
-        <ItemsTable editable={editable} rows={itemRows} setRows={setItemRows} />
+        <ItemsTable rows={itemRows} setRows={setItemRows} editable={editable} />
       </div>
       <Dialog open={openConfirmDialog} onClose={handleCancelConfirm}>
         <DialogTitle>Confirm Save</DialogTitle>

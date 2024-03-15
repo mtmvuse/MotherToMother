@@ -13,6 +13,7 @@ import { organizationRouter } from "./routes/v1/organization/organization.router
 import { adminsRouter } from "./routes/v1/admins/admins.router";
 import { inventoryRouter } from "./routes/v1/inventory/inventory.router";
 import { reportRouter } from "./routes/v1/report/report.router";
+import { cashDonationRouter } from "./routes/v1/cashDonation/cashDonation.router";
 
 dotenv.config();
 
@@ -48,6 +49,7 @@ app.use("/donation", donationRouter);
 app.use("/inventory", inventoryRouter);
 
 app.use("/report", reportRouter);
+app.use("/cashDonation", cashDonationRouter);
 
 // Default route: Unprotected
 app.get("/", (_req: Request, res: Response) => {

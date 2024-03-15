@@ -3,7 +3,8 @@ import type { EditUserType, AddUserType } from '../types/user';
 import type { Organization } from '~/types/organization';
 import type { GridFilterModel, GridSortModel } from '@mui/x-data-grid';
 import { filterModelToApiQuery, sortModelToApiQuery } from './utils';
-import { AddOutgoingDonationType } from '~/types/DonationTypes';
+import { AddIncomingDonationType, AddOutgoingDonationType, UpdateOutgoingDonationType } from '~/types/DonationTypes';
+import { AddCashDonationType, EditCashType } from '~/types/cashDonationTypes';
 
 const mode = import.meta.env.MODE;
 const backendUrl: string =
@@ -85,6 +86,29 @@ export const getUsers = async (
 	});
 };
 
+export const getCashDonations = async (
+	token: string | undefined,
+	page: number,
+	pageSize: number,
+	filterModel?: GridFilterModel,
+	sortModel?: GridSortModel
+) => {
+	let url = `${backendUrl}/cashDonation/v1?page=${page}&pageSize=${pageSize}`;
+	if (filterModel) {
+		url += `&${filterModelToApiQuery(filterModel)}`;
+	}
+	if (sortModel) {
+		url += `&${sortModelToApiQuery(sortModel)}`;
+	}
+	return await fetch(url, {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${token}`,
+		},
+	});
+};
+
 export const updateUser = async (id: number, userData: EditUserType, token: string) => {
 	return await fetch(`${backendUrl}/users/v1/update/id/${id}`, {
 		method: 'PUT',
@@ -93,6 +117,17 @@ export const updateUser = async (id: number, userData: EditUserType, token: stri
 			Authorization: `Bearer ${token}`,
 		},
 		body: JSON.stringify(userData),
+	});
+};
+
+export const updateCashDonation = async (id: number, cashData: EditCashType, token: string) => {
+	return await fetch(`${backendUrl}/cashdonation/v1/update/id/${id}`, {
+		method: 'PUT',
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${token}`,
+		},
+		body: JSON.stringify(cashData),
 	});
 };
 
@@ -106,11 +141,29 @@ export const deleteUser = async (id: number, token: string) => {
 	});
 };
 
+export const deleteCashDonation = async (id: number, token: string) => {
+	return await fetch(`${backendUrl}/cashDonation/v1/delete/id/${id}`, {
+		method: 'DELETE',
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${token}`,
+		},
+	});
+};
+
 export const addUser = async (user: AddUserType) => {
 	return await fetch(`${backendUrl}/registration/v1`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify(user),
+	});
+};
+
+export const addCashDonation = async (CashDonation: AddCashDonationType) => {
+	return await fetch(`${backendUrl}/cashDonation/v1`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(CashDonation),
 	});
 };
 
@@ -186,6 +239,14 @@ export const getReports = async (
 	});
 };
 
+export const createIncomingDonation = async (outgoingDonationData: AddIncomingDonationType) => {
+	return await fetch(`${backendUrl}/donation/v1/incoming`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(outgoingDonationData),
+	});
+};
+
 export const getDonations = async (
 	token: string | undefined,
 	page: number,
@@ -206,5 +267,31 @@ export const getDonations = async (
 			'Content-Type': 'application/json',
 			Authorization: `Bearer ${token}`,
 		},
+	});
+};
+
+export const getDonationDetails = (donationId: number): Promise<Response> => {
+	return fetch(`${backendUrl}/donation/v1/details/${donationId}`, {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+	});
+};
+
+export const getDonationDemographics = (donationId: number): Promise<Response> => {
+	return fetch(`${backendUrl}/donation/v1/demographics/${donationId}`, {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+	});
+};
+
+export const editOutgoingDonation = async (donationId: number, outgoingDonationData: UpdateOutgoingDonationType) => {
+	return await fetch(`${backendUrl}/donation/v1/outgoing/${donationId}`, {
+		method: 'PUT',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(outgoingDonationData),
 	});
 };
