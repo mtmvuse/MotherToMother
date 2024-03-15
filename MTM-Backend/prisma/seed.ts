@@ -42,23 +42,34 @@ async function main() {
       },
     });
 
-    // Create 10 donations for each user
-    for (let i = 0; i < 10; ++i) {
+    // Create 3 cash donations for each user
+    for (let i = 0; i < 3; ++i) {
+      await db.cashDonation.create({
+        data: {
+          organizationId: user.organizationId,
+          date: new Date(),
+          total: Math.floor(Math.random() * 1000), // Generate a random total amount
+        },
+      });
+    }
+
+    // Create 3 donations for each user
+    for (let i = 0; i < 3; ++i) {
       const newDonation = await db.donation.create({
         data: {
           userId: user.id,
-          date: new Date(new Date().setDate(new Date().getDate() + i)),
+          date: new Date(),
         },
       });
 
-      // Create 2 donation details for each donation
-      for (let j = 0; j < 1; ++j) {
+      // Create 5 donation details for each donation
+      for (let j = 0; j < 5; ++j) {
         await db.donationDetail.create({
           data: {
             donationId: newDonation.id,
             itemId: items[j].id,
             usedQuantity: 3,
-            newQuantity: j % 2 == 0 ? 0 : 1,
+            newQuantity: 2,
           },
         });
       }
@@ -83,6 +94,7 @@ async function main() {
 
 // Function to clear data from the database
 async function clearData() {
+  await db.cashDonation.deleteMany();
   await db.donationDetail.deleteMany();
   await db.outgoingDonationStats.deleteMany();
   await db.donation.deleteMany();

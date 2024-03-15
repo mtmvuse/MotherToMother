@@ -9,18 +9,19 @@ datasource db {
 }
 
 model Organization {
-  id   Int    @id @default(autoincrement())
-  name String @unique
-  type String
-  user User[]
+  id           Int            @id @default(autoincrement())
+  name         String         @unique
+  type         String
+  CashDonation CashDonation[]
+  user         User[]
 }
 
 model User {
-  id             Int           @id @default(autoincrement())
-  organizationId Int?
+  id             Int          @id @default(autoincrement())
+  organizationId Int
   firstName      String
   lastName       String
-  email          String        @unique
+  email          String       @unique
   hash           String
   salt           String
   phone          String
@@ -32,7 +33,7 @@ model User {
   household      String?
   userType       String
   donation       Donation[]
-  Organization   Organization? @relation(fields: [organizationId], references: [id])
+  Organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@index([organizationId], map: "User_organizationId_fkey")
 }
@@ -41,7 +42,7 @@ model Donation {
   id                    Int                    @id @default(autoincrement())
   userId                Int
   date                  DateTime               @default(now())
-  user                  User                   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user                  User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
   DonationDetail        DonationDetail[]
   OutgoingDonationStats OutgoingDonationStats?
 
@@ -54,10 +55,10 @@ model DonationDetail {
   itemId       Int
   usedQuantity Int
   newQuantity  Int
-  donation     Donation @relation(fields: [donationId], references: [id])
-  item         Item     @relation(fields: [itemId], references: [id])
+  donation     Donation @relation(fields: [donationId], references: [id], onDelete: Cascade)
+  item         Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
 
-  @@index([donationId], map: "DonationDetail_donationId_fkey")
+  @@unique([donationId, itemId])
   @@index([itemId], map: "DonationDetail_itemId_fkey")
 }
 
@@ -71,7 +72,7 @@ model OutgoingDonationStats {
   nativeNum    Int
   asianNum     Int
   otherNum     Int
-  donation     Donation @relation(fields: [donationId], references: [id])
+  donation     Donation @relation(fields: [donationId], references: [id], onDelete: Cascade)
 }
 
 model Item {
@@ -93,9 +94,9 @@ model Admin {
 }
 
 model CashDonation {
-  id             Int           @id @default(autoincrement())
+  id             Int          @id @default(autoincrement())
   organizationId Int
-  date           DateTime      @default(now())
+  date           DateTime     @default(now())
   total          Float
   Organization   Organization @relation(fields: [organizationId], references: [id])
 
@@ -134,7 +135,7 @@ view donation_detail {
 
 /// View for report dashboard for admin portal
 view report_dashboard {
-  id       Int   @id @default(0) 
+  id       BigInt   @id @default(0) @db.UnsignedBigInt
   agency   String
   date     DateTime @default(dbgenerated("'0000-00-00 00:00:00.000'"))
   item     String
