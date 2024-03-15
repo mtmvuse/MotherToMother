@@ -168,6 +168,6 @@
 .footer-summary-header {
 	display: flex;
 	text-transform: uppercase;
-	width: min(180px, 10%);
+	width: min(200px, 20%);
 	justify-content: space-between;
 }
