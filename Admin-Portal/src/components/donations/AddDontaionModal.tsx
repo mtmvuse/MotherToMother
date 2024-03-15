@@ -319,12 +319,20 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
         {success && (
           <SuccessMessage success={success} setSuccess={setSuccess} />
         )}
-        <Typography variant="h5" textAlign="left">
-          Add Donation
+        <Typography
+          fontFamily="Raleway, sans-serif"
+          fontSize={14}
+          color="navy"
+          mb={1}
+          mt={2}
+          style={{ letterSpacing: "2px" }}
+          textAlign="left"
+        >
+          ADD DONATION
         </Typography>
         <div
           style={{
-            backgroundColor: "lightgrey",
+            backgroundColor: "#F3F3F3",
             borderRadius: "10px",
             padding: "25px",
           }}
@@ -332,7 +340,13 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
           <div
             style={{ display: "flex", alignItems: "center", marginTop: "20px" }}
           >
-            <Typography fontSize={20}>Donor</Typography>
+            <Typography
+              fontFamily="Raleway, sans-serif"
+              fontSize={20}
+              color="navy"
+            >
+              Donor
+            </Typography>
 
             <div
               style={{
@@ -343,7 +357,7 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
             >
               <FormControl
                 variant="standard"
-                sx={{ width: 400, marginRight: "50px" }}
+                sx={{ width: 300, marginRight: "260px" }}
               >
                 <Select id="donor-select" onChange={handleTypeChange}>
                   <MenuItem value={"Incoming"}>Incoming</MenuItem>
@@ -356,7 +370,13 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
           <div
             style={{ display: "flex", alignItems: "center", marginTop: "20px" }}
           >
-            <Typography fontSize={20}>Organization</Typography>
+            <Typography
+              fontFamily="Raleway, sans-serif"
+              fontSize={20}
+              color="navy"
+            >
+              Organization
+            </Typography>
 
             <div
               style={{
@@ -368,7 +388,7 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
               <FormControl
                 fullWidth
                 variant="standard"
-                sx={{ width: 400, marginRight: "50px" }}
+                sx={{ width: 300, marginRight: "260px" }}
                 disabled={!showDonor}
               >
                 <Select id="org-select" onChange={handleOrgChange}>
@@ -385,7 +405,13 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
           <div
             style={{ display: "flex", alignItems: "center", marginTop: "20px" }}
           >
-            <Typography fontSize={20}>User</Typography>
+            <Typography
+              fontFamily="Raleway, sans-serif"
+              fontSize={20}
+              color="navy"
+            >
+              User
+            </Typography>
 
             <div
               style={{
@@ -398,7 +424,7 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
                 disabled={!showUser || userList.length === 0}
                 fullWidth
                 variant="standard"
-                sx={{ width: 400, marginRight: "50px" }}
+                sx={{ width: 300, marginRight: "260px" }}
               >
                 {/* {selectedOrg && userList.length > 0 ? (
           <InputLabel id="user-select-label">User</InputLabel>
@@ -434,7 +460,13 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
           <div
             style={{ display: "flex", alignItems: "center", marginTop: "20px" }}
           >
-            <Typography fontSize={20}>Date</Typography>
+            <Typography
+              fontFamily="Raleway, sans-serif"
+              fontSize={20}
+              color="navy"
+            >
+              Date
+            </Typography>
 
             <div
               className="date-picker"
@@ -447,7 +479,7 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DemoContainer
                   components={["DatePicker"]}
-                  sx={{ width: 400, marginRight: "50px" }}
+                  sx={{ width: 300, marginRight: "260px" }}
                 >
                   <DatePicker
                     disabled={!showCalendar}
@@ -486,8 +518,16 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
             <Typography>Total Cost: ${totalCost}</Typography>
             {donationType == "Outgoing" && (
               <div>
-                <Typography align={"center"} m={2}>
-                  Demographic Data
+                <Typography
+                  fontFamily="Raleway, sans-serif"
+                  fontSize={14}
+                  color="navy"
+                  mb={1}
+                  mt={2}
+                  style={{ letterSpacing: "2px" }}
+                  textAlign={"left"}
+                >
+                  DEMOGRAPHIC DATA
                 </Typography>
                 <div
                   style={{

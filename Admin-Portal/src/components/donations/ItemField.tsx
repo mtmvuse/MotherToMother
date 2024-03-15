@@ -140,7 +140,7 @@ const ItemField: React.FC<ItemFieldProps> = ({
       </FormControl>
       <>
         <FormControl variant="standard" sx={{ minWidth: 120 }}>
-          <InputLabel id="demo-simple-select-standard-label">Item</InputLabel>
+          <InputLabel id="demo-simple-select-standard-label">Type</InputLabel>
           <Select
             label="ItemType"
             onChange={handleItemTypeChange}
