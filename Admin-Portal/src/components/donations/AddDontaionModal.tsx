@@ -28,6 +28,8 @@ import {
 import "./styles/AddDonation.css";
 import addItemIcon from "../../assets/add-item-icon.png";
 
+// TODO: Fix API integration
+
 interface DonationItem {
   itemId: number;
   quantityNew: number;

@@ -23,10 +23,6 @@
   font-size: 15px;
   background-color: white;
   border: none;
-  /* border-radius: 50px; */
-  /* border-top-left-radius: 50px !important;
-  border-top-right-radius: 50px !important; */
-  /* margin-top: 10px; */
   min-height: 35px !important;
   max-height: 35px !important;
 }
@@ -35,10 +31,6 @@
   color: darkblue;
   background-color: white;
   border: none;
-  /* border-radius: 50px; */
-  /* border-top-left-radius: 50px !important;
-    border-top-right-radius: 50px !important; */
-  /* margin-top: 10px; */
   min-height: 35px !important;
   max-height: 35px !important;
 }
@@ -56,10 +48,6 @@
   min-height: 0px !important;
   max-height: 0px !important;
 }
-
-/* .items-table .css-1k1tj0y-MuiDataGrid-root .MuiDataGrid-row {
-  min-height: 1px !important;
-} */
 
 .details-table .MuiDataGrid-columnSeparator {
   display: none !important;
@@ -121,7 +109,6 @@
   position: relative;
   border: none;
   font-size: 16px;
-  /* padding: 5px 0px 0px 0px; */
   transition:
     border-color 0.15s ease-in-out,
     box-shadow 0.15s ease-in-out;

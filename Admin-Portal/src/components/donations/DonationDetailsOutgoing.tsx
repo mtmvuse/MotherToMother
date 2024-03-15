@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from "react";
 import {
   Box,
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
   FormControl,
-  InputLabel,
   MenuItem,
   Typography,
 } from "@mui/material";
@@ -29,9 +27,6 @@ import {
 } from "../../lib/services";
 import { ErrorMessage } from "../../components/ErrorMessage";
 import { SuccessMessage } from "../../components/SuccessMessage";
-
-// TODO Add global erros
-// TODO Styling
 
 interface ModalContentProps {
   selectedDonation: ResponseDonation;
