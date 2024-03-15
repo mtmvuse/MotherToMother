@@ -2,7 +2,7 @@ export interface Report {
   id: number;
   agency: string;
   date: Date;
-  item_name: string;
+  item: string;
   quantity: number;
   value: number | null;
   total: number | null;
@@ -12,4 +12,6 @@ export interface Report {
 export interface ReportResponse {
   report: Report[];
   totalNumber: number;
+  totalAmount: number;
+  totalValue: number;
 }

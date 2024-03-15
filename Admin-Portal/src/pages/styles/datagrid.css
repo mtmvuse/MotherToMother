@@ -141,7 +141,7 @@
 	border: none;
 	color: #6d6d6d;
 	text-decoration: none;
-	font-size: 10px;
+	font-size: 12px;
 	cursor: pointer;
 	border-radius: 20px;
 	height: 40px;
@@ -149,54 +149,25 @@
 	margin: auto 10px 10px 0;
 	display: flex;
 	align-items: center;
-	justify-content: centter;
-}
-
-.dropdown-filter.MuiFormControl-root {
-	background-color: #f3f3f3;
-	border: none;
-	color: #6d6d6d;
-	font-size: 10px;
-	cursor: pointer;
-	border-radius: 20px;
-	height: 40px;
-	width: fit-content;
-	padding: 0 10px;
-	margin: auto 10px 10px 0;
-	display: flex;
-	align-items: center;
 	justify-content: center;
 }
 
-.dropdown-filter .MuiOutlinedInput-notchedOutline {
-	border: none;
-}
-
-.dropdown-filter .MuiSelect-root {
-}
-
-.dropdown-filter .MuiSelect-select {
-	color: #6d6d6d;
-}
-
-/* .report .MuiDataGrid-footerContainer {
-	padding-top: 10px;
-}
-
-.report-summary-container {
+.footer-summary {
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
 	color: #004a7c;
 	background-color: #d8d8d8;
 	border-radius: 50px;
 	border-top-left-radius: 50px !important;
 	border-top-right-radius: 50px !important;
-	margin-top: 10px;
 	min-height: 35px !important;
 	max-height: 35px !important;
-	width:;
 }
 
-.report-summary {
-	position: relative;
-	bottom: 95px;
-	padding: 0 20px;
-} */
+.footer-summary-header {
+	display: flex;
+	text-transform: uppercase;
+	width: min(180px, 10%);
+	justify-content: space-between;
+}

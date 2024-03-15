@@ -5,7 +5,6 @@ import express, {
 } from "express";
 import * as ReportService from "./report.service";
 import type { Report } from "../../../types/report";
-import Joi from "joi";
 import {
   translateFilterToPrisma,
   translateSortToPrisma,
@@ -22,7 +21,6 @@ reportRouter.get(
   "/v1",
   async (req: Request, res: Response, next: NextFunction) => {
     const { page, pageSize, sort, order, ...filters } = req.query;
-
     const pageInt = Number(page);
     const pageSizeInt = Number(pageSize);
     const typedFilters = {
@@ -30,21 +28,32 @@ reportRouter.get(
       id: filters.id && Number(filters.id),
     };
     const whereClause = translateFilterToPrisma(typedFilters) as Report;
-    console.log(whereClause);
     const orderBy = translateSortToPrisma(
       sort as string,
       order as string,
     ) as Prisma.report_dashboardOrderByWithAggregationInput;
 
     try {
-      const report = await ReportService.getReportByPage(
-        pageInt,
-        pageSizeInt,
-        whereClause,
-        orderBy,
-      );
+      let report;
+      if (pageInt == -1 && pageSizeInt == -1) {
+        report = await ReportService.getAllReports(whereClause, orderBy);
+      } else {
+        report = await ReportService.getReportByPage(
+          pageInt,
+          pageSizeInt,
+          whereClause,
+          orderBy,
+        );
+      }
       const count = await ReportService.getReportCount(whereClause);
-      return res.status(200).json({ report, totalNumber: count });
+      const amount = await ReportService.getReportAmount(whereClause);
+      const value = await ReportService.getReportValue(whereClause);
+      return res.status(200).json({
+        report,
+        totalNumber: count,
+        totalAmount: amount,
+        totalValue: value,
+      });
     } catch (e) {
       next(e);
     }

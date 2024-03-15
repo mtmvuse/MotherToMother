@@ -5,7 +5,7 @@ SELECT
   ) AS `id`,
   `t2`.`agency` AS `agency`,
   `t2`.`date` AS `date`,
-  `t2`.`item_name` AS `item_name`,
+  `t2`.`item` AS `item`,
   `t1`.`quantity` AS `quantity`,
 (
     CASE
@@ -45,7 +45,7 @@ FROM
         `mtm`.`DonationDetail`.`id` AS `id`,
         `mtm`.`Organization`.`name` AS `agency`,
         `mtm`.`Donation`.`date` AS `date`,
-        `mtm`.`Item`.`name` AS `item_name`,
+        `mtm`.`Item`.`name` AS `item`,
         `mtm`.`Item`.`valueUsed` AS `valueUsed`,
         `mtm`.`Item`.`valueNew` AS `valueNew`
       FROM

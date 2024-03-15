@@ -1,51 +1,28 @@
 import React, { useEffect, useState, useRef } from 'react';
-import ReactDOM from 'react-dom';
-import { Box, Button, Icon, Typography, Dialog, DialogContent } from '@mui/material';
-import { FormControl, InputLabel, Select, MenuItem, SelectChangeEvent } from '@mui/material';
-import {
-	DataGrid,
-	GridToolbar,
-	GridActionsCellItem,
-	GridColDef,
-	GridFilterModel,
-	GridRowParams,
-	GridSortModel,
-	GridValueFormatterParams,
-	GridValueGetterParams,
-	GridCellParams,
-} from '@mui/x-data-grid';
-import DeleteAlertModal from '../components/DeleteAlertModal';
-import editIcon from '../assets/edit-icon.png';
-import deleteIcon from '../assets/delete-icon.png';
-import AddIcon from '@mui/icons-material/Add';
-import { ArrowDropDown } from '@mui/icons-material';
-import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { report } from 'process';
+import ReactDOM from 'react-dom/client';
+import { Button, Dialog, DialogContent } from '@mui/material';
+import { DataGrid, GridColDef, GridFilterModel, GridSortModel, GridValueGetterParams } from '@mui/x-data-grid';
+import { keepPreviousData, useQuery, useQueryClient } from '@tanstack/react-query';
+import { ErrorMessage } from '../components/ErrorMessage';
 // Services and types
 import { ReportResponse, Report } from '~/types/report';
 import { Organization } from '~/types/organization';
-import { getReports, getOrganizations } from '../lib/services';
+import { getReports, getOrganizations, getModalItems } from '../lib/services';
 import './styles/datagrid.css';
-import FormDialog from '../components/FormDialog';
 import { PAGE_SIZE } from '../lib/constants';
 // Calendar imports
-import { CalendarIcon, DatePicker } from '@mui/x-date-pickers/';
+import { CalendarIcon } from '@mui/x-date-pickers/';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
-import dayjs from 'dayjs';
+import 'react-date-range/dist/styles.css'; // main css file
+import 'react-date-range/dist/theme/default.css'; // theme css file
+import { DateRangePicker } from 'react-date-range';
+import type { Range } from 'react-date-range';
 
-/*
-Concerns : 
-MUI datecalendar range is only available in pro version can I use another package
-considering this is admin website not mobile
-
-Type does not exist in database so can't do a filter
-
-Should there be a filter for status? 
-
-Need to fix items since it is called item-name
-*/
+import FooterSummary from '../components/report/FooterSummary';
+import ExportButton from '../components/ExportButton';
+import { saveAs } from 'file-saver';
+import Papa from 'papaparse';
 
 const ReportsPage: React.FC = () => {
 	const [page, setPage] = useState(0);
@@ -54,34 +31,43 @@ const ReportsPage: React.FC = () => {
 	const [sortModel, setSortModel] = useState<GridSortModel | undefined>();
 	const [totalNumber, setTotalNumber] = useState(0);
 	const [openCal, setOpenCal] = useState(false);
-	const [organizations, setOrganizations] = useState<string[] | null>(null);
-	const [agency, setAgency] = useState<string>('Agency');
-	const [type, setType] = useState<string | null>(null);
-
+	const [date, setDate] = useState<Range[]>([
+		{
+			startDate: new Date(),
+			endDate: new Date(),
+			key: 'selection',
+		},
+	]);
+	const [amount, setAmount] = useState<number>(0);
+	const [total, setTotal] = useState<number>(0);
 	const [error, setError] = useState<string | null>(null);
-	const [success, setSuccess] = useState<boolean | null>(null);
-	const queryClient = useQueryClient();
 
 	const dataGridRef = useRef(null);
+	const hasInsertedDivRef = useRef(false);
+	const rootRef = useRef<any>(null);
 
 	useEffect(() => {
 		const dataGridElement = document.querySelector('.MuiDataGrid-footerContainer');
-		console.log(dataGridElement);
-		// Calculate the position to insert the div
-		const newDiv = document.createElement('div');
-		newDiv.textContent = 'Newsefsefesf Div'; // Add content or any other attributes as needed
 
 		if (dataGridElement && dataGridElement.parentNode) {
-			dataGridElement.parentNode.insertBefore(newDiv, dataGridElement);
+			if (!hasInsertedDivRef.current) {
+				const newDiv = document.createElement('div');
+				dataGridElement.parentNode.insertBefore(newDiv, dataGridElement);
+				rootRef.current = ReactDOM.createRoot(newDiv);
+				hasInsertedDivRef.current = true;
+			}
+
+			if (rootRef.current) {
+				rootRef.current.render(<FooterSummary totalAmount={total} totalValue={amount} />);
+			}
 		}
-	}, [dataGridRef.current]);
+	}, [dataGridRef.current, total, amount]);
 
 	const handleFilterModelChange = (model: GridFilterModel) => {
 		setFilterModel(model);
 	};
 
 	const handleSortModelChange = (model: GridSortModel) => {
-		console.log(`sorting${model}`);
 		setSortModel(model);
 	};
 
@@ -104,7 +90,7 @@ const ReportsPage: React.FC = () => {
 						id: item.id,
 						agency: item.agency,
 						date: item.date,
-						items: item.item_name,
+						item: item.item,
 						quantity: item.quantity,
 						value: item.value,
 						total: item.total,
@@ -113,11 +99,73 @@ const ReportsPage: React.FC = () => {
 					}));
 
 					setTotalNumber(data.totalNumber);
+					setAmount(data.totalAmount);
+					setTotal(data.totalValue);
 
 					return renderReport;
 				}),
 		enabled: !isAnyFilterValueUndefined(),
 	});
+
+	const organizationsQueryResponse = useQuery({
+		queryKey: ['organizations'],
+		queryFn: () =>
+			getOrganizations()
+				.then((res: Response) => res.json())
+				.then((data: Organization[]) => data),
+	});
+
+	const itemsQueryResponse = useQuery({
+		queryKey: ['items'],
+		queryFn: () =>
+			getModalItems()
+				.then((res: Response) => res.json())
+				.then((data: Organization[]) => data),
+	});
+
+	const handleCalendarOpen = () => {
+		setOpenCal(true);
+	};
+
+	const handleCalendarClose = () => {
+		setOpenCal(false);
+	};
+
+	const handleExport = async () => {
+		try {
+			const response = await getReports('token', -1, -1, filterModel, sortModel);
+			const data = await response.json();
+			const csv = Papa.unparse(data.report);
+			const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+			saveAs(blob, 'MTM users.csv');
+		} catch (error: any) {
+			setError(`Export failed with error: ${error.message}`);
+		}
+	};
+
+	const handleDateChange = (ranges: any) => {
+		const filter = [
+			{
+				field: 'date',
+				operator: '<=',
+				value: new Date(
+					new Date(ranges.selection.endDate).setDate(new Date(ranges.selection.endDate).getDate() + 1)
+				).toISOString(),
+			},
+			{ field: 'date', operator: '>=', value: ranges.selection.startDate.toISOString() },
+		];
+
+		setDate([ranges.selection]);
+		setFilterModel({ items: filter });
+	};
+
+	if (reportQueryResponse.isLoading) return <div>Loading...</div>;
+	if (reportQueryResponse.error) return <ErrorMessage error={reportQueryResponse.error.message} setError={setError} />;
+	if (organizationsQueryResponse.isLoading) return <div>Loading...</div>;
+	if (organizationsQueryResponse.error)
+		return <ErrorMessage error={organizationsQueryResponse.error.message} setError={setError} />;
+	if (itemsQueryResponse.isLoading) return <div>Loading...</div>;
+	if (itemsQueryResponse.error) return <ErrorMessage error={itemsQueryResponse.error.message} setError={setError} />;
 
 	const columns: GridColDef[] = [
 		{
@@ -125,6 +173,8 @@ const ReportsPage: React.FC = () => {
 			headerName: 'AGENCY',
 			flex: 2,
 			align: 'left',
+			type: 'singleSelect',
+			valueOptions: organizationsQueryResponse.data?.map((organization) => organization.name),
 			headerAlign: 'left',
 		},
 		{
@@ -135,13 +185,16 @@ const ReportsPage: React.FC = () => {
 			align: 'left',
 			headerAlign: 'left',
 			editable: true,
+			filterable: false,
 			valueGetter: (params: GridValueGetterParams) => new Date(params.row.date),
 		},
 		{
-			field: 'items',
+			field: 'item',
 			headerName: 'ITEMS',
 			flex: 3,
 			align: 'left',
+			type: 'singleSelect',
+			valueOptions: itemsQueryResponse.data?.map((item) => item.name),
 			headerAlign: 'left',
 			editable: true,
 		},
@@ -175,7 +228,7 @@ const ReportsPage: React.FC = () => {
 			field: 'status',
 			headerName: 'STATUS',
 			flex: 3,
-			type: 'number',
+			type: 'string',
 			align: 'left',
 			headerAlign: 'left',
 			editable: true,
@@ -192,122 +245,36 @@ const ReportsPage: React.FC = () => {
 			cellClassName: 'type-style',
 		},
 	];
-
-	const handleCalendarOpen = () => {
-		setOpenCal(true);
-	};
-
-	const handleCalendarClose = () => {
-		setOpenCal(false);
-	};
-
-	const handleCalendarSubmit = () => {};
-
-	const handleCalendarCancel = () => {};
-
-	const handleAgencyChange = (event: SelectChangeEvent) => {
-		const value = event.target.value as string;
-		setAgency(value);
-
-		if (value === 'Agency') {
-			setFilterModel(undefined);
-		} else {
-			const filter = [{ field: 'agency', operator: 'contains', value: value }];
-
-			const updateFilterModel = {
-				...filterModel,
-				items: filter,
-			};
-
-			handleFilterModelChange(updateFilterModel);
-		}
-	};
-
-	const handleTypeChange = (event: SelectChangeEvent) => {
-		const value = event.target.value as string;
-		setType(value);
-
-		if (value === 'Type') {
-			setFilterModel(undefined);
-		} else {
-			const filter = [{ field: 'type', operator: 'contains', value: value }];
-
-			const updateFilterModel = {
-				...filterModel,
-				items: filter,
-			};
-
-			handleFilterModelChange(updateFilterModel);
-		}
-	};
-
-	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				const response = await getOrganizations();
-				if (!response.ok) {
-					setError('Failed to fetch organizations');
-				}
-				const orgObj = await response.json();
-				const agencyList = orgObj.map((org: Organization) => org.name);
-				setOrganizations(agencyList);
-			} catch (error) {
-				setError('Error fetching organizations:');
-			}
-		};
-
-		fetchData();
-	}, []);
-
 	return (
 		<>
+			{error && <ErrorMessage error={error} setError={setError} />}
 			<div
 				style={{
 					display: 'flex',
-					justifyContent: 'flex-start',
+					justifyContent: 'space-between',
 				}}
 			>
 				<Button className='table-add-calendar-button' onClick={handleCalendarOpen} endIcon={<CalendarIcon />}>
 					Choose Date
 				</Button>
 				<LocalizationProvider dateAdapter={AdapterDayjs}>
-					<Dialog open={openCal} onClose={handleCalendarClose}>
+					<Dialog open={openCal} onClose={handleCalendarClose} maxWidth={false}>
 						<DialogContent>
-							<DateCalendar defaultValue={dayjs(Date())} value={dayjs('10-12-2021')} />
+							<DateRangePicker
+								onChange={handleDateChange}
+								moveRangeOnFirstSelection={false}
+								months={2}
+								ranges={date}
+								direction='horizontal'
+								rangeColors={['#4DAD45']}
+							/>
 						</DialogContent>
 					</Dialog>
 				</LocalizationProvider>
 
-				<Box sx={{ minWidth: 120 }}>
-					<FormControl className='dropdown-filter' fullWidth variant='outlined'>
-						<Select labelId='agency-filter' value={agency} onChange={handleAgencyChange}>
-							<MenuItem value={'Agency'}>Agency</MenuItem>
-							{organizations?.map((organization, index) => (
-								<MenuItem key={index} value={organization}>
-									{organization}
-								</MenuItem>
-							))}
-						</Select>
-					</FormControl>
-				</Box>
-
-				{/* not finished yet, type field does not exist in database schema */}
-				<Box sx={{ minWidth: 120 }}>
-					<FormControl className='dropdown-filter' fullWidth variant='outlined'>
-						<Select labelId='type-filter' value={type ?? 'Type'} onChange={handleTypeChange}>
-							<MenuItem value={'Type'}>Type</MenuItem>
-							<MenuItem key='Incoming' value='Incoming'>
-								Incoming
-							</MenuItem>
-							<MenuItem key='Outgoing' value='Outgoing'>
-								Outgoing
-							</MenuItem>
-						</Select>
-					</FormControl>
-				</Box>
-
-				{/* <ExportButton handleExport={() => {}} /> */}
+				<ExportButton handleExport={handleExport} />
 			</div>
+
 			<div className='grid-container'>
 				<DataGrid
 					className='report'
