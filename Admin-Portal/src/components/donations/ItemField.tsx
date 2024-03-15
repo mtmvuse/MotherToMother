@@ -190,7 +190,9 @@ const ItemField: React.FC<ItemFieldProps> = ({
         />
       </>
       <Box sx={{ minWidth: "150px", flexWrap: "wrap" }}>
-        <Typography>Total: ${totalValue}</Typography>
+        <Typography fontFamily={"raleway, sans-sherif"} fontWeight={"bold"}>
+          Total: ${totalValue}
+        </Typography>
       </Box>
       <IconButton onClick={onDelete} style={{ marginRight: "200" }}>
         <img

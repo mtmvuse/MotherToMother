@@ -509,8 +509,33 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
         ))}
         {items.length > 0 && (
           <div>
-            <Typography>Total Items: {totalQuantity}</Typography>
-            <Typography>Total Cost: ${totalCost}</Typography>
+            <div
+              style={{
+                backgroundColor: "#f3f3f3",
+                marginTop: "15px",
+                borderRadius: "10px",
+                padding: "13px",
+                fontFamily: "Raleway, sans-serif",
+                fontSize: "18px",
+                color: "navy",
+              }}
+            >
+              <div style={{ textAlign: "left", marginBottom: "8px" }}>
+                Total Items
+                <span style={{ color: "black", float: "right" }}>
+                  {totalQuantity}
+                </span>
+              </div>
+              <div style={{ textAlign: "left" }}>
+                Total Price
+                <span style={{ color: "black", float: "right" }}>
+                  {totalCost.toLocaleString("en-US", {
+                    style: "currency",
+                    currency: "USD",
+                  })}
+                </span>
+              </div>
+            </div>
             {donationType == "Outgoing" && (
               <div>
                 <Typography
@@ -589,9 +614,24 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
                     />
                   </div>
                 </div>
-                <Typography>
-                  Number Served: {calculateNumberServed(demographicData)}
-                </Typography>
+                <div
+                  style={{
+                    display: "flex",
+                    paddingRight: 20,
+                    fontFamily: "Raleway, sans-serif",
+                    fontSize: 20,
+                    backgroundColor: "#f3f3f3",
+                    marginTop: "15px",
+                    borderRadius: "10px",
+                    padding: "13px",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <span style={{ color: "navy" }}>Total Kids</span>
+                  <span style={{ color: "black", textAlign: "right" }}>
+                    {calculateNumberServed(demographicData)}
+                  </span>
+                </div>
               </div>
             )}
             <div style={{ display: "flex", justifyContent: "center" }}>
