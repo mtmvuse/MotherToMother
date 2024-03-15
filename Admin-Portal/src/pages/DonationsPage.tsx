@@ -161,6 +161,11 @@ const DonationsPage: React.FC = () => {
       flex: 3,
       align: "left",
       headerAlign: "left",
+      valueFormatter: (params) =>
+        params.value.toLocaleString("en-US", {
+          style: "currency",
+          currency: "USD",
+        }),
     },
     {
       field: "type",
