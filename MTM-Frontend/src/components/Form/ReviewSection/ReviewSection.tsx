@@ -71,7 +71,6 @@ const ReviewSection = (props: ReviewSectionProps) => {
             <Typography variant="body1"> items are in your form </Typography>
           </Stack>
         </Box>
-
         {props.currPanel === "ReviewSection" && (
           <>
             {getDonationCategories().map((category, i) => (

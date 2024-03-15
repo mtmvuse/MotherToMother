@@ -1,6 +1,5 @@
 import React from "react";
 import { Box, Typography } from "@mui/material/";
-
 import { Accordion } from "./Accordion";
 import { AccordionSummary } from "./AccordionSummary";
 import { AccordionDetails } from "./AccordionDetails";
@@ -22,7 +21,6 @@ const AboutUsAccordion: React.FC<AboutUsAccordionProps> = ({
       <Accordion
         expanded={expanded === "about us"}
         onChange={handleChange("about us")}
-        customStyles={{}}
       >
         <AccordionSummary
           aria-controls="about-panel-content"

@@ -4,84 +4,103 @@
  * PRISMA STUDIO - DIRECTLY, SQL WORKBENCH - DIRECTLY
  */
 import { db } from "../src/utils/db.server";
+import { organizationData, userDataMock, itemDataMock } from "./mockData";
 
 async function main() {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  const getRandomIndex = (arr: any) => Math.floor(Math.random() * arr.length);
   // Clear data from the database
-  // await clearData();
+  await clearData();
 
-  // Seeding User
-  const user = await db.user.create({
-    data: {
-      id: 777,
-      firstName: "John",
-      lastName: "Doe",
-      email: "john.doe@example.com",
-      hash: "hashed_password",
-      salt: "random_salt",
-      phone: "1234567890",
-      address: "123 Main St",
-      city: "Anytown",
-      state: "Anystate",
-      zip: 12345,
-      role: "User",
-      userType: "UserType",
-      household: "abc",
-    },
-  });
+  // seed organiztion data
+  const orgs = [];
+  for (const orgData of organizationData) {
+    const org = await db.organization.create({
+      data: orgData,
+    });
+    orgs.push(org);
+  }
 
-  // Seeding Item
-  const item = await db.item.create({
-    data: {
-      category: "Sample Category",
-      name: "Sample Item",
-      quantityUsed: 10,
-      quantityNew: 5,
-      valueUsed: 15.5,
-      valueNew: 10.0,
-    },
-  });
+  // seed item data
+  const items = [];
+  for (const itemData of itemDataMock) {
+    const newItem = await db.item.create({
+      data: itemData,
+    });
+    items.push(newItem);
+  }
 
-  // Seeding Donation
-  const donation = await db.donation.create({
-    data: {
-      userId: user.id,
-    },
-  });
+  // seed user and donation data
+  for (const userData of userDataMock) {
+    // Create user and remember the ID
+    const user = await db.user.create({
+      data: {
+        ...userData,
+        organizationId:
+          orgs.find((org) => org.type === userData.userType.split(" ")[0])
+            ?.id || orgs[0].id,
+      },
+    });
 
-  // Seeding DonationDetail
-  const donationDetail = await db.donationDetail.create({
-    data: {
-      donationId: donation.id,
-      itemId: item.id,
-      usedQuantity: 3,
-      newQuantity: 2,
-    },
-  });
+    // Create 3 cash donations for each user
+    for (let i = 0; i < 3; ++i) {
+      await db.cashDonation.create({
+        data: {
+          organizationId: user.organizationId,
+          date: new Date(),
+          total: Math.floor(Math.random() * 1000), // Generate a random total amount
+        },
+      });
+    }
 
-  // Seeding OutgoingDonationStats
-  const outgoingDonationStats = await db.outgoingDonationStats.create({
-    data: {
-      donationId: donation.id,
-      numberServed: 100,
-      whiteNum: 20,
-      latinoNum: 25,
-      blackNum: 15,
-      nativeNum: 10,
-      asianNum: 20,
-      otherNum: 10,
-    },
-  });
+    // Create 3 donations for each user
+    for (let i = 0; i < 3; ++i) {
+      const newDonation = await db.donation.create({
+        data: {
+          userId: user.id,
+          date: new Date(),
+        },
+      });
 
-  console.log(`Seeding finished.`);
+      // Create 5 donation details for each donation
+      for (let j = 0; j < 5; ++j) {
+        await db.donationDetail.create({
+          data: {
+            donationId: newDonation.id,
+            itemId: items[j].id,
+            usedQuantity: 3,
+            newQuantity: 2,
+          },
+        });
+      }
+
+      if (user.userType === "Agency Partner") {
+        await db.outgoingDonationStats.create({
+          data: {
+            donationId: newDonation.id,
+            numberServed: 100,
+            whiteNum: 20,
+            latinoNum: 25,
+            blackNum: 15,
+            nativeNum: 10,
+            asianNum: 20,
+            otherNum: 10,
+          },
+        });
+      }
+    }
+  }
 }
 
 // Function to clear data from the database
 async function clearData() {
+  await db.cashDonation.deleteMany();
   await db.donationDetail.deleteMany();
   await db.outgoingDonationStats.deleteMany();
   await db.donation.deleteMany();
   await db.item.deleteMany();
   await db.user.deleteMany();
+  await db.organization.deleteMany();
   console.log("Data cleared");
 }
 

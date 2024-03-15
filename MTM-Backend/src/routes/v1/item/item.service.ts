@@ -1,5 +1,5 @@
 import { db } from "../../../utils/db.server";
-import type { ItemInputNoID, ItemType } from "../../../types/item";
+import type { ItemType } from "../../../types/item";
 
 /**
  * Gets all items
@@ -19,6 +19,30 @@ export const getAllItems = async (): Promise<ItemType[] | null> => {
   });
 
   return items;
+};
+
+/**
+ * Get a item by id
+ * @param id
+ * @returns an item based upon the given id
+ */
+export const getItemFromID = async (id: number): Promise<ItemType | null> => {
+  const item: ItemType | null = await db.item.findUnique({
+    where: {
+      id: id,
+    },
+    select: {
+      id: true,
+      category: true,
+      name: true,
+      quantityUsed: true,
+      quantityNew: true,
+      valueNew: true,
+      valueUsed: true,
+    },
+  });
+
+  return item;
 };
 
 /**
@@ -104,29 +128,38 @@ export const getItemsCategoryName = async (
 };
 
 /**
- * Create a item
- * @param item
- * @returns the created item
+ * Increment or decrement the quantity of an item
+ * @param itemId
+ * @param quantityUsedChange positive or negative number to change the quantityUsed
+ * @param quantityNewChange positive or negative number to change the quantityNew
+ *
+ * @returns the updated item
  */
-export const createItem = async (item: ItemInputNoID): Promise<ItemType> => {
-  const createdItem: ItemType = await db.item.create({
-    data: {
-      category: item.category,
-      name: item.name,
-      quantityUsed: item.quantityUsed,
-      quantityNew: item.quantityNew,
-      valueNew: item.valueNew,
-      valueUsed: item.valueUsed,
+export const updateItem = async (
+  itemId: number,
+  quantityUsedChange: number,
+  quantityNewChange: number,
+): Promise<ItemType | null> => {
+  // Check that stock will not go negative
+  const itemFromID = await getItemFromID(itemId);
+
+  if (itemFromID === null) {
+    throw new Error(`Item [ID: ${itemId}] not found`);
+  }
+
+  const item: ItemType | null = await db.item.update({
+    where: {
+      id: itemId,
     },
-    select: {
-      id: true,
-      category: true,
-      name: true,
-      quantityUsed: true,
-      quantityNew: true,
-      valueNew: true,
-      valueUsed: true,
+    data: {
+      quantityUsed: {
+        increment: quantityUsedChange,
+      },
+      quantityNew: {
+        increment: quantityNewChange,
+      },
     },
   });
-  return createdItem;
+
+  return item;
 };

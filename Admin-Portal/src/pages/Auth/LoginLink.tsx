@@ -1,20 +1,18 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "../../lib/contexts";
 
-interface LoginLinkProps {
-  email: string | null;
-}
-const LoginLink: React.FC<LoginLinkProps> = (props) => {
-  const email = props.email;
-  const { handleLoginWithEmailLink } = useAuth();
+const LoginLink: React.FC = () => {
+  const { loginWithEmailLink } = useAuth();
+  const [loginStatus, setLogInStatus] = useState("Authenticating...");
 
   useEffect(() => {
-    handleLoginWithEmailLink(email);
-    window.close();
+    loginWithEmailLink().then(() => {
+      setLogInStatus("Logged in, you can close the window now!");
+    });
   }, []);
   return (
     <>
-      <p>Authenticating...</p>
+      <p>{loginStatus}</p>
     </>
   );
 };

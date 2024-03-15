@@ -1,6 +1,6 @@
 import { styled } from "@mui/material/styles";
 import MuiAccordionSummary, {
-  AccordionSummaryProps,
+  type AccordionSummaryProps,
 } from "@mui/material/AccordionSummary";
 
 interface AccordionSummaryStyledProps extends AccordionSummaryProps {

@@ -1,12 +1,6 @@
-import React from "react";
-
-import {
-  createBrowserRouter,
-  createRoutesFromElements,
-  Route,
-  Routes,
-  RouterProvider,
-} from "react-router-dom";
+import React, { useEffect } from "react";
+import { CACHE_KEY } from "./lib/constants";
+import { Route, Routes, BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { FormProvider } from "./contexts/FormContext";
 // Routes
@@ -22,50 +16,74 @@ import EditProfile from "./pages/EditProfile/EditProfile";
 import { ProfileLayout } from "./pages/Profile/ProfileLayout";
 import SpecificItemPage from "./pages/SpecificItemPage";
 import Home from "./pages/Home/Home";
-import Success from "./pages/Success"
+import Success from "./pages/Success";
+import { useState } from "react";
 
-const router = createBrowserRouter(
-  createRoutesFromElements(
-    <>
-      <Route path="/" element={<AuthLayout />}>
-        <Route index element={<Login />} />
-        <Route path="register" element={<Register />} />
-        <Route path="forgotPassword" element={<ForgotPassword />} />
-      </Route>
-      <Route path="home" element={<PrivateRoute element={<HomeLayout />} />}>
-        <Route index element={<Home />} />
-        <Route path="profile" element={<ProfileLayout />}>
-          <Route index element={<Profile />} />
-          <Route path="edit" element={<EditProfile />} />
-        </Route>
+export interface SharedStates {
+  setSavedUserType: (newUserType: string) => void;
+}
 
-        <Route
-          path="form/*"
-          element={
-            <FormProvider>
-              <Routes>
-                <Route index element={<Form />} />
-                <Route
-                  path="specificItem"
-                  element={<PrivateRoute element={<SpecificItemPage />} />}
-                />
-                <Route
-                  path="success"
-                  element={<PrivateRoute element={<Success />} />}
-                />
-              </Routes>
-            </FormProvider>
-          }
-        />
-      </Route>
-    </>,
-  ),
-);
+const App: React.FC = () => {
+  const [savedUserType, setSavedUserType] = useState<string>("");
+  useEffect(() => {
+    const savedUserType = localStorage.getItem(CACHE_KEY.USER_TYPE);
+    if (savedUserType) {
+      setSavedUserType(savedUserType);
+    }
+  }, []);
 
-const App: React.FC = () => (
-  <AuthProvider>
-    <RouterProvider router={router} />
-  </AuthProvider>
-);
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <Routes>
+          <Route path="/" element={<AuthLayout />}>
+            <Route
+              index
+              element={<Login setSavedUserType={setSavedUserType} />}
+            />
+            <Route
+              path="register"
+              element={<Register setSavedUserType={setSavedUserType} />}
+            />
+            <Route path="forgotPassword" element={<ForgotPassword />} />
+          </Route>
+          <Route
+            path="home"
+            element={
+              <PrivateRoute
+                element={<HomeLayout savedUserType={savedUserType} />}
+              />
+            }
+          >
+            <Route index element={<Home />} />
+            <Route path="profile" element={<ProfileLayout />}>
+              <Route index element={<Profile />} />
+              <Route path="edit" element={<EditProfile />} />
+            </Route>
+
+            <Route
+              path="form/*"
+              element={
+                <FormProvider>
+                  <Routes>
+                    <Route index element={<Form />} />
+                    <Route
+                      path="specificItem"
+                      element={<PrivateRoute element={<SpecificItemPage />} />}
+                    />
+                    <Route
+                      path="success"
+                      element={<PrivateRoute element={<Success />} />}
+                    />
+                  </Routes>
+                </FormProvider>
+              }
+            />
+          </Route>
+        </Routes>
+      </AuthProvider>
+    </BrowserRouter>
+  );
+};
 
 export default App;

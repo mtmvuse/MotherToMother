@@ -14,18 +14,20 @@ import {
   Select,
   MenuItem,
   InputLabel,
-  SelectChangeEvent,
-  RadioGroup,
-  Radio,
-  FormControlLabel,
 } from "@mui/material";
 import { registerUserOnServer, getOrganizations } from "../../lib/services";
-import { RegisterFormValues, Organization, UserType } from "~/types/AuthTypes";
+import type {
+  RegisterFormValues,
+  Organization,
+  UserType,
+} from "~/types/AuthTypes";
 // Register components
 import { RegisterTextField } from "../../components/Auth/RegisterForms/RegisterTextField";
 import { RegisterTextFieldPassword } from "../../components/Auth/RegisterForms/RegisterTextFieldPassword";
 import { RegisterTextFieldPhone } from "../../components/Auth/RegisterForms/RegisterTextFieldPhone";
 import { feedback } from "../../components/Auth/RegisterForms/RegisterFeedback";
+import { USER_TYPE } from "../../lib/constants";
+import type { SharedStates } from "../../App";
 
 const schema = Yup.object().shape({
   name: Yup.string()
@@ -54,20 +56,21 @@ const schema = Yup.object().shape({
     .required(feedback.zip),
   city: Yup.string().required(feedback.city),
   affiliation: Yup.string().when("userType", ([userType], s) => {
-    if (userType !== "Public Donor" && userType !== "") {
+    if (userType !== USER_TYPE.PUBLIC && userType !== "") {
       return s.required(feedback.affiliation);
     }
     return s;
   }),
 });
 
-const Register: React.FC = () => {
+const Register: React.FC<SharedStates> = ({ setSavedUserType }) => {
   const [userType, setUserType] = useState<string>("");
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [error, setError] = useState<string>("");
   const { registerUser, currentUser } = useAuth();
   const navigate = useNavigate();
 
+  //how to handle the logic of failing to register on the database
   useEffect(() => {
     if (currentUser) {
       navigate("/home");
@@ -75,25 +78,23 @@ const Register: React.FC = () => {
   }, [currentUser, navigate]);
 
   useEffect(() => {
-    if (userType === "Agency Partner") {
-      const organizationQueryType: string | undefined = userType
-        .split(" ")[0]
-        ?.toLocaleLowerCase();
+    const organizationQueryType: string | undefined = userType
+      .split(" ")[0]
+      ?.toLocaleLowerCase();
 
-      const queryOrganizations = async (query: string | undefined) => {
-        try {
-          const organization = await getOrganizations(query);
-          setOrganizations(organization);
-        } catch (err: any) {
-          if (err instanceof TypeError) {
-            setError("Network error: Failed to get organizations");
-          } else {
-            setError(err.message);
-          }
+    const queryOrganizations = async (query: string | undefined) => {
+      try {
+        const organization = await getOrganizations(query);
+        setOrganizations(organization);
+      } catch (err: any) {
+        if (err instanceof TypeError) {
+          setError("Network error: Failed to get organizations");
+        } else {
+          setError(err.message);
         }
-      };
-      queryOrganizations(organizationQueryType);
-    }
+      }
+    };
+    queryOrganizations(organizationQueryType);
   }, [userType]);
 
   const {
@@ -124,6 +125,9 @@ const Register: React.FC = () => {
         state: "state",
         zip: parseInt(values.zip, 10),
         userType: values.userType,
+        organizationId: values.affiliation
+          ? parseInt(values.affiliation, 10)
+          : organizations.find((item) => item.name == "Public")?.id,
       } as UserType;
 
       const response = await registerUserOnServer(user);
@@ -132,6 +136,8 @@ const Register: React.FC = () => {
           `Failed to save registered user data to database: ${response.status}`,
         );
       }
+      localStorage.setItem("userType", values.userType);
+      setSavedUserType(values.userType);
       navigate("/home");
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
@@ -315,9 +321,12 @@ const Register: React.FC = () => {
           </Box>
 
           <Box mb={2} width="100%">
-            <Typography variant="body1"  style={{
+            <Typography
+              variant="body1"
+              style={{
                 fontFamily: "Raleway, sans-serif",
-              }}>
+              }}
+            >
               Account Type<span style={{ color: "#EF4444" }}>*</span>
             </Typography>
             <Typography
@@ -345,8 +354,8 @@ const Register: React.FC = () => {
                   >
                     <div
                       onClick={() => {
-                        onChange("Public Donor");
-                        setUserType("Public Donor");
+                        onChange(USER_TYPE.PUBLIC);
+                        setUserType(USER_TYPE.PUBLIC);
                       }}
                       style={{
                         border: "1px solid #ccc",
@@ -355,21 +364,21 @@ const Register: React.FC = () => {
                         borderRadius: "10px",
                         padding: "8px",
                         backgroundColor:
-                          value === "Public Donor"
+                          value === USER_TYPE.PUBLIC
                             ? "var(--mtmNavy)"
                             : "transparent",
-                        color: value === "Public Donor" ? "#fff" : "#000",
+                        color: value === USER_TYPE.PUBLIC ? "#fff" : "#000",
                         cursor: "pointer",
                         width: "100%",
                         boxSizing: "border-box",
                       }}
                     >
-                      Public Donor
+                      {USER_TYPE.PUBLIC}
                     </div>
                     <div
                       onClick={() => {
-                        onChange("Agency Partner");
-                        setUserType("Agency Partner");
+                        onChange(USER_TYPE.AGENCY);
+                        setUserType(USER_TYPE.AGENCY);
                       }}
                       style={{
                         marginTop: "8px",
@@ -378,16 +387,16 @@ const Register: React.FC = () => {
                         borderRadius: "10px",
                         padding: "8px",
                         backgroundColor:
-                          value === "Agency Partner"
+                          value === USER_TYPE.AGENCY
                             ? "var(--mtmNavy)"
                             : "transparent",
-                        color: value === "Agency Partner" ? "#fff" : "#000",
+                        color: value === USER_TYPE.AGENCY ? "#fff" : "#000",
                         cursor: "pointer",
                         width: "100%",
                         boxSizing: "border-box",
                       }}
                     >
-                      Agency Partner
+                      {USER_TYPE.AGENCY}
                     </div>
                   </Box>
                   <FormHelperText>
@@ -403,7 +412,7 @@ const Register: React.FC = () => {
               )}
             />
           </Box>
-          {userType != "Public Donor" && userType != "" && (
+          {userType != USER_TYPE.PUBLIC && userType != "" && (
             <Box>
               <Typography variant="body1">
                 Affiliation<span style={{ color: "#EF4444" }}>*</span>
@@ -450,7 +459,7 @@ const Register: React.FC = () => {
                       error={!!errors.affiliation}
                     >
                       {organizations.map((organization, index) => (
-                        <MenuItem value={organization.name} key={index}>
+                        <MenuItem value={organization.id} key={index}>
                           {organization.name}
                         </MenuItem>
                       ))}
