@@ -8,9 +8,10 @@ import {
   GridRowParams,
   GridValueFormatterParams,
 } from "@mui/x-data-grid";
-import DeleteIcon from "@mui/icons-material/Delete";
+import deleteIcon from "../../assets/delete-icon.png";
 
 import { ItemDetails } from "~/types/DonationTypes";
+import "./styles/DonationDetails.css";
 
 interface DonationTableProps {
   editable: boolean;
@@ -57,9 +58,9 @@ const ItemsTable: React.FC<DonationTableProps> = ({
   const columns: GridColDef[] = [
     {
       field: "name",
-      headerName: "Name",
+      headerName: "Item",
       type: "string",
-      flex: 2,
+      flex: 1.5,
       editable: false,
     },
     {
@@ -67,28 +68,38 @@ const ItemsTable: React.FC<DonationTableProps> = ({
       headerName: "Used Quantity",
       type: "number",
       editable: editable,
-      flex: 2,
+      flex: 1,
     },
     {
       field: "quantityNew",
       headerName: "New Quantity",
       type: "number",
       editable: editable,
-      flex: 2,
+      flex: 1,
     },
     {
       field: "valueNew",
       headerName: "New Value",
       type: "number",
       editable: false,
-      flex: 2,
+      flex: 1,
+      valueFormatter: (params) =>
+        params.value.toLocaleString("en-US", {
+          style: "currency",
+          currency: "USD",
+        }),
     },
     {
       field: "valueUsed",
       headerName: "Used Value",
       type: "number",
       editable: false,
-      flex: 2,
+      flex: 1,
+      valueFormatter: (params) =>
+        params.value.toLocaleString("en-US", {
+          style: "currency",
+          currency: "USD",
+        }),
     },
   ];
 
@@ -96,9 +107,10 @@ const ItemsTable: React.FC<DonationTableProps> = ({
     columns.push({
       field: "actions",
       type: "actions",
+      align: "right",
       getActions: (params: GridRowParams) => [
         <GridActionsCellItem
-          icon={<DeleteIcon />}
+          icon={<img src={deleteIcon} />}
           label="Delete"
           onClick={handleDeleteRow(params.id)}
         />,
@@ -107,7 +119,7 @@ const ItemsTable: React.FC<DonationTableProps> = ({
   }
 
   return (
-    <div>
+    <div className="details-table">
       <DataGrid
         hideFooter={true}
         sx={{ minWidth: 600 }}
@@ -118,10 +130,32 @@ const ItemsTable: React.FC<DonationTableProps> = ({
         }))}
         processRowUpdate={handleProcessRowUpdate}
       />
-
-      <div style={{ textAlign: "right", marginRight: "5px" }}>
-        <div>Total Price: {totalPrice}</div>
-        <div>Total Quantity: {totalQuantity}</div>
+      <div
+        style={{
+          backgroundColor: "#f3f3f3",
+          marginTop: "15px",
+          borderRadius: "10px",
+          padding: "13px",
+          fontFamily: "Raleway, sans-serif",
+          fontSize: "18px",
+          color: "navy",
+        }}
+      >
+        <div style={{ textAlign: "left", marginBottom: "8px" }}>
+          Total Items
+          <span style={{ color: "black", float: "right" }}>
+            {totalQuantity}
+          </span>
+        </div>
+        <div style={{ textAlign: "left" }}>
+          Total Price
+          <span style={{ color: "black", float: "right" }}>
+            {totalPrice.toLocaleString("en-US", {
+              style: "currency",
+              currency: "USD",
+            })}
+          </span>
+        </div>
       </div>
     </div>
   );

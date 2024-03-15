@@ -10,6 +10,7 @@ import {
   FormControl,
   InputLabel,
   MenuItem,
+  Typography,
 } from "@mui/material";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import ItemsTable from "./ItemsTable";
@@ -154,7 +155,11 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
   }, [selectedCategorySelection, itemList]);
 
   const dateString = selectedDonation?.date
-    ? new Date(selectedDonation.date).toLocaleDateString()
+    ? new Date(selectedDonation.date).toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      })
     : "";
 
   const handleEditButtonClick = () => {
@@ -289,109 +294,180 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
     <Box p={2} sx={{ overflowY: "auto" }}>
       {error && <ErrorMessage error={error} setError={setError} />}
       {success && <SuccessMessage success={success} setSuccess={setSuccess} />}
-      <h2>Donation Detail</h2>
-      <Box display="flex" justifyContent="space-between" mb={1}>
-        <p>{dateString}</p>
-        <p>{selectedDonation?.organization}</p>
-      </Box>
-      <Box
-        sx={{
-          borderBottom: 1,
-          borderColor: "divider",
-          p: 1,
-        }}
+      <Typography
+        fontFamily="Raleway, sans-serif"
+        fontSize={13}
+        color="navy"
+        mb={1}
+        style={{ letterSpacing: "2px" }}
       >
+        DONATION SUMMARY
+      </Typography>
+      <div style={{ display: "flex" }}>
+        <Typography
+          fontFamily="Raleway, sans-serif"
+          fontSize={30}
+          fontWeight="bold"
+          color="navy"
+        >
+          #{selectedDonation.id}
+        </Typography>
+
+        <div
+          style={{
+            backgroundColor: "lightgray",
+            display: "inline-block",
+            padding: "3px 10px 3px 10px",
+            borderRadius: "15px",
+            marginTop: "8px",
+            marginBottom: "10px",
+            marginLeft: "15px",
+          }}
+        >
+          {selectedDonation.type}
+        </div>
+      </div>
+
+      <Typography
+        fontFamily="Raleway, sans-serif"
+        fontSize={15}
+        color="#6D6D6D"
+        mb={2}
+        style={{ display: "inline-block" }}
+      >
+        {dateString} to{" "}
+        <span style={{ textDecoration: "underline" }}>
+          {selectedDonation.organization}
+        </span>
+      </Typography>
+
+      <Box>
         {!editable && (
-          <Button variant="contained" onClick={handleEditButtonClick}>
+          <button className="edit-button" onClick={handleEditButtonClick}>
             Edit
-          </Button>
+          </button>
         )}
         {editable && (
           <>
-            <Button onClick={handleSaveButtonClick}>Save</Button>
-            <Button onClick={handleCancelButtonClick}>Cancel</Button>
-            <Button onClick={handleAddItemButtonClick}>Add Item</Button>
+            <button
+              className="inner-edit-button"
+              onClick={handleSaveButtonClick}
+            >
+              Save
+            </button>
+            <button
+              className="inner-edit-button"
+              onClick={handleCancelButtonClick}
+            >
+              Cancel
+            </button>
+            <button
+              className="inner-edit-button"
+              onClick={handleAddItemButtonClick}
+            >
+              Add Item
+            </button>
           </>
         )}
       </Box>
       <div
         style={{
-          border: "4px solid black",
-          borderRadius: "5px",
+          border: "none",
         }}
       >
         <ItemsTable rows={itemRows} setRows={setItemRows} editable={editable} />
       </div>
-      <div
-        style={{
-          border: "4px solid black",
-          borderRadius: "5px",
-          marginTop: "10px",
-        }}
-      >
+      <div>
         <DemographicTable
           rows={demographicRows}
           setRows={setDemographicRows}
           editable={editable}
         />
       </div>
-      <Dialog open={openAddItemDialog} onClose={handleCloseAddDialog}>
-        <DialogTitle>Add Item</DialogTitle>
-        <DialogContent>
-          <FormControl fullWidth>
-            <InputLabel id="category-label">Category</InputLabel>
-            <Select
-              labelId="category-label"
-              id="category"
-              value={selectedCategorySelection ? selectedCategorySelection : ""}
-              onChange={handleCategorySelectionChange}
-              label="category"
+      <div className="add-item">
+        <Dialog
+          open={openAddItemDialog}
+          onClose={handleCloseAddDialog}
+          maxWidth="lg"
+        >
+          <DialogTitle fontFamily={"raleway, sans-sherif"}>
+            Add Item
+          </DialogTitle>
+          <DialogContent>
+            <div style={{ display: "flex" }}>
+              <Typography
+                fontFamily={"raleway, sans-sherif"}
+                marginRight={2}
+                marginBottom={2}
+              >
+                Category
+              </Typography>
+              <FormControl fullWidth>
+                <Select
+                  id="category"
+                  value={
+                    selectedCategorySelection ? selectedCategorySelection : ""
+                  }
+                  onChange={handleCategorySelectionChange}
+                >
+                  {categoryList.map((category, index) => (
+                    <MenuItem key={index} value={category.toString()}>
+                      {category}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </div>
+            <div style={{ display: "flex" }}>
+              <Typography fontFamily={"raleway, sans-sherif"} marginRight={6.4}>
+                Item
+              </Typography>
+              <FormControl fullWidth disabled={!selectedCategorySelection}>
+                <Select
+                  id="item-selection"
+                  value={
+                    selectedItemSelection ? selectedItemSelection.name : ""
+                  }
+                  onChange={handleItemSelectionChange}
+                >
+                  {filteredItemList.map((item) => (
+                    <MenuItem value={item.name}>{item.name}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </div>
+          </DialogContent>
+          <DialogActions>
+            <button className="dialog-button" onClick={handleCloseAddDialog}>
+              Cancel
+            </button>
+            <button
+              className="dialog-button"
+              onClick={() => {
+                handleAddDialog();
+              }}
             >
-              {categoryList.map((category, index) => (
-                <MenuItem key={index} value={category.toString()}>
-                  {category}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <FormControl fullWidth disabled={!selectedCategorySelection}>
-            <InputLabel id="item-selection-label">Item</InputLabel>
-            <Select
-              labelId="item-selection-label"
-              id="item-selection"
-              value={selectedItemSelection ? selectedItemSelection.name : ""}
-              onChange={handleItemSelectionChange}
-              label="Item"
-            >
-              {filteredItemList.map((item) => (
-                <MenuItem value={item.name}>{item.name}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseAddDialog}>Cancel</Button>
-          <Button
-            onClick={() => {
-              handleAddDialog();
-            }}
-          >
-            Add
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <Dialog open={openConfirmDialog} onClose={handleCancelConfirm}>
-        <DialogTitle>Confirm Save</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Are you sure you want to save changes?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCancelConfirm}>Cancel</Button>
-          <Button onClick={handleConfirmSave}>Save</Button>
-        </DialogActions>
-      </Dialog>
+              Add
+            </button>
+          </DialogActions>
+        </Dialog>
+        <Dialog open={openConfirmDialog} onClose={handleCancelConfirm}>
+          <DialogTitle>Confirm Save</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Are you sure you want to save changes?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <button className="dialog-button" onClick={handleCancelConfirm}>
+              Cancel
+            </button>
+            <button className="dialog-button" onClick={handleConfirmSave}>
+              Save
+            </button>
+          </DialogActions>
+        </Dialog>
+      </div>
     </Box>
   );
 };
