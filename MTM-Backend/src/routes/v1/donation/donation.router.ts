@@ -180,6 +180,7 @@ const createOutgoingDonation = async (
     // ----------------------- Here, it start updating the database -------------------------------
     const newDonation = await DonationService.createDonation(
       donationReqBody.userId,
+      donationReqBody.date,
     );
 
     donationReqBody.donationDetails.forEach(
