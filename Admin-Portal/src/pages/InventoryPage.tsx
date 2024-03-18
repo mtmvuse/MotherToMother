@@ -30,6 +30,8 @@ import editIcon from "../assets/edit-icon.png";
 import deleteIcon from "../assets/delete-icon.png";
 import AddIcon from "@mui/icons-material/Add";
 import "./styles/datagrid.css";
+import { ErrorMessage } from "../components/ErrorMessage";
+import { SuccessMessage } from "../components/SuccessMessage";
 
 // TODO: make this into a constant in the constants file
 const categoryOptions: string[] = ["Books", "Clothes"];
@@ -45,6 +47,8 @@ const InventoryPage: React.FC = () => {
   const [openDeleteInventory, setOpenDeleteInventory] = useState(false);
   const [deleteRow, setDeleteRow] = useState<inventoryRow | undefined>();
   const [editRow, setEditRow] = useState<inventoryRow | undefined>();
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<boolean | null>(null);
   const queryClient = useQueryClient();
 
   const handleOpenAddInventory = () => {
@@ -85,12 +89,14 @@ const InventoryPage: React.FC = () => {
   const inventoryQueryResponse = useQuery({
     queryKey: ["inventory", page, pageSize, filterModel, sortModel],
     placeholderData: keepPreviousData,
-    //define type
     queryFn: () =>
       getInventoryRows("token", page, pageSize, filterModel, sortModel)
         .then((response: Response) => response.json())
         .then((data) => {
           setTotalNumber(data.totalNumber);
+          if (data === undefined) {
+            throw new Error("No data: Internal Server Error");
+          }
           const renderInventories = data.inventory.map(
             (item: ResponseInventoryItem) => ({
               id: item.id,
@@ -112,22 +118,46 @@ const InventoryPage: React.FC = () => {
 
   const addMutation = useMutation({
     mutationFn: (data: any) => addIventoryItem(data),
-    onSuccess: () => {
+    onSuccess: (result: Response) => {
       queryClient.invalidateQueries({ queryKey: ["inventory"] });
+      if (result.status === 400 || result.status === 500) {
+        setError("Cannot add inventory item");
+      } else {
+        setSuccess(true);
+      }
+    },
+    onError: (error: Error) => {
+      setError(error.message);
     },
   });
 
   const editMutation = useMutation({
     mutationFn: (data: any) => editInventoryItem(data),
-    onSuccess: () => {
+    onSuccess: (result: Response) => {
       queryClient.invalidateQueries({ queryKey: ["inventory"] });
+      if (result.status === 400 || result.status === 500) {
+        setError("Cannot edit inventory item");
+      } else {
+        setSuccess(true);
+      }
+    },
+    onError: (error: Error) => {
+      setError(error.message);
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) => deleteInventoryItem(id, "token"),
-    onSuccess: () => {
+    onSuccess: (result: Response) => {
       queryClient.invalidateQueries({ queryKey: ["inventory"] });
+      if (result.status === 400 || result.status === 500) {
+        setError("Cannot delete inventory item");
+      } else {
+        setSuccess(true);
+      }
+    },
+    onError: (error: Error) => {
+      setError(error.message);
     },
   });
 
@@ -170,6 +200,15 @@ const InventoryPage: React.FC = () => {
     editMutation.mutate(editData);
     handleCloseEditInventory();
   };
+
+  if (inventoryQueryResponse.isLoading) return <div>Loading...</div>;
+  if (inventoryQueryResponse.error)
+    return (
+      <ErrorMessage
+        error={inventoryQueryResponse.error.message}
+        setError={setError}
+      />
+    );
 
   const columns: GridColDef[] = [
     {
@@ -271,6 +310,8 @@ const InventoryPage: React.FC = () => {
   ];
   return (
     <Box>
+      {error && <ErrorMessage error={error} setError={setError} />}
+      {success && <SuccessMessage success={success} setSuccess={setSuccess} />}
       <Button
         className="table-add-button"
         endIcon={<AddIcon />}

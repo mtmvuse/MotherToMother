@@ -42,6 +42,17 @@ async function main() {
       },
     });
 
+    // Create 3 cash donations for each user
+    for (let i = 0; i < 3; ++i) {
+      await db.cashDonation.create({
+        data: {
+          organizationId: user.organizationId,
+          date: new Date(),
+          total: Math.floor(Math.random() * 1000), // Generate a random total amount
+        },
+      });
+    }
+
     // Create 3 donations for each user
     for (let i = 0; i < 3; ++i) {
       const newDonation = await db.donation.create({
@@ -83,6 +94,7 @@ async function main() {
 
 // Function to clear data from the database
 async function clearData() {
+  await db.cashDonation.deleteMany();
   await db.donationDetail.deleteMany();
   await db.outgoingDonationStats.deleteMany();
   await db.donation.deleteMany();
