@@ -89,46 +89,70 @@ const ReviewSection = (props: ReviewSectionProps) => {
               {!isEditMode && (
                 <Button
                   variant="outlined"
-                  sx={{ fontSize: 15, height: "33px" }}
+                  sx={{
+                    fontSize: 15,
+                    height: "33px",
+                    color: "#004A7C",
+                    borderColor: "#004A7C",
+                  }}
                   onClick={handleEdit}
                   style={{
-                    marginTop: "5%",
-                    backgroundColor: "white",
-                    color: "#A4A4A4",
-                    fontSize: 15,
-                    border: "1px solid #A4A4A4",
-                    borderRadius: "10px",
-                    height: "32px",
+                    marginTop: "15px",
+                    marginBottom: "15px",
+                    color: "var(--mtmNavy)",
+                    border: "1px solid var(--mtmNavy)",
+                    fontFamily: " Inter, sans-serif",
+                    fontSize: "15px",
+                    fontWeight: "800",
                   }}
                 >
-                  Edit
+                  EDIT
                 </Button>
               )}
               {isEditMode && (
-                <Stack direction="row" spacing={3} marginTop="50px">
+                <Stack direction="row" spacing={3}>
                   <Button
                     variant="outlined"
-                    sx={{ fontSize: 15, height: "33px" }}
+                    sx={{
+                      fontSize: 15,
+                      height: "33px",
+                      backgroundColor: "#004A7C", // Replace with your desired background color
+                      color: "white", // Replace with your desired text color
+                    }}
                     color="primary"
                     onClick={handleSave}
                     style={{
-                      marginTop: "0",
-                      backgroundColor: "#A4A4A4",
+                      marginTop: "15px",
+                      marginBottom: "15px",
+                      backgroundColor: "var(--mtmNavy)",
                       color: "white",
-                      fontSize: 15,
-                      border: "1px solid #c1c1c1",
-                      borderRadius: "10px",
                       height: "32px",
                       width: "87px",
+                      fontFamily: " Inter, sans-serif",
+                      fontSize: "15px",
+                      fontWeight: "800",
                     }}
                   >
-                    Save
+                    SAVE
                   </Button>
                   <Button
                     variant="outlined"
-                    sx={{ fontSize: 15, height: "33px" }}
+                    sx={{
+                      fontSize: 15,
+                      height: "33px",
+                      color: "#004A7C",
+                      borderColor: "#004A7C",
+                    }}
                     onClick={handleCancel}
-                    style={{ marginTop: "0" }}
+                    style={{
+                      marginTop: "15px",
+                      marginBottom: "15px",
+                      color: "var(--mtmNavy)",
+                      border: "1px solid var(--mtmNavy)",
+                      fontFamily: " Inter, sans-serif",
+                      fontSize: "15px",
+                      fontWeight: "800",
+                    }}
                   >
                     Cancel
                   </Button>
