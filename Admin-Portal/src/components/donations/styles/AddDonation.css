@@ -1,0 +1,130 @@
+.add-modal .MuiInputBase-input {
+  border-radius: 10px;
+  position: relative;
+  background-color: white;
+  border: 1px solid #a4a4a4;
+  font-size: 16px;
+  padding: 5px 26px 15px 12px;
+  transition:
+    border-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out;
+}
+
+.add-modal .MuiInputBase-input:focus {
+  border-radius: 10px;
+  background-color: white;
+}
+
+.add-modal .css-n70jm4-MuiInputBase-root-MuiInput-root-MuiSelect-root::before {
+  border-bottom: none;
+}
+
+.add-modal .css-n70jm4-MuiInputBase-root-MuiInput-root-MuiSelect-root::after {
+  border-bottom: none;
+}
+
+.add-modal .css-n70jm4-MuiInputBase-root-MuiInput-root-MuiSelect-root::during {
+  border-bottom: none;
+}
+
+@media (hover) {
+  .add-modal
+    .css-n70jm4-MuiInputBase-root-MuiInput-root-MuiSelect-root:hover:not(
+      .Mui-disabled,
+      .Mui-error
+    ):before {
+    border-bottom: none;
+  }
+}
+
+.add-modal
+  .css-n70jm4-MuiInputBase-root-MuiInput-root-MuiSelect-root.Mui-disabled:before {
+  border: none;
+}
+
+.add-modal .css-1p7b3mx-MuiInputBase-root-MuiInput-root-MuiSelect-root::before {
+  border: none;
+}
+
+.add-modal .css-1p7b3mx-MuiInputBase-root-MuiInput-root-MuiSelect-root::after {
+  border: none;
+}
+
+@media (hover) {
+  .add-modal
+    .css-1p7b3mx-MuiInputBase-root-MuiInput-root-MuiSelect-root:hover:not(
+      .Mui-disabled,
+      .Mui-error
+    ):before {
+    border-bottom: none;
+  }
+}
+
+.add-modal .css-1eed5fa-MuiInputBase-root-MuiInput-root.Mui-disabled:before {
+  border: none;
+}
+
+.add-modal .css-1eed5fa-MuiInputBase-root-MuiInput-root.Mui-disabled {
+  color: blue;
+}
+
+.add-modal .css-1x51dt5-MuiInputBase-input-MuiInput-input.Mui-disabled {
+  -webkit-text-fill-color: black;
+}
+
+.add-modal
+  .css-1rxz5jq-MuiSelect-select-MuiInputBase-input-MuiInput-input.MuiSelect-select {
+  height: 8px;
+  min-height: 0px;
+}
+
+.add-modal .date-picker .MuiInputBase-input {
+  height: 8px;
+  padding: 20px 26px 24px 12px;
+}
+
+.add-modal .css-1x51dt5-MuiInputBase-input-MuiInput-input {
+  height: 8px;
+  min-height: 0px;
+  padding: 10px 1px 10px 5px;
+}
+
+.add-modal .css-1eed5fa-MuiInputBase-root-MuiInput-root::before {
+  border: none;
+}
+
+.add-modal
+  .css-1eed5fa-MuiInputBase-root-MuiInput-root:hover:not(
+    .Mui-disabled,
+    .Mui-error
+  ):before {
+  border: none;
+}
+
+.add-modal .css-1eed5fa-MuiInputBase-root-MuiInput-root::after {
+  border: none;
+}
+
+.add-modal .add-item-icon {
+  width: 15px;
+}
+
+.add-modal .delete-item-icon {
+  width: 15px;
+}
+
+.add-modal .submit-button {
+  width: 120px;
+  height: 30px;
+  align-items: center;
+  color: white;
+  font-family: Inter, sans-serif;
+  font-size: 15px;
+  font-weight: 300;
+  background-color: #a4a4a4;
+  text-align: center;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  margin-top: 15px;
+}

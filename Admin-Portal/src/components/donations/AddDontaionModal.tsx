@@ -10,7 +10,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import ItemField from "./ItemField";
-import { Alert, TextField, Typography } from "@mui/material";
+import { Alert, IconButton, TextField, Typography } from "@mui/material";
 import {
   createOutgoingDonation,
   getOrganizations,
@@ -25,11 +25,10 @@ import {
   AddIncomingDonationType,
   AddOutgoingDonationType,
 } from "~/types/DonationTypes";
+import "./styles/AddDonation.css";
+import addItemIcon from "../../assets/add-item-icon.png";
 
-// TODO Add figma styling
-// TODO Cleanup/ Add global errors
-// TODO Add Put (edit) donation API integration
-// TODO Integrate Edit Icon button
+// TODO: Fix API integration
 
 interface DonationItem {
   itemId: number;
@@ -94,6 +93,7 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
     setSelectedOrg(selectedOrg);
     setShowUser(true);
     updateUsers(selectedOrg);
+    setSelectedUser(undefined);
   };
 
   const handleTypeChange = (event: SelectChangeEvent<string>) => {
@@ -124,15 +124,24 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
   };
 
   const addItemField = () => {
-    if (items.every((item) => item.totalValue > 0)) {
-      const newItem: DonationItem = {
-        itemId: 0,
-        quantityNew: 0,
-        quantityUsed: 0,
-        totalValue: 0,
-      };
-      setItems([...items, newItem]);
+    if (!selectedDate) {
+      setError("Fill in all fields");
+      return;
     }
+
+    if (items.some((item) => item.totalValue <= 0)) {
+      setError("Fill in all items");
+      return;
+    }
+
+    const newItem: DonationItem = {
+      itemId: 0,
+      quantityNew: 0,
+      quantityUsed: 0,
+      totalValue: 0,
+    };
+    setItems([...items, newItem]);
+    setIsSubmitted(false);
   };
 
   const removeItemField = (index: number) => {
@@ -225,254 +234,417 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
     );
   };
 
-  const setAlert = () => {
-    if (items.some((item) => item.totalValue === 0)) {
-      setError("Please fill in all item fields.");
-      return;
-    }
-  };
-
   const handleSubmit = async () => {
     setIsSubmitted(true);
-    setAlert();
-    try {
-      if (!selectedUser) {
-        setError("User not selected.");
+    if (!selectedUser) {
+      setError("User not selected.");
+      return;
+    }
+
+    if (!selectedOrg) {
+      setError("Organization not selected.");
+      return;
+    }
+
+    if (!selectedDate) {
+      setError("Date not selected.");
+      return;
+    }
+
+    if (items.some((item) => item.totalValue === 0)) {
+      setError("Please fill all item fields.");
+      return;
+    }
+
+    if (donationType === "Outgoing") {
+      if (calculateNumberServed(demographicData) === 0) {
+        setError("Please fill in at least one demographic field.");
         return;
       }
-      const isItemsEmpty = items.some((item) => item.totalValue === 0);
+    }
 
-      if (isItemsEmpty) {
-        setError("Please fill all item fields.");
-        return;
+    if (donationType == "Outgoing") {
+      const outgoingDonationData: AddOutgoingDonationType = {
+        userId: selectedUser.id,
+        donationDetails: items.map((item) => ({
+          itemId: item.itemId,
+          usedQuantity: item.quantityUsed,
+          newQuantity: item.quantityNew,
+        })),
+        numberServed: demographicData.numberServed,
+        whiteNum: demographicData.whiteNum,
+        latinoNum: demographicData.latinoNum,
+        blackNum: demographicData.blackNum,
+        nativeNum: demographicData.nativeNum,
+        asianNum: demographicData.asianNum,
+        otherNum: demographicData.otherNum,
+      };
+      const response = await createOutgoingDonation(outgoingDonationData);
+      console.log(outgoingDonationData);
+
+      if (response.status === 200) {
+        handleCloseModal();
+        handleSubmissionSuccess();
+      } else {
+        setError("Error Creating Donation");
       }
+    }
 
-      if (donationType === "Outgoing") {
-        const isDemographicEmpty =
-          demographicData.numberServed === 0 &&
-          demographicData.whiteNum === 0 &&
-          demographicData.latinoNum === 0 &&
-          demographicData.blackNum === 0 &&
-          demographicData.nativeNum === 0 &&
-          demographicData.asianNum === 0 &&
-          demographicData.otherNum === 0;
+    if (donationType == "Incoming") {
+      const incomingDonationData: AddIncomingDonationType = {
+        userId: selectedUser.id,
+        donationDetails: items.map((item) => ({
+          itemId: item.itemId,
+          usedQuantity: item.quantityUsed,
+          newQuantity: item.quantityNew,
+        })),
+      };
+      const response = await createIncomingDonation(incomingDonationData);
+      console.log(incomingDonationData);
 
-        if (isDemographicEmpty) {
-          setError("Please fill in at least one demographic field.");
-          return;
-        }
+      if (response.status === 200) {
+        handleCloseModal();
+        handleSubmissionSuccess();
+      } else {
+        setError("Error Creating Donation");
       }
-
-      if (donationType == "Outgoing") {
-        const outgoingDonationData: AddOutgoingDonationType = {
-          userId: selectedUser.id,
-          donationDetails: items.map((item) => ({
-            itemId: item.itemId,
-            usedQuantity: item.quantityUsed,
-            newQuantity: item.quantityNew,
-          })),
-          numberServed: demographicData.numberServed,
-          whiteNum: demographicData.whiteNum,
-          latinoNum: demographicData.latinoNum,
-          blackNum: demographicData.blackNum,
-          nativeNum: demographicData.nativeNum,
-          asianNum: demographicData.asianNum,
-          otherNum: demographicData.otherNum,
-        };
-        const response = await createOutgoingDonation(outgoingDonationData);
-        console.log(outgoingDonationData);
-
-        if (response.status === 200) {
-          handleCloseModal();
-          handleSubmissionSuccess();
-        }
-      }
-
-      if (donationType == "Incoming") {
-        const incomingDonationData: AddIncomingDonationType = {
-          userId: selectedUser.id,
-          donationDetails: items.map((item) => ({
-            itemId: item.itemId,
-            usedQuantity: item.quantityUsed,
-            newQuantity: item.quantityNew,
-          })),
-        };
-        const response = await createIncomingDonation(incomingDonationData);
-        console.log(incomingDonationData);
-
-        if (response.status === 200) {
-          handleCloseModal();
-          handleSubmissionSuccess();
-        }
-      }
-    } catch (error) {
-      setError("Error submitting donation:");
     }
   };
 
   return (
-    <Box p={2} sx={{ overflowY: "auto" }}>
-      {error && <ErrorMessage error={error} setError={setError} />}
-      {success && <SuccessMessage success={success} setSuccess={setSuccess} />}
-      <Typography variant="h5" textAlign="center">
-        Add Donation
-      </Typography>
-
-      <FormControl fullWidth variant="standard" sx={{ mb: 2 }}>
-        <InputLabel id="donationType-select-label">Donation Type</InputLabel>
-        <Select
-          labelId="donationType-select-label"
-          id="donor-select"
-          value={donationType}
-          onChange={handleTypeChange}
-          label="Donation Type"
+    <div className="add-modal">
+      <Box p={2} sx={{ overflowY: "auto" }}>
+        {error && <ErrorMessage error={error} setError={setError} />}
+        {success && (
+          <SuccessMessage success={success} setSuccess={setSuccess} />
+        )}
+        <Typography
+          fontFamily="Raleway, sans-serif"
+          fontSize={14}
+          color="navy"
+          mb={1}
+          mt={2}
+          style={{ letterSpacing: "2px" }}
+          textAlign="left"
         >
-          <MenuItem value={"Incoming"}>Incoming</MenuItem>
-          <MenuItem value={"Outgoing"}>Outgoing</MenuItem>
-        </Select>
-      </FormControl>
-      {showDonor && (
-        <FormControl fullWidth variant="standard" sx={{ mb: 2 }}>
-          <InputLabel id="org-select-label">Organization</InputLabel>
-          <Select
-            labelId="org-select-label"
-            id="org-select"
-            value={selectedOrg?.name}
-            onChange={handleOrgChange}
-            label="Organization"
+          ADD DONATION
+        </Typography>
+        <div
+          style={{
+            backgroundColor: "#F3F3F3",
+            borderRadius: "10px",
+            padding: "25px",
+          }}
+        >
+          <div
+            style={{ display: "flex", alignItems: "center", marginTop: "20px" }}
           >
-            {organizationList.map((org) => (
-              <MenuItem key={org.id} value={org.id}>
-                {org.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      )}
-      {showUser && (
-        <>
-          {userList.length > 0 ? (
-            <FormControl fullWidth variant="standard" sx={{ mb: 2 }}>
-              <InputLabel id="user-select-label">User</InputLabel>
-              <Select
-                labelId="user-select-label"
-                id="user-select"
-                value={selectedUser?.firstName}
-                onChange={handleUserChange}
-                label="Donor"
-                MenuProps={{
-                  PaperProps: {
-                    style: {
-                      maxHeight: 200,
-                      overflowY: "auto",
-                    },
-                  },
-                }}
-              >
-                {userList.map((user) => (
-                  <MenuItem key={user.id} value={user.id}>
-                    {user.firstName}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          ) : (
-            <Typography>
-              No users available for the selected organization.
+            <Typography
+              fontFamily="Raleway, sans-serif"
+              fontSize={20}
+              color="navy"
+            >
+              Donor
             </Typography>
-          )}
-        </>
-      )}
 
-      {showCalendar && (
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DemoContainer components={["DatePicker"]}>
-            <DatePicker
-              onChange={handleDateChange}
-              value={selectedDate}
-              label="Basic date picker"
-            />
-          </DemoContainer>
-        </LocalizationProvider>
-      )}
-      {showAddButton && (
-        <Button
-          variant="contained"
-          onClick={addItemField}
-          sx={{ mt: 2, mb: 1 }}
-        >
-          Add Item
-        </Button>
-      )}
-      {items.map((item, index) => (
-        <ItemField
-          key={index}
-          isSubmitted={isSubmitted}
-          onDelete={() => removeItemField(index)}
-          onQuantityChange={(quantityNew, quantityUsed, totalValue) =>
-            handleQuantityChange(index, quantityNew, quantityUsed, totalValue)
-          }
-          onItemChange={(itemId) => handleItemChange(index, itemId)}
-        />
-      ))}
-      {items.length > 0 && (
-        <div>
-          <Typography>Total Items: {totalQuantity}</Typography>
-          <Typography>Total Cost: ${totalCost}</Typography>
-          {donationType == "Outgoing" && (
-            <div>
-              <Typography align={"center"} m={2}>
-                Demographic Data
-              </Typography>
-              <div>
-                <TextField
-                  label="White"
-                  type="standard"
-                  value={demographicData.whiteNum}
-                  onChange={handleChangeDemographicData("whiteNum")}
-                />
-                <TextField
-                  label="Latino"
-                  type="standard"
-                  value={demographicData.latinoNum}
-                  onChange={handleChangeDemographicData("latinoNum")}
-                />
-                <TextField
-                  label="Black"
-                  type="standard"
-                  value={demographicData.blackNum}
-                  onChange={handleChangeDemographicData("blackNum")}
-                />
-                <TextField
-                  label="Native"
-                  type="standard"
-                  value={demographicData.nativeNum}
-                  onChange={handleChangeDemographicData("nativeNum")}
-                />
-                <TextField
-                  label="Asian"
-                  type="standard"
-                  value={demographicData.asianNum}
-                  onChange={handleChangeDemographicData("asianNum")}
-                />
-                <TextField
-                  label="Other"
-                  type="standard"
-                  value={demographicData.otherNum}
-                  onChange={handleChangeDemographicData("otherNum")}
-                />
-              </div>
-              <Typography>
-                Number Served: {calculateNumberServed(demographicData)}
-              </Typography>
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "flex-end",
+              }}
+            >
+              <FormControl
+                variant="standard"
+                sx={{ width: 300, marginRight: "260px" }}
+              >
+                <Select id="donor-select" onChange={handleTypeChange}>
+                  <MenuItem value={"Incoming"}>Incoming</MenuItem>
+                  <MenuItem value={"Outgoing"}>Outgoing</MenuItem>
+                </Select>
+              </FormControl>
             </div>
-          )}
-          <Button variant="contained" sx={{ mt: 2 }} onClick={handleSubmit}>
-            Submit
-          </Button>
+          </div>
+
+          <div
+            style={{ display: "flex", alignItems: "center", marginTop: "20px" }}
+          >
+            <Typography
+              fontFamily="Raleway, sans-serif"
+              fontSize={20}
+              color="navy"
+            >
+              Organization
+            </Typography>
+
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "flex-end",
+              }}
+            >
+              <FormControl
+                fullWidth
+                variant="standard"
+                sx={{ width: 300, marginRight: "260px" }}
+                disabled={!showDonor}
+              >
+                <Select id="org-select" onChange={handleOrgChange}>
+                  {organizationList.map((org) => (
+                    <MenuItem key={org.id} value={org.id}>
+                      {org.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </div>
+          </div>
+
+          <div
+            style={{ display: "flex", alignItems: "center", marginTop: "20px" }}
+          >
+            <Typography
+              fontFamily="Raleway, sans-serif"
+              fontSize={20}
+              color="navy"
+            >
+              User
+            </Typography>
+
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "flex-end",
+              }}
+            >
+              <FormControl
+                disabled={!showUser || userList.length === 0}
+                fullWidth
+                variant="standard"
+                sx={{ width: 300, marginRight: "260px" }}
+              >
+                {selectedOrg && userList.length === 0 && (
+                  <Typography fontSize={13}>
+                    No users available for the selected organization.
+                  </Typography>
+                )}
+
+                <Select
+                  labelId="user-select-label"
+                  id="user-select"
+                  onChange={handleUserChange}
+                  label="Donor"
+                  MenuProps={{
+                    PaperProps: {
+                      style: {
+                        maxHeight: 200,
+                        overflowY: "auto",
+                      },
+                    },
+                  }}
+                >
+                  {userList.map((user) => (
+                    <MenuItem key={user.id} value={user.id}>
+                      {user.firstName}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </div>
+          </div>
+
+          <div
+            style={{ display: "flex", alignItems: "center", marginTop: "20px" }}
+          >
+            <Typography
+              fontFamily="Raleway, sans-serif"
+              fontSize={20}
+              color="navy"
+            >
+              Date
+            </Typography>
+
+            <div
+              className="date-picker"
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "flex-end",
+              }}
+            >
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DemoContainer
+                  components={["DatePicker"]}
+                  sx={{ width: 300, marginRight: "260px" }}
+                >
+                  <DatePicker
+                    disabled={!showCalendar}
+                    onChange={handleDateChange}
+                    value={selectedDate}
+                  />
+                </DemoContainer>
+              </LocalizationProvider>
+            </div>
+          </div>
         </div>
-      )}
-    </Box>
+
+        <IconButton onClick={addItemField} sx={{ mt: 2, mb: 1 }}>
+          <img
+            className="add-item-icon"
+            src={addItemIcon}
+            alt="Add Item Icon"
+          />
+        </IconButton>
+
+        {items.map((item, index) => (
+          <ItemField
+            key={index}
+            isSubmitted={isSubmitted}
+            onDelete={() => removeItemField(index)}
+            onQuantityChange={(quantityNew, quantityUsed, totalValue) =>
+              handleQuantityChange(index, quantityNew, quantityUsed, totalValue)
+            }
+            onItemChange={(itemId) => handleItemChange(index, itemId)}
+          />
+        ))}
+        {items.length > 0 && (
+          <div>
+            <div
+              style={{
+                backgroundColor: "#f3f3f3",
+                marginTop: "15px",
+                borderRadius: "10px",
+                padding: "13px",
+                fontFamily: "Raleway, sans-serif",
+                fontSize: "18px",
+                color: "navy",
+              }}
+            >
+              <div style={{ textAlign: "left", marginBottom: "8px" }}>
+                Total Items
+                <span style={{ color: "black", float: "right" }}>
+                  {totalQuantity}
+                </span>
+              </div>
+              <div style={{ textAlign: "left" }}>
+                Total Price
+                <span style={{ color: "black", float: "right" }}>
+                  {totalCost.toLocaleString("en-US", {
+                    style: "currency",
+                    currency: "USD",
+                  })}
+                </span>
+              </div>
+            </div>
+            {donationType == "Outgoing" && (
+              <div>
+                <Typography
+                  fontFamily="Raleway, sans-serif"
+                  fontSize={14}
+                  color="navy"
+                  mb={1}
+                  mt={2}
+                  style={{ letterSpacing: "2px" }}
+                  textAlign={"left"}
+                >
+                  DEMOGRAPHIC DATA
+                </Typography>
+                <div
+                  style={{
+                    backgroundColor: "lightgray",
+                    padding: "25px",
+                    borderRadius: "10px",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <TextField
+                      label="White"
+                      variant="standard"
+                      value={demographicData.whiteNum}
+                      onChange={handleChangeDemographicData("whiteNum")}
+                      sx={{ marginRight: "30px" }}
+                    />
+                    <TextField
+                      label="Latino"
+                      variant="standard"
+                      value={demographicData.latinoNum}
+                      onChange={handleChangeDemographicData("latinoNum")}
+                      sx={{ marginRight: "30px" }}
+                    />
+                    <TextField
+                      label="Black"
+                      variant="standard"
+                      value={demographicData.blackNum}
+                      onChange={handleChangeDemographicData("blackNum")}
+                      sx={{ marginRight: "30px" }}
+                    />
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      marginTop: "10px",
+                    }}
+                  >
+                    <TextField
+                      label="Native"
+                      variant="standard"
+                      value={demographicData.nativeNum}
+                      onChange={handleChangeDemographicData("nativeNum")}
+                      sx={{ marginRight: "30px" }}
+                    />
+                    <TextField
+                      label="Asian"
+                      variant="standard"
+                      value={demographicData.asianNum}
+                      onChange={handleChangeDemographicData("asianNum")}
+                      sx={{ marginRight: "30px" }}
+                    />
+                    <TextField
+                      label="Other"
+                      variant="standard"
+                      value={demographicData.otherNum}
+                      onChange={handleChangeDemographicData("otherNum")}
+                      sx={{ marginRight: "30px" }}
+                    />
+                  </div>
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    paddingRight: 20,
+                    fontFamily: "Raleway, sans-serif",
+                    fontSize: 20,
+                    backgroundColor: "#f3f3f3",
+                    marginTop: "15px",
+                    borderRadius: "10px",
+                    padding: "13px",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <span style={{ color: "navy" }}>Total Kids</span>
+                  <span style={{ color: "black", textAlign: "right" }}>
+                    {calculateNumberServed(demographicData)}
+                  </span>
+                </div>
+              </div>
+            )}
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              <button className="submit-button" onClick={handleSubmit}>
+                Submit
+              </button>
+            </div>
+          </div>
+        )}
+      </Box>
+    </div>
   );
 };
 

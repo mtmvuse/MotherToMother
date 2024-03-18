@@ -1,0 +1,163 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap");
+.poppins-regular {
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+.inter-regular {
+  font-family: "Inter", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.raleway-regular {
+  font-family: "Raleway", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.details-table .css-1iyq7zh-MuiDataGrid-columnHeaders {
+  color: darkblue;
+  font-size: 15px;
+  background-color: white;
+  border: none;
+  min-height: 35px !important;
+  max-height: 35px !important;
+}
+
+.demographic-table .css-1iyq7zh-MuiDataGrid-columnHeaders {
+  color: darkblue;
+  background-color: white;
+  border: none;
+  min-height: 35px !important;
+  max-height: 35px !important;
+}
+
+.demographic-table .MuiDataGrid-root {
+  border-width: 0px !important;
+  font-family: Raleway, sans-serif !important;
+  font-size: 18px;
+  font-weight: 400px;
+  color: black !important;
+  background-color: #f3f3f3;
+}
+
+.demographic-table .css-1iyq7zh-MuiDataGrid-columnHeaders {
+  min-height: 0px !important;
+  max-height: 0px !important;
+}
+
+.details-table .MuiDataGrid-columnSeparator {
+  display: none !important;
+}
+
+.details-table .MuiDataGrid-root {
+  border-width: 0px !important;
+  font-family: Raleway, sans-serif !important;
+  font-size: 18px;
+  font-weight: 400px;
+  color: black !important;
+  background-color: #f3f3f3;
+}
+
+.details-table .super-app-theme--cell {
+  color: #004a7c;
+  font-weight: 600;
+  align-items: center !important;
+  font-family: poppins, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.edit-button {
+  border-radius: 10px;
+  width: 70px;
+  height: 30px;
+  align-items: center;
+  background: navy;
+  font-family: Inter, sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: white;
+  text-align: center;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.inner-edit-button {
+  border-radius: 10px;
+  width: 80px;
+  height: 30px;
+  align-items: center;
+  background: navy;
+  font-family: Inter, sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: white;
+  text-align: center;
+  border: none;
+  cursor: pointer;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+.css-1yk1gt9-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root {
+  border-radius: 10px;
+  position: relative;
+  border: none;
+  font-size: 16px;
+  transition:
+    border-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out;
+}
+
+.css-1yk1gt9-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root {
+  border-radius: 10px;
+  background-color: white;
+  height: 30px;
+}
+.css-1yk1gt9-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root {
+  border-bottom: none;
+}
+
+.css-1yk1gt9-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root {
+  border-bottom: none;
+}
+
+.css-1yk1gt9-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root ::during {
+  border-bottom: none;
+}
+
+@media (hover) {
+  .css-1yk1gt9-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root
+    :hover:not(.Mui-disabled, .Mui-error):before {
+    border-bottom: none;
+  }
+}
+
+.css-1fu2e3p-MuiPaper-root-MuiDialog-paper {
+  width: 500px;
+  border-radius: 25px;
+}
+
+.css-1t1j96h-MuiPaper-root-MuiDialog-paper {
+  border-radius: 25px;
+}
+
+.dialog-button {
+  background-color: transparent;
+  width: 70px;
+  height: 30px;
+  align-items: center;
+  font-family: Inter, sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: navy;
+  text-align: center;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 10px;
+}

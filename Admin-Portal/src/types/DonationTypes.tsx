@@ -66,3 +66,10 @@ export interface UpdateOutgoingDonationType {
   asianNum: number;
   otherNum: number;
 }
+
+export interface ItemSelection {
+  name: string;
+  category: string;
+  valueUsed: number;
+  valueNew: number;
+}
