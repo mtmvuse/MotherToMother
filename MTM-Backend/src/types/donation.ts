@@ -16,6 +16,7 @@ export interface DonationDetailType {
 
 export interface OutgoingDonationRequestBodyType {
   userId: number;
+  date: Date;
   email: string;
   numberServed: number;
   whiteNum: number;

@@ -7,6 +7,10 @@
 /** This file is the utils file that ignores type safety for priority purposes.
  * Will be good to add type back in the future */
 
+const isDate = (value: any) => {
+  const isoDatePattern = /^\d{4}-\d{2}-\d{2}$/;
+  return isoDatePattern.test(value);
+};
 /**
  * Translate the filters to Prisma format
  * @param filters filters for the query
@@ -40,24 +44,60 @@ export const translateFilterToPrisma = (filters: any) => {
         const num = parseFloat(value);
         where[field] = { not: { equals: isNaN(num) ? value : num } };
         break;
-      case "!=":
-        where[field] = { not: { equals: Number(value) } };
-        break;
       case "gt":
-        where[field] = { gt: Number(value) };
+        if (isDate(value)) {
+          const startOfNextDay = new Date(value);
+          startOfNextDay.setDate(startOfNextDay.getDate() + 1);
+          where[field] = {
+            gt: startOfNextDay,
+          };
+        } else {
+          where[field] = { gt: Number(value) };
+        }
         break;
       case "lt":
-        where[field] = { lt: Number(value) };
+        if (isDate(value)) {
+          const date = new Date(value);
+          where[field] = {
+            lt: date,
+          };
+        } else {
+          where[field] = { lt: Number(value) };
+        }
         break;
       case "gte":
-        where[field] = { gte: Number(value) };
+        if (isDate(value)) {
+          const date = new Date(value);
+          where[field] = {
+            gte: date,
+          };
+        } else {
+          where[field] = { gte: Number(value) };
+        }
         break;
       case "lte":
-        where[field] = { lte: Number(value) };
+        if (isDate(value)) {
+          const startOfNextDay = new Date(value);
+          startOfNextDay.setDate(startOfNextDay.getDate() + 1);
+          where[field] = {
+            lt: startOfNextDay,
+          };
+        } else {
+          where[field] = { lte: Number(value) };
+        }
         break;
       default:
-        // Handle equality as default case
-        where[field] = { equals: value };
+        if (isDate(value)) {
+          const startOfDay = new Date(value);
+          const startOfNextDay = new Date(startOfDay);
+          startOfNextDay.setDate(startOfNextDay.getDate() + 1);
+          where[field] = {
+            gte: startOfDay,
+            lt: startOfNextDay,
+          };
+        } else {
+          where[field] = { equals: value };
+        }
         break;
     }
   });
