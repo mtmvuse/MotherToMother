@@ -7,8 +7,6 @@ import { db } from "../src/utils/db.server";
 import { organizationData, userDataMock, itemDataMock } from "./mockData";
 
 async function main() {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  const getRandomIndex = (arr: any) => Math.floor(Math.random() * arr.length);
   // Clear data from the database
   await clearData();
 
@@ -44,10 +42,12 @@ async function main() {
 
     // Create 3 cash donations for each user
     for (let i = 0; i < 3; ++i) {
+      const date = new Date();
+      date.setDate(date.getDate() - 2 * i);
       await db.cashDonation.create({
         data: {
           organizationId: user.organizationId,
-          date: new Date(),
+          date: date,
           total: Math.floor(Math.random() * 1000), // Generate a random total amount
         },
       });
