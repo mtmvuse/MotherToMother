@@ -108,3 +108,11 @@ export const updateAdmin = async (admin: AdminInputNoID) => {
     },
   });
 };
+
+export const deleteAdmin = async (id: number): Promise<void> => {
+  await db.admin.delete({
+    where: {
+      id,
+    },
+  });
+};
