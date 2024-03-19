@@ -1,5 +1,6 @@
 import { AddInventoryItemType, EditInventoryItemType } from "~/types/inventory";
 import type { EditUserType, AddUserType } from "../types/user";
+import type { EditAdminType, AddAdminType } from "../types/admin";
 import type { Organization } from "~/types/organization";
 import type { GridFilterModel, GridSortModel } from "@mui/x-data-grid";
 import { filterModelToApiQuery, sortModelToApiQuery } from "./utils";
@@ -301,5 +302,73 @@ export const editOutgoingDonation = async (
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(outgoingDonationData),
+  });
+};
+
+export const getAdmin = async (
+  token: string | undefined,
+  page: number,
+  pageSize: number,
+  filterModel?: GridFilterModel,
+  sortModel?: GridSortModel
+) => {
+  let url = `${backendUrl}/admin/v1/admin?page=${page}&pageSize=${pageSize}`;
+  if (filterModel) {
+    url += `&${filterModelToApiQuery(filterModel)}`;
+  }
+  if (sortModel) {
+    url += `&${sortModelToApiQuery(sortModel)}`;
+  }
+  return await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+export const updateAdmin = async (
+  id: number,
+  adminData: EditAdminType,
+  token: string
+) => {
+  return await fetch(`${backendUrl}/admin/v1/update/id/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(adminData),
+  });
+};
+
+export const deleteAdmin = async (id: number, token: string) => {
+  return await fetch(`${backendUrl}/admin/v1/delete/id/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+export const addAdmin = async (admin: AddAdminType) => {
+  return await fetch(`${backendUrl}/admin/v1`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(admin),
+  });
+};
+
+export const getModalAdmin = async (query?: string | undefined) => {
+  const fetchURL = query
+    ? `${backendUrl}/admin/v1?type=${query}`
+    : `${backendUrl}/admin/v1`;
+  return await fetch(fetchURL, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
 };

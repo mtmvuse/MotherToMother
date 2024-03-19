@@ -4,7 +4,7 @@ import express, {
   type NextFunction,
 } from "express";
 import type { AdminInputNoID, AdminType } from "../../../types/admin";
-import * as AdminService from "./admins.service";
+import * as AdminService from "./admin.service";
 import Joi from "joi";
 
 interface QueryType {

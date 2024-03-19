@@ -10,7 +10,7 @@ import { notFound, errorHandler } from "./middlewares/errors";
 import { donationRouter } from "./routes/v1/donation/donation.router";
 import { registrationRouter } from "./routes/v1/registration/registration.router";
 import { organizationRouter } from "./routes/v1/organization/organization.router";
-import { adminsRouter } from "./routes/v1/admins/admins.router";
+import { adminsRouter } from "./routes/v1/admin/admin.router";
 import { inventoryRouter } from "./routes/v1/inventory/inventory.router";
 import { cashDonationRouter } from "./routes/v1/cashDonation/cashDonation.router";
 
@@ -33,7 +33,7 @@ app.use(helmet());
 
 app.use("/users", userRouter);
 
-app.use("/admins", adminsRouter);
+app.use("/admin", adminsRouter);
 
 app.use("/items", itemsRouter);
 

@@ -383,3 +383,24 @@ export const organizationData = [
     type: "Agency",
   },
 ];
+
+export const adminDataMock = [
+  {
+    name: "NEW ADMIN1",
+    email: "john.doe1@example.com",
+    role: USER_TYPE[0],
+  },
+
+  {
+    name: "NEW ADMIN2",
+    email: "john.doe2@example.com",
+    role: USER_TYPE[1],
+  },
+
+  {
+    name: "NEW ADMIN3",
+    email: "john.doe3@example.com",
+    role: USER_TYPE[3],
+  },
+  
+];

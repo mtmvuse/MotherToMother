@@ -10,13 +10,12 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
-  getUsers,
-  updateUser,
-  getOrganizations,
-  addUser,
-  deleteUser,
+  getAdmin,
+  updateAdmin,
+  addAdmin,
+  deleteAdmin,
 } from "../lib/services";
-import { USER_TYPE, PAGE_SIZE } from "../lib/constants";
+import { ADMIN_TYPE, PAGE_SIZE } from "../lib/constants";
 import {
   useQuery,
   useMutation,
@@ -24,14 +23,14 @@ import {
   keepPreviousData,
 } from "@tanstack/react-query";
 import type {
-  UserDashboardResponse,
-  EditUserArgs,
-  UserRow,
-} from "../types/user";
+  AdminDashboardResponse,
+  EditAdminArgs,
+  AdminRow,
+} from "../types/admin";
 import { Button, Box } from "@mui/material";
 import FormDialog from "../components/FormDialog";
 import DeleteAlertModal from "../components/DeleteAlertModal";
-import UserDialog from "../components/users/UserDialog";
+import AdminDialog from "../components/admin/adminDialog";
 import type { Organization } from "~/types/organization";
 
 const AdminsPage: React.FC = () => {
@@ -40,60 +39,60 @@ const AdminsPage: React.FC = () => {
   const [filterModel, setFilterModel] = useState<GridFilterModel | undefined>();
   const [sortModel, setSortModel] = useState<GridSortModel | undefined>();
   const [totalNumber, setTotalNumber] = useState(0);
-  const [openAddUser, setOpenAddUser] = React.useState(false);
-  const [openEditUser, setOpenEditUser] = React.useState(false);
-  const [openDeleteUser, setOpenDeleteUser] = React.useState(false);
-  const [editRow, setEditRow] = React.useState<UserRow | undefined>();
-  const [deleteRow, setDeleteRow] = React.useState<UserRow | undefined>();
+  const [openAddAdmin, setOpenAddAdmin] = React.useState(false);
+  const [openEditAdmin, setOpenEditAdmin] = React.useState(false);
+  const [openDeleteAdmin, setOpenDeleteAdmin] = React.useState(false);
+  const [editRow, setEditRow] = React.useState<AdminRow | undefined>();
+  const [deleteRow, setDeleteRow] = React.useState<AdminRow | undefined>();
   const queryClient = useQueryClient();
 
-  const handleOpenAddUser = () => {
-    setOpenAddUser(true);
+  const handleOpenAddAdmin = () => {
+    setOpenAddAdmin(true);
   };
 
-  const handleCloseAddUser = () => {
-    setOpenAddUser(false);
+  const handleCloseAddAdmin = () => {
+    setOpenAddAdmin(false);
   };
 
-  const handleOpenEditUser = (row: UserRow) => {
+  const handleOpenEditAdmin = (row: AdminRow) => {
     setEditRow(row);
-    setOpenEditUser(true);
+    setOpenEditAdmin(true);
   };
 
-  const handleCloseEditUser = () => {
+  const handleCloseEditAdmin = () => {
     setEditRow(undefined);
-    setOpenEditUser(false);
+    setOpenEditAdmin(false);
   };
 
-  const handleOpenDeleteUser = (row: UserRow) => {
+  const handleOpenDeleteAdmin = (row: AdminRow) => {
     setDeleteRow(row);
-    setOpenDeleteUser(true);
+    setOpenDeleteAdmin(true);
   };
 
-  const handleCloseDeleteUser = () => {
+  const handleCloseDeleteAdmin = () => {
     setDeleteRow(undefined);
-    setOpenDeleteUser(false);
+    setOpenDeleteAdmin(false);
   };
 
-  const findOrganizationId = (organizationName: string) => {
-    return organizationsQueryResponse.data?.find(
-      (organization) => organization.name === organizationName
-    )?.id;
-  };
+  // const findOrganizationId = (organizationName: string) => {
+  //   return organizationsQueryResponse.data?.find(
+  //     (organization) => organization.name === organizationName
+  //   )?.id;
+  // };
 
   const isAnyFilterValueUndefined = () => {
     return filterModel?.items.some((item) => item.value === undefined);
   };
 
-  const usersQueryResponse = useQuery({
-    queryKey: ["users", page, pageSize, filterModel, sortModel],
+  const adminQueryResponse = useQuery({
+    queryKey: ["admin", page, pageSize, filterModel, sortModel],
     placeholderData: keepPreviousData,
     queryFn: () =>
-      getUsers("token", page, pageSize, filterModel, sortModel)
+      getAdmin("token", page, pageSize, filterModel, sortModel)
         .then((res: Response) => res.json())
-        .then((data: UserDashboardResponse) => {
+        .then((data: AdminDashboardResponse) => {
           setTotalNumber(data.totalNumber);
-          return data.users;
+          return data.admin;
         })
         .catch((err: any) => {
           console.error(err);
@@ -101,54 +100,52 @@ const AdminsPage: React.FC = () => {
     enabled: !isAnyFilterValueUndefined(),
   });
 
-  const organizationsQueryResponse = useQuery({
-    queryKey: ["organizations"],
-    queryFn: () =>
-      getOrganizations()
-        .then((res: Response) => res.json())
-        .then((data: Organization[]) => data)
-        .catch((err: any) => {
-          console.error(err);
-        }),
-  });
+  // const organizationsQueryResponse = useQuery({
+  //   queryKey: ["organizations"],
+  //   queryFn: () =>
+  //     getOrganizations()
+  //       .then((res: Response) => res.json())
+  //       .then((data: Organization[]) => data)
+  //       .catch((err: any) => {
+  //         console.error(err);
+  //       }),
+  // });
 
   const addMutation = useMutation({
-    mutationFn: (data: any) => addUser(data),
+    mutationFn: (data: any) => addAdmin(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: ["admin"] });
     },
   });
 
   const editMutation = useMutation({
-    mutationFn: (data: EditUserArgs) =>
-      updateUser(data.id, data.userData, "token"),
+    mutationFn: (data: EditAdminArgs) =>
+      updateAdmin(data.id, data.adminData, "token"),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: ["admin"] });
     },
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: number) => deleteUser(id, "token"),
+    mutationFn: (id: number) => deleteAdmin(id, "token"),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: ["admin"] });
     },
   });
 
-  const handleAddUser = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleAddAdmin = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const formJson = Object.fromEntries((formData as any).entries());
     const { organization, ...rest } = formJson;
-    const userData = {
-      ...rest,
-      organizationId: findOrganizationId(formJson.organization),
-      password: "password",
+    const adminData = {
+      ...rest
     };
-    addMutation.mutate(userData);
-    handleCloseAddUser();
+    addMutation.mutate(adminData);
+    handleCloseAddAdmin();
   };
 
-  const handleEditUser = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleEditAdmin = (event: React.FormEvent<HTMLFormElement>) => {
     if (!editRow) return;
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
@@ -156,20 +153,19 @@ const AdminsPage: React.FC = () => {
     const { organization, ...rest } = formJson;
     const data = {
       id: editRow.id,
-      userData: {
-        ...rest,
-        organizationId: findOrganizationId(formJson.organization),
-      } as EditUserArgs["userData"],
+      adminData: {
+        ...rest
+      } as EditAdminArgs["adminData"],
       token: "token",
     };
     editMutation.mutate(data);
-    handleCloseEditUser();
+    handleCloseEditAdmin();
   };
 
-  const handleDeleteUser = () => {
+  const handleDeleteAdmin = () => {
     if (!deleteRow) return;
     deleteMutation.mutate(deleteRow.id);
-    handleCloseDeleteUser();
+    handleCloseDeleteAdmin();
   };
 
   const handleFilterModelChange = (model: GridFilterModel) => {
@@ -180,9 +176,9 @@ const AdminsPage: React.FC = () => {
     setSortModel(model);
   };
 
-  if (usersQueryResponse.isLoading) return <div>Loading...</div>;
-  if (usersQueryResponse.error)
-    return <div>Error: {usersQueryResponse.error.message}</div>;
+  if (adminQueryResponse.isLoading) return <div>Loading...</div>;
+  if (adminQueryResponse.error)
+    return <div>Error: {adminQueryResponse.error.message}</div>;
 
   const columns: GridColDef[] = [
     {
@@ -205,7 +201,7 @@ const AdminsPage: React.FC = () => {
       headerName: "Role",
       flex: 2,
       type: "singleSelect",
-      valueOptions: Object.values(USER_TYPE),
+      valueOptions: Object.values(ADMIN_TYPE),
       align: "left",
       headerAlign: "left",
     },
@@ -237,14 +233,14 @@ const AdminsPage: React.FC = () => {
         <GridActionsCellItem
           icon={<EditIcon />}
           onClick={() => {
-            handleOpenEditUser(params.row);
+            handleOpenEditAdmin(params.row);
           }}
           label="Edit"
         />,
         <GridActionsCellItem
           icon={<DeleteIcon />}
           onClick={() => {
-            handleOpenDeleteUser(params.row);
+            handleOpenDeleteAdmin(params.row);
           }}
           label="Delete"
         />,
@@ -256,14 +252,14 @@ const AdminsPage: React.FC = () => {
       <Button
         variant="contained"
         sx={{ margin: "auto 10px 10px auto" }}
-        onClick={handleOpenAddUser}
+        onClick={handleOpenAddAdmin}
       >
         Add Admin
       </Button>
 
       <DataGrid
         sx={{ width: "95%", height: "80vh" }}
-        rows={usersQueryResponse.data || []}
+        rows={adminQueryResponse.data || []}
         columns={columns}
         pagination
         autoPageSize
@@ -278,29 +274,28 @@ const AdminsPage: React.FC = () => {
       />
 
       <FormDialog
-        title={"ADD A NEW USER"}
-        handleClose={handleCloseAddUser}
-        open={openAddUser}
-        handleSubmit={handleAddUser}
+        title={"ADD A NEW ADMIN"}
+        handleClose={handleCloseAddAdmin}
+        open={openAddAdmin}
+        handleSubmit={handleAddAdmin}
       >
-        <UserDialog organizations={organizationsQueryResponse.data} />
+        <AdminDialog />
       </FormDialog>
       <FormDialog
-        title={"EDIT A USER"}
-        handleClose={handleCloseEditUser}
-        open={openEditUser}
-        handleSubmit={handleEditUser}
+        title={"EDIT A ADMIN"}
+        handleClose={handleCloseEditAdmin}
+        open={openEditAdmin}
+        handleSubmit={handleEditAdmin}
       >
-        <UserDialog
-          organizations={organizationsQueryResponse.data}
+        <AdminDialog
           editRow={editRow}
         />
       </FormDialog>
       <DeleteAlertModal
-        scenario={"user"}
-        handleDelete={handleDeleteUser}
-        open={openDeleteUser}
-        handleClose={handleCloseDeleteUser}
+        scenario={"admin"}
+        handleDelete={handleDeleteAdmin}
+        open={openDeleteAdmin}
+        handleClose={handleCloseDeleteAdmin}
       />
     </Box>
   );
