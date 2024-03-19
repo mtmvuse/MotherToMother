@@ -105,7 +105,7 @@ model CashDonation {
   @@index([organizationId], map: "CashDonation_organizationId_fkey")
 }
 
-/// View for user dashboard for admin portal
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 view user_dashboard {
   id           Int    @id @default(0)
   email        String
