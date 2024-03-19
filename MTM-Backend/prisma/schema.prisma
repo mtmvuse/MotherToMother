@@ -33,7 +33,7 @@ model User {
   household      String?
   userType       String
   donation       Donation[]
-  Organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  Organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@index([organizationId], map: "User_organizationId_fkey")
 }
@@ -42,8 +42,8 @@ model Donation {
   id                    Int                    @id @default(autoincrement())
   userId                Int
   date                  DateTime               @default(now())
-  user                  User                   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  DonationDetail        DonationDetail[]      
+  user                  User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  DonationDetail        DonationDetail[]
   OutgoingDonationStats OutgoingDonationStats?
 
   @@index([userId], map: "Donation_userId_fkey")
@@ -55,11 +55,10 @@ model DonationDetail {
   itemId       Int
   usedQuantity Int
   newQuantity  Int
-  donation     Donation @relation(fields: [donationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  item         Item     @relation(fields: [itemId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  donation     Donation @relation(fields: [donationId], references: [id], onDelete: Cascade)
+  item         Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
 
   @@unique([donationId, itemId])
-  @@index([donationId], map: "DonationDetail_donationId_fkey")
   @@index([itemId], map: "DonationDetail_itemId_fkey")
 }
 
@@ -73,16 +72,16 @@ model OutgoingDonationStats {
   nativeNum    Int
   asianNum     Int
   otherNum     Int
-  donation     Donation @relation(fields: [donationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  donation     Donation @relation(fields: [donationId], references: [id], onDelete: Cascade)
 }
 
 model Item {
   id             Int              @id @default(autoincrement())
-  category       String
   name           String
   quantityUsed   Int
   quantityNew    Int
   valueUsed      Float
+  category       String
   valueNew       Float
   DonationDetail DonationDetail[]
 }
@@ -103,26 +102,4 @@ model CashDonation {
   Organization   Organization @relation(fields: [organizationId], references: [id])
 
   @@index([organizationId], map: "CashDonation_organizationId_fkey")
-}
-
-/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-view user_dashboard {
-  id           Int    @id @default(0)
-  email        String
-  name         String @default("") @db.VarChar(383)
-  phone        String
-  address      String @db.Text
-  type         String
-  organization String
-}
-
-/// View for donation details for admin portal
-view donation_detail {
-  id           Int      @id @default(0)
-  date         DateTime @default(now())
-  organization String
-  total        Float
-  items        Decimal @db.Decimal(33, 0)
-  type         String   @default("") @db.VarChar(8)
-  details      Json
 }

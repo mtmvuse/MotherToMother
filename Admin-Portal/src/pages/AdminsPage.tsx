@@ -260,9 +260,7 @@ const AdminsPage: React.FC = () => {
       >
         Add Admin
       </Button>
-      <Button variant="contained" sx={{ margin: "auto 10px 10px auto" }}>
-        Add Organization
-      </Button>
+
       <DataGrid
         sx={{ width: "95%", height: "80vh" }}
         rows={usersQueryResponse.data || []}
