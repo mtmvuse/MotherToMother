@@ -41,8 +41,8 @@ const modalStyle = {
   transform: "translate(-50%, -50%)",
   padding: "20px",
   border: "1px solid #888",
-  width: "40%",
-  height: "auto",
+  width: "32%",
+  height: "55%",
   maxHeight: "80vh",
   overflowY: "auto",
   boxShadow: "0 4px 8px 0 rgba(0,0,0,0.2)",
@@ -161,6 +161,11 @@ const DonationsPage: React.FC = () => {
       flex: 3,
       align: "left",
       headerAlign: "left",
+      valueFormatter: (params) =>
+        params.value.toLocaleString("en-US", {
+          style: "currency",
+          currency: "USD",
+        }),
     },
     {
       field: "type",

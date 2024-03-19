@@ -83,7 +83,7 @@
   border-radius: 20px;
 }
 
-.css-1iyq7zh-MuiDataGrid-columnHeaders {
+.grid-container .css-1iyq7zh-MuiDataGrid-columnHeaders {
   color: #004a7c;
   background-color: #d8d8d8;
   border-radius: 50px;
@@ -94,27 +94,27 @@
   max-height: 35px !important;
 }
 
-.css-1psby5b-MuiDataGrid-root .MuiDataGrid-row-row {
+.grid-container .css-1psby5b-MuiDataGrid-root .MuiDataGrid-row-row {
   min-height: 10px !important;
 }
 
-.mtm-datagrid .MuiDataGrid-columnSeparator {
+.grid-container .mtm-datagrid .MuiDataGrid-columnSeparator {
   display: none !important;
 }
 
-.MuiDataGrid-root {
+.grid-container .MuiDataGrid-root {
   border-width: 0px !important;
   font-family: Inter, sans-serif !important;
   font-size: 14px;
   color: #6d6d6d !important;
 }
 
-.mtm-datagrid .MuiDataGrid-columnHeader {
+.grid-container .mtm-datagrid .MuiDataGrid-columnHeader {
   border-top-left-radius: 0px;
   border-top-right-radius: 0px;
 }
 
-.mtm-datagrid .super-app-theme--cell {
+.grid-container .mtm-datagrid .super-app-theme--cell {
   color: #004a7c;
   font-weight: 600;
   align-items: center !important;

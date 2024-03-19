@@ -119,7 +119,10 @@ export const getTransactions = async (page: number, pageSize: number) => {
   return transformedData;
 };
 
-export const createDonation = async (userId: number): Promise<DonationType> => {
+export const createDonation = async (
+  userId: number,
+  date: Date,
+): Promise<DonationType> => {
   return db.donation.create({
     data: {
       user: {
@@ -127,6 +130,7 @@ export const createDonation = async (userId: number): Promise<DonationType> => {
           id: userId,
         },
       },
+      date: date,
     },
   });
 };

@@ -70,6 +70,7 @@ const Register: React.FC<SharedStates> = ({ setSavedUserType }) => {
   const { registerUser, currentUser } = useAuth();
   const navigate = useNavigate();
 
+  //how to handle the logic of failing to register on the database
   useEffect(() => {
     if (currentUser) {
       navigate("/home");
@@ -77,25 +78,23 @@ const Register: React.FC<SharedStates> = ({ setSavedUserType }) => {
   }, [currentUser, navigate]);
 
   useEffect(() => {
-    if (userType === USER_TYPE.AGENCY) {
-      const organizationQueryType: string | undefined = userType
-        .split(" ")[0]
-        ?.toLocaleLowerCase();
+    const organizationQueryType: string | undefined = userType
+      .split(" ")[0]
+      ?.toLocaleLowerCase();
 
-      const queryOrganizations = async (query: string | undefined) => {
-        try {
-          const organization = await getOrganizations(query);
-          setOrganizations(organization);
-        } catch (err: any) {
-          if (err instanceof TypeError) {
-            setError("Network error: Failed to get organizations");
-          } else {
-            setError(err.message);
-          }
+    const queryOrganizations = async (query: string | undefined) => {
+      try {
+        const organization = await getOrganizations(query);
+        setOrganizations(organization);
+      } catch (err: any) {
+        if (err instanceof TypeError) {
+          setError("Network error: Failed to get organizations");
+        } else {
+          setError(err.message);
         }
-      };
-      queryOrganizations(organizationQueryType);
-    }
+      }
+    };
+    queryOrganizations(organizationQueryType);
   }, [userType]);
 
   const {
@@ -126,6 +125,9 @@ const Register: React.FC<SharedStates> = ({ setSavedUserType }) => {
         state: "state",
         zip: parseInt(values.zip, 10),
         userType: values.userType,
+        organizationId: values.affiliation
+          ? parseInt(values.affiliation, 10)
+          : organizations.find((item) => item.name == "Public")?.id,
       } as UserType;
 
       const response = await registerUserOnServer(user);
@@ -457,7 +459,7 @@ const Register: React.FC<SharedStates> = ({ setSavedUserType }) => {
                       error={!!errors.affiliation}
                     >
                       {organizations.map((organization, index) => (
-                        <MenuItem value={organization.name} key={index}>
+                        <MenuItem value={organization.id} key={index}>
                           {organization.name}
                         </MenuItem>
                       ))}

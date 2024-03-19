@@ -7,8 +7,6 @@ import { db } from "../src/utils/db.server";
 import { organizationData, userDataMock, itemDataMock } from "./mockData";
 
 async function main() {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  const getRandomIndex = (arr: any) => Math.floor(Math.random() * arr.length);
   // Clear data from the database
   await clearData();
 
@@ -41,6 +39,19 @@ async function main() {
             ?.id || orgs[0].id,
       },
     });
+
+    // Create 3 cash donations for each user
+    for (let i = 0; i < 3; ++i) {
+      const date = new Date();
+      date.setDate(date.getDate() - 2 * i);
+      await db.cashDonation.create({
+        data: {
+          organizationId: user.organizationId,
+          date: date,
+          total: Math.floor(Math.random() * 1000), // Generate a random total amount
+        },
+      });
+    }
 
     // Create 3 donations for each user
     for (let i = 0; i < 3; ++i) {
@@ -83,6 +94,7 @@ async function main() {
 
 // Function to clear data from the database
 async function clearData() {
+  await db.cashDonation.deleteMany();
   await db.donationDetail.deleteMany();
   await db.outgoingDonationStats.deleteMany();
   await db.donation.deleteMany();
