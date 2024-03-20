@@ -10,7 +10,7 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { getAdmin, updateAdmin, addAdmin, deleteAdmin } from "../lib/services";
-import { ADMIN_TYPE, PAGE_SIZE } from "../lib/constants";
+import { PAGE_SIZE } from "../lib/constants";
 import {
   useQuery,
   useMutation,
@@ -68,12 +68,6 @@ const AdminsPage: React.FC = () => {
     setDeleteRow(undefined);
     setOpenDeleteAdmin(false);
   };
-
-  // const findOrganizationId = (organizationName: string) => {
-  //   return organizationsQueryResponse.data?.find(
-  //     (organization) => organization.name === organizationName
-  //   )?.id;
-  // };
 
   const isAnyFilterValueUndefined = () => {
     return filterModel?.items.some((item) => item.value === undefined);
@@ -177,8 +171,6 @@ const AdminsPage: React.FC = () => {
       field: "role",
       headerName: "Role",
       flex: 2,
-      type: "singleSelect",
-      valueOptions: Object.values(ADMIN_TYPE),
       align: "left",
       headerAlign: "left",
     },

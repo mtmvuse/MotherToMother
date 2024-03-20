@@ -360,15 +360,3 @@ export const addAdmin = async (admin: AddAdminType) => {
     body: JSON.stringify(admin),
   });
 };
-
-export const getModalAdmin = async (query?: string | undefined) => {
-  const fetchURL = query
-    ? `${backendUrl}/admin/v1?type=${query}`
-    : `${backendUrl}/admin/v1`;
-  return await fetch(fetchURL, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-};
