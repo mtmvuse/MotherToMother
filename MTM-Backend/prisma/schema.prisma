@@ -78,11 +78,11 @@ model OutgoingDonationStats {
 
 model Item {
   id             Int              @id @default(autoincrement())
-  category       String
   name           String
   quantityUsed   Int
   quantityNew    Int
   valueUsed      Float
+  category       String
   valueNew       Float
   DonationDetail DonationDetail[]
 }
@@ -95,9 +95,9 @@ model Admin {
 }
 
 model CashDonation {
-  id             Int           @id @default(autoincrement())
+  id             Int          @id @default(autoincrement())
   organizationId Int
-  date           DateTime      @default(now())
+  date           DateTime     @default(now())
   total          Float
   Organization   Organization @relation(fields: [organizationId], references: [id])
 

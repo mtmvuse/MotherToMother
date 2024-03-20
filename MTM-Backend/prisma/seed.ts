@@ -4,7 +4,12 @@
  * PRISMA STUDIO - DIRECTLY, SQL WORKBENCH - DIRECTLY
  */
 import { db } from "../src/utils/db.server";
-import { organizationData, userDataMock, itemDataMock } from "./mockData";
+import {
+  organizationData,
+  userDataMock,
+  itemDataMock,
+  adminDataMock,
+} from "./mockData";
 
 async function main() {
   // Clear data from the database
@@ -90,6 +95,12 @@ async function main() {
       }
     }
   }
+  // seed admin data
+  for (const adminData of adminDataMock) {
+    await db.admin.create({
+      data: adminData,
+    });
+  }
 }
 
 // Function to clear data from the database
@@ -101,6 +112,7 @@ async function clearData() {
   await db.item.deleteMany();
   await db.user.deleteMany();
   await db.organization.deleteMany();
+  await db.admin.deleteMany();
   console.log("Data cleared");
 }
 
