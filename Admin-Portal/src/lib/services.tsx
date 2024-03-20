@@ -70,6 +70,16 @@ export const deleteInventoryItem = async (
   });
 };
 
+export const getAdminByEmail = async (email: string) => {
+  const url = `${backendUrl}/admins/v1/?email=${email}`;
+  return await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+};
+
 export const getUsers = async (
   token: string | undefined,
   page: number,
