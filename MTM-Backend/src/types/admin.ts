@@ -7,9 +7,3 @@ export interface AdminInputNoID {
 export interface AdminType extends AdminInputNoID {
   id: number;
 }
-export interface Admin {
-  email: string;
-  firstName: string;
-  lastName: string;
-  role: string;
-}
