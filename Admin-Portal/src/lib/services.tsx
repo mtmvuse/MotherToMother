@@ -312,7 +312,7 @@ export const getAdmin = async (
   filterModel?: GridFilterModel,
   sortModel?: GridSortModel
 ) => {
-  let url = `${backendUrl}/admin/v1/admin?page=${page}&pageSize=${pageSize}`;
+  let url = `${backendUrl}/admin/v1?page=${page}&pageSize=${pageSize}`;
   if (filterModel) {
     url += `&${filterModelToApiQuery(filterModel)}`;
   }

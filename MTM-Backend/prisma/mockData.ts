@@ -14,7 +14,7 @@ export const userDataMock = [
     city: "Anytown",
     state: "Anystate",
     zip: 12345,
-    role: "User",
+
     household: "abc",
   },
   {
@@ -29,7 +29,7 @@ export const userDataMock = [
     city: "Anytown",
     state: "Anystate",
     zip: 12345,
-    role: "User",
+
     household: "abc",
   },
   {
@@ -45,7 +45,7 @@ export const userDataMock = [
     city: "Anytown",
     state: "Anystate",
     zip: 12348,
-    role: "User",
+
     household: "abc3",
   },
   {
@@ -61,7 +61,7 @@ export const userDataMock = [
     city: "Anytown",
     state: "Anystate",
     zip: 12349,
-    role: "User",
+
     household: "abc4",
   },
   {
@@ -77,7 +77,7 @@ export const userDataMock = [
     city: "Anytown",
     state: "Anystate",
     zip: 12350,
-    role: "User",
+
     household: "abc5",
   },
   {
@@ -93,7 +93,7 @@ export const userDataMock = [
     city: "Anytown",
     state: "Anystate",
     zip: 12351,
-    role: "User",
+
     household: "abc6",
   },
   {
@@ -109,7 +109,7 @@ export const userDataMock = [
     city: "Anytown",
     state: "Anystate",
     zip: 12352,
-    role: "User",
+
     household: "abc7",
   },
   {
@@ -125,7 +125,7 @@ export const userDataMock = [
     city: "Anytown",
     state: "Anystate",
     zip: 12353,
-    role: "User",
+
     household: "abc8",
   },
   {
@@ -141,7 +141,7 @@ export const userDataMock = [
     city: "Anytown",
     state: "Anystate",
     zip: 12353,
-    role: "User",
+
     household: "abc9",
   },
   {
@@ -157,7 +157,7 @@ export const userDataMock = [
     city: "Anytown",
     state: "Anystate",
     zip: 12345,
-    role: "User",
+
     household: "abc10",
   },
   {
@@ -173,7 +173,7 @@ export const userDataMock = [
     city: "Anytown",
     state: "Anystate",
     zip: 12345,
-    role: "User",
+
     household: "abc11",
   },
   {
@@ -189,7 +189,7 @@ export const userDataMock = [
     city: "Anytown",
     state: "Anystate",
     zip: 12345,
-    role: "User",
+
     household: "abc12",
   },
   {
@@ -205,7 +205,7 @@ export const userDataMock = [
     city: "Anytown",
     state: "Anystate",
     zip: 12345,
-    role: "User",
+
     household: "abc13",
   },
   {
@@ -221,7 +221,7 @@ export const userDataMock = [
     city: "Anytown",
     state: "Anystate",
     zip: 12345,
-    role: "User",
+
     household: "abc14",
   },
   {
@@ -237,7 +237,7 @@ export const userDataMock = [
     city: "Anytown",
     state: "Anystate",
     zip: 12345,
-    role: "User",
+
     household: "abc15",
   },
   {
@@ -253,7 +253,7 @@ export const userDataMock = [
     city: "Anytown",
     state: "Anystate",
     zip: 12345,
-    role: "User",
+
     household: "abc16",
   },
 ];
@@ -388,19 +388,16 @@ export const adminDataMock = [
   {
     name: "NEW ADMIN1",
     email: "john.doe1@example.com",
-    role: USER_TYPE[0],
+    role: "Human Resources",
   },
-
   {
     name: "NEW ADMIN2",
     email: "john.doe2@example.com",
-    role: USER_TYPE[1],
+    role: "Operations",
   },
-
   {
     name: "NEW ADMIN3",
     email: "john.doe3@example.com",
-    role: USER_TYPE[3],
+    role: "Fundraising",
   },
-  
 ];

@@ -9,12 +9,7 @@ import {
 } from "@mui/x-data-grid";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import {
-  getAdmin,
-  updateAdmin,
-  addAdmin,
-  deleteAdmin,
-} from "../lib/services";
+import { getAdmin, updateAdmin, addAdmin, deleteAdmin } from "../lib/services";
 import { ADMIN_TYPE, PAGE_SIZE } from "../lib/constants";
 import {
   useQuery,
@@ -31,7 +26,7 @@ import { Button, Box } from "@mui/material";
 import FormDialog from "../components/FormDialog";
 import DeleteAlertModal from "../components/DeleteAlertModal";
 import AdminDialog from "../components/admin/adminDialog";
-import type { Organization } from "~/types/organization";
+import AddIcon from "@mui/icons-material/Add";
 
 const AdminsPage: React.FC = () => {
   const [page, setPage] = useState(0);
@@ -92,24 +87,13 @@ const AdminsPage: React.FC = () => {
         .then((res: Response) => res.json())
         .then((data: AdminDashboardResponse) => {
           setTotalNumber(data.totalNumber);
-          return data.admin;
+          return data.admins;
         })
         .catch((err: any) => {
           console.error(err);
         }),
     enabled: !isAnyFilterValueUndefined(),
   });
-
-  // const organizationsQueryResponse = useQuery({
-  //   queryKey: ["organizations"],
-  //   queryFn: () =>
-  //     getOrganizations()
-  //       .then((res: Response) => res.json())
-  //       .then((data: Organization[]) => data)
-  //       .catch((err: any) => {
-  //         console.error(err);
-  //       }),
-  // });
 
   const addMutation = useMutation({
     mutationFn: (data: any) => addAdmin(data),
@@ -137,11 +121,7 @@ const AdminsPage: React.FC = () => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const formJson = Object.fromEntries((formData as any).entries());
-    const { organization, ...rest } = formJson;
-    const adminData = {
-      ...rest
-    };
-    addMutation.mutate(adminData);
+    addMutation.mutate(formJson);
     handleCloseAddAdmin();
   };
 
@@ -150,12 +130,9 @@ const AdminsPage: React.FC = () => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const formJson = Object.fromEntries((formData as any).entries());
-    const { organization, ...rest } = formJson;
     const data = {
       id: editRow.id,
-      adminData: {
-        ...rest
-      } as EditAdminArgs["adminData"],
+      adminData: formJson as EditAdminArgs["adminData"],
       token: "token",
     };
     editMutation.mutate(data);
@@ -213,20 +190,6 @@ const AdminsPage: React.FC = () => {
       headerAlign: "left",
     },
     {
-      field: "phone",
-      headerName: "Phone",
-      flex: 2,
-      align: "left",
-      headerAlign: "left",
-    },
-    {
-      field: "address",
-      headerName: "Address",
-      flex: 3,
-      align: "left",
-      headerAlign: "left",
-    },
-    {
       field: "actions",
       type: "actions",
       getActions: (params: GridRowParams) => [
@@ -249,30 +212,33 @@ const AdminsPage: React.FC = () => {
   ];
   return (
     <Box>
-      <Button
-        variant="contained"
-        sx={{ margin: "auto 10px 10px auto" }}
-        onClick={handleOpenAddAdmin}
-      >
-        Add Admin
-      </Button>
-
-      <DataGrid
-        sx={{ width: "95%", height: "80vh" }}
-        rows={adminQueryResponse.data || []}
-        columns={columns}
-        pagination
-        autoPageSize
-        rowCount={totalNumber}
-        paginationMode="server"
-        onPaginationModelChange={(params) => {
-          setPage(params.page);
-          setPageSize(params.pageSize);
-        }}
-        onFilterModelChange={handleFilterModelChange}
-        onSortModelChange={handleSortModelChange}
-      />
-
+      <div style={{ display: "flex " }}>
+        <Button
+          className="table-add-button"
+          onClick={handleOpenAddAdmin}
+          endIcon={<AddIcon />}
+        >
+          Add
+        </Button>
+      </div>
+      <div className="grid-container">
+        <DataGrid
+          rowHeight={40}
+          rows={adminQueryResponse.data || []}
+          columns={columns}
+          pagination
+          autoPageSize
+          rowCount={totalNumber}
+          paginationMode="server"
+          onPaginationModelChange={(params) => {
+            setPage(params.page);
+            setPageSize(params.pageSize);
+          }}
+          onFilterModelChange={handleFilterModelChange}
+          onSortModelChange={handleSortModelChange}
+          sx={{ width: "100%", height: "68vh" }}
+        />
+      </div>
       <FormDialog
         title={"ADD A NEW ADMIN"}
         handleClose={handleCloseAddAdmin}
@@ -287,9 +253,7 @@ const AdminsPage: React.FC = () => {
         open={openEditAdmin}
         handleSubmit={handleEditAdmin}
       >
-        <AdminDialog
-          editRow={editRow}
-        />
+        <AdminDialog editRow={editRow} />
       </FormDialog>
       <DeleteAlertModal
         scenario={"admin"}
