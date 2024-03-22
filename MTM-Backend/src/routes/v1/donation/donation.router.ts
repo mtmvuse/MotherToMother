@@ -422,24 +422,17 @@ donationRouter.post(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const donationReqBody = req.body as IncomingDonationTypeWithID;
-      if (!donationReqBody.userId) {
+      // validate body - make sure there's items with names and quantities
+      if (!donationReqBody.userId || !donationReqBody.products) {
         return res.status(400).json({
-          error: "User ID must be entered",
+          error: "User ID and/or Products must be entered",
         });
       }
       // make sure the user exists by checking the id in the database
       const createdDonation =
         await DonationService.createIncomingDonation(donationReqBody);
 
-      if (createdDonation) {
-        return res.status(200).json({
-          createdDonation,
-        });
-      } else {
-        return res.status(400).json({
-          error: "User does not exist",
-        });
-      }
+      return res.status(200).json(createdDonation);
     } catch (e) {
       next(e);
     }

@@ -41,6 +41,11 @@ export interface PUTOutgoingDonationRequestBodyType {
   donationDetails: Array<DonationDetailType>;
 }
 
+export interface PUTIncomingDonationRequestBodyType {
+  id: number;
+  donationDetails: Array<DonationDetailType>;
+}
+
 export interface OutgoingDonationStatsType {
   id: number;
   donationId: number;

@@ -7,7 +7,9 @@ import type {
   IncomingDonationTypeWithID,
   IncomingDonationWithIDType,
   DonationsDashboardDisplay,
+  PUTIncomingDonationRequestBodyType,
 } from "../../../types/donation";
+import { getItemsName, updateItem } from "../item/item.service";
 import type { Prisma } from "@prisma/client";
 
 export const getDonationsAP = async (
@@ -319,9 +321,11 @@ export const createIncomingDonation = async (
       id: incomingDonation.userId,
     },
   });
+  // console.log(user, incomingDonation.userId);
   if (!user) {
-    return null;
+    throw new Error(`No user with the given ID: ${incomingDonation.userId}`);
   }
+
   const donation = await db.donation.create({
     data: {
       userId: incomingDonation.userId,
@@ -330,32 +334,27 @@ export const createIncomingDonation = async (
   });
   // For each product, update the inventory and create donation details entries
   for (const product of incomingDonation.products) {
-    const item = await db.item.findFirst({
-      where: { name: product.name },
-      select: {
-        id: true,
-        category: true,
-        name: true,
-        quantityUsed: true,
-        quantityNew: true,
-        valueUsed: true,
-        valueNew: true,
-        DonationDetail: true,
-      },
-    });
-    if (item) {
-      await db.item.update({
-        where: { id: item.id },
-        data: { quantityNew: { increment: product.quantity } },
-      });
-      await db.donationDetail.create({
-        data: {
-          donationId: donation.id,
-          itemId: item.id,
-          newQuantity: product.quantity,
-          usedQuantity: 0,
-        },
-      });
+    // console.log("PRODUCT:", product);
+    const items = await getItemsName(product.name);
+    if (items && items !== null && items.length > 0) {
+      // find the correct item by name and update the quantity
+      // console.log("ITEMS: ", items, product.quantity);
+      for (const item of items) {
+        console.log(item.name, product.name, item.name == product.name);
+        if (item.name == product.name) {
+          // console.log("FOUND ITEM: ", item, product.quantity);
+          const newItem = await updateItem(item.id, product.quantity, 0);
+          // console.log("NEW ITEM: ", newItem);
+          await db.donationDetail.create({
+            data: {
+              donationId: donation.id,
+              itemId: item.id,
+              newQuantity: 0,
+              usedQuantity: product.quantity,
+            },
+          });
+        }
+      }
     }
   }
   return donation;
@@ -364,35 +363,82 @@ export const createIncomingDonation = async (
 export const updateIncomingDonation = async (
   incomingDonation: IncomingDonationWithIDType,
 ) => {
+  const donationReqBody =
+    incomingDonation as PUTIncomingDonationRequestBodyType;
+
+  // Validations
+  if (incomingDonation.id < 0) {
+    throw new Error("DonationId must be a non-negative integer");
+  }
+  console.log(incomingDonation.id, "incomingDonation.id");
   const donationExists = await db.donation.findUnique({
     where: { id: incomingDonation.id },
   });
 
   if (!donationExists) {
-    return null;
+    throw new Error("Invalid DonationID");
   }
 
-  // Process each donation detail
-  for (const detail of incomingDonation.donationDetails) {
-    // find and Update the corresponding item's inventory
-    const item = await db.item.findFirst({
-      where: { name: detail.item },
-      select: {
-        id: true,
-        quantityUsed: true,
-        quantityNew: true,
-      },
-    });
-    if (item) {
-      await db.item.update({
-        where: { id: item.id },
-        data: {
-          quantityNew: { increment: detail.newQuantity },
-          quantityUsed: { increment: detail.usedQuantity },
-        },
-      });
+  for (const donationDetail of donationReqBody.donationDetails) {
+    console.log(
+      donationDetail.usedQuantity,
+      donationDetail.newQuantity,
+      donationDetail.item,
+    );
+    console.log(donationDetail);
+    if (donationDetail.usedQuantity < 0 || donationDetail.newQuantity < 0) {
+      throw new Error("Quantity of items must be non-negative integers");
+    }
+
+    if (!donationDetail.item) {
+      throw new Error("Missing item name");
+    }
+
+    // Check if item exists in the database
+    const items = await getItemsName(donationDetail.item);
+
+    if (!items) {
+      throw new Error(`No item with the given name: ${donationDetail.item}`);
+    } else if (items.length > 1) {
+      throw new Error(
+        `More than one item found by the given name: ${donationDetail.item}`,
+      );
+    } else if (items.length === 1) {
+      // set itemId
+      donationDetail.itemId = items[0].id;
     }
   }
+
+  console.log("Done with validations");
+  console.log(
+    donationReqBody.donationDetails,
+    "donationReqBody.donationDetails",
+  );
+
+  // for loop to set donationDetail.itemId
+
+  // Update the DonationDetails Table and the Item Table
+  await Promise.all(
+    donationReqBody.donationDetails.map(async (donationDetail) => {
+      console.log(donationDetail);
+      const prevDonationDetail = await getDonationDetails(
+        donationExists.id,
+        donationDetail.itemId,
+      );
+
+      const itemFromName = await getItemsName(donationDetail.item!);
+
+      donationDetail.itemId = itemFromName![0].id;
+
+      await updateDonationDetails(donationExists.id, donationDetail);
+
+      await updateItem(
+        donationDetail.itemId,
+        prevDonationDetail!.usedQuantity - donationDetail.usedQuantity,
+        prevDonationDetail!.newQuantity - donationDetail.newQuantity,
+      );
+    }),
+  );
   // return updated donation
   return donationExists;
 };
