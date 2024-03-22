@@ -4,23 +4,16 @@ import express, {
   type NextFunction,
 } from "express";
 import * as DonationService from "./donation.service";
-import {
-  getItemsCategoryName,
-  updateItem,
-  getItemsName,
-  getItemFromID,
-} from "../item/item.service";
+import { updateItem, getItemsName, getItemFromID } from "../item/item.service";
 import type {
   OutgoingDonationRequestBodyType,
   DonationDetailType,
   OutgoingDonationStatsType,
-  IncomingDonationType,
-  DonationRequestBodyType,
-  IncomingDonationWithIDType,
   DonationQueryType,
   DonationsDashboardDisplay,
   PUTOutgoingDonationRequestBodyType,
   PUTDonationRequestBodyType,
+  DonationRequestBodyType,
 } from "../../../types/donation";
 import {
   translateFilterToPrisma,
@@ -72,6 +65,9 @@ const isNonNegativeInteger = (value: number) => {
   return value >= 0 && Number.isInteger(value);
 };
 
+/**
+ * Create an outgoing donation
+ */
 const createOutgoingDonation = async (
   req: Request,
   res: Response,
@@ -89,11 +85,9 @@ const createOutgoingDonation = async (
       !isNonNegativeInteger(donationReqBody.asianNum) ||
       !isNonNegativeInteger(donationReqBody.otherNum)
     ) {
-      return res
-        .status(500)
-        .send(
-          "NumberServed and demographic numbers must be non-negative integers",
-        );
+      throw new Error(
+        "NumberServed and demographic numbers must be non-negative integers",
+      );
     }
 
     await Promise.all(
@@ -162,6 +156,9 @@ const createOutgoingDonation = async (
   }
 };
 
+/**
+ * Update an outgoing donation
+ */
 const updateOutgoingDonation = async (
   req: Request,
   res: Response,
@@ -188,44 +185,24 @@ const updateOutgoingDonation = async (
       !isNonNegativeInteger(donationReqBody.asianNum) ||
       !isNonNegativeInteger(donationReqBody.otherNum)
     ) {
-      return res.status(500).json({
-        errors:
-          "NumberServed and demographic numbers must be non-negative integers",
-      });
+      throw new Error(
+        "NumberServed and demographic numbers must be non-negative integers",
+      );
     }
     // -------------------------- Item Validation ------------------------------
-    const errors = [] as string[];
     for (const donationDetail of donationReqBody.donationDetails) {
       if (
         !isNonNegativeInteger(donationDetail.usedQuantity) ||
         !isNonNegativeInteger(donationDetail.newQuantity)
       ) {
-        errors.push("Quantity of items must be non-negative integers");
-        return;
+        throw new Error("Quantity of items must be non-negative integers");
       }
 
       if (!donationDetail.item) {
-        errors.push("Missing item name");
-        return;
-      }
-
-      // Check if item exists in the database
-      const items = await getItemsName(donationDetail.item);
-
-      if (!items) {
-        errors.push(`No item with the given name: ${donationDetail.item}`);
-        return;
-      } else if (items.length > 1) {
-        errors.push(
-          `More than one item found by the given name: ${donationDetail.item}`,
-        );
-        return;
+        throw new Error("Missing item name");
       }
     }
 
-    console.log("Done with validations");
-
-    // Check that stock amount is enough for each item
     await Promise.all(
       donationReqBody.donationDetails.map(async (donationDetail) => {
         const item = await getItemsName(donationDetail.item!);
@@ -246,7 +223,7 @@ const updateOutgoingDonation = async (
         );
 
         if (!prevDonationDetail) {
-          // If it is new item is not in the donation
+          // If it is new item not in the donation
           if (item[0].quantityNew < donationDetail.newQuantity) {
             throw new Error(
               `Not enough stock for the new item: ${donationDetail.item}. Stock: ${item[0].quantityNew}`,
@@ -354,21 +331,20 @@ const updateOutgoingDonation = async (
 
     await updatedDeletedItems();
 
-    // Update Date in Donation Table
-    await DonationService.updateDonationDate(donationId, new Date());
-
     return res.status(200).json({ message: "Outgoing Donation Updated" });
   } catch (e) {
     next(e);
   }
 };
 
+/**
+ * Create an incoming donation
+ */
 donationRouter.post(
   "/v1/incoming",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const donationReqBody = req.body as DonationRequestBodyType;
-
       await Promise.all(
         donationReqBody.donationDetails.map(async (itemDetail) => {
           const item = await getItemFromID(itemDetail.itemId);
@@ -403,18 +379,22 @@ donationRouter.post(
           );
         }),
       );
-      return res.status(200).json({ donationId: newDonation.id });
+
+      return res.status(200).json({ message: "Incoming Donation Created" });
     } catch (e) {
       next(e);
     }
   },
 );
 
+/**
+ * Update an incoming donation
+ */
 donationRouter.put(
-  "/v1/incoming/:donationId",
+  "/v1/incoming",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const donationReqBody = req.body as PUTDonationRequestBodyType;
+      const donationReqBody = req.body as DonationRequestBodyType;
       const donationIdString = req.params.donationId;
 
       // ------------------------------------ Validations ------------------------------------
@@ -424,7 +404,6 @@ donationRouter.put(
         throw new Error("DonationId must be a non-negative integer");
       }
       const donationId = parseInt(donationIdString, 10);
-
       // -------------------------- Item Validation ------------------------------
       for (const donationDetail of donationReqBody.donationDetails) {
         if (
@@ -437,94 +416,21 @@ donationRouter.put(
         if (!donationDetail.item) {
           throw new Error("Missing item name");
         }
-
-        // Check if item exists in the database
-        const items = await getItemsName(donationDetail.item);
-
-        if (!items) {
-          throw new Error(
-            `No item with the given name: ${donationDetail.item}`,
-          );
-        } else if (items.length > 1) {
-          throw new Error(
-            `More than one item found by the given name: ${donationDetail.item}`,
-          );
-        }
       }
-
-      console.log("Done with validations");
-
-      // Check that stock amount is enough for each item
-      await Promise.all(
-        donationReqBody.donationDetails.map(async (donationDetail) => {
-          const item = await getItemsName(donationDetail.item!);
-
-          if (!item) {
-            throw new Error(
-              `No item with the given name: ${donationDetail.item}`,
-            );
-          } else if (item.length > 1) {
-            throw new Error(
-              `More than one item found by the given name: ${donationDetail.item}`,
-            );
-          }
-
-          const prevDonationDetail = await DonationService.getDonationDetails(
-            donationId,
-            item[0].id,
-          );
-
-          if (!prevDonationDetail) {
-            // If it is new item is not in the donation
-            if (item[0].quantityNew < donationDetail.newQuantity) {
-              throw new Error(
-                `Not enough stock for the new item: ${donationDetail.item}. Stock: ${item[0].quantityNew}`,
-              );
-            }
-
-            if (item[0].quantityUsed < donationDetail.usedQuantity) {
-              throw new Error(
-                `Not enough stock for the used item: ${donationDetail.item}. Stock: ${item[0].quantityUsed}`,
-              );
-            }
-          } else {
-            // If it is an existing item in the donation, update by the difference
-            if (
-              item[0].quantityNew + prevDonationDetail.newQuantity <
-              donationDetail.newQuantity
-            ) {
-              throw new Error(
-                `Not enough stock for the new item: ${
-                  donationDetail.item
-                }. Stock: ${
-                  item[0].quantityNew + prevDonationDetail.newQuantity
-                }`,
-              );
-            }
-
-            if (
-              item[0].quantityUsed + prevDonationDetail.usedQuantity <
-              donationDetail.usedQuantity
-            ) {
-              throw new Error(
-                `Not enough stock for the used item: ${
-                  donationDetail.item
-                }. Stock: ${
-                  item[0].quantityUsed + prevDonationDetail.usedQuantity
-                }`,
-              );
-            }
-          }
-        }),
-      );
-
-      // ---------------------- Updating the OutgoingDonationStats Table -------------------------
-
       // Update the DonationDetails Table and the Item Table
       await Promise.all(
         donationReqBody.donationDetails.map(async (donationDetail) => {
           const itemFromName = await getItemsName(donationDetail.item!);
-          donationDetail.itemId = itemFromName![0].id;
+          if (!itemFromName) {
+            throw new Error(
+              `No item with the given name: ${donationDetail.item}`,
+            );
+          } else if (itemFromName.length > 1) {
+            throw new Error(
+              `More than one item found by the given name: ${donationDetail.item}`,
+            );
+          }
+          donationDetail.itemId = itemFromName[0].id;
 
           const prevDonationDetail = await DonationService.getDonationDetails(
             donationId,
@@ -539,14 +445,14 @@ donationRouter.put(
           if (prevDonationDetail) {
             await updateItem(
               donationDetail.itemId,
-              prevDonationDetail.usedQuantity - donationDetail.usedQuantity,
-              prevDonationDetail.newQuantity - donationDetail.newQuantity,
+              donationDetail.usedQuantity - prevDonationDetail.usedQuantity,
+              donationDetail.newQuantity - prevDonationDetail.newQuantity,
             );
           } else {
             await updateItem(
               donationDetail.itemId,
-              -donationDetail.usedQuantity,
-              -donationDetail.newQuantity,
+              donationDetail.usedQuantity,
+              donationDetail.newQuantity,
             );
           }
         }),
@@ -563,7 +469,11 @@ donationRouter.put(
 
           // Reset back the quantity of the item in the inventory
           if (!itemInNewDonation) {
-            await updateItem(item.itemId, item.usedQuantity, item.newQuantity);
+            await updateItem(
+              item.itemId,
+              -item.usedQuantity,
+              -item.newQuantity,
+            );
 
             // Update the deleted items in the DonationDetails Table
             await DonationService.deleteRowInDonationDetails(
@@ -575,10 +485,6 @@ donationRouter.put(
       };
 
       await updatedDeletedItems();
-
-      // Update Date in Donation Table
-      await DonationService.updateDonationDate(donationId, new Date());
-
       return res.status(200).json({ message: "Outgoing Donation Updated" });
     } catch (e) {
       next(e);
@@ -586,6 +492,9 @@ donationRouter.put(
   },
 );
 
+/**
+ * Get the details of a donation
+ */
 donationRouter.get(
   "/v1/details/:donationId",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -620,6 +529,9 @@ donationRouter.get(
   },
 );
 
+/**
+ * Delete a donation
+ */
 donationRouter.delete(
   "/v1/delete/:donationId",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -635,9 +547,12 @@ donationRouter.delete(
   },
 );
 
+/**
+ * Get the demographic details of an outgoing donation
+ */
 donationRouter.get(
   "/v1/demographics/:donationId",
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const donationId = req.params.donationId;
       const donationDetails = await DonationService.getDemographicDetailsId(
@@ -645,8 +560,7 @@ donationRouter.get(
       );
       return res.status(200).json(donationDetails);
     } catch (error) {
-      console.error("Error:", error);
-      return res.status(500).json({ error: "Internal server error" });
+      next(error);
     }
   },
 );

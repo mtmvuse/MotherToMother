@@ -67,22 +67,10 @@ export interface IncomingDonationRequestBodyType {
   products: Array<ProductType>;
 }
 
-export interface IncomingDonationTypeWithID
-  extends IncomingDonationRequestBodyType {
-  userId: number;
-}
-
 export interface IncomingDonationDetail {
   item: string;
   newQuantity: number;
   usedQuantity: number;
-}
-
-export interface IncomingDonationType {
-  donationDetails: Array<IncomingDonationDetail>;
-}
-export interface IncomingDonationWithIDType extends IncomingDonationType {
-  id: number;
 }
 
 export interface DonationQueryType {
