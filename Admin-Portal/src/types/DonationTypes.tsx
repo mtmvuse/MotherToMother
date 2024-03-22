@@ -41,6 +41,7 @@ export interface AddOutgoingDonationType {
   nativeNum: number;
   asianNum: number;
   otherNum: number;
+  date: Date;
 }
 
 export interface AddIncomingDonationType {
@@ -52,12 +53,15 @@ export interface AddIncomingDonationType {
   }[];
 }
 
-export interface UpdateOutgoingDonationType {
+export interface UpdateDonationType {
   donationDetails: {
     item: string;
     usedQuantity: number;
     newQuantity: number;
   }[];
+}
+
+export interface UpdateOutgoingDonationType extends UpdateDonationType {
   numberServed: number;
   whiteNum: number;
   latinoNum: number;

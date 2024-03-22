@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from "react";
-import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
-import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import ItemField from "./ItemField";
-import { Alert, IconButton, TextField, Typography } from "@mui/material";
+import { IconButton, TextField, Typography } from "@mui/material";
 import {
   createOutgoingDonation,
   getOrganizations,
@@ -19,16 +17,12 @@ import {
 } from "../../lib/services";
 import { Organization } from "~/types/organization";
 import { ResponseUser } from "~/types/user";
-import { ErrorMessage } from "../ErrorMessage";
-import { SuccessMessage } from "../SuccessMessage";
 import {
   AddIncomingDonationType,
   AddOutgoingDonationType,
 } from "~/types/DonationTypes";
 import "./styles/AddDonation.css";
 import addItemIcon from "../../assets/add-item-icon.png";
-
-// TODO: Fix API integration
 
 interface DonationItem {
   itemId: number;
@@ -40,11 +34,13 @@ interface DonationItem {
 interface AddDonationsModalProps {
   handleCloseModal: () => void;
   handleSubmissionSuccess: () => void;
+  setError: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
   handleCloseModal,
   handleSubmissionSuccess,
+  setError,
 }) => {
   const [organizationList, setOrganizationList] = useState<Organization[]>([]);
   const [userList, setUserList] = useState<ResponseUser[]>([]);
@@ -73,8 +69,6 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
     otherNum: 0,
   });
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<boolean | null>(null);
 
   const handleUserChange = (event: SelectChangeEvent<string>) => {
     const selectedUserId = event.target.value;
@@ -184,7 +178,7 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
 
         setOrganizationList(filteredOrgList);
       } catch (error) {
-        setError("Error fetching organizations:");
+        setError("Error fetching organizations");
       }
     };
 
@@ -271,6 +265,7 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
           usedQuantity: item.quantityUsed,
           newQuantity: item.quantityNew,
         })),
+        date: selectedDate,
         numberServed: demographicData.numberServed,
         whiteNum: demographicData.whiteNum,
         latinoNum: demographicData.latinoNum,
@@ -280,17 +275,17 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
         otherNum: demographicData.otherNum,
       };
       const response = await createOutgoingDonation(outgoingDonationData);
-      console.log(outgoingDonationData);
 
-      if (response.status === 200) {
+      if (response.ok) {
         handleCloseModal();
         handleSubmissionSuccess();
+      } else if (response.status === 500) {
+        const message = await response.json();
+        setError(message.message);
       } else {
         setError("Error Creating Donation");
       }
-    }
-
-    if (donationType == "Incoming") {
+    } else if (donationType == "Incoming") {
       const incomingDonationData: AddIncomingDonationType = {
         userId: selectedUser.id,
         donationDetails: items.map((item) => ({
@@ -300,24 +295,24 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
         })),
       };
       const response = await createIncomingDonation(incomingDonationData);
-      console.log(incomingDonationData);
 
       if (response.status === 200) {
         handleCloseModal();
         handleSubmissionSuccess();
+      } else if (response.status === 500) {
+        const messages = await response.json();
+        setError(messages.error);
       } else {
         setError("Error Creating Donation");
       }
+    } else {
+      setError("Invalid donation type");
     }
   };
 
   return (
     <div className="add-modal">
       <Box p={2} sx={{ overflowY: "auto" }}>
-        {error && <ErrorMessage error={error} setError={setError} />}
-        {success && (
-          <SuccessMessage success={success} setSuccess={setSuccess} />
-        )}
         <Typography
           fontFamily="Raleway, sans-serif"
           fontSize={14}
@@ -498,7 +493,7 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
           />
         </IconButton>
 
-        {items.map((item, index) => (
+        {items.map((_item, index) => (
           <ItemField
             key={index}
             isSubmitted={isSubmitted}
