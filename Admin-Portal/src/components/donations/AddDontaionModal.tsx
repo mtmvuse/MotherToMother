@@ -17,7 +17,6 @@ import {
 } from "../../lib/services";
 import { Organization } from "~/types/organization";
 import { ResponseUser } from "~/types/user";
-import { SuccessMessage } from "../SuccessMessage";
 import {
   AddIncomingDonationType,
   AddOutgoingDonationType,
@@ -70,7 +69,6 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
     otherNum: 0,
   });
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
-  const [success, setSuccess] = useState<boolean | null>(null);
 
   const handleUserChange = (event: SelectChangeEvent<string>) => {
     const selectedUserId = event.target.value;
@@ -288,7 +286,6 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
         setError("Error Creating Donation");
       }
     } else if (donationType == "Incoming") {
-      console.log("Incoming Donation");
       const incomingDonationData: AddIncomingDonationType = {
         userId: selectedUser.id,
         donationDetails: items.map((item) => ({
@@ -298,7 +295,6 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
         })),
       };
       const response = await createIncomingDonation(incomingDonationData);
-      console.log(incomingDonationData);
 
       if (response.status === 200) {
         handleCloseModal();
@@ -317,9 +313,6 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
   return (
     <div className="add-modal">
       <Box p={2} sx={{ overflowY: "auto" }}>
-        {success && (
-          <SuccessMessage success={success} setSuccess={setSuccess} />
-        )}
         <Typography
           fontFamily="Raleway, sans-serif"
           fontSize={14}
