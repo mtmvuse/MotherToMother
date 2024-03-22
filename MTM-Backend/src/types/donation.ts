@@ -14,10 +14,29 @@ export interface DonationDetailType {
   newQuantity: number;
 }
 
-export interface OutgoingDonationRequestBodyType {
+export interface OutgoingDonationRequestBodyType
+  extends DonationRequestBodyType {
+  numberServed: number;
+  whiteNum: number;
+  latinoNum: number;
+  blackNum: number;
+  nativeNum: number;
+  asianNum: number;
+  otherNum: number;
+}
+
+export interface DonationRequestBodyType {
   userId: number;
   date: Date;
-  email: string;
+  donationDetails: Array<DonationDetailType>;
+}
+
+export interface PUTDonationRequestBodyType {
+  donationDetails: Array<DonationDetailType>;
+}
+
+export interface PUTOutgoingDonationRequestBodyType
+  extends PUTDonationRequestBodyType {
   numberServed: number;
   whiteNum: number;
   latinoNum: number;
@@ -25,25 +44,6 @@ export interface OutgoingDonationRequestBodyType {
   nativeNum: number;
   asianNum: number;
   otherNum: number;
-  donationDetails: Array<DonationDetailType>;
-}
-
-export interface PUTOutgoingDonationRequestBodyType {
-  // userId: number;
-  // email: string; // TOOD: Why no provide email in PUT request?
-  numberServed: number;
-  whiteNum: number;
-  latinoNum: number;
-  blackNum: number;
-  nativeNum: number;
-  asianNum: number;
-  otherNum: number;
-  donationDetails: Array<DonationDetailType>;
-}
-
-export interface PUTIncomingDonationRequestBodyType {
-  id: number;
-  donationDetails: Array<DonationDetailType>;
 }
 
 export interface OutgoingDonationStatsType {
@@ -56,15 +56,6 @@ export interface OutgoingDonationStatsType {
   nativeNum: number;
   asianNum: number;
   otherNum: number;
-}
-
-export interface DashboardDonationDetailType {
-  itemId: number;
-  item: string;
-  status: string;
-  value: number;
-  quantity: number;
-  total: number;
 }
 
 export interface ProductType {

@@ -16,11 +16,12 @@ import type {
   DonationDetailType,
   OutgoingDonationStatsType,
   IncomingDonationType,
-  IncomingDonationTypeWithID,
+  DonationRequestBodyType,
   IncomingDonationWithIDType,
   DonationQueryType,
   DonationsDashboardDisplay,
   PUTOutgoingDonationRequestBodyType,
+  PUTDonationRequestBodyType,
 } from "../../../types/donation";
 import {
   translateFilterToPrisma,
@@ -67,7 +68,6 @@ donationRouter.get(
         await DonationService.getDonationDashboardCount(whereClause);
       return res.status(200).json({ donationsAP, totalNumber: count });
     } catch (e) {
-      console.error(e);
       next(e);
     }
   },
@@ -83,58 +83,7 @@ const createOutgoingDonation = async (
   next: NextFunction,
 ) => {
   try {
-    // Setting type of req.body to OutgoingDonationRequestBodyType
     const donationReqBody = req.body as OutgoingDonationRequestBodyType;
-
-    if (!donationReqBody.userId) {
-      // Then get the ID from the email
-      const user = await getUserByEmail(donationReqBody.email);
-
-      if (!user) {
-        throw new Error(
-          `No user with the given email: ${donationReqBody.email}`,
-        );
-      }
-
-      donationReqBody.userId = user.id;
-    }
-
-    // Get the id for each item in outgoing donation request
-    await Promise.all(
-      donationReqBody.donationDetails.map(async (itemDetail, index) => {
-        if (!itemDetail.itemId) {
-          // Get the id from its category and name
-          if (!itemDetail.category || !itemDetail.item) {
-            throw new Error(
-              "Missing a category or an item for one or more item on the request. ",
-            );
-          }
-
-          const items = await getItemsCategoryName(
-            itemDetail.category,
-            itemDetail.item,
-          );
-
-          if (!items) {
-            throw new Error(
-              `No item with the given (category, name): (${itemDetail.category}, ${itemDetail.item})`,
-            );
-          } else if (items.length > 1) {
-            throw new Error(
-              `More than one item found by the given (category, name): (${itemDetail.category}, ${itemDetail.item})`,
-            );
-          }
-
-          // Check if quantity is valid (not negative integer)
-          if (!isNonNegativeInteger(itemDetail.newQuantity)) {
-            throw new Error("Quantity of items must be non-negative integers");
-          }
-
-          donationReqBody.donationDetails[index].itemId = items[0].id;
-        }
-      }),
-    );
-
     // Validate the numberServed and demographic numbers
     if (
       !isNonNegativeInteger(donationReqBody.numberServed) ||
@@ -145,37 +94,50 @@ const createOutgoingDonation = async (
       !isNonNegativeInteger(donationReqBody.asianNum) ||
       !isNonNegativeInteger(donationReqBody.otherNum)
     ) {
-      throw new Error(
-        "NumberServed and demographic numbers must be non-negative integers",
-      );
+      return res
+        .status(500)
+        .send(
+          "NumberServed and demographic numbers must be non-negative integers",
+        );
     }
 
-    // Check that stock amount is enough for each item
+    // const errors = [] as string[];
+
     await Promise.all(
       donationReqBody.donationDetails.map(async (itemDetail) => {
-        const item = await getItemsName(itemDetail.item!);
+        const item = await getItemFromID(itemDetail.itemId);
 
         if (!item) {
-          throw new Error(`No item with the given name: ${itemDetail.item}`);
-        } else if (item.length > 1) {
-          throw new Error(
-            `More than one item found by the given name: ${itemDetail.item}`,
-          );
+          // errors.push(`No item with the given id: ${itemDetail.itemId}`);
+          throw new Error(`No item with the given id: ${itemDetail.itemId}`);
+          // return; // Skip to the next iteration
         }
 
-        if (item[0].quantityNew < itemDetail.newQuantity) {
+        if (item.quantityNew < itemDetail.newQuantity) {
+          // errors.push(
+          //   `Not enough stock for the new item: ${item.name}. Stock: ${item.quantityNew}`,
+          // );
           throw new Error(
-            `Not enough stock for the new item: ${itemDetail.item}. Stock: ${item[0].quantityNew}`,
+            `Not enough stock for the new item: ${item.name}. Stock: ${item.quantityNew}`,
           );
+          // return;
         }
 
-        if (item[0].quantityUsed < itemDetail.usedQuantity) {
+        if (item.quantityUsed < itemDetail.usedQuantity) {
           throw new Error(
-            `Not enough stock for the used item: ${itemDetail.item}. Stock: ${item[0].quantityUsed}`,
+            `Not enough stock for the used item: ${item.name}. Stock: ${item.quantityUsed}`,
           );
+          // errors.push(
+          //   `Not enough stock for the used item: ${item.name}. Stock: ${item.quantityUsed}`,
+          // );
+          // return;
         }
       }),
     );
+
+    // if (errors.length > 0) {
+    //   return res.status(500).json({ errors });
+    // }
 
     // ----------------------- Here, it start updating the database -------------------------------
     const newDonation = await DonationService.createDonation(
@@ -247,33 +209,38 @@ const updateOutgoingDonation = async (
       !isNonNegativeInteger(donationReqBody.asianNum) ||
       !isNonNegativeInteger(donationReqBody.otherNum)
     ) {
-      throw new Error(
-        "NumberServed and demographic numbers must be non-negative integers",
-      );
+      return res.status(500).json({
+        errors:
+          "NumberServed and demographic numbers must be non-negative integers",
+      });
     }
-
     // -------------------------- Item Validation ------------------------------
+    const errors = [] as string[];
     for (const donationDetail of donationReqBody.donationDetails) {
       if (
         !isNonNegativeInteger(donationDetail.usedQuantity) ||
         !isNonNegativeInteger(donationDetail.newQuantity)
       ) {
-        throw new Error("Quantity of items must be non-negative integers");
+        errors.push("Quantity of items must be non-negative integers");
+        return;
       }
 
       if (!donationDetail.item) {
-        throw new Error("Missing item name");
+        errors.push("Missing item name");
+        return;
       }
 
       // Check if item exists in the database
       const items = await getItemsName(donationDetail.item);
 
       if (!items) {
-        throw new Error(`No item with the given name: ${donationDetail.item}`);
+        errors.push(`No item with the given name: ${donationDetail.item}`);
+        return;
       } else if (items.length > 1) {
-        throw new Error(
+        errors.push(
           `More than one item found by the given name: ${donationDetail.item}`,
         );
+        return;
       }
     }
 
@@ -421,18 +388,43 @@ donationRouter.post(
   "/v1/incoming",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const donationReqBody = req.body as IncomingDonationTypeWithID;
-      // validate body - make sure there's items with names and quantities
-      if (!donationReqBody.userId || !donationReqBody.products) {
-        return res.status(400).json({
-          error: "User ID and/or Products must be entered",
-        });
-      }
-      // make sure the user exists by checking the id in the database
-      const createdDonation =
-        await DonationService.createIncomingDonation(donationReqBody);
+      const donationReqBody = req.body as DonationRequestBodyType;
 
-      return res.status(200).json(createdDonation);
+      await Promise.all(
+        donationReqBody.donationDetails.map(async (itemDetail) => {
+          const item = await getItemFromID(itemDetail.itemId);
+          if (!item) {
+            throw new Error(`No item with the given id: ${itemDetail.itemId}`);
+          }
+        }),
+      );
+
+      // ----------------------- Here, it start updating the database -------------------------------
+      const newDonation = await DonationService.createDonation(
+        donationReqBody.userId,
+        donationReqBody.date,
+      );
+
+      donationReqBody.donationDetails.forEach(
+        async (donationDetail: DonationDetailType) => {
+          await DonationService.createDonationDetails(
+            newDonation.id,
+            donationDetail,
+          );
+        },
+      );
+
+      // Update the quantity of each item
+      await Promise.all(
+        donationReqBody.donationDetails.map(async (itemDetail) => {
+          await updateItem(
+            itemDetail.itemId,
+            itemDetail.usedQuantity,
+            itemDetail.newQuantity,
+          );
+        }),
+      );
+      return res.status(200).json({ donationId: newDonation.id });
     } catch (e) {
       next(e);
     }
@@ -440,39 +432,179 @@ donationRouter.post(
 );
 
 donationRouter.put(
-  "/v1/incoming",
+  "/v1/incoming/:donationId",
   async (
     req: Request<any, any, any, QueryTypeID>,
     res: Response,
     next: NextFunction,
   ) => {
     try {
-      const body = req.body as IncomingDonationType;
-      const donationId = parseInt(req.query.id);
-      if (!donationId) {
-        return res.status(400).json({
-          error: "ID must be entered",
-        });
+      const donationReqBody = req.body as PUTDonationRequestBodyType;
+      const donationIdString = req.params.donationId as string;
+
+      // ------------------------------------ Validations ------------------------------------
+      if (!donationIdString) {
+        throw new Error("Missing donationId");
+      } else if (!isNonNegativeInteger(parseInt(donationIdString, 10))) {
+        throw new Error("DonationId must be a non-negative integer");
+      }
+      const donationId = parseInt(donationIdString, 10);
+
+      // -------------------------- Item Validation ------------------------------
+      for (const donationDetail of donationReqBody.donationDetails) {
+        if (
+          !isNonNegativeInteger(donationDetail.usedQuantity) ||
+          !isNonNegativeInteger(donationDetail.newQuantity)
+        ) {
+          throw new Error("Quantity of items must be non-negative integers");
+        }
+
+        if (!donationDetail.item) {
+          throw new Error("Missing item name");
+        }
+
+        // Check if item exists in the database
+        const items = await getItemsName(donationDetail.item);
+
+        if (!items) {
+          throw new Error(
+            `No item with the given name: ${donationDetail.item}`,
+          );
+        } else if (items.length > 1) {
+          throw new Error(
+            `More than one item found by the given name: ${donationDetail.item}`,
+          );
+        }
       }
 
-      // create object with IncomingDonationWithIDType
-      const incomingDonation: IncomingDonationWithIDType = {
-        id: donationId,
-        donationDetails: body.donationDetails,
+      console.log("Done with validations");
+
+      // Check that stock amount is enough for each item
+      await Promise.all(
+        donationReqBody.donationDetails.map(async (donationDetail) => {
+          const item = await getItemsName(donationDetail.item!);
+
+          if (!item) {
+            throw new Error(
+              `No item with the given name: ${donationDetail.item}`,
+            );
+          } else if (item.length > 1) {
+            throw new Error(
+              `More than one item found by the given name: ${donationDetail.item}`,
+            );
+          }
+
+          const prevDonationDetail = await DonationService.getDonationDetails(
+            donationId,
+            item[0].id,
+          );
+
+          if (!prevDonationDetail) {
+            // If it is new item is not in the donation
+            if (item[0].quantityNew < donationDetail.newQuantity) {
+              throw new Error(
+                `Not enough stock for the new item: ${donationDetail.item}. Stock: ${item[0].quantityNew}`,
+              );
+            }
+
+            if (item[0].quantityUsed < donationDetail.usedQuantity) {
+              throw new Error(
+                `Not enough stock for the used item: ${donationDetail.item}. Stock: ${item[0].quantityUsed}`,
+              );
+            }
+          } else {
+            // If it is an existing item in the donation, update by the difference
+            if (
+              item[0].quantityNew + prevDonationDetail.newQuantity <
+              donationDetail.newQuantity
+            ) {
+              throw new Error(
+                `Not enough stock for the new item: ${
+                  donationDetail.item
+                }. Stock: ${
+                  item[0].quantityNew + prevDonationDetail.newQuantity
+                }`,
+              );
+            }
+
+            if (
+              item[0].quantityUsed + prevDonationDetail.usedQuantity <
+              donationDetail.usedQuantity
+            ) {
+              throw new Error(
+                `Not enough stock for the used item: ${
+                  donationDetail.item
+                }. Stock: ${
+                  item[0].quantityUsed + prevDonationDetail.usedQuantity
+                }`,
+              );
+            }
+          }
+        }),
+      );
+
+      // ---------------------- Updating the OutgoingDonationStats Table -------------------------
+
+      // Update the DonationDetails Table and the Item Table
+      await Promise.all(
+        donationReqBody.donationDetails.map(async (donationDetail) => {
+          const itemFromName = await getItemsName(donationDetail.item!);
+          donationDetail.itemId = itemFromName![0].id;
+
+          const prevDonationDetail = await DonationService.getDonationDetails(
+            donationId,
+            donationDetail.itemId,
+          );
+
+          await DonationService.updateDonationDetails(
+            donationId,
+            donationDetail,
+          );
+
+          if (prevDonationDetail) {
+            await updateItem(
+              donationDetail.itemId,
+              prevDonationDetail.usedQuantity - donationDetail.usedQuantity,
+              prevDonationDetail.newQuantity - donationDetail.newQuantity,
+            );
+          } else {
+            await updateItem(
+              donationDetail.itemId,
+              -donationDetail.usedQuantity,
+              -donationDetail.newQuantity,
+            );
+          }
+        }),
+      );
+
+      // If an item is removed from donation when updating, then item is added back to the inventory
+      const updatedDeletedItems = async () => {
+        const getAllItemsInDonation =
+          await DonationService.getAllItemsInDonation(donationId);
+        getAllItemsInDonation.forEach(async (item) => {
+          const itemInNewDonation = donationReqBody.donationDetails.find(
+            (itemDetail) => itemDetail.itemId === item.itemId,
+          );
+
+          // Reset back the quantity of the item in the inventory
+          if (!itemInNewDonation) {
+            await updateItem(item.itemId, item.usedQuantity, item.newQuantity);
+
+            // Update the deleted items in the DonationDetails Table
+            await DonationService.deleteRowInDonationDetails(
+              donationId,
+              item.itemId,
+            );
+          }
+        });
       };
 
-      const donations =
-        await DonationService.updateIncomingDonation(incomingDonation);
+      await updatedDeletedItems();
 
-      if (donations) {
-        return res.status(200).json({
-          donations,
-        });
-      } else {
-        return res.status(400).json({
-          error: "Donation does not exist",
-        });
-      }
+      // Update Date in Donation Table
+      await DonationService.updateDonationDate(donationId, new Date());
+
+      return res.status(200).json({ message: "Outgoing Donation Updated" });
     } catch (e) {
       next(e);
     }
@@ -482,12 +614,12 @@ donationRouter.put(
 donationRouter.get(
   "/v1/details/:donationId",
   async (
-    req: Request<any, any, any, any>,
+    req: Request<any, any, any, DonationDetailType>,
     res: Response,
     next: NextFunction,
   ) => {
     try {
-      const donationId = req.params.donationId;
+      const donationId = req.params.donationId as string;
 
       const donationDetails = await DonationService.getDonationDetailsId(
         parseInt(donationId),
@@ -522,7 +654,7 @@ donationRouter.get(
   "/v1/demographics/:donationId",
   async (req: Request<any, any, any, any>, res: Response) => {
     try {
-      const donationId = req.params.donationId;
+      const donationId = req.params.donationId as string;
       const donationDetails = await DonationService.getDemographicDetailsId(
         parseInt(donationId),
       );

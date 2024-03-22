@@ -8,6 +8,7 @@ import {
   AddIncomingDonationType,
   AddOutgoingDonationType,
   UpdateOutgoingDonationType,
+  UpdateDonationType,
 } from "~/types/DonationTypes";
 import { AddCashDonationType, EditCashType } from "~/types/cashDonationTypes";
 
@@ -238,12 +239,12 @@ export const createOutgoingDonation = async (
 };
 
 export const createIncomingDonation = async (
-  outgoingDonationData: AddIncomingDonationType
+  incomingDonationData: AddIncomingDonationType
 ) => {
   return await fetch(`${backendUrl}/donation/v1/incoming`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(outgoingDonationData),
+    body: JSON.stringify(incomingDonationData),
   });
 };
 
@@ -312,6 +313,17 @@ export const editOutgoingDonation = async (
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(outgoingDonationData),
+  });
+};
+
+export const editIncomingDonation = async (
+  donationId: number,
+  donationData: UpdateDonationType
+) => {
+  return await fetch(`${backendUrl}/donation/v1/incoming/${donationId}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(donationData),
   });
 };
 

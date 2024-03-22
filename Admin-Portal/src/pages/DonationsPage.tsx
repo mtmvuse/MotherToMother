@@ -30,8 +30,6 @@ import {
   DonationDashboardResponse,
   ResponseDonation,
 } from "~/types/DonationTypes";
-import { UserDashboardResponse } from "~/types/user";
-import { ResolveModulePreloadDependenciesFn } from "vite";
 
 const modalStyle = {
   backgroundColor: "#fefefe",
@@ -56,15 +54,14 @@ const DonationsPage: React.FC = () => {
   const [filterModel, setFilterModel] = useState<GridFilterModel | undefined>();
   const [sortModel, setSortModel] = useState<GridSortModel | undefined>();
   const [totalNumber, setTotalNumber] = useState(0);
-
   const [selectedDonation, setSelectedDonation] = useState<ResponseDonation>();
-
   const [incomingModalOpen, setIncomingModalOpen] = useState(false);
   const [outgoingModalOpen, setOutgoingModalOpen] = useState(false);
   const [addDonationModal, setAddDonationModalOpen] = React.useState(false);
   const [showSuccessAlert, setShowSuccessAlert] = useState<boolean | null>(
     null
   );
+  const [error, setError] = useState<string | null>(null);
 
   const isAnyFilterValueUndefined = () => {
     return filterModel?.items.some((item) => item.value === undefined);
@@ -202,6 +199,7 @@ const DonationsPage: React.FC = () => {
           setSuccess={setShowSuccessAlert}
         />
       )}
+      {error && <ErrorMessage error={error} setError={setError} />}
       <Button
         onClick={handleAddDonation}
         className="table-add-button"
@@ -248,6 +246,7 @@ const DonationsPage: React.FC = () => {
           <AddDonationModal
             handleCloseModal={handleCloseModal}
             handleSubmissionSuccess={handleSubmissionSuccess}
+            setError={setError}
           />
         </Box>
       </Modal>
