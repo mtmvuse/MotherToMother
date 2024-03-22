@@ -4,7 +4,6 @@ import express, {
   type NextFunction,
 } from "express";
 import * as DonationService from "./donation.service";
-import { getUserByEmail } from "../user/user.service";
 import {
   getItemsCategoryName,
   updateItem,
@@ -28,10 +27,6 @@ import {
   translateSortToPrisma,
 } from "../../../utils/lib";
 import type { Prisma } from "@prisma/client";
-
-interface QueryTypeID {
-  id: string;
-}
 
 const donationRouter = express.Router();
 
@@ -101,43 +96,27 @@ const createOutgoingDonation = async (
         );
     }
 
-    // const errors = [] as string[];
-
     await Promise.all(
       donationReqBody.donationDetails.map(async (itemDetail) => {
         const item = await getItemFromID(itemDetail.itemId);
 
         if (!item) {
-          // errors.push(`No item with the given id: ${itemDetail.itemId}`);
           throw new Error(`No item with the given id: ${itemDetail.itemId}`);
-          // return; // Skip to the next iteration
         }
 
         if (item.quantityNew < itemDetail.newQuantity) {
-          // errors.push(
-          //   `Not enough stock for the new item: ${item.name}. Stock: ${item.quantityNew}`,
-          // );
           throw new Error(
             `Not enough stock for the new item: ${item.name}. Stock: ${item.quantityNew}`,
           );
-          // return;
         }
 
         if (item.quantityUsed < itemDetail.usedQuantity) {
           throw new Error(
             `Not enough stock for the used item: ${item.name}. Stock: ${item.quantityUsed}`,
           );
-          // errors.push(
-          //   `Not enough stock for the used item: ${item.name}. Stock: ${item.quantityUsed}`,
-          // );
-          // return;
         }
       }),
     );
-
-    // if (errors.length > 0) {
-    //   return res.status(500).json({ errors });
-    // }
 
     // ----------------------- Here, it start updating the database -------------------------------
     const newDonation = await DonationService.createDonation(
@@ -433,14 +412,10 @@ donationRouter.post(
 
 donationRouter.put(
   "/v1/incoming/:donationId",
-  async (
-    req: Request<any, any, any, QueryTypeID>,
-    res: Response,
-    next: NextFunction,
-  ) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const donationReqBody = req.body as PUTDonationRequestBodyType;
-      const donationIdString = req.params.donationId as string;
+      const donationIdString = req.params.donationId;
 
       // ------------------------------------ Validations ------------------------------------
       if (!donationIdString) {
@@ -613,13 +588,9 @@ donationRouter.put(
 
 donationRouter.get(
   "/v1/details/:donationId",
-  async (
-    req: Request<any, any, any, DonationDetailType>,
-    res: Response,
-    next: NextFunction,
-  ) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const donationId = req.params.donationId as string;
+      const donationId = req.params.donationId;
 
       const donationDetails = await DonationService.getDonationDetailsId(
         parseInt(donationId),
@@ -644,17 +615,31 @@ donationRouter.get(
 
       return res.status(200).json(itemDetails);
     } catch (error) {
-      console.error("Error:", error);
-      return res.status(500).json({ error: "Internal server error" });
+      next(error);
+    }
+  },
+);
+
+donationRouter.delete(
+  "/v1/delete/:donationId",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const donationId = req.params.donationId;
+      const donation = await DonationService.deleteDonation(
+        parseInt(donationId),
+      );
+      return res.status(200).json(donation);
+    } catch (e) {
+      next(e);
     }
   },
 );
 
 donationRouter.get(
   "/v1/demographics/:donationId",
-  async (req: Request<any, any, any, any>, res: Response) => {
+  async (req: Request, res: Response) => {
     try {
-      const donationId = req.params.donationId as string;
+      const donationId = req.params.donationId;
       const donationDetails = await DonationService.getDemographicDetailsId(
         parseInt(donationId),
       );

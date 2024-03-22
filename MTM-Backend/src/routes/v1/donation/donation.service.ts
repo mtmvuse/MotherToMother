@@ -241,6 +241,14 @@ export const updateOutgoingDonationStats = async (
   });
 };
 
+export const deleteDonation = async (donationId: number) => {
+  return db.donation.delete({
+    where: {
+      id: donationId,
+    },
+  });
+};
+
 // export const updateIncomingDonation = async (
 //   incomingDonation: IncomingDonationWithIDType,
 // ) => {
