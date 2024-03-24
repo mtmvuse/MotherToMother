@@ -351,7 +351,7 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
             >
               <FormControl
                 variant="standard"
-                sx={{ width: 300, marginRight: "260px" }}
+                sx={{ width: 300, marginRight: "200px" }}
               >
                 <Select id="donor-select" onChange={handleTypeChange}>
                   <MenuItem value={"Incoming"}>Incoming</MenuItem>
@@ -382,7 +382,7 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
               <FormControl
                 fullWidth
                 variant="standard"
-                sx={{ width: 300, marginRight: "260px" }}
+                sx={{ width: 300, marginRight: "200px" }}
                 disabled={!showDonor}
               >
                 <Select id="org-select" onChange={handleOrgChange}>
@@ -418,7 +418,7 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
                 disabled={!showUser || userList.length === 0}
                 fullWidth
                 variant="standard"
-                sx={{ width: 300, marginRight: "260px" }}
+                sx={{ width: 300, marginRight: "200px" }}
               >
                 {selectedOrg && userList.length === 0 && (
                   <Typography fontSize={13}>
@@ -472,7 +472,7 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DemoContainer
                   components={["DatePicker"]}
-                  sx={{ width: 300, marginRight: "260px" }}
+                  sx={{ width: 300, marginRight: "200px" }}
                 >
                   <DatePicker
                     disabled={!showCalendar}
