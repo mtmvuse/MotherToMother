@@ -43,10 +43,10 @@ const InventoryPage: React.FC = () => {
   const [sortModel, setSortModel] = useState<GridSortModel | undefined>();
   const [totalNumber, setTotalNumber] = useState(0);
   const [openAddInventory, setOpenAddInventory] = useState(false);
-  // const [openEditInventory, setOpenEditInventory] = useState(false);
+  const [openEditInventory, setOpenEditInventory] = useState(false);
   const [openDeleteInventory, setOpenDeleteInventory] = useState(false);
   const [deleteRow, setDeleteRow] = useState<inventoryRow | undefined>();
-  // const [editRow, setEditRow] = useState<inventoryRow | undefined>();
+  const [editRow, setEditRow] = useState<inventoryRow | undefined>();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean | null>(null);
   const queryClient = useQueryClient();
@@ -59,15 +59,15 @@ const InventoryPage: React.FC = () => {
     setOpenAddInventory(false);
   };
 
-  // const handleOpenEditInventory = (row: inventoryRow) => {
-  //   setEditRow(row);
-  //   setOpenEditInventory(true);
-  // };
+  const handleOpenEditInventory = (row: inventoryRow) => {
+    setEditRow(row);
+    setOpenEditInventory(true);
+  };
 
-  // const handleCloseEditInventory = () => {
-  //   setEditRow(undefined);
-  //   setOpenEditInventory(false);
-  // };
+  const handleCloseEditInventory = () => {
+    setEditRow(undefined);
+    setOpenEditInventory(false);
+  };
   const handleOpenDeleteInventory = (row: inventoryRow) => {
     setDeleteRow(row);
     setOpenDeleteInventory(true);
@@ -131,20 +131,20 @@ const InventoryPage: React.FC = () => {
     },
   });
 
-  // const editMutation = useMutation({
-  //   mutationFn: (data: any) => editInventoryItem(data),
-  //   onSuccess: (result: Response) => {
-  //     queryClient.invalidateQueries({ queryKey: ["inventory"] });
-  //     if (result.status === 400 || result.status === 500) {
-  //       setError("Cannot edit inventory item");
-  //     } else {
-  //       setSuccess(true);
-  //     }
-  //   },
-  //   onError: (error: Error) => {
-  //     setError(error.message);
-  //   },
-  // });
+  const editMutation = useMutation({
+    mutationFn: (data: any) => editInventoryItem(data),
+    onSuccess: (result: Response) => {
+      queryClient.invalidateQueries({ queryKey: ["inventory"] });
+      if (result.status === 400 || result.status === 500) {
+        setError("Cannot edit inventory item");
+      } else {
+        setSuccess(true);
+      }
+    },
+    onError: (error: Error) => {
+      setError(error.message);
+    },
+  });
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) => deleteInventoryItem(id, "token"),
@@ -183,23 +183,23 @@ const InventoryPage: React.FC = () => {
     handleCloseDeleteInventory();
   };
 
-  // const handleEditRow = (event: React.FormEvent<HTMLFormElement>) => {
-  //   if (!editRow) return;
-  //   event.preventDefault();
-  //   const formData = new FormData(event.currentTarget);
-  //   const formJson = Object.fromEntries((formData as any).entries());
-  //   const itemData = {
-  //     name: formJson.name,
-  //     category: formJson.category,
-  //     quantityNew: formJson.quantityNew,
-  //     valueNew: formJson.valueNew,
-  //     quantityUsed: formJson.quantityUsed,
-  //     valueUsed: formJson.valueUsed,
-  //   };
-  //   const editData = { data: itemData, id: editRow.id };
-  //   editMutation.mutate(editData);
-  //   handleCloseEditInventory();
-  // };
+  const handleEditRow = (event: React.FormEvent<HTMLFormElement>) => {
+    if (!editRow) return;
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const formJson = Object.fromEntries((formData as any).entries());
+    const itemData = {
+      name: formJson.name,
+      category: formJson.category,
+      quantityNew: formJson.quantityNew,
+      valueNew: formJson.valueNew,
+      quantityUsed: formJson.quantityUsed,
+      valueUsed: formJson.valueUsed,
+    };
+    const editData = { data: itemData, id: editRow.id };
+    editMutation.mutate(editData);
+    handleCloseEditInventory();
+  };
 
   if (inventoryQueryResponse.isLoading) return <div>Loading...</div>;
   if (inventoryQueryResponse.error)
@@ -244,7 +244,7 @@ const InventoryPage: React.FC = () => {
       type: "number",
       align: "left",
       headerAlign: "left",
-      // editable: true,
+      editable: true,
     },
     {
       field: "valueNew",
@@ -253,7 +253,7 @@ const InventoryPage: React.FC = () => {
       type: "number",
       align: "left",
       headerAlign: "left",
-      // editable: true,
+      editable: true,
       valueFormatter: (params: GridValueFormatterParams<number>) => {
         if (params.value == null) {
           return "$0";
@@ -268,7 +268,7 @@ const InventoryPage: React.FC = () => {
       type: "number",
       align: "left",
       headerAlign: "left",
-      // editable: true,
+      editable: true,
     },
     {
       field: "valueUsed",
@@ -277,7 +277,7 @@ const InventoryPage: React.FC = () => {
       type: "number",
       align: "left",
       headerAlign: "left",
-      // editable: true,
+      editable: true,
       valueFormatter: (params: GridValueFormatterParams<number>) => {
         if (params.value == null) {
           return "$0";
@@ -290,13 +290,13 @@ const InventoryPage: React.FC = () => {
       type: "actions",
       getActions: (params: GridRowParams) => {
         return [
-          // <GridActionsCellItem
-          //   icon={<img src={editIcon} />}
-          //   onClick={() => {
-          //     handleOpenEditInventory(params.row);
-          //   }}
-          //   label="Edit"
-          // />,
+          <GridActionsCellItem
+            icon={<img src={editIcon} />}
+            onClick={() => {
+              handleOpenEditInventory(params.row);
+            }}
+            label="Edit"
+          />,
           <GridActionsCellItem
             icon={<img src={deleteIcon} />}
             onClick={() => {
@@ -349,7 +349,14 @@ const InventoryPage: React.FC = () => {
       >
         <InventoryDialog categories={categoryOptions} />
       </FormDialog>
-
+      <FormDialog
+        title={"EDIT A INVENTORY ENTRY"}
+        handleClose={handleCloseEditInventory}
+        open={openEditInventory}
+        handleSubmit={handleEditRow}
+      >
+        <InventoryDialog categories={categoryOptions} editRow={editRow} />
+      </FormDialog>
       <DeleteAlertModal
         scenario={"Inventory Entry"}
         handleDelete={handleDeleteRow}
@@ -361,13 +368,3 @@ const InventoryPage: React.FC = () => {
 };
 
 export default InventoryPage;
-{
-  /* <FormDialog
-title={"EDIT A INVENTORY ENTRY"}
-handleClose={handleCloseEditInventory}
-open={openEditInventory}
-handleSubmit={handleEditRow}
->
-<InventoryDialog categories={categoryOptions} editRow={editRow} />
-</FormDialog> */
-}
