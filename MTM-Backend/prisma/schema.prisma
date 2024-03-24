@@ -33,7 +33,7 @@ model User {
   household      String?
   userType       String
   donation       Donation[]
-  Organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  Organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@index([organizationId], map: "User_organizationId_fkey")
 }
@@ -42,7 +42,7 @@ model Donation {
   id                    Int                    @id @default(autoincrement())
   userId                Int
   date                  DateTime               @default(now())
-  user                  User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                  User                   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   DonationDetail        DonationDetail[]
   OutgoingDonationStats OutgoingDonationStats?
 
@@ -55,8 +55,8 @@ model DonationDetail {
   itemId       Int
   usedQuantity Int
   newQuantity  Int
-  donation     Donation @relation(fields: [donationId], references: [id], onDelete: Cascade)
-  item         Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  donation     Donation @relation(fields: [donationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  item         Item     @relation(fields: [itemId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@unique([donationId, itemId])
   @@index([itemId], map: "DonationDetail_itemId_fkey")
@@ -72,16 +72,16 @@ model OutgoingDonationStats {
   nativeNum    Int
   asianNum     Int
   otherNum     Int
-  donation     Donation @relation(fields: [donationId], references: [id], onDelete: Cascade)
+  donation     Donation @relation(fields: [donationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Item {
   id             Int              @id @default(autoincrement())
+  category       String
   name           String
   quantityUsed   Int
   quantityNew    Int
   valueUsed      Float
-  category       String
   valueNew       Float
   DonationDetail DonationDetail[]
 }
@@ -135,7 +135,7 @@ view donation_detail {
 
 /// View for report dashboard for admin portal
 view report_dashboard {
-  id       BigInt   @id @default(0) @db.UnsignedBigInt
+  id       Int   @id @default(0)
   agency   String
   date     DateTime @default(dbgenerated("'0000-00-00 00:00:00.000'"))
   item     String
