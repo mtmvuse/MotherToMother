@@ -56,10 +56,10 @@ const ReportsPage: React.FC = () => {
 				rootRef.current = ReactDOM.createRoot(newDiv);
 				hasInsertedDivRef.current = true;
 			}
+		}
 
-			if (rootRef.current) {
-				rootRef.current.render(<FooterSummary totalAmount={total} totalValue={amount} />);
-			}
+		if (rootRef.current) {
+			rootRef.current.render(<FooterSummary totalAmount={total} totalValue={amount} />);
 		}
 	}, [dataGridRef.current, total, amount]);
 
@@ -87,14 +87,7 @@ const ReportsPage: React.FC = () => {
 					}
 
 					const renderReport = data.report.map((item: Report) => ({
-						id: item.id,
-						agency: item.agency,
-						date: item.date,
-						item: item.item,
-						quantity: item.quantity,
-						value: item.value,
-						total: item.total,
-						status: item.status,
+						...item,
 						type: 'Incoming',
 					}));
 
@@ -137,7 +130,7 @@ const ReportsPage: React.FC = () => {
 			const data = await response.json();
 			const csv = Papa.unparse(data.report);
 			const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-			saveAs(blob, 'MTM users.csv');
+			saveAs(blob, 'MTM report.csv');
 		} catch (error: any) {
 			setError(`Export failed with error: ${error.message}`);
 		}
