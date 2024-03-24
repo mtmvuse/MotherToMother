@@ -13,11 +13,12 @@
 }
 
 .MuiButton-root.table-add-button {
-  background-color: #f3f3f3;
+  background-color: #f7f7f7;
   border: none;
   color: #6d6d6d;
+  font-size: 18px;
+  text-transform: capitalize;
   text-decoration: none;
-  font-size: 12px;
   cursor: pointer;
   border-radius: 20px;
   height: 40px;
@@ -29,11 +30,12 @@
 }
 
 .MuiButton-root.table-add-org-button {
-  background-color: #f3f3f3;
+  background-color: #f7f7f7;
   border: none;
   color: #6d6d6d;
   text-decoration: none;
-  font-size: 10px;
+  font-size: 12px;
+  text-transform: capitalize;
   cursor: pointer;
   border-radius: 20px;
   height: 40px;
@@ -45,11 +47,12 @@
 }
 
 .MuiButton-root.table-add-button-second {
-  background-color: #f3f3f3;
+  background-color: #f7f7f7;
   border: none;
   color: #6d6d6d;
   text-decoration: none;
-  font-size: 12px;
+  font-size: 18px;
+  text-transform: capitalize;
   cursor: pointer;
   border-radius: 20px;
   height: 40px;
@@ -77,7 +80,7 @@
 }
 
 .grid-container {
-  background-color: #f3f3f3;
+  background-color: #f7f7f7;
   margin-top: 10px;
   padding: 20px 20px 0 20px;
   border-radius: 20px;
