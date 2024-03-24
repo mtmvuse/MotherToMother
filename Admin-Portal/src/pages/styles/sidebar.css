@@ -31,11 +31,6 @@
 	margin-right: 40px;
 }
 
-.topbar-search {
-	display: flex;
-	gap: 10px;
-}
-
 /* Page Content */
 .page-title {
 	color: #004a7c;

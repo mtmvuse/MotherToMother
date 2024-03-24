@@ -86,11 +86,6 @@ const HomeLayout: React.FC = () => {
 						</Typography>
 						<ExpandMoreIcon />
 					</Box>
-
-					<Box className='topbar-search'>
-						<SearchIcon />
-						<Typography>Quick search</Typography>
-					</Box>
 				</Box>
 
 				<Box sx={{ display: 'flex' }}>
