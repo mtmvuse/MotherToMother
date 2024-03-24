@@ -59,7 +59,6 @@ model DonationDetail {
   item         Item     @relation(fields: [itemId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@unique([donationId, itemId])
-  @@index([donationId], map: "DonationDetail_donationId_fkey")
   @@index([itemId], map: "DonationDetail_itemId_fkey")
 }
 
@@ -78,11 +77,11 @@ model OutgoingDonationStats {
 
 model Item {
   id             Int              @id @default(autoincrement())
+  category       String
   name           String
   quantityUsed   Int
   quantityNew    Int
   valueUsed      Float
-  category       String
   valueNew       Float
   DonationDetail DonationDetail[]
 }
@@ -128,8 +127,20 @@ view donation_detail {
   id           Int      @id @default(0)
   date         DateTime @default(now())
   organization String
-  total        Float
-  items        Decimal @db.Decimal(33, 0)
+  total        Float?
+  items        Decimal? @db.Decimal(33, 0)
   type         String   @default("") @db.VarChar(8)
-  details      Json
+  details      Json?
+}
+
+/// View for report dashboard for admin portal
+view report_dashboard {
+  id       Int   @id @default(0)
+  agency   String
+  date     DateTime @default(dbgenerated("'0000-00-00 00:00:00.000'"))
+  item     String
+  quantity Int      @default(0)
+  value    Float?
+  total    Float?
+  status   String   @default("") @db.VarChar(4)
 }

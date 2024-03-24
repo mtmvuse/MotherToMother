@@ -13,7 +13,6 @@ import {
 import { getModalItems } from "../../lib/services";
 import { ResponseInventoryItem } from "~/types/inventory";
 import deleteIcon from "../../assets/delete-icon.png";
-import { focusManager } from "@tanstack/react-query";
 
 interface ItemFieldProps {
   onDelete: () => void;
