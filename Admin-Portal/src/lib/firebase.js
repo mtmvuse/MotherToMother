@@ -22,6 +22,6 @@ export const auth = getAuth(app);
 
 // TODO For Sign-in with email link, url to change
 export const actionCodeSettings = {
-  url: "https://localhost:5175/loginLink",
+  url: "http://localhost:5175/loginLink",
   handleCodeInApp: true,
 };

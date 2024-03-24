@@ -16,4 +16,7 @@ export default defineConfig({
       },
     },
   },
+  optimizeDeps: {
+    exclude: ["react-date-range.js", "date-fns.js"],
+  },
 });
