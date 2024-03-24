@@ -49,7 +49,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem("emailForSignIn", email);
       console.log("Login link sent!");
     } catch (error) {
-      console.error("Error sending login link:", error.message);
+      console.error("Error sending login link:", (error as Error).message);
     }
   };
 
@@ -62,7 +62,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         await signInWithEmailLink(auth, email, window.location.href);
         window.localStorage.removeItem("emailForSignIn");
       } catch (error) {
-        console.error("Error signing in with email link:", error.message);
+        console.error(
+          "Error signing in with email link:",
+          (error as Error).message
+        );
       }
     }
   };
