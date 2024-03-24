@@ -12,14 +12,21 @@ import { ReviewSectionCategory } from "./ReviewSectionCategory";
 import NumberInCircle from "./NumberInCircle";
 import FormHeader from "../FormHeader";
 import { useForm } from "../../../contexts/FormContext";
+import { BorderClear } from "@mui/icons-material";
 
 interface ReviewSectionProps {
   step: number;
+  currPanel: string;
+  setCurrPanel: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const ReviewSection = (props: ReviewSectionProps) => {
   const { donationDetails } = useForm();
   const [isEditMode, setisEditMode] = useState(false);
+
+  const handlePanelChange = () => {
+    props.setCurrPanel("ReviewSection");
+  };
 
   const handleEdit = () => {
     setisEditMode(true);
@@ -41,7 +48,7 @@ const ReviewSection = (props: ReviewSectionProps) => {
     <>
       <CssBaseline />
       <ThemeProvider theme={PrimaryMainTheme}>
-        <Box width="85%">
+        <Box width="100%" onClick={handlePanelChange}>
           {/* Header of Review Section */}
           <FormHeader number={props.step} header="Review" />
 
@@ -63,85 +70,96 @@ const ReviewSection = (props: ReviewSectionProps) => {
             />
             <Typography variant="body1"> items are in your form </Typography>
           </Stack>
-          {getDonationCategories().map((category, i) => (
-            <ReviewSectionCategory
-              key={i}
-              categoryName={category}
-              isEditMode={isEditMode}
-            />
-          ))}
         </Box>
-        {!isEditMode && (
-          <Button
-            variant="outlined"
-            sx={{
-              fontSize: 15,
-              height: "33px",
-              color: "#004A7C",
-              borderColor: "#004A7C",
-            }}
-            onClick={handleEdit}
-            style={{
-              marginTop: "15px",
-              marginBottom: "15px",
-              color: "var(--mtmNavy)",
-              border: "1px solid var(--mtmNavy)",
-              fontFamily: " Inter, sans-serif",
-              fontSize: "15px",
-              fontWeight: "800",
-            }}
-          >
-            EDIT
-          </Button>
-        )}
-        {isEditMode && (
-          <Stack direction="row" spacing={3}>
-            <Button
-              variant="outlined"
-              sx={{
-                fontSize: 15,
-                height: "33px",
-                backgroundColor: "#004A7C", // Replace with your desired background color
-                color: "white", // Replace with your desired text color
-              }}
-              color="primary"
-              onClick={handleSave}
-              style={{
-                marginTop: "15px",
-                marginBottom: "15px",
-                backgroundColor: "var(--mtmNavy)",
-                color: "white",
-                height: "32px",
-                width: "87px",
-                fontFamily: " Inter, sans-serif",
-                fontSize: "15px",
-                fontWeight: "800",
-              }}
+        {props.currPanel === "ReviewSection" && (
+          <>
+            {getDonationCategories().map((category, i) => (
+              <ReviewSectionCategory
+                key={i}
+                categoryName={category}
+                isEditMode={isEditMode}
+              />
+            ))}
+            <Box
+              width="100%"
+              display="flex"
+              justifyContent="center"
+              marginBottom={2}
             >
-              SAVE
-            </Button>
-            <Button
-              variant="outlined"
-              sx={{
-                fontSize: 15,
-                height: "33px",
-                color: "#004A7C",
-                borderColor: "#004A7C",
-              }}
-              onClick={handleCancel}
-              style={{
-                marginTop: "15px",
-                marginBottom: "15px",
-                color: "var(--mtmNavy)",
-                border: "1px solid var(--mtmNavy)",
-                fontFamily: " Inter, sans-serif",
-                fontSize: "15px",
-                fontWeight: "800",
-              }}
-            >
-              CANCEL
-            </Button>
-          </Stack>
+              {!isEditMode && (
+                <Button
+                  variant="outlined"
+                  sx={{
+                    fontSize: 15,
+                    height: "33px",
+                    color: "#004A7C",
+                    borderColor: "#004A7C",
+                  }}
+                  onClick={handleEdit}
+                  style={{
+                    marginTop: "15px",
+                    marginBottom: "15px",
+                    color: "var(--mtmNavy)",
+                    border: "1px solid var(--mtmNavy)",
+                    fontFamily: " Inter, sans-serif",
+                    fontSize: "15px",
+                    fontWeight: "800",
+                  }}
+                >
+                  EDIT
+                </Button>
+              )}
+              {isEditMode && (
+                <Stack direction="row" spacing={3}>
+                  <Button
+                    variant="outlined"
+                    sx={{
+                      fontSize: 15,
+                      height: "33px",
+                      backgroundColor: "#004A7C", // Replace with your desired background color
+                      color: "white", // Replace with your desired text color
+                    }}
+                    color="primary"
+                    onClick={handleSave}
+                    style={{
+                      marginTop: "15px",
+                      marginBottom: "15px",
+                      backgroundColor: "var(--mtmNavy)",
+                      color: "white",
+                      height: "32px",
+                      width: "87px",
+                      fontFamily: " Inter, sans-serif",
+                      fontSize: "15px",
+                      fontWeight: "800",
+                    }}
+                  >
+                    SAVE
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    sx={{
+                      fontSize: 15,
+                      height: "33px",
+                      color: "#004A7C",
+                      borderColor: "#004A7C",
+                    }}
+                    onClick={handleCancel}
+                    style={{
+                      marginTop: "15px",
+                      marginBottom: "15px",
+                      color: "var(--mtmNavy)",
+                      border: "1px solid var(--mtmNavy)",
+                      fontFamily: " Inter, sans-serif",
+                      fontSize: "15px",
+                      fontWeight: "800",
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                </Stack>
+              )}
+            </Box>
+          </>
         )}
       </ThemeProvider>
     </>

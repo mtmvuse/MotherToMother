@@ -1,9 +1,15 @@
 import { AddInventoryItemType, EditInventoryItemType } from '~/types/inventory';
 import type { EditUserType, AddUserType } from '../types/user';
+import type { EditAdminType, AddAdminType } from '../types/admin';
 import type { Organization } from '~/types/organization';
 import type { GridFilterModel, GridSortModel } from '@mui/x-data-grid';
 import { filterModelToApiQuery, sortModelToApiQuery } from './utils';
-import { AddIncomingDonationType, AddOutgoingDonationType, UpdateOutgoingDonationType } from '~/types/DonationTypes';
+import {
+	AddIncomingDonationType,
+	AddOutgoingDonationType,
+	UpdateOutgoingDonationType,
+	UpdateDonationType,
+} from '~/types/DonationTypes';
 import { AddCashDonationType, EditCashType } from '~/types/cashDonationTypes';
 
 const mode = import.meta.env.MODE;
@@ -59,6 +65,16 @@ export const deleteInventoryItem = async (inventoryId: number, token: string) =>
 		headers: {
 			'Content-Type': 'application/json',
 			Authorization: `Bearer ${token}`,
+		},
+	});
+};
+
+export const getAdminByEmail = async (email: string) => {
+	const url = `${backendUrl}/admins/v1/?email=${email}`;
+	return await fetch(url, {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json',
 		},
 	});
 };
@@ -197,14 +213,6 @@ export const getModalItems = async () => {
 	});
 };
 
-export const createOutgoingDonation = async (outgoingDonationData: AddOutgoingDonationType) => {
-	return await fetch(`${backendUrl}/donation/v1/outgoing`, {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify(outgoingDonationData),
-	});
-};
-
 export const addOrganization = async (organization: Organization, token: string) => {
 	return await fetch(`${backendUrl}/organization/v1`, {
 		method: 'POST',
@@ -213,6 +221,22 @@ export const addOrganization = async (organization: Organization, token: string)
 			Authorization: `Bearer ${token}`,
 		},
 		body: JSON.stringify(organization),
+	});
+};
+
+export const createIncomingDonation = async (incomingDonationData: AddIncomingDonationType) => {
+	return await fetch(`${backendUrl}/donation/v1/incoming`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(incomingDonationData),
+	});
+};
+
+export const createOutgoingDonation = async (outgoingDonationData: AddOutgoingDonationType) => {
+	return await fetch(`${backendUrl}/donation/v1/outgoing`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(outgoingDonationData),
 	});
 };
 
@@ -236,14 +260,6 @@ export const getReports = async (
 			'Content-Type': 'application/json',
 			Authorization: `Bearer ${token}`,
 		},
-	});
-};
-
-export const createIncomingDonation = async (outgoingDonationData: AddIncomingDonationType) => {
-	return await fetch(`${backendUrl}/donation/v1/incoming`, {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify(outgoingDonationData),
 	});
 };
 
@@ -293,5 +309,65 @@ export const editOutgoingDonation = async (donationId: number, outgoingDonationD
 		method: 'PUT',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify(outgoingDonationData),
+	});
+};
+
+export const editIncomingDonation = async (donationId: number, donationData: UpdateDonationType) => {
+	return await fetch(`${backendUrl}/donation/v1/incoming/${donationId}`, {
+		method: 'PUT',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(donationData),
+	});
+};
+
+export const getAdmin = async (
+	token: string | undefined,
+	page: number,
+	pageSize: number,
+	filterModel?: GridFilterModel,
+	sortModel?: GridSortModel
+) => {
+	let url = `${backendUrl}/admin/v1?page=${page}&pageSize=${pageSize}`;
+	if (filterModel) {
+		url += `&${filterModelToApiQuery(filterModel)}`;
+	}
+	if (sortModel) {
+		url += `&${sortModelToApiQuery(sortModel)}`;
+	}
+	return await fetch(url, {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${token}`,
+		},
+	});
+};
+
+export const updateAdmin = async (id: number, adminData: EditAdminType, token: string) => {
+	return await fetch(`${backendUrl}/admin/v1/update/id/${id}`, {
+		method: 'PUT',
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${token}`,
+		},
+		body: JSON.stringify(adminData),
+	});
+};
+
+export const deleteAdmin = async (id: number, token: string) => {
+	return await fetch(`${backendUrl}/admin/v1/delete/id/${id}`, {
+		method: 'DELETE',
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${token}`,
+		},
+	});
+};
+
+export const addAdmin = async (admin: AddAdminType) => {
+	return await fetch(`${backendUrl}/admin/v1`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(admin),
 	});
 };

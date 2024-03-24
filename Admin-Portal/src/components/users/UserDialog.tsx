@@ -7,6 +7,7 @@ import {
   FormControl,
   InputLabel,
   SelectChangeEvent,
+  Autocomplete,
 } from "@mui/material";
 import { USER_TYPE } from "../../lib/constants";
 import type { Organization } from "~/types/organization";
@@ -20,19 +21,9 @@ interface UserDialogProps {
 const UserDialog: React.FC<UserDialogProps> = (props) => {
   const { organizations, editRow } = props;
   const [userType, setUserType] = React.useState(editRow?.type || "");
-  const [organization, setOrganization] = React.useState(
-    editRow?.organization || ""
-  );
   const handleUserTypeChange = (event: SelectChangeEvent) => {
     setUserType(event.target.value as string);
-    if (event.target.value === USER_TYPE.PUBLIC) {
-      setOrganization("Public");
-    }
   };
-  const handleOrganizationChange = (event: SelectChangeEvent) => {
-    setOrganization(event.target.value as string);
-  };
-
   const [firstName, lastName] = editRow?.name.split(" ") || [];
   const [address, city, state, zip] = editRow?.address.split(", ") || [];
 
@@ -151,25 +142,24 @@ const UserDialog: React.FC<UserDialogProps> = (props) => {
           ))}
         </Select>
       </FormControl>
-      <FormControl fullWidth margin="dense">
-        <InputLabel id="Organization">Organization</InputLabel>
-        <Select
-          labelId="organization-label"
-          id="organization-select"
-          value={organization}
-          label="Organization"
-          onChange={handleOrganizationChange}
-          name="organization"
-        >
-          {organizations
+      <Autocomplete
+        disablePortal
+        id="combo-box-demo"
+        options={
+          organizations
             ?.filter((org) => org.type === userType?.split(" ")[0])
-            ?.map((org) => (
-              <MenuItem key={org.id} value={org.name}>
-                {org.name}
-              </MenuItem>
-            ))}
-        </Select>
-      </FormControl>
+            ?.map((org) => org.name) || []
+        }
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            margin="dense"
+            label="Organization"
+            name="organization"
+            defaultValue={editRow?.organization}
+          />
+        )}
+      />
     </>
   );
 };

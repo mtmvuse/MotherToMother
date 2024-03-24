@@ -77,11 +77,11 @@ model OutgoingDonationStats {
 
 model Item {
   id             Int              @id @default(autoincrement())
-  category       String
   name           String
   quantityUsed   Int
   quantityNew    Int
   valueUsed      Float
+  category       String
   valueNew       Float
   DonationDetail DonationDetail[]
 }

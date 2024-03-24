@@ -5,10 +5,10 @@ import {
   GridActionsCellItem,
   GridColDef,
   GridFilterModel,
-  GridRowId,
   GridRowParams,
   GridSortModel,
   GridValueFormatterParams,
+  GridValueGetterParams,
 } from "@mui/x-data-grid";
 import FormDialog from "../components/FormDialog";
 import CashDonationsDialog from "../components/cashDonations/cashDonationDialog";
@@ -40,8 +40,6 @@ import type {
 import { PAGE_SIZE } from "../lib/constants";
 import { ErrorMessage } from "../components/ErrorMessage";
 import { SuccessMessage } from "../components/SuccessMessage";
-
-let id_counter = 2;
 
 const CashDonationsPage: React.FC = () => {
   const [filterModel, setFilterModel] = useState<GridFilterModel | undefined>();
@@ -263,6 +261,11 @@ const CashDonationsPage: React.FC = () => {
       flex: 3,
       align: "left",
       headerAlign: "left",
+      type: "date",
+      valueFormatter: (params: GridValueFormatterParams) => {
+        return new Date(params.value).toLocaleDateString();
+      },
+      valueGetter: (params: GridValueGetterParams) => new Date(params.value),
     },
     {
       field: "organization",

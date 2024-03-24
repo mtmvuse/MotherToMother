@@ -91,10 +91,10 @@ export const createAdmin = async (
   };
 };
 
-export const updateAdmin = async (admin: AdminInputNoID) => {
+export const updateAdmin = async (admin: AdminInputNoID, id: number) => {
   await db.admin.update({
     where: {
-      email: admin.email,
+      id: id,
     },
     data: {
       name: admin.name,
@@ -105,6 +105,14 @@ export const updateAdmin = async (admin: AdminInputNoID) => {
       name: true,
       email: true,
       role: true,
+    },
+  });
+};
+
+export const deleteAdmin = async (id: number): Promise<void> => {
+  await db.admin.delete({
+    where: {
+      id,
     },
   });
 };

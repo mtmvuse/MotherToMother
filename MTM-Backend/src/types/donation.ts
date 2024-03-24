@@ -14,9 +14,8 @@ export interface DonationDetailType {
   newQuantity: number;
 }
 
-export interface OutgoingDonationRequestBodyType {
-  userId: number;
-  email: string;
+export interface OutgoingDonationRequestBodyType
+  extends DonationRequestBodyType {
   numberServed: number;
   whiteNum: number;
   latinoNum: number;
@@ -24,12 +23,20 @@ export interface OutgoingDonationRequestBodyType {
   nativeNum: number;
   asianNum: number;
   otherNum: number;
+}
+
+export interface DonationRequestBodyType {
+  userId: number;
+  date: Date;
   donationDetails: Array<DonationDetailType>;
 }
 
-export interface PUTOutgoingDonationRequestBodyType {
-  // userId: number;
-  // email: string; // TOOD: Why no provide email in PUT request?
+export interface PUTDonationRequestBodyType {
+  donationDetails: Array<DonationDetailType>;
+}
+
+export interface PUTOutgoingDonationRequestBodyType
+  extends PUTDonationRequestBodyType {
   numberServed: number;
   whiteNum: number;
   latinoNum: number;
@@ -37,7 +44,6 @@ export interface PUTOutgoingDonationRequestBodyType {
   nativeNum: number;
   asianNum: number;
   otherNum: number;
-  donationDetails: Array<DonationDetailType>;
 }
 
 export interface OutgoingDonationStatsType {
@@ -52,15 +58,6 @@ export interface OutgoingDonationStatsType {
   otherNum: number;
 }
 
-export interface DashboardDonationDetailType {
-  itemId: number;
-  item: string;
-  status: string;
-  value: number;
-  quantity: number;
-  total: number;
-}
-
 export interface ProductType {
   name: string;
   quantity: number;
@@ -70,22 +67,10 @@ export interface IncomingDonationRequestBodyType {
   products: Array<ProductType>;
 }
 
-export interface IncomingDonationTypeWithID
-  extends IncomingDonationRequestBodyType {
-  userId: number;
-}
-
 export interface IncomingDonationDetail {
   item: string;
   newQuantity: number;
   usedQuantity: number;
-}
-
-export interface IncomingDonationType {
-  donationDetails: Array<IncomingDonationDetail>;
-}
-export interface IncomingDonationWithIDType extends IncomingDonationType {
-  id: number;
 }
 
 export interface DonationQueryType {
