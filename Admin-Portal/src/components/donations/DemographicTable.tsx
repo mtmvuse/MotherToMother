@@ -8,6 +8,7 @@ import {
 } from "@mui/x-data-grid";
 import { DemographicDetails, ItemDetails } from "~/types/DonationTypes";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { Typography } from "@mui/material";
 
 interface DonationTableProps {
   rows: any[];
@@ -50,7 +51,7 @@ const DemographicTable: React.FC<DonationTableProps> = ({
     {
       field: "quantity",
       headerName: "Quantity",
-      align: "left",
+      align: "right",
       headerAlign: "left",
       type: "number",
       editable: editable,
@@ -60,18 +61,46 @@ const DemographicTable: React.FC<DonationTableProps> = ({
 
   return (
     <div>
-      <DataGrid
-        hideFooter={true}
-        sx={{ minWidth: 600 }}
-        rows={rows}
-        columns={columns.map((column) => ({
-          ...column,
-          editable: editable ? column.editable : false,
-        }))}
-        processRowUpdate={handleProcessRowUpdate}
-      />
-      <div style={{ textAlign: "right", paddingRight: 20 }}>
-        Total Kids: {totalKids}
+      <Typography
+        fontFamily="Raleway, sans-serif"
+        fontSize={13}
+        color="navy"
+        mb={1}
+        mt={2}
+        style={{ letterSpacing: "2px" }}
+      >
+        DEMOGRAPHIC SUMMARY
+      </Typography>
+      <div
+        className="demographic-table"
+        style={{ backgroundColor: "#f3f3f3", borderRadius: "10px" }}
+      >
+        <DataGrid
+          hideFooter={true}
+          sx={{ minWidth: 600 }}
+          rows={rows}
+          columns={columns.map((column) => ({
+            ...column,
+            editable: editable ? column.editable : false,
+          }))}
+          processRowUpdate={handleProcessRowUpdate}
+        />
+      </div>
+      <div
+        style={{
+          display: "flex",
+          paddingRight: 20,
+          fontFamily: "Raleway, sans-serif",
+          fontSize: 20,
+          backgroundColor: "#f3f3f3",
+          marginTop: "15px",
+          borderRadius: "10px",
+          padding: "13px",
+          justifyContent: "space-between",
+        }}
+      >
+        <span style={{ color: "navy" }}>Total Kids</span>
+        <span style={{ color: "black", textAlign: "right" }}>{totalKids}</span>
       </div>
     </div>
   );

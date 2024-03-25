@@ -13,7 +13,6 @@ import LocalAtmOutlinedIcon from '@mui/icons-material/LocalAtmOutlined';
 import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
 import StyledEngineProvider from '@mui/material/StyledEngineProvider';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import SearchIcon from '@mui/icons-material/Search';
 import favicon from '../assets/favicon.ico';
 
 interface LinkTabProps {

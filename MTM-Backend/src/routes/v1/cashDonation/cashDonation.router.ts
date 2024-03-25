@@ -57,7 +57,6 @@ cashDonationRouter.get(
         );
       }
       const count = await CashDonationService.getCdCount(whereClause);
-
       return res.status(200).json({ cashDonation, totalNumber: count });
     } catch (e) {
       next(e);

@@ -19,6 +19,7 @@ export const translateFilterToPrisma = (filters: any) => {
     if (!value) return;
 
     const [field, operation] = key.split("_");
+    if (field === "date") return;
 
     switch (operation) {
       case "contains":
@@ -40,11 +41,9 @@ export const translateFilterToPrisma = (filters: any) => {
         const num = parseFloat(value);
         where[field] = { not: { equals: isNaN(num) ? value : num } };
         break;
-      case "!=":
-        where[field] = { not: { equals: Number(value) } };
-        break;
       case "gt":
         where[field] = { gt: Number(value) };
+
         break;
       case "lt":
         where[field] = { lt: Number(value) };
@@ -56,11 +55,18 @@ export const translateFilterToPrisma = (filters: any) => {
         where[field] = { lte: Number(value) };
         break;
       default:
-        // Handle equality as default case
         where[field] = { equals: value };
         break;
     }
   });
+
+  // Need to handle date seperately as gte and lte required by DateRange
+  if (filters["date_lte"] || filters["date_gte"]) {
+    where["date"] = {
+      lte: filters?.date_lte,
+      gte: filters?.date_gte,
+    };
+  }
 
   return where;
 };

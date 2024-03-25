@@ -7,6 +7,7 @@ import { useAuth } from "../../lib/contexts";
 import { Box, TextField, Button } from "@mui/material";
 import FormError from "./FormError";
 import { DEFAULT_PAGE } from "../../lib/constants";
+import { getAdminByEmail } from "../../lib/services";
 
 interface FormValues {
   email: string;
@@ -42,8 +43,14 @@ const Login: React.FC = () => {
   const onSubmit = async (values: FormValues) => {
     try {
       setError("");
-      await sendLoginEmail(values.email);
-      navigate(DEFAULT_PAGE);
+      const response = await getAdminByEmail(values.email);
+      const adminStatus = await response.status;
+      if (adminStatus == 200) {
+        await sendLoginEmail(values.email);
+        navigate(DEFAULT_PAGE);
+      } else {
+        setError("Email is not found in admin database");
+      }
     } catch (err: any) {
       setError(err.message);
     }

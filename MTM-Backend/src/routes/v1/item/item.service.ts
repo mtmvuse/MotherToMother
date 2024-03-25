@@ -72,10 +72,10 @@ export const getItemsCategory = async (
 };
 
 /**
- * Get a items by id w/valid Category and Name
+ * Get a items by id w/valid Name
  * @param category
  * @param name
- * @returns an array of items based upon the given category and name
+ * @returns an array of items based upon the given name
  */
 export const getItemsName = async (
   name: string,

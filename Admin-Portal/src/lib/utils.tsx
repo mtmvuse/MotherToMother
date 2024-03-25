@@ -35,18 +35,22 @@ export const filterModelToApiQuery = (filterModel: GridFilterModel) => {
         break;
       case "!=":
       case "isNot":
-        queryParam.push(`${field}_not=${encodeURIComponent(value)}`); // Assuming '_not' for negation
+        queryParam.push(`${field}_not=${encodeURIComponent(value)}`);
         break;
       case ">":
+      case "after":
         queryParam.push(`${field}_gt=${encodeURIComponent(value)}`);
         break;
       case ">=":
+      case "onOrAfter":
         queryParam.push(`${field}_gte=${encodeURIComponent(value)}`);
         break;
       case "<":
+      case "before":
         queryParam.push(`${field}_lt=${encodeURIComponent(value)}`);
         break;
       case "<=":
+      case "onOrBefore":
         queryParam.push(`${field}_lte=${encodeURIComponent(value)}`);
         break;
     }
