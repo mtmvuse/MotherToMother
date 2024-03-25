@@ -94,7 +94,7 @@ const HomeLayout: React.FC = () => {
 							flex: '0 0 15%',
 							borderRight: 1,
 							borderColor: 'divider',
-							height: '100vh',
+							height: '90vh',
 							display: 'flex',
 							flexDirection: 'column',
 						}}
@@ -120,7 +120,7 @@ const HomeLayout: React.FC = () => {
 						</Box>
 					</Box>
 					<Box sx={{ flex: 1, p: 3 }} className='page-container'>
-						<Typography variant='h4' className='page-title'>
+						<Typography variant='h5' className='page-title'>
 							{CAPTIONS[curPage]}
 						</Typography>
 						{<Outlet />}
