@@ -77,23 +77,13 @@ const HomeLayout: React.FC = () => {
 	return (
 		<StyledEngineProvider injectFirst>
 			<Box className='root-container'>
-				<Box className='topbar-container'>
-					<Box className='topbar-profile'>
-						<Avatar src={favicon} sx={{ borderRadius: 0 }} alt='Favicon' />
-						<Typography variant='h5' className='text'>
-							Name
-						</Typography>
-						<ExpandMoreIcon />
-					</Box>
-				</Box>
-
 				<Box sx={{ display: 'flex' }}>
 					<Box
 						sx={{
 							flex: '0 0 15%',
 							borderRight: 1,
 							borderColor: 'divider',
-							height: '90vh',
+							height: '100vh',
 							display: 'flex',
 							flexDirection: 'column',
 						}}
