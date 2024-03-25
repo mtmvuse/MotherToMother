@@ -65,6 +65,11 @@ const ItemField: React.FC<ItemFieldProps> = ({
       console.error("Error fetching inventory items:", error);
     }
   };
+  const preventMinus = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "-" || e.key === "e" || e.key === "E" || e.key === "+") {
+      e.preventDefault();
+    }
+  };
 
   const handleUsedQuantityChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -178,6 +183,7 @@ const ItemField: React.FC<ItemFieldProps> = ({
           InputLabelProps={{
             shrink: true,
           }}
+          onKeyDown={preventMinus}
           sx={{ width: "100px" }}
           onChange={
             itemType === "New"
