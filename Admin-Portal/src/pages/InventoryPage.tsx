@@ -189,12 +189,12 @@ const InventoryPage: React.FC = () => {
     const formData = new FormData(event.currentTarget);
     const formJson = Object.fromEntries((formData as any).entries());
     const itemData = {
-      name: formJson.name,
+      name: formJson.itemName,
       category: formJson.category,
-      quantityNew: formJson.quantityNew,
-      valueNew: formJson.valueNew,
-      quantityUsed: formJson.quantityUsed,
-      valueUsed: formJson.valueUsed,
+      quantityNew: formJson.newStock,
+      valueNew: formJson.newValue,
+      quantityUsed: formJson.usedStock,
+      valueUsed: formJson.usedValue,
     };
     const editData = { data: itemData, id: editRow.id };
     editMutation.mutate(editData);
