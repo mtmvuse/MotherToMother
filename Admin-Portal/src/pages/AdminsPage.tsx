@@ -27,6 +27,8 @@ import FormDialog from "../components/FormDialog";
 import DeleteAlertModal from "../components/DeleteAlertModal";
 import AdminDialog from "../components/admin/adminDialog";
 import AddIcon from "@mui/icons-material/Add";
+import { ErrorMessage } from "../components/ErrorMessage";
+import { SuccessMessage } from "../components/SuccessMessage";
 
 const AdminsPage: React.FC = () => {
   const [page, setPage] = useState(0);
@@ -39,6 +41,8 @@ const AdminsPage: React.FC = () => {
   const [openDeleteAdmin, setOpenDeleteAdmin] = React.useState(false);
   const [editRow, setEditRow] = React.useState<AdminRow | undefined>();
   const [deleteRow, setDeleteRow] = React.useState<AdminRow | undefined>();
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<boolean | null>(null);
   const queryClient = useQueryClient();
 
   const handleOpenAddAdmin = () => {
@@ -81,33 +85,60 @@ const AdminsPage: React.FC = () => {
         .then((res: Response) => res.json())
         .then((data: AdminDashboardResponse) => {
           setTotalNumber(data.totalNumber);
+          if (data === undefined) {
+            throw new Error("No data: Internal Server Error");
+          }
           return data.admins;
-        })
-        .catch((err: any) => {
-          console.error(err);
         }),
     enabled: !isAnyFilterValueUndefined(),
   });
 
   const addMutation = useMutation({
     mutationFn: (data: any) => addAdmin(data),
-    onSuccess: () => {
+    onSuccess: (result: Response) => {
       queryClient.invalidateQueries({ queryKey: ["admin"] });
+      if (result.status === 400 || result.status === 500) {
+        setError("Cannot add user");
+      } else {
+        setSuccess(true);
+      }
+      handleCloseAddAdmin();
+    },
+    onError: (error: Error) => {
+      setError(error.message);
     },
   });
 
   const editMutation = useMutation({
     mutationFn: (data: EditAdminArgs) =>
       updateAdmin(data.id, data.adminData, "token"),
-    onSuccess: () => {
+    onSuccess: (result: Response) => {
       queryClient.invalidateQueries({ queryKey: ["admin"] });
+      if (result.status === 400 || result.status === 500) {
+        setError("Cannot edit admin");
+      } else {
+        setSuccess(true);
+      }
+      handleCloseEditAdmin();
+    },
+    onError: (error: Error) => {
+      setError(error.message);
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) => deleteAdmin(id, "token"),
-    onSuccess: () => {
+    onSuccess: (result: Response) => {
       queryClient.invalidateQueries({ queryKey: ["admin"] });
+      if (result.status === 400 || result.status === 500) {
+        setError("Cannot delete admin");
+      } else {
+        setSuccess(true);
+      }
+      handleCloseDeleteAdmin();
+    },
+    onError: (error: Error) => {
+      setError(error.message);
     },
   });
 
@@ -149,7 +180,12 @@ const AdminsPage: React.FC = () => {
 
   if (adminQueryResponse.isLoading) return <div>Loading...</div>;
   if (adminQueryResponse.error)
-    return <div>Error: {adminQueryResponse.error.message}</div>;
+  return (
+    <ErrorMessage
+      error={adminQueryResponse.error.message}
+      setError={setError}
+    />
+  );
 
   const columns: GridColDef[] = [
     {
@@ -204,6 +240,8 @@ const AdminsPage: React.FC = () => {
   ];
   return (
     <Box>
+      {error && <ErrorMessage error={error} setError={setError} />}
+      {success && <SuccessMessage success={success} setSuccess={setSuccess} />}
       <div style={{ display: "flex " }}>
         <Button
           className="table-add-button"
