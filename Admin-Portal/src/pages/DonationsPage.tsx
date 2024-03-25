@@ -62,16 +62,16 @@ const DonationsPage: React.FC = () => {
     null
   );
   const [error, setError] = useState<string | null>(null);
-
   const isAnyFilterValueUndefined = () => {
     return filterModel?.items.some((item) => item.value === undefined);
   };
-
   const handleSubmissionSuccess = () => {
     setShowSuccessAlert(true);
+    queryClient.invalidateQueries({ queryKey: ["inventory"] });
   };
 
   const handleAddDonation = () => setAddDonationModalOpen(true);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (selectedDonation) {
