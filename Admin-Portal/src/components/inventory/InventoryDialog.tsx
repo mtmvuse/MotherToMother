@@ -49,7 +49,7 @@ const AddInventoryDialog: React.FC<InventoryDialogProps> = ({
           label="Item Name"
           type="text"
           variant="standard"
-          defaultValue={editRow?.itemName}
+          defaultValue={editRow?.name}
         />
         <FormControl fullWidth margin="dense">
           <InputLabel id="inventory-category">Inventory Category</InputLabel>
@@ -86,7 +86,7 @@ const AddInventoryDialog: React.FC<InventoryDialogProps> = ({
           label="New Stock"
           type="number"
           variant="standard"
-          defaultValue={editRow?.newStock}
+          defaultValue={editRow?.quantityNew}
         />
         <TextField
           autoFocus
@@ -97,7 +97,7 @@ const AddInventoryDialog: React.FC<InventoryDialogProps> = ({
           label="New Value"
           type="number"
           variant="standard"
-          defaultValue={editRow?.newValue}
+          defaultValue={editRow?.valueNew}
         />
       </div>
       <div>
@@ -110,7 +110,7 @@ const AddInventoryDialog: React.FC<InventoryDialogProps> = ({
           label="Used Stock"
           type="number"
           variant="standard"
-          defaultValue={editRow?.usedStock}
+          defaultValue={editRow?.quantityUsed}
         />
         <TextField
           autoFocus
@@ -121,7 +121,7 @@ const AddInventoryDialog: React.FC<InventoryDialogProps> = ({
           label="Used Value"
           type="number"
           variant="standard"
-          defaultValue={editRow?.usedValue}
+          defaultValue={editRow?.valueUsed}
         />
       </div>
     </Box>

@@ -33,12 +33,11 @@ const Login: React.FC = () => {
 
   const [error, setError] = useState<string>("");
 
-  // useEffect(() => {
-  //   if (currentUser) {
-  //     console.log(currentUser);
-  //     navigate(DEFAULT_PAGE);
-  //   }
-  // }, [currentUser, navigate]);
+  useEffect(() => {
+    if (currentUser) {
+      navigate(DEFAULT_PAGE);
+    }
+  }, [currentUser, navigate]);
 
   const onSubmit = async (values: FormValues) => {
     try {
