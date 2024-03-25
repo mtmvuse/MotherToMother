@@ -99,6 +99,7 @@ export const updateAdmin = async (admin: AdminInputNoID, id: number) => {
     data: {
       name: admin.name,
       role: admin.role,
+      email: admin.email,
     },
     select: {
       id: true,

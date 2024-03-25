@@ -73,7 +73,7 @@ export const deleteInventoryItem = async (
 };
 
 export const getAdminByEmail = async (email: string) => {
-  const url = `${backendUrl}/admins/v1/?email=${email}`;
+  const url = `${backendUrl}/admin/v1?email=${email}`;
   return await fetch(url, {
     method: "GET",
     headers: {
