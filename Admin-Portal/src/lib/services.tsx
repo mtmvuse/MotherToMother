@@ -327,6 +327,13 @@ export const editIncomingDonation = async (
   });
 };
 
+export const deleteDonation = async (donationId: number) => {
+  return await fetch(`${backendUrl}/donation/v1/delete/${donationId}`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+  });
+};
+
 export const getAdmin = async (
   token: string | undefined,
   page: number,

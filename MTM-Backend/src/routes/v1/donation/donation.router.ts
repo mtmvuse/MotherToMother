@@ -391,7 +391,7 @@ donationRouter.post(
  * Update an incoming donation
  */
 donationRouter.put(
-  "/v1/incoming",
+  "/v1/incoming/:donationId",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const donationReqBody = req.body as DonationRequestBodyType;
@@ -485,7 +485,7 @@ donationRouter.put(
       };
 
       await updatedDeletedItems();
-      return res.status(200).json({ message: "Outgoing Donation Updated" });
+      return res.status(200).json({ message: "Incoming Donation Updated" });
     } catch (e) {
       next(e);
     }
