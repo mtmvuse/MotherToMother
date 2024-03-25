@@ -95,7 +95,7 @@ const InventoryPage: React.FC = () => {
         .then((data) => {
           setTotalNumber(data.totalNumber);
           if (data === undefined) {
-            throw new Error("No data: Internal Server Error");
+            setError("No data: Internal Server Error");
           }
           const renderInventories = data.inventory.map(
             (item: ResponseInventoryItem) => ({
@@ -166,12 +166,12 @@ const InventoryPage: React.FC = () => {
     const formData = new FormData(event.currentTarget);
     const formJson = Object.fromEntries((formData as any).entries());
     const itemData = {
-      name: formJson.name,
+      name: formJson.itemName,
       category: formJson.category,
-      quantityNew: formJson.quantityNew,
-      valueNew: formJson.valueNew,
-      quantityUsed: formJson.quantityUsed,
-      valueUsed: formJson.valueUsed,
+      quantityNew: formJson.newStock,
+      valueNew: formJson.newValue,
+      quantityUsed: formJson.usedStock,
+      valueUsed: formJson.usedValue,
     };
     addMutation.mutate(itemData);
     handleCloseAddInventory();
@@ -189,12 +189,12 @@ const InventoryPage: React.FC = () => {
     const formData = new FormData(event.currentTarget);
     const formJson = Object.fromEntries((formData as any).entries());
     const itemData = {
-      name: formJson.name,
+      name: formJson.itemName,
       category: formJson.category,
-      quantityNew: formJson.quantityNew,
-      valueNew: formJson.valueNew,
-      quantityUsed: formJson.quantityUsed,
-      valueUsed: formJson.valueUsed,
+      quantityNew: formJson.newStock,
+      valueNew: formJson.newValue,
+      quantityUsed: formJson.usedStock,
+      valueUsed: formJson.usedValue,
     };
     const editData = { data: itemData, id: editRow.id };
     editMutation.mutate(editData);
@@ -225,7 +225,6 @@ const InventoryPage: React.FC = () => {
       flex: 3,
       align: "left",
       headerAlign: "left",
-      editable: true,
     },
     {
       field: "category",
@@ -235,7 +234,6 @@ const InventoryPage: React.FC = () => {
       valueOptions: categoryOptions,
       align: "left",
       headerAlign: "left",
-      editable: true,
     },
     {
       field: "quantityNew",
@@ -244,7 +242,6 @@ const InventoryPage: React.FC = () => {
       type: "number",
       align: "left",
       headerAlign: "left",
-      editable: true,
     },
     {
       field: "valueNew",
@@ -253,7 +250,6 @@ const InventoryPage: React.FC = () => {
       type: "number",
       align: "left",
       headerAlign: "left",
-      editable: true,
       valueFormatter: (params: GridValueFormatterParams<number>) => {
         if (params.value == null) {
           return "$0";
@@ -268,7 +264,6 @@ const InventoryPage: React.FC = () => {
       type: "number",
       align: "left",
       headerAlign: "left",
-      editable: true,
     },
     {
       field: "valueUsed",
@@ -277,7 +272,6 @@ const InventoryPage: React.FC = () => {
       type: "number",
       align: "left",
       headerAlign: "left",
-      editable: true,
       valueFormatter: (params: GridValueFormatterParams<number>) => {
         if (params.value == null) {
           return "$0";
@@ -321,7 +315,6 @@ const InventoryPage: React.FC = () => {
       </Button>
       <div className="grid-container">
         <DataGrid
-          editMode="row"
           rowHeight={40}
           sx={{ width: "100%", height: "68vh" }}
           rows={inventoryQueryResponse.data || []}
