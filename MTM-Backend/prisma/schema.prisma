@@ -33,7 +33,7 @@ model User {
   household      String?
   userType       String
   donation       Donation[]
-  Organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  Organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@index([organizationId], map: "User_organizationId_fkey")
 }
@@ -42,7 +42,7 @@ model Donation {
   id                    Int                    @id @default(autoincrement())
   userId                Int
   date                  DateTime               @default(now())
-  user                  User                   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user                  User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
   DonationDetail        DonationDetail[]
   OutgoingDonationStats OutgoingDonationStats?
 
@@ -55,8 +55,8 @@ model DonationDetail {
   itemId       Int
   usedQuantity Int
   newQuantity  Int
-  donation     Donation @relation(fields: [donationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  item         Item     @relation(fields: [itemId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  donation     Donation @relation(fields: [donationId], references: [id], onDelete: Cascade)
+  item         Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
 
   @@unique([donationId, itemId])
   @@index([itemId], map: "DonationDetail_itemId_fkey")
@@ -72,7 +72,7 @@ model OutgoingDonationStats {
   nativeNum    Int
   asianNum     Int
   otherNum     Int
-  donation     Donation @relation(fields: [donationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  donation     Donation @relation(fields: [donationId], references: [id], onDelete: Cascade)
 }
 
 model Item {
@@ -105,21 +105,13 @@ model CashDonation {
 
 /// View for user dashboard for admin portal
 view user_dashboard {
-  id           Int    @id @default(0)
+  id           Int     @id @default(0)
   email        String
-  name         String @default("") @db.VarChar(383)
+  name         String? @db.VarChar(383)
   phone        String
-  address      String @db.Text
+  address      String? @db.Text
   type         String
   organization String
-}
-
-/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-view cashDonation_dashboard {
-  id           Int      @id @default(0)
-  date         DateTime @default(now())
-  organization String
-  total        Float
 }
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
@@ -135,7 +127,7 @@ view donation_detail {
 
 /// View for report dashboard for admin portal
 view report_dashboard {
-  id       Int   @id @default(0)
+  id       BigInt   @id @default(0) @db.UnsignedBigInt
   agency   String
   date     DateTime @default(dbgenerated("'0000-00-00 00:00:00.000'"))
   item     String
@@ -143,4 +135,14 @@ view report_dashboard {
   value    Float?
   total    Float?
   status   String   @default("") @db.VarChar(4)
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view cash_dashboard {
+  id           Int      @default(0)
+  date         DateTime @default(now())
+  organization String
+  total        Float
+
+  @@ignore
 }
