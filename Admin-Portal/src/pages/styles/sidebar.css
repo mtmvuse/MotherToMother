@@ -1,82 +1,82 @@
 /* Root Container */
 .root-container {
-	background-color: #f7f7f7;
+  background-color: #f7f7f7;
 }
 .MuiBox-root.css-1ysufnx {
-	border-right: none; /* Remove border on the right for selected tab */
+  border-right: none; /* Remove border on the right for selected tab */
 }
 
 /* Page Content */
 .page-title {
-	color: #004a7c;
-	border-bottom: 1px solid #ede7f6;
-	padding: 10px 0 25px 10px;
-	margin-bottom: 15px;
+  color: #004a7c;
+  border-bottom: 1px solid #ede7f6;
+  padding: 10px 0 25px 10px;
+  margin-bottom: 15px;
 }
 
 .page-container {
-	background-color: #ffffff;
-	border-radius: 14px;
-	margin: 10px;
-	padding-top: 3vh;
+  background-color: #ffffff;
+  border-radius: 14px;
+  margin: 10px;
+  padding-top: 3vh;
 }
 
 /* Side Bar Tab */
 .tabsContainer {
-	height: 50vh;
-	background-color: #ffffff;
-	border-radius: 14px;
-	margin: 10px;
-	padding-top: 3vh;
+  height: 50vh;
+  background-color: #ffffff;
+  border-radius: 14px;
+  margin: 10px;
+  padding-top: 3vh;
 }
 
 .navTab {
-	color: gray;
-	justify-content: flex-start;
-	padding-top: 0;
-	padding-bottom: 0;
-	min-height: 5vh;
-	border-radius: 4;
-	margin-left: 10px;
-	margin-right: 10px;
-	margin-top: 2px;
-	margin-bottom: 2px;
+  color: gray;
+  justify-content: flex-start;
+  padding-top: 0;
+  padding-bottom: 0;
+  min-height: 5vh;
+  border-radius: 4;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-top: 2px;
+  margin-bottom: 2px;
 }
 
 .navTabText {
-	color: gray;
-	margin-left: 5px;
-	font-size: 11px;
-	font-weight: bold;
-	text-transform: capitalize;
+  color: gray;
+  margin-left: 5px;
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: capitalize;
 }
 
 /* App name caption */
 .versionText {
-	font-weight: bold;
-	font-size: 10px;
-	color: #8e8e93;
-	margin-top: 5px;
-	margin-bottom: 5px;
+  font-weight: bold;
+  font-size: 10px;
+  color: #8e8e93;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
 .appNameText {
-	font-weight: bold;
-	font-size: 13px;
-	margin-left: 20px;
-	margin-right: 20px;
+  font-weight: bold;
+  font-size: 13px;
+  margin-left: 20px;
+  margin-right: 20px;
 }
 
 .appInfoContainer {
-	justify-self: flex-end;
-	background-color: #ffffff;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	flex-grow: inherit;
-	margin: 10px;
-	margin-top: auto;
-	border-radius: 14px;
-	padding-top: 15px;
-	padding-bottom: 5px;
+  justify-self: flex-end;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-grow: inherit;
+  margin: 10px;
+  margin-top: auto;
+  border-radius: 14px;
+  padding-top: 15px;
+  padding-bottom: 5px;
 }
