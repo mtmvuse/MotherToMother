@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import {
   TextField,
   Select,
@@ -38,20 +38,23 @@ const CashDonationsDialog: React.FC<CashDialogProps> = (props) => {
     setTotal(input);
   };
 
-  const handleOrganizationChange = (event: SelectChangeEvent) => {
-    setOrganization(event.target.value as string);
-  };
-
   return (
     <>
-      <FormControl fullWidth margin="dense">
-        <Autocomplete
-          disablePortal
-          id="combo-box-demo"
-          options={(organizations || []).map((org) => org.name)}
-          renderInput={(params) => <TextField {...params} label="Donor" />}
-        />
-      </FormControl>
+      <Autocomplete
+        disablePortal
+        id="combo-box-demo"
+        options={organizations?.map((org) => org.name) || []}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            margin="dense"
+            label="Organization"
+            name="organization"
+            defaultValue={editRow?.organization}
+          />
+        )}
+      />
+
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DemoContainer components={["DatePicker"]}>
           <DatePicker
