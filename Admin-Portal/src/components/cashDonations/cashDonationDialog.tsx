@@ -6,6 +6,7 @@ import {
   FormControl,
   InputLabel,
   SelectChangeEvent,
+  Autocomplete,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
@@ -44,22 +45,12 @@ const CashDonationsDialog: React.FC<CashDialogProps> = (props) => {
   return (
     <>
       <FormControl fullWidth margin="dense">
-        <InputLabel id="Donor">Donor</InputLabel>
-        <Select
-          required={true}
-          labelId="organization-label"
-          id="organization-select"
-          value={organization}
-          label="Donor"
-          onChange={handleOrganizationChange}
-          name="organization"
-        >
-          {organizations?.map((org) => (
-            <MenuItem key={org.id} value={org.name}>
-              {org.name}
-            </MenuItem>
-          ))}
-        </Select>
+        <Autocomplete
+          disablePortal
+          id="combo-box-demo"
+          options={(organizations || []).map((org) => org.name)}
+          renderInput={(params) => <TextField {...params} label="Donor" />}
+        />
       </FormControl>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DemoContainer components={["DatePicker"]}>
