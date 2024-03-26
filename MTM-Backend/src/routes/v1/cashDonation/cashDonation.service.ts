@@ -77,9 +77,9 @@ export const getCdAP = async (
   page: number,
   pageSize: number,
   whereClause: cdDashboardDisplay,
-  orderBy: Prisma.cash_dashboardAvgOrderByAggregateInput,
+  orderBy: Prisma.cashDonation_dashboardAvgOrderByAggregateInput,
 ): Promise<cdDashboardDisplay[]> => {
-  return db.cash_dashboard.findMany({
+  return db.cashDonation_dashboard.findMany({
     where: whereClause,
     take: pageSize,
     skip: page * pageSize,
@@ -89,9 +89,9 @@ export const getCdAP = async (
 
 export const getAllCdAP = async (
   whereClause: cdDashboardDisplay,
-  orderBy: Prisma.cash_dashboardAvgOrderByAggregateInput,
+  orderBy: Prisma.cashDonation_dashboardAvgOrderByAggregateInput,
 ): Promise<cdDashboardDisplay[]> => {
-  return db.cash_dashboard.findMany({
+  return db.cashDonation_dashboard.findMany({
     where: whereClause,
     orderBy: orderBy,
   });
@@ -100,7 +100,7 @@ export const getAllCdAP = async (
 export const getCdCount = async (
   whereClause: cdDashboardDisplay,
 ): Promise<number> => {
-  return db.cash_dashboard.count({
+  return db.cashDonation_dashboard.count({
     where: whereClause,
   });
 };
