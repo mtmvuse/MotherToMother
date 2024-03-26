@@ -40,7 +40,7 @@ cashDonationRouter.get(
     const orderBy = translateSortToPrisma(
       sort,
       order,
-    ) as Prisma.cashDonation_dashboardAvgOrderByAggregateInput;
+    ) as Prisma.cash_dashboardAvgOrderByAggregateInput;
     try {
       let cashDonation;
       if (pageInt == -1 && pageSizeInt == -1) {
