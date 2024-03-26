@@ -138,11 +138,9 @@ view report_dashboard {
 }
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-view cash_dashboard {
-  id           Int      @default(0)
+view cashDonation_dashboard {
+  id           Int      @unique @default(0)
   date         DateTime @default(now())
   organization String
   total        Float
-
-  @@ignore
 }
