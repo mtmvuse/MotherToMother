@@ -40,6 +40,7 @@ import type {
 import { PAGE_SIZE } from "../lib/constants";
 import { ErrorMessage } from "../components/ErrorMessage";
 import { SuccessMessage } from "../components/SuccessMessage";
+import Calendar from "../components/Calendar";
 
 const CashDonationsPage: React.FC = () => {
   const [filterModel, setFilterModel] = useState<GridFilterModel | undefined>();
@@ -262,6 +263,7 @@ const CashDonationsPage: React.FC = () => {
       align: "left",
       headerAlign: "left",
       type: "date",
+      filterable: false,
       valueFormatter: (params: GridValueFormatterParams) => {
         return new Date(params.value).toLocaleDateString();
       },
@@ -319,6 +321,7 @@ const CashDonationsPage: React.FC = () => {
       {error && <ErrorMessage error={error} setError={setError} />}
       {success && <SuccessMessage success={success} setSuccess={setSuccess} />}
       <div style={{ display: "flex " }}>
+        <Calendar setFilterModel={setFilterModel} />
         <Button
           className="table-add-button"
           onClick={handleOpenAddCashDonation}

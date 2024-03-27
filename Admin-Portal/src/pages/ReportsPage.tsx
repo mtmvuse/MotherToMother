@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
 import ReactDOM from "react-dom/client";
-import { Button, Dialog, DialogContent } from "@mui/material";
 import {
   DataGrid,
   GridColDef,
@@ -20,19 +19,11 @@ import { Organization } from "~/types/organization";
 import { getReports, getOrganizations, getModalItems } from "../lib/services";
 import "./styles/datagrid.css";
 import { PAGE_SIZE } from "../lib/constants";
-// Calendar imports
-import { CalendarIcon } from "@mui/x-date-pickers/";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import "react-date-range/dist/styles.css"; // main css file
-import "react-date-range/dist/theme/default.css"; // theme css file
-import { DateRangePicker } from "react-date-range";
-import type { Range } from "react-date-range";
-
 import FooterSummary from "../components/report/FooterSummary";
 import ExportButton from "../components/ExportButton";
 import { saveAs } from "file-saver";
 import Papa from "papaparse";
+import Calendar from "../components/Calendar";
 
 const ReportsPage: React.FC = () => {
   const [page, setPage] = useState(0);
@@ -40,14 +31,7 @@ const ReportsPage: React.FC = () => {
   const [filterModel, setFilterModel] = useState<GridFilterModel | undefined>();
   const [sortModel, setSortModel] = useState<GridSortModel | undefined>();
   const [totalNumber, setTotalNumber] = useState(0);
-  const [openCal, setOpenCal] = useState(false);
-  const [date, setDate] = useState<Range[]>([
-    {
-      startDate: new Date(),
-      endDate: new Date(),
-      key: "selection",
-    },
-  ]);
+
   const [amount, setAmount] = useState<number>(0);
   const [total, setTotal] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
@@ -130,14 +114,6 @@ const ReportsPage: React.FC = () => {
         .then((data: Organization[]) => data),
   });
 
-  const handleCalendarOpen = () => {
-    setOpenCal(true);
-  };
-
-  const handleCalendarClose = () => {
-    setOpenCal(false);
-  };
-
   const handleExport = async () => {
     try {
       const response = await getReports(
@@ -154,28 +130,6 @@ const ReportsPage: React.FC = () => {
     } catch (error: any) {
       setError(`Export failed with error: ${error.message}`);
     }
-  };
-
-  const handleDateChange = (ranges: any) => {
-    const filter = [
-      {
-        field: "date",
-        operator: "<=",
-        value: new Date(
-          new Date(ranges.selection.endDate).setDate(
-            new Date(ranges.selection.endDate).getDate() + 1
-          )
-        ).toISOString(),
-      },
-      {
-        field: "date",
-        operator: ">=",
-        value: ranges.selection.startDate.toISOString(),
-      },
-    ];
-
-    setDate([ranges.selection]);
-    setFilterModel({ items: filter });
   };
 
   if (reportQueryResponse.isLoading) return <div>Loading...</div>;
@@ -292,28 +246,7 @@ const ReportsPage: React.FC = () => {
           justifyContent: "space-between",
         }}
       >
-        <Button
-          className="table-add-calendar-button"
-          onClick={handleCalendarOpen}
-          endIcon={<CalendarIcon />}
-        >
-          Choose Date
-        </Button>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <Dialog open={openCal} onClose={handleCalendarClose} maxWidth={false}>
-            <DialogContent>
-              <DateRangePicker
-                onChange={handleDateChange}
-                moveRangeOnFirstSelection={false}
-                months={2}
-                ranges={date}
-                direction="horizontal"
-                rangeColors={["#4DAD45"]}
-              />
-            </DialogContent>
-          </Dialog>
-        </LocalizationProvider>
-
+        <Calendar setFilterModel={setFilterModel} />
         <ExportButton handleExport={handleExport} />
       </div>
 
