@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState } from "react";
 import { CalendarIcon } from "@mui/x-date-pickers/";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -16,7 +16,6 @@ interface CalendarProps {
 }
 
 const Calendar: React.FC<CalendarProps> = ({ setFilterModel }) => {
-  console.log("changed");
   const [openCal, setOpenCal] = useState(false);
   const [date, setDate] = useState<Range[]>([
     {
@@ -53,7 +52,6 @@ const Calendar: React.FC<CalendarProps> = ({ setFilterModel }) => {
     ];
     setDate([ranges.selection]);
     setFilterModel({ items: filter });
-    console.log(filter);
   };
 
   return (

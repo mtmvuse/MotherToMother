@@ -153,6 +153,7 @@ const DonationsPage: React.FC = () => {
       headerName: "Date",
       type: "date",
       flex: 3,
+      filterable: false,
       valueGetter: (params: GridValueGetterParams) => new Date(params.row.date),
     },
     { field: "organization", headerName: "Organization", flex: 4 },
