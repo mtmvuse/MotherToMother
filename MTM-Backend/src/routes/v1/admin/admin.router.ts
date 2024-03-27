@@ -44,7 +44,6 @@ adminsRouter.get(
       }
       return res.status(200).json(admin);
     } catch (e) {
-      console.error(e);
       next(e);
     }
   },
@@ -69,7 +68,6 @@ adminsRouter.post(
       }
       return res.status(201).json(item);
     } catch (e) {
-      console.error(e);
       next(e);
     }
   },
@@ -83,11 +81,7 @@ adminsRouter.post(
  */
 adminsRouter.put(
   "/v1/update/id/:id",
-  async (
-    req: Request<any, any, any, QueryType>,
-    res: Response,
-    next: NextFunction,
-  ) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     const schema = Joi.object({
       name: Joi.string().required(),
       role: Joi.string().required(),
@@ -97,10 +91,10 @@ adminsRouter.put(
     try {
       const data = (await schema.validateAsync(req.body)) as AdminInputNoID;
       await AdminService.updateAdmin(data, id);
+      console.log(data);
 
       res.status(200).send("Admin type updated successfully");
     } catch (e) {
-      console.error(e);
       next(e);
     }
   },

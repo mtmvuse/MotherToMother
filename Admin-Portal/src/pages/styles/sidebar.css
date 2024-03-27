@@ -6,31 +6,6 @@
   border-right: none; /* Remove border on the right for selected tab */
 }
 
-/* Name and Search TopBar */
-.topbar-container {
-  display: flex;
-  background-color: #ffffff;
-  overflow: hidden;
-  align-items: center;
-  padding: 20px 0 10px 30px;
-  margin: 0 0 15px 0;
-  border-bottom-left-radius: 20px;
-  border-bottom-right-radius: 20px;
-  gap: 8%;
-}
-
-.topbar-profile {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.topbar-profile .text {
-  font-weight: bold;
-  text-transform: capitalize;
-  margin-right: 40px;
-}
-
 /* Page Content */
 .page-title {
   color: #004a7c;
