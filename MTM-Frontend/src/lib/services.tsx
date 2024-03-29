@@ -97,7 +97,7 @@ export const createOutgoingDonation = async (
   token: string,
   request: OutgoingDonationRequestType,
 ) => {
-  const fullUrl = `${backendUrl}/donation/v1/outgoing`;
+  const fullUrl = `${backendUrl}/donation/v1/outgoing/ua`;
 
   return await fetch(fullUrl, {
     method: "POST",
