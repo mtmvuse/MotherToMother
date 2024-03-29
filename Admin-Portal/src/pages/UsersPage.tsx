@@ -373,7 +373,6 @@ const UsersPage: React.FC = () => {
         >
           Add
         </Button>
-
         <ExportButton handleExport={handleExport} />
       </div>
       <div className="grid-container">

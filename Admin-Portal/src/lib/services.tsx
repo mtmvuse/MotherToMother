@@ -255,7 +255,7 @@ export const createIncomingDonation = async (
 export const createOutgoingDonation = async (
   outgoingDonationData: AddOutgoingDonationType
 ) => {
-  return await fetch(`${backendUrl}/donation/v1/outgoing`, {
+  return await fetch(`${backendUrl}/donation/v1/outgoing/ap`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(outgoingDonationData),
