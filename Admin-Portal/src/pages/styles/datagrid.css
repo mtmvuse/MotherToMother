@@ -64,7 +64,7 @@
   justify-content: centter;
 }
 
-.css-a1ywpm-MuiButtonBase-root-MuiButton-root {
+.MuiButton-root.table-add-export-button {
   background-color: #f3f3f3 !important;
   border: none;
   color: #6d6d6d !important;

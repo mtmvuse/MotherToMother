@@ -12,6 +12,7 @@ const ExportButton: React.FC<ExportButtonProps> = ({ handleExport }) => {
       onClick={handleExport}
       variant="contained"
       sx={{ margin: "auto 10px 10px auto" }}
+      className="table-add-export-button"
     >
       <DownloadOutlinedIcon sx={{ marginRight: "6px" }} />
       <Typography sx={{ textTransform: "capitalize", fontSize: "18px" }}>
