@@ -58,7 +58,7 @@ export const updateUser = async (
   userData: EditUserType,
   token: string | undefined,
 ) => {
-  return await fetch(`${backendUrl}/users/v1/update/${email}`, {
+  return await fetch(`${backendUrl}/users/v1/update/email/${email}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",

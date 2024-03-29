@@ -147,7 +147,7 @@ userRouter.put(
  * Update User by email from user app
  */
 userRouter.put(
-  "/v1/update/:email",
+  "/v1/update/email/:email",
   async (req: Request, res: Response, next: NextFunction) => {
     const schema = Joi.object({
       organizationId: Joi.number(),
@@ -168,6 +168,7 @@ userRouter.put(
     try {
       const data = (await schema.validateAsync(req.body)) as RawUserInput;
       const { currentUser, ...userData } = data;
+      console.log(currentUser);
       if (userEmail != currentUser) {
         return res.status(401).json({ message: "Unauthorized" });
       }
