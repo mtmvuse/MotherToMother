@@ -168,7 +168,6 @@ userRouter.put(
     try {
       const data = (await schema.validateAsync(req.body)) as RawUserInput;
       const { currentUser, ...userData } = data;
-      console.log(currentUser);
       if (userEmail != currentUser) {
         return res.status(401).json({ message: "Unauthorized" });
       }
