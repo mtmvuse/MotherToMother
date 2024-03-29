@@ -117,6 +117,7 @@ const EditProfile: React.FC = () => {
         address: values.address,
         city: values.city,
         zip: parseInt(values.zip ?? "00000"),
+        currentUser: currentUser?.email,
       };
 
       if (!values.email) {
