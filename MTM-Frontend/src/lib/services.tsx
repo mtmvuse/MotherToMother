@@ -31,16 +31,12 @@ export const getOrganizations = async (query?: string | undefined) => {
   if (query === undefined) fetchURL = `${backendUrl}/organization/v1`;
   else fetchURL = `${backendUrl}/organization/v1?type=${query}`;
 
-  const response = await fetch(fetchURL, {
+  return await fetch(fetchURL, {
     method: "GET",
     headers: {
       "Control-Cache": "no-cache",
     },
   });
-  if (!response.ok) {
-    throw new Error(`Failed to get organizations: ${response.status}`);
-  }
-  return await response.json();
 };
 
 export const getUserData = async (email: string, token: string | undefined) => {
@@ -54,11 +50,11 @@ export const getUserData = async (email: string, token: string | undefined) => {
 };
 
 export const updateUser = async (
-  email: string,
+  id: string,
   userData: EditUserType,
   token: string | undefined,
 ) => {
-  return await fetch(`${backendUrl}/users/v1/update/email/${email}`, {
+  return await fetch(`${backendUrl}/users/v1/update/email/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
