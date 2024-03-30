@@ -31,16 +31,12 @@ export const getOrganizations = async (query?: string | undefined) => {
   if (query === undefined) fetchURL = `${backendUrl}/organization/v1`;
   else fetchURL = `${backendUrl}/organization/v1?type=${query}`;
 
-  const response = await fetch(fetchURL, {
+  return await fetch(fetchURL, {
     method: "GET",
     headers: {
       "Control-Cache": "no-cache",
     },
   });
-  if (!response.ok) {
-    throw new Error(`Failed to get organizations: ${response.status}`);
-  }
-  return await response.json();
 };
 
 export const getUserData = async (email: string, token: string | undefined) => {

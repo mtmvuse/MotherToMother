@@ -4,13 +4,10 @@ import Navbar from "../../components/NavigationBar/BottomNavbar";
 import { TopBar } from "../../components/NavigationBar/TopBar";
 import { Outlet, useLocation } from "react-router-dom";
 
-export interface UserTypeProps {
-  savedUserType: string;
-}
-
-export const HomeLayout: React.FC<UserTypeProps> = ({ savedUserType }) => {
+export const HomeLayout: React.FC = () => {
   const location = useLocation();
   const isFormRoute = location.pathname.startsWith("/home/form/specificItem");
+  const savedUserType = localStorage.getItem("userType");
 
   return (
     <Container>
