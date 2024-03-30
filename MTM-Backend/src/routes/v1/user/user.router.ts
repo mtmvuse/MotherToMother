@@ -162,10 +162,10 @@ userRouter.put(
       userType: Joi.string(),
       currentUser: Joi.string(),
     });
-    const email = req.params.email;
-    const body = (await schema.validateAsync(req.body)) as RawUserInput;
-    const { currentUser, ...userData } = body;
     try {
+      const email = req.params.email;
+      const body = (await schema.validateAsync(req.body)) as RawUserInput;
+      const { currentUser, ...userData } = body;
       if (currentUser !== email) {
         return res.status(403).json({ message: "Unauthorized" });
       }
