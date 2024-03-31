@@ -4,10 +4,10 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { useAuth } from "../../lib/contexts";
-import { Box, TextField, Button } from "@mui/material";
-import FormError from "./FormError";
+import { Box, TextField, Button, Snackbar, Alert } from "@mui/material";
 import { DEFAULT_PAGE } from "../../lib/constants";
 import { getAdminByEmail } from "../../lib/services";
+import { ErrorMessage } from "../../components/ErrorMessage";
 
 interface FormValues {
   email: string;
@@ -18,6 +18,42 @@ const schema = Yup.object().shape({
     .email("Invalid email address")
     .required("Email is required"),
 });
+
+interface SuccessMessageProps {
+  success: string | null;
+  setSuccess: React.Dispatch<React.SetStateAction<string | null>>;
+}
+
+const SuccessMessage: React.FC<SuccessMessageProps> = ({
+  success,
+  setSuccess,
+}) => {
+  const handleClose = () => {
+    setSuccess(null);
+  };
+  return (
+    <Snackbar
+      open={success != null}
+      autoHideDuration={3000}
+      onClose={handleClose}
+      style={{
+        position: "fixed",
+        left: "50%",
+        top: "30%",
+        transform: "translate(-50%, -50%)",
+      }}
+    >
+      <Alert
+        onClose={handleClose}
+        severity="success"
+        variant="filled"
+        sx={{ width: "100%" }}
+      >
+        {success}
+      </Alert>
+    </Snackbar>
+  );
+};
 
 const Login: React.FC = () => {
   const { currentUser, sendLoginEmail } = useAuth();
@@ -31,7 +67,8 @@ const Login: React.FC = () => {
     resolver: yupResolver(schema),
   });
 
-  const [error, setError] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   useEffect(() => {
     if (currentUser) {
@@ -41,12 +78,16 @@ const Login: React.FC = () => {
 
   const onSubmit = async (values: FormValues) => {
     try {
-      setError("");
+      setError(null);
+      setSuccess(null);
       const response = await getAdminByEmail(values.email);
       const adminStatus = await response.status;
       if (adminStatus == 200) {
         await sendLoginEmail(values.email);
-        navigate(DEFAULT_PAGE);
+        setSuccess("Login email sent. Please check your inbox to login.");
+        setTimeout(() => {
+          navigate(DEFAULT_PAGE);
+        }, 5000);
       } else {
         setError("Email is not found in admin database");
       }
@@ -54,6 +95,14 @@ const Login: React.FC = () => {
       setError(err.message);
     }
   };
+
+  if (error) {
+    return <ErrorMessage error={error} setError={setError} />;
+  }
+  if (success != null) {
+    return <SuccessMessage success={success} setSuccess={setSuccess} />;
+  }
+
   return (
     <Box
       sx={{
@@ -74,7 +123,6 @@ const Login: React.FC = () => {
             helperText={errors.email?.message}
           />
         </div>
-        {errors && <FormError>{error}</FormError>}
         <Button variant="contained" disabled={isSubmitting} type="submit">
           {isSubmitting ? "Submitting" : "Login"}
         </Button>
