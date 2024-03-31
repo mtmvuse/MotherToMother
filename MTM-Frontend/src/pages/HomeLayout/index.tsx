@@ -7,7 +7,6 @@ import { Outlet, useLocation } from "react-router-dom";
 export const HomeLayout: React.FC = () => {
   const location = useLocation();
   const isFormRoute = location.pathname.startsWith("/home/form/specificItem");
-  const savedUserType = localStorage.getItem("userType");
 
   return (
     <Container>
@@ -15,7 +14,7 @@ export const HomeLayout: React.FC = () => {
       <Container>
         <Outlet />
       </Container>
-      <Navbar savedUserType={savedUserType} />
+      <Navbar />
     </Container>
   );
 };
