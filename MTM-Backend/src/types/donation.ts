@@ -14,8 +14,9 @@ export interface DonationDetailType {
   newQuantity: number;
 }
 
-export interface OutgoingDonationRequestBodyType
-  extends DonationRequestBodyType {
+export interface UADonationRequestBodyType {
+  email: string;
+  donationDetails: Array<DonationDetailType>;
   numberServed: number;
   whiteNum: number;
   latinoNum: number;
@@ -29,6 +30,17 @@ export interface DonationRequestBodyType {
   userId: number;
   date: Date;
   donationDetails: Array<DonationDetailType>;
+}
+
+export interface OutgoingDonationRequestBodyType
+  extends DonationRequestBodyType {
+  numberServed: number;
+  whiteNum: number;
+  latinoNum: number;
+  blackNum: number;
+  nativeNum: number;
+  asianNum: number;
+  otherNum: number;
 }
 
 export interface PUTDonationRequestBodyType {

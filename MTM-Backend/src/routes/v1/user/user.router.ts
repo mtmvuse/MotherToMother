@@ -144,10 +144,10 @@ userRouter.put(
 );
 
 /**
- * Update User by email from user app
+ * Update User by email from User App
  */
 userRouter.put(
-  "/v1/update/:email",
+  "/v1/update/email/:email",
   async (req: Request, res: Response, next: NextFunction) => {
     const schema = Joi.object({
       organizationId: Joi.number(),
@@ -159,19 +159,17 @@ userRouter.put(
       city: Joi.string(),
       state: Joi.string(),
       zip: Joi.number().integer().positive(),
-      role: Joi.string(),
-      household: Joi.string(),
       userType: Joi.string(),
       currentUser: Joi.string(),
     });
-    const userEmail = req.params.email;
     try {
-      const data = (await schema.validateAsync(req.body)) as RawUserInput;
-      const { currentUser, ...userData } = data;
-      if (userEmail != currentUser) {
-        return res.status(401).json({ message: "Unauthorized" });
+      const email = req.params.email;
+      const body = (await schema.validateAsync(req.body)) as RawUserInput;
+      const { currentUser, ...userData } = body;
+      if (currentUser !== email) {
+        return res.status(403).json({ message: "Unauthorized" });
       }
-      const user = await UserService.updateUserByEmail(userData, userEmail);
+      const user = await UserService.updateUserByEmail(userData, email);
       return res.status(201).json(user);
     } catch (e) {
       next(e);

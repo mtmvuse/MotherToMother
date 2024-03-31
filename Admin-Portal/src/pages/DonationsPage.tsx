@@ -39,6 +39,7 @@ import {
   DonationDashboardResponse,
   ResponseDonation,
 } from "~/types/DonationTypes";
+import Calendar from "../components/Calendar";
 
 const modalStyle = {
   backgroundColor: "#fefefe",
@@ -130,7 +131,7 @@ const DonationsPage: React.FC = () => {
         .catch((err: any) => {
           console.log(err);
         }),
-    enabled: !filterModel,
+    enabled: !isAnyFilterValueUndefined(),
   });
 
   const handleFilterModelChange = (model: GridFilterModel) => {
@@ -152,6 +153,7 @@ const DonationsPage: React.FC = () => {
       headerName: "Date",
       type: "date",
       flex: 3,
+      filterable: false,
       valueGetter: (params: GridValueGetterParams) => new Date(params.row.date),
     },
     { field: "organization", headerName: "Organization", flex: 4 },
@@ -234,13 +236,21 @@ const DonationsPage: React.FC = () => {
         />
       )}
       {error && <ErrorMessage error={error} setError={setError} />}
-      <Button
-        onClick={handleAddDonation}
-        className="table-add-button"
-        endIcon={<AddIcon />}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+        }}
       >
-        Add
-      </Button>
+        <Calendar setFilterModel={setFilterModel} />
+        <Button
+          onClick={handleAddDonation}
+          className="table-add-button"
+          endIcon={<AddIcon />}
+        >
+          Add
+        </Button>
+      </div>
       <div className="grid-container">
         <DataGrid
           rowHeight={40}

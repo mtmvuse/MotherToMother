@@ -6,14 +6,9 @@ import * as Yup from "yup";
 import { useAuth } from "../../../contexts/AuthContext";
 import { Typography } from "@mui/material";
 import FormError from "../FormError";
-
 import "./Login.css";
 import m2m_logo from "../../assets/m2m_logo.png";
 import animal_logo from "../../assets/animal_logo.png";
-
-import { storeLocalUserType } from "../../../lib/utils";
-import { type SharedStates } from "~/App";
-import { ErrorMessage } from "../../../components/Error";
 
 interface FormValues {
   email: string;
@@ -27,7 +22,7 @@ const schema = Yup.object().shape({
   password: Yup.string().required("Password is required"),
 });
 
-const Login: React.FC<SharedStates> = ({ setSavedUserType }) => {
+const Login: React.FC = () => {
   const { login, currentUser } = useAuth();
   const navigate = useNavigate();
 
@@ -49,12 +44,8 @@ const Login: React.FC<SharedStates> = ({ setSavedUserType }) => {
 
   const onSubmit = async (data: FormValues) => {
     try {
-      setError(null);
-      const result = await login(data.email, data.password);
-      const accessToken = await result.user?.getIdToken();
-      const userEmail = result.user.email!;
-      const savedUserType = await storeLocalUserType(userEmail, accessToken);
-      setSavedUserType(savedUserType);
+      setError("");
+      await login(data.email, data.password);
       navigate("/home");
     } catch (err) {
       setError((err as Error).message);

@@ -100,24 +100,6 @@ export const getAllUsersAP = async (
 };
 
 /**
- * Get a user by id
- * @param id
- * @returns a user given id or null if not found
- */
-export const getUser = async (id: number): Promise<ResponseUser | null> => {
-  return db.user.findUnique({
-    where: {
-      id,
-    },
-    select: {
-      id: true,
-      email: true,
-      userType: true,
-    },
-  });
-};
-
-/**
  * Get a user by email
  * @param email
  * @returns a user given id or null if not found
