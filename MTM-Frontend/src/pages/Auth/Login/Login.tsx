@@ -9,6 +9,7 @@ import FormError from "../FormError";
 import "./Login.css";
 import m2m_logo from "../../assets/m2m_logo.png";
 import animal_logo from "../../assets/animal_logo.png";
+import { ErrorMessage } from "../../../components/Error";
 
 interface FormValues {
   email: string;
