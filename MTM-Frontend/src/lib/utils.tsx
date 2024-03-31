@@ -10,7 +10,6 @@ export const storeLocalUserData = async (
   localStorage.setItem("userType", userData.userType);
   localStorage.setItem("userEmail", userData.email);
   localStorage.setItem("userFirstName", userData.firstName);
-  localStorage.setItem("userId", userData.id.toLocaleString());
 };
 
 export const updateLocalUserData = (user: EditUserType) => {
