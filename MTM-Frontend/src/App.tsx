@@ -1,5 +1,4 @@
-import React, { useEffect } from "react";
-import { CACHE_KEY } from "./lib/constants";
+import React from "react";
 import { Route, Routes, BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { FormProvider } from "./contexts/FormContext";
@@ -17,43 +16,20 @@ import { ProfileLayout } from "./pages/Profile/ProfileLayout";
 import SpecificItemPage from "./pages/SpecificItemPage";
 import Home from "./pages/Home/Home";
 import Success from "./pages/Success";
-import { useState } from "react";
-
-export interface SharedStates {
-  setSavedUserType: (newUserType: string) => void;
-}
 
 const App: React.FC = () => {
-  const [savedUserType, setSavedUserType] = useState<string>("");
-  useEffect(() => {
-    const savedUserType = localStorage.getItem(CACHE_KEY.USER_TYPE);
-    if (savedUserType) {
-      setSavedUserType(savedUserType);
-    }
-  }, []);
-
   return (
     <BrowserRouter>
       <AuthProvider>
         <Routes>
           <Route path="/" element={<AuthLayout />}>
-            <Route
-              index
-              element={<Login setSavedUserType={setSavedUserType} />}
-            />
-            <Route
-              path="register"
-              element={<Register setSavedUserType={setSavedUserType} />}
-            />
+            <Route index element={<Login />} />
+            <Route path="register" element={<Register />} />
             <Route path="forgotPassword" element={<ForgotPassword />} />
           </Route>
           <Route
             path="home"
-            element={
-              <PrivateRoute
-                element={<HomeLayout savedUserType={savedUserType} />}
-              />
-            }
+            element={<PrivateRoute element={<HomeLayout />} />}
           >
             <Route index element={<Home />} />
             <Route path="profile" element={<ProfileLayout />}>

@@ -18,7 +18,7 @@ const Profile: React.FC = () => {
     const fetchUser = async () => {
       try {
         if (!currentUser) {
-          throw new Error("Current user not found");
+          throw new Error("Not loggined in");
         }
         const token = await currentUser.getIdToken();
 
@@ -29,7 +29,10 @@ const Profile: React.FC = () => {
 
         const response = await getUserData(userEmail, token);
         if (!response.ok) {
-          throw new Error("Error fetching user");
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          const message = await response.json();
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
+          throw new Error(message.message);
         }
 
         const userData = (await response.json()) as UserType;
@@ -46,7 +49,6 @@ const Profile: React.FC = () => {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("userType");
     void logout();
     navigate("/");
   };
