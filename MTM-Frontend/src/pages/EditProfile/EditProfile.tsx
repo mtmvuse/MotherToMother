@@ -147,6 +147,7 @@ const EditProfile: React.FC = () => {
     <div>
       <div className={"edit-profile-container"}>
         <ErrorMessage error={error} setError={setError} />
+        {/* {error && <ErrorMessage error={error} setError={setError} />} */}
         <div className={"edit-form"}>
           <form id="edit-form" onSubmit={handleSubmit(onSubmit)}>
             <p className="text-label">Basic Information</p>
