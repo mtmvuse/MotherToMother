@@ -96,13 +96,6 @@ const Login: React.FC = () => {
     }
   };
 
-  if (error) {
-    return <ErrorMessage error={error} setError={setError} />;
-  }
-  if (success != null) {
-    return <SuccessMessage success={success} setSuccess={setSuccess} />;
-  }
-
   return (
     <Box
       sx={{
@@ -112,6 +105,8 @@ const Login: React.FC = () => {
         height: "100vh",
       }}
     >
+      {error && (<ErrorMessage error={error} setError={setError} />)}
+      {success && (<SuccessMessage success={success} setSuccess={setSuccess} />)}
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
           <TextField

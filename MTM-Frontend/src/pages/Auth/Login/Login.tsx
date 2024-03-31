@@ -61,12 +61,9 @@ const Login: React.FC<SharedStates> = ({ setSavedUserType }) => {
     }
   };
 
-  if (error != null) {
-    return <ErrorMessage error={error} setError={setError} />;
-  }
-
   return (
     <div className={"login-container"}>
+      {error && <ErrorMessage error={error} setError={setError} />}
       <img className="logo-image" src={m2m_logo} alt="Image1" />
       <Typography className={"heading"}>Log In</Typography>
       <div
