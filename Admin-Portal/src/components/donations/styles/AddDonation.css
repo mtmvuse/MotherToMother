@@ -128,3 +128,7 @@
   cursor: pointer;
   margin-top: 15px;
 }
+
+.add-modal .css-1ae42j0 {
+  min-width: 0;
+}

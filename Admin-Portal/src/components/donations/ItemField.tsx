@@ -116,7 +116,7 @@ const ItemField: React.FC<ItemFieldProps> = ({
   return (
     <Box
       display="flex"
-      flexDirection="row"
+      flexDirection={{ xs: "column", md: "row" }}
       alignItems="center"
       justifyContent="space-between"
       borderRadius={"10px"}
