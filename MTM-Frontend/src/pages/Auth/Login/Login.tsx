@@ -13,6 +13,7 @@ import animal_logo from "../../assets/animal_logo.png";
 
 import { storeLocalUserType } from "../../../lib/utils";
 import { type SharedStates } from "~/App";
+import { ErrorMessage } from "../../../components/Error";
 
 interface FormValues {
   email: string;
@@ -38,7 +39,7 @@ const Login: React.FC<SharedStates> = ({ setSavedUserType }) => {
     resolver: yupResolver(schema),
   });
 
-  const [error, setError] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (currentUser) {
@@ -48,7 +49,7 @@ const Login: React.FC<SharedStates> = ({ setSavedUserType }) => {
 
   const onSubmit = async (data: FormValues) => {
     try {
-      setError("");
+      setError(null);
       const result = await login(data.email, data.password);
       const accessToken = await result.user?.getIdToken();
       const userEmail = result.user.email!;
@@ -59,6 +60,10 @@ const Login: React.FC<SharedStates> = ({ setSavedUserType }) => {
       setError((err as Error).message);
     }
   };
+
+  if (error != null) {
+    return <ErrorMessage error={error} setError={setError} />;
+  }
 
   return (
     <div className={"login-container"}>
