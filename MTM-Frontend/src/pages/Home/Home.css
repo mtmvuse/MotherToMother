@@ -99,3 +99,9 @@ body {
   margin-bottom: 1px;
   margin-top: 1px;
 }
+
+@media only screen and (max-height: 840px) {
+  .square-button {
+    height: 20px;
+  }
+}
