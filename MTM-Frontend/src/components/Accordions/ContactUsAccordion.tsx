@@ -94,11 +94,7 @@ const ContactUsAccordion: React.FC<ContactUsAccordionProps> = ({
               <Box sx={innerLineStyle}>
                 <WatchLaterOutlinedIcon sx={iconStyle} />
                 <Box>
-                  <Typography variant="caption">
-                    Mon-Thur 9:30am–4:30pm
-                  </Typography>
-                  <br />
-                  <Typography variant="caption">Fri - Sun CLOSED</Typography>
+                  <Typography variant="caption">TWR 1:00pm-4:30pm</Typography>
                 </Box>
               </Box>
             </InfoBox>
