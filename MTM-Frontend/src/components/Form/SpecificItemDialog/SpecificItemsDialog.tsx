@@ -76,6 +76,12 @@ export const SpecificItemsDialog = ({
     if (onClose) onClose();
   };
 
+  const preventMinus = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "-" || e.key === "e" || e.key === "E" || e.key === "+") {
+      e.preventDefault();
+    }
+  };
+
   return (
     <div id="SpecificItems-Dialog">
       <Dialog
@@ -127,6 +133,7 @@ export const SpecificItemsDialog = ({
             <input
               type="number"
               value={tempNewQuantity === 0 ? "" : tempNewQuantity}
+              onKeyDown={preventMinus}
               onChange={(e) => {
                 const value = e.target.value;
                 if (value === "" || !isNaN(parseInt(value))) {
@@ -164,6 +171,7 @@ export const SpecificItemsDialog = ({
             <input
               type="number"
               value={tempUsedQuantity === 0 ? "" : tempUsedQuantity}
+              onKeyDown={preventMinus}
               onChange={(e) => {
                 const value = e.target.value;
                 if (value === "" || !isNaN(parseInt(value))) {

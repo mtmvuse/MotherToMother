@@ -6,6 +6,12 @@ interface InputProps {
   onInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
+const preventMinus = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  if (e.key === "-" || e.key === "e" || e.key === "E" || e.key === "+") {
+    e.preventDefault();
+  }
+};
+
 export const QuestionField: React.FC<InputProps> = ({
   question,
   value,
@@ -28,6 +34,7 @@ export const QuestionField: React.FC<InputProps> = ({
           type="number"
           placeholder={String(value)}
           onChange={onInputChange}
+          onKeyDown={preventMinus}
           style={{
             width: "4.5rem",
             height: "2rem",
