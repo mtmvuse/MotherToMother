@@ -9,7 +9,7 @@ import {
   SelectChangeEvent,
   Autocomplete,
 } from "@mui/material";
-import { USER_TYPE } from "../../lib/constants";
+import { USER_TYPE, USER_STATUS } from "../../lib/constants";
 import type { Organization } from "~/types/organization";
 import type { UserRow } from "~/types/user";
 
@@ -21,12 +21,15 @@ interface UserDialogProps {
 const UserDialog: React.FC<UserDialogProps> = (props) => {
   const { organizations, editRow } = props;
   const [userType, setUserType] = React.useState(editRow?.type || "");
+  const [status, setStatus] = React.useState(editRow?.status || "");
   const handleUserTypeChange = (event: SelectChangeEvent) => {
     setUserType(event.target.value as string);
   };
+  const handleStatusChange = (event: SelectChangeEvent) => {
+    setStatus(event.target.value as string);
+  };
   const [firstName, lastName] = editRow?.name.split(" ") || [];
   const [address, city, state, zip] = editRow?.address.split(", ") || [];
-
   return (
     <>
       <Box>
@@ -125,23 +128,46 @@ const UserDialog: React.FC<UserDialogProps> = (props) => {
         variant="standard"
         defaultValue={zip}
       />
-      <FormControl fullWidth margin="dense">
-        <InputLabel id="user-type">User Type</InputLabel>
-        <Select
-          labelId="user-type-label"
-          id="user-type-select"
-          value={userType}
-          label="User Type"
-          onChange={handleUserTypeChange}
-          name="userType"
-        >
-          {Object.values(USER_TYPE).map((type) => (
-            <MenuItem key={type} value={type}>
-              {type}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+      <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+        <FormControl>
+          <InputLabel id="user-type">User Type</InputLabel>
+          <Select
+            labelId="user-type-label"
+            id="user-type-select"
+            value={userType}
+            label="User Type"
+            onChange={handleUserTypeChange}
+            name="userType"
+            fullWidth
+            margin="dense"
+          >
+            {Object.values(USER_TYPE).map((type) => (
+              <MenuItem key={type} value={type}>
+                {type}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <FormControl>
+          <InputLabel id="status">Status</InputLabel>
+          <Select
+            labelId="status-label"
+            id="status-select"
+            value={status}
+            label="Status"
+            onChange={handleStatusChange}
+            name="status"
+            fullWidth
+            margin="dense"
+          >
+            {Object.values(USER_STATUS).map((status) => (
+              <MenuItem key={status} value={status}>
+                {status}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </div>
       <Autocomplete
         disablePortal
         id="combo-box-demo"
@@ -150,13 +176,13 @@ const UserDialog: React.FC<UserDialogProps> = (props) => {
             ?.filter((org) => org.type === userType?.split(" ")[0])
             ?.map((org) => org.name) || []
         }
+        defaultValue={editRow?.organization || ""}
         renderInput={(params) => (
           <TextField
             {...params}
             margin="dense"
             label="Organization"
             name="organization"
-            defaultValue={editRow?.organization}
           />
         )}
       />

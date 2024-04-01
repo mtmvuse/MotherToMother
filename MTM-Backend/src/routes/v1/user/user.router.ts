@@ -194,6 +194,7 @@ userRouter.put(
       state: Joi.string(),
       zip: Joi.number().integer().positive(),
       userType: Joi.string(),
+      status: Joi.string(),
     });
     const id = Number(req.params.id);
     try {

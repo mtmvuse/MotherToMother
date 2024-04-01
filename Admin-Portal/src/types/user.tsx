@@ -12,6 +12,7 @@ export interface ResponseUser {
   Organization: {
     name: string;
   };
+  status: string;
 }
 
 export interface AddUserType {
@@ -25,6 +26,7 @@ export interface AddUserType {
   zip: number;
   state: string;
   organizationId: number;
+  status: string;
   password: string;
 }
 
@@ -41,6 +43,7 @@ export type UserRow = {
   phone: string;
   address: string;
   organization: string;
+  status: string;
 };
 
 export type EditUserType = {
@@ -55,6 +58,7 @@ export type EditUserType = {
   zip?: number;
   state?: string;
   organizationId?: number;
+  status?: string;
 };
 
 export type EditUserArgs = {

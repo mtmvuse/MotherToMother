@@ -15,6 +15,7 @@ SELECT
     `mtm`.`User`.`zip`
   ) AS `address`,
   `mtm`.`User`.`userType` AS `type`,
+  `mtm`.`User`.`status` AS `status`,
   `mtm`.`Organization`.`name` AS `organization`
 FROM
   (
