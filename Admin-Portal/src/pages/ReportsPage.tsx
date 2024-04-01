@@ -176,7 +176,7 @@ const ReportsPage: React.FC = () => {
       type: "date",
       align: "left",
       headerAlign: "left",
-      editable: true,
+      editable: false,
       filterable: false,
       valueGetter: (params: GridValueGetterParams) => new Date(params.row.date),
     },
@@ -188,7 +188,7 @@ const ReportsPage: React.FC = () => {
       type: "singleSelect",
       valueOptions: itemsQueryResponse.data?.map((item) => item.name),
       headerAlign: "left",
-      editable: true,
+      editable: false,
     },
     {
       field: "quantity",
@@ -197,7 +197,7 @@ const ReportsPage: React.FC = () => {
       type: "number",
       align: "left",
       headerAlign: "left",
-      editable: true,
+      editable: false,
     },
     {
       field: "value",
@@ -206,7 +206,7 @@ const ReportsPage: React.FC = () => {
       type: "number",
       align: "left",
       headerAlign: "left",
-      editable: true,
+      editable: false,
     },
     {
       field: "total",
@@ -214,7 +214,7 @@ const ReportsPage: React.FC = () => {
       flex: 3,
       align: "left",
       headerAlign: "left",
-      editable: true,
+      editable: false,
     },
     {
       field: "status",
@@ -223,7 +223,7 @@ const ReportsPage: React.FC = () => {
       type: "string",
       align: "left",
       headerAlign: "left",
-      editable: true,
+      editable: false,
       cellClassName: "type-style",
     },
     {
@@ -233,7 +233,7 @@ const ReportsPage: React.FC = () => {
       type: "string",
       align: "left",
       headerAlign: "left",
-      editable: true,
+      editable: false,
       cellClassName: "type-style",
     },
   ];

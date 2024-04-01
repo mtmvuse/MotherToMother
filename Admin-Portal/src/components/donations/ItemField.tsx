@@ -20,7 +20,7 @@ interface ItemFieldProps {
   onQuantityChange: (
     quantityNew: number,
     quantityUsed: number,
-    totalValue: number
+    totalValue: number,
   ) => void;
   onItemChange: (itemId: number) => void;
 }
@@ -72,14 +72,14 @@ const ItemField: React.FC<ItemFieldProps> = ({
   };
 
   const handleUsedQuantityChange = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const tmpUsedQuantity = Number(event.target.value);
     setQuantityUsed(tmpUsedQuantity);
   };
 
   const handleNewQuantityChange = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const tmpNewQuantity = Number(event.target.value);
     setQuantityNew(tmpNewQuantity);
@@ -116,7 +116,7 @@ const ItemField: React.FC<ItemFieldProps> = ({
   return (
     <Box
       display="flex"
-      flexDirection="row"
+      flexDirection={{ xs: "column", md: "row" }}
       alignItems="center"
       justifyContent="space-between"
       borderRadius={"10px"}
@@ -166,8 +166,8 @@ const ItemField: React.FC<ItemFieldProps> = ({
             itemType === "New"
               ? formatDollar(valueNew)
               : itemType === "Used"
-              ? formatDollar(valueUsed)
-              : ""
+                ? formatDollar(valueUsed)
+                : ""
           }
           InputLabelProps={{
             shrink: true,
@@ -179,6 +179,7 @@ const ItemField: React.FC<ItemFieldProps> = ({
           variant="standard"
           label="Quantity"
           type="number"
+          value={itemType === "New" ? quantityNew : quantityUsed}
           disabled={!itemType}
           InputLabelProps={{
             shrink: true,
@@ -189,13 +190,21 @@ const ItemField: React.FC<ItemFieldProps> = ({
             itemType === "New"
               ? handleNewQuantityChange
               : itemType === "Used"
-              ? handleUsedQuantityChange
-              : undefined
+                ? handleUsedQuantityChange
+                : undefined
           }
         />
       </>
       <Box sx={{ minWidth: "150px", flexWrap: "wrap" }}>
-        <Typography fontFamily={"raleway, sans-sherif"} fontWeight={"bold"}>
+        <Typography
+          fontFamily={"raleway, sans-sherif"}
+          fontWeight={"bold"}
+          sx={{
+            minWidth: "150px",
+            maxWidth: "150px",
+            overflowWrap: "break-word",
+          }}
+        >
           Total: ${totalValue}
         </Typography>
       </Box>

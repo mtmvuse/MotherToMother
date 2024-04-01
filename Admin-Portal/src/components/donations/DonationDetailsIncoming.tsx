@@ -31,7 +31,7 @@ interface ModalContentProps {
   selectedDonation: ResponseDonation;
 }
 
-const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
+const DonationDetailsIncoming: React.FC<ModalContentProps> = ({
   selectedDonation,
 }) => {
   const [itemRows, setItemRows] = useState<ItemDetails[]>([]);
@@ -217,23 +217,27 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
       return;
     }
 
-    setItemRows((prevRows) => [
-      ...prevRows,
-      {
-        id: idItemCounter + 1,
-        name: selectedItemSelection.name,
-        valueNew: selectedItemSelection.valueNew || 0,
-        valueUsed: selectedItemSelection.valueUsed || 0,
-        quantityNew: dialogNewQuantity || 0,
-        quantityUsed: dialogUsedQuantity || 0,
-      },
-    ]);
-    setIdItemCounter(idItemCounter + 1);
-    setOpenAddItemDialog(false);
-    setSelectedCategorySelection("");
-    setSelectedItemSelection(null);
-    setDialogNewQuantity(0);
-    setDialogUsedQuantity(0);
+    if (dialogNewQuantity === 0 && dialogUsedQuantity === 0) {
+      setError("Please Add Quantities");
+    } else {
+      setItemRows((prevRows) => [
+        ...prevRows,
+        {
+          id: idItemCounter + 1,
+          name: selectedItemSelection.name,
+          valueNew: selectedItemSelection.valueNew || 0,
+          valueUsed: selectedItemSelection.valueUsed || 0,
+          quantityNew: dialogNewQuantity || 0,
+          quantityUsed: dialogUsedQuantity || 0,
+        },
+      ]);
+      setIdItemCounter(idItemCounter + 1);
+      setOpenAddItemDialog(false);
+      setSelectedCategorySelection("");
+      setSelectedItemSelection(null);
+      setDialogNewQuantity(0);
+      setDialogUsedQuantity(0);
+    }
   };
 
   const handleCloseAddDialog = () => {
@@ -341,6 +345,8 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
           onClose={handleCloseAddDialog}
           maxWidth="lg"
         >
+          {error && <ErrorMessage error={error} setError={setError} />}
+
           <DialogTitle fontFamily={"raleway, sans-sherif"}>
             Add Item
           </DialogTitle>
@@ -453,4 +459,4 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
   );
 };
 
-export default DonationDetailsOutgoing;
+export default DonationDetailsIncoming;
