@@ -5,10 +5,10 @@ import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { useAuth } from "../../../contexts/AuthContext";
 import { Typography } from "@mui/material";
-import FormError from "../FormError";
 import "./Login.css";
 import m2m_logo from "../../assets/m2m_logo.png";
 import animal_logo from "../../assets/animal_logo.png";
+import { ErrorMessage } from "../../../components/Error";
 
 interface FormValues {
   email: string;
@@ -34,7 +34,7 @@ const Login: React.FC = () => {
     resolver: yupResolver(schema),
   });
 
-  const [error, setError] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (currentUser) {
@@ -48,12 +48,25 @@ const Login: React.FC = () => {
       await login(data.email, data.password);
       navigate("/home");
     } catch (err) {
-      setError((err as Error).message);
+      const errMessage = (err as Error).message;
+      const regex = /\((.*?)\)/; // Matches anything within parentheses
+      const match = errMessage.match(regex);
+      if (match && match.length > 1) {
+        const extractedString = match[1];
+        if (extractedString == "auth/invalid-credential") {
+          setError("The email and password does not match");
+        } else {
+          setError((err as Error).message);
+        }
+      } else {
+        setError((err as Error).message);
+      }
     }
   };
 
   return (
     <div className={"login-container"}>
+      {error && <ErrorMessage error={error} setError={setError} />}
       <img className="logo-image" src={m2m_logo} alt="Image1" />
       <Typography className={"heading"}>Log In</Typography>
       <div
@@ -84,7 +97,6 @@ const Login: React.FC = () => {
               <p className="error-message">{errors.password.message}</p>
             )}
           </div>
-          {error && <FormError>{error}</FormError>}
 
           <div className={"signup-container"}>
             <Typography>
