@@ -129,26 +129,7 @@ const UserDialog: React.FC<UserDialogProps> = (props) => {
         defaultValue={zip}
       />
       <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-        <FormControl>
-          <InputLabel id="user-type">User Type</InputLabel>
-          <Select
-            labelId="user-type-label"
-            id="user-type-select"
-            value={userType}
-            label="User Type"
-            onChange={handleUserTypeChange}
-            name="userType"
-            fullWidth
-            margin="dense"
-          >
-            {Object.values(USER_TYPE).map((type) => (
-              <MenuItem key={type} value={type}>
-                {type}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl>
+        {/* <FormControl>
           <InputLabel id="status">Status</InputLabel>
           <Select
             labelId="status-label"
@@ -159,6 +140,7 @@ const UserDialog: React.FC<UserDialogProps> = (props) => {
             name="status"
             fullWidth
             margin="dense"
+            sx={{ marginTop: "15px" }}
           >
             {Object.values(USER_STATUS).map((status) => (
               <MenuItem key={status} value={status}>
@@ -166,7 +148,7 @@ const UserDialog: React.FC<UserDialogProps> = (props) => {
               </MenuItem>
             ))}
           </Select>
-        </FormControl>
+        </FormControl> */}
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
         <FormControl>
@@ -180,6 +162,7 @@ const UserDialog: React.FC<UserDialogProps> = (props) => {
             name="userType"
             fullWidth
             margin="dense"
+            sx={{ marginTop: "10px" }}
           >
             {Object.values(USER_TYPE).map((type) => (
               <MenuItem key={type} value={type}>

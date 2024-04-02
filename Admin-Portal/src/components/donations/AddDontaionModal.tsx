@@ -8,11 +8,13 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import ItemField from "./ItemField";
-<<<<<<< HEAD
-import { IconButton, TextField, Typography, Autocomplete } from "@mui/material";
-=======
-import { IconButton, TextField, Typography, Grid } from "@mui/material";
->>>>>>> c667d140193bbc6d5ea5e37a2ac7e7d43e092e9b
+import {
+  IconButton,
+  TextField,
+  Typography,
+  Grid,
+  Autocomplete,
+} from "@mui/material";
 import {
   createOutgoingDonation,
   getOrganizations,
@@ -347,7 +349,6 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
                 fontSize={20}
                 color="navy"
               >
-<<<<<<< HEAD
                 <Autocomplete
                   disablePortal
                   id="donor-select"
@@ -364,16 +365,7 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
                     />
                   )}
                 />
-=======
-                Donor
               </Typography>
-              <FormControl variant="standard" fullWidth sx={{ width: "75%" }}>
-                <Select id="donor-select" onChange={handleTypeChange}>
-                  <MenuItem value={"Incoming"}>Incoming</MenuItem>
-                  <MenuItem value={"Outgoing"}>Outgoing</MenuItem>
-                </Select>
->>>>>>> c667d140193bbc6d5ea5e37a2ac7e7d43e092e9b
-              </FormControl>
             </Grid>
             <Grid item xs={12}>
               <Typography
@@ -426,13 +418,8 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
                     No users available for the selected organization.
                   </Typography>
                 )}
-<<<<<<< HEAD
                 <Autocomplete
                   disablePortal
-=======
-                <Select
-                  labelId="user-select-label"
->>>>>>> c667d140193bbc6d5ea5e37a2ac7e7d43e092e9b
                   id="user-select"
                   value={selectedUser}
                   onChange={handleUserChange}
@@ -452,9 +439,8 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
                   )}
                 />
               </FormControl>
-<<<<<<< HEAD
-            </div>
-          </div>
+            </Grid>
+          </Grid>
 
           <div
             style={{ display: "flex", alignItems: "center", marginTop: "20px" }}
@@ -489,38 +475,6 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
               </LocalizationProvider>
             </div>
           </div>
-=======
-            </Grid>
-            <Grid item xs={12}>
-              <Typography
-                fontFamily="Raleway, sans-serif"
-                fontSize={20}
-                color="navy"
-              >
-                Date
-              </Typography>
-              <div
-                className="date-picker"
-                style={{
-                  width: "100%",
-                }}
-              >
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DemoContainer
-                    components={["DatePicker"]}
-                    sx={{ width: "100%" }}
-                  >
-                    <DatePicker
-                      disabled={!showCalendar}
-                      onChange={handleDateChange}
-                      value={selectedDate}
-                    />
-                  </DemoContainer>
-                </LocalizationProvider>
-              </div>
-            </Grid>
-          </Grid>
->>>>>>> c667d140193bbc6d5ea5e37a2ac7e7d43e092e9b
         </div>
         <IconButton onClick={addItemField} sx={{ mt: 2, mb: 1 }}>
           <img

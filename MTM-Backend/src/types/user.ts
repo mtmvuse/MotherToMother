@@ -69,5 +69,5 @@ export interface UserDashboardDisplay {
   phone: string;
   address: string;
   type: string;
-  status: string;
+  //status: string;
 }
