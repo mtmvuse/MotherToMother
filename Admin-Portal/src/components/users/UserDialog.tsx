@@ -198,7 +198,6 @@ const UserDialog: React.FC<UserDialogProps> = (props) => {
             ?.map((org) => org.name) || []
         }
         defaultValue={editRow?.organization || ""}
-        defaultValue={editRow?.organization || ""}
         renderInput={(params) => (
           <TextField
             {...params}
