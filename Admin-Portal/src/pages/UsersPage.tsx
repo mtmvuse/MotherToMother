@@ -288,7 +288,7 @@ const UsersPage: React.FC = () => {
     {
       field: "name",
       headerName: "Name",
-      flex: 2,
+      flex: 2.5,
       align: "left",
       headerAlign: "left",
     },
@@ -304,7 +304,7 @@ const UsersPage: React.FC = () => {
     {
       field: "organization",
       headerName: "Organization",
-      flex: 2,
+      flex: 2.5,
       type: "singleSelect",
       valueOptions: organizationsQueryResponse.data?.map(
         (organization) => organization.name
@@ -329,7 +329,14 @@ const UsersPage: React.FC = () => {
     {
       field: "address",
       headerName: "Address",
-      flex: 3,
+      flex: 5,
+      align: "left",
+      headerAlign: "left",
+    },
+    {
+      field: "status",
+      headerName: "Status",
+      flex: 1.5,
       align: "left",
       headerAlign: "left",
     },
@@ -373,7 +380,6 @@ const UsersPage: React.FC = () => {
         >
           Add
         </Button>
-
         <ExportButton handleExport={handleExport} />
       </div>
       <div className="grid-container">

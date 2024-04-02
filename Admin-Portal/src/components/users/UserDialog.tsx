@@ -26,7 +26,6 @@ const UserDialog: React.FC<UserDialogProps> = (props) => {
   };
   const [firstName, lastName] = editRow?.name.split(" ") || [];
   const [address, city, state, zip] = editRow?.address.split(", ") || [];
-
   return (
     <>
       <Box>
@@ -125,23 +124,27 @@ const UserDialog: React.FC<UserDialogProps> = (props) => {
         variant="standard"
         defaultValue={zip}
       />
-      <FormControl fullWidth margin="dense">
-        <InputLabel id="user-type">User Type</InputLabel>
-        <Select
-          labelId="user-type-label"
-          id="user-type-select"
-          value={userType}
-          label="User Type"
-          onChange={handleUserTypeChange}
-          name="userType"
-        >
-          {Object.values(USER_TYPE).map((type) => (
-            <MenuItem key={type} value={type}>
-              {type}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+      <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+        <FormControl>
+          <InputLabel id="user-type">User Type</InputLabel>
+          <Select
+            labelId="user-type-label"
+            id="user-type-select"
+            value={userType}
+            label="User Type"
+            onChange={handleUserTypeChange}
+            name="userType"
+            fullWidth
+            margin="dense"
+          >
+            {Object.values(USER_TYPE).map((type) => (
+              <MenuItem key={type} value={type}>
+                {type}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </div>
       <Autocomplete
         disablePortal
         id="combo-box-demo"
@@ -150,13 +153,13 @@ const UserDialog: React.FC<UserDialogProps> = (props) => {
             ?.filter((org) => org.type === userType?.split(" ")[0])
             ?.map((org) => org.name) || []
         }
+        defaultValue={editRow?.organization || ""}
         renderInput={(params) => (
           <TextField
             {...params}
             margin="dense"
             label="Organization"
             name="organization"
-            defaultValue={editRow?.organization}
           />
         )}
       />

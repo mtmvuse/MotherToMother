@@ -364,6 +364,7 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
                   value={donationType}
                   onChange={handleTypeChange}
                   options={options}
+                  sx={{ marginLeft: "20px" }}
                   renderInput={(params) => (
                     <TextField
                       {...params}
@@ -407,6 +408,7 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
                   value={selectedOrg}
                   onChange={handleOrgChange}
                   options={organizationList}
+                  sx={{ marginLeft: "20px" }}
                   getOptionLabel={(org) => org.name}
                   renderInput={(params) => (
                     <TextField
@@ -456,6 +458,7 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
                   value={selectedUser}
                   onChange={handleUserChange}
                   options={userList}
+                  sx={{ marginLeft: "20px" }}
                   getOptionLabel={(user) => user.firstName}
                   renderInput={(params: any) => (
                     <TextField
@@ -468,8 +471,6 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
                   renderOption={(props, user) => (
                     <li {...props}>{user.firstName}</li>
                   )}
-                  fullWidth
-                  style={{ marginBottom: 20 }}
                 />
               </FormControl>
             </div>
@@ -497,7 +498,7 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DemoContainer
                   components={["DatePicker"]}
-                  sx={{ width: 300, marginRight: "200px" }}
+                  sx={{ width: 300, marginRight: "180px" }}
                 >
                   <DatePicker
                     disabled={!showCalendar}
