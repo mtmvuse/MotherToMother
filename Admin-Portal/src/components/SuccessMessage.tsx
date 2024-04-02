@@ -2,17 +2,20 @@ import React from "react";
 import { Snackbar, Alert } from "@mui/material";
 
 interface SuccessMessageProps {
+  message?: string | null;
   success: boolean | null;
   setSuccess: React.Dispatch<React.SetStateAction<boolean | null>>;
 }
 
-export const SuccessMessage: React.FC<SuccessMessageProps> = ({
+export const SuccessMessage: React.FC<SuccessMessageProps> = ({message,
   success,
   setSuccess,
 }) => {
   const handleClose = () => {
     setSuccess(false);
   };
+
+  const displayMessage = message == null ? "Success!" : message 
   return (
     <Snackbar
       open={success || false}
@@ -31,7 +34,7 @@ export const SuccessMessage: React.FC<SuccessMessageProps> = ({
         variant="filled"
         sx={{ width: "100%" }}
       >
-        Success!
+        {displayMessage}
       </Alert>
     </Snackbar>
   );

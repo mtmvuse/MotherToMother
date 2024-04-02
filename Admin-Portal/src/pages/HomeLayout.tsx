@@ -22,7 +22,7 @@ const iconMap: { [key: string]: React.ElementType } = {
   donations: VolunteerActivismOutlinedIcon,
   inventory: ContentPasteSearchOutlinedIcon,
   users: GroupOutlinedIcon,
-  administration: CorporateFareOutlinedIcon,
+  admins: CorporateFareOutlinedIcon,
   cashdonations: LocalAtmOutlinedIcon,
   reports: AssessmentOutlinedIcon,
 };
