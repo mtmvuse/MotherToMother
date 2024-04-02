@@ -129,28 +129,6 @@ const UserDialog: React.FC<UserDialogProps> = (props) => {
         defaultValue={zip}
       />
       <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-        {/* <FormControl>
-          <InputLabel id="status">Status</InputLabel>
-          <Select
-            labelId="status-label"
-            id="status-select"
-            value={status}
-            label="Status"
-            onChange={handleStatusChange}
-            name="status"
-            fullWidth
-            margin="dense"
-            sx={{ marginTop: "15px" }}
-          >
-            {Object.values(USER_STATUS).map((status) => (
-              <MenuItem key={status} value={status}>
-                {status}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl> */}
-      </div>
-      <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
         <FormControl>
           <InputLabel id="user-type">User Type</InputLabel>
           <Select
@@ -162,11 +140,29 @@ const UserDialog: React.FC<UserDialogProps> = (props) => {
             name="userType"
             fullWidth
             margin="dense"
-            sx={{ marginTop: "10px" }}
           >
             {Object.values(USER_TYPE).map((type) => (
               <MenuItem key={type} value={type}>
                 {type}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <FormControl>
+          <InputLabel id="status">Status</InputLabel>
+          <Select
+            labelId="status-label"
+            id="status-select"
+            value={status}
+            label="Status"
+            onChange={handleStatusChange}
+            name="status"
+            fullWidth
+            margin="dense"
+          >
+            {Object.values(USER_STATUS).map((status) => (
+              <MenuItem key={status} value={status}>
+                {status}
               </MenuItem>
             ))}
           </Select>
