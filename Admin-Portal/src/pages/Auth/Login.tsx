@@ -8,6 +8,7 @@ import { Box, TextField, Button, Snackbar, Alert } from "@mui/material";
 import { DEFAULT_PAGE } from "../../lib/constants";
 import { getAdminByEmail } from "../../lib/services";
 import { ErrorMessage } from "../../components/ErrorMessage";
+import { SuccessMessage } from "../../components/SuccessMessage";
 
 interface FormValues {
   email: string;
@@ -18,42 +19,6 @@ const schema = Yup.object().shape({
     .email("Invalid email address")
     .required("Email is required"),
 });
-
-interface SuccessMessageProps {
-  success: string | null;
-  setSuccess: React.Dispatch<React.SetStateAction<string | null>>;
-}
-
-const SuccessMessage: React.FC<SuccessMessageProps> = ({
-  success,
-  setSuccess,
-}) => {
-  const handleClose = () => {
-    setSuccess(null);
-  };
-  return (
-    <Snackbar
-      open={success != null}
-      autoHideDuration={3000}
-      onClose={handleClose}
-      style={{
-        position: "fixed",
-        left: "50%",
-        top: "30%",
-        transform: "translate(-50%, -50%)",
-      }}
-    >
-      <Alert
-        onClose={handleClose}
-        severity="success"
-        variant="filled"
-        sx={{ width: "100%" }}
-      >
-        {success}
-      </Alert>
-    </Snackbar>
-  );
-};
 
 const Login: React.FC = () => {
   const { currentUser, sendLoginEmail } = useAuth();
@@ -68,7 +33,7 @@ const Login: React.FC = () => {
   });
 
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
+  const [success, setSuccess] = useState<boolean | null>(null);
 
   useEffect(() => {
     if (currentUser) {
@@ -84,7 +49,7 @@ const Login: React.FC = () => {
       const adminStatus = await response.status;
       if (adminStatus == 200) {
         await sendLoginEmail(values.email);
-        setSuccess("Login email sent. Please check your inbox to login.");
+        setSuccess(true);
         setTimeout(() => {
           navigate(DEFAULT_PAGE);
         }, 5000);
@@ -106,7 +71,7 @@ const Login: React.FC = () => {
       }}
     >
       {error && (<ErrorMessage error={error} setError={setError} />)}
-      {success && (<SuccessMessage success={success} setSuccess={setSuccess} />)}
+      {success && (<SuccessMessage message={"Login email sent. Please check your inbox to login."} success={success} setSuccess={setSuccess} />)}
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
           <TextField
