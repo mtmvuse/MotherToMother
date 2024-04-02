@@ -17,4 +17,5 @@ export type EditUserType = {
   address: string | undefined;
   city: string | undefined;
   zip: number | undefined;
+  currentUser: string;
 };

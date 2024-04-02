@@ -9,6 +9,7 @@ import { getUserData, updateUser } from "../../lib/services";
 import { ErrorMessage } from "../../components/Error";
 import { CircularProgress } from "@mui/material";
 import type { UserType } from "../../types/UserTypes";
+import { updateLocalUserData } from "../../lib/utils";
 
 interface FormValues {
   name?: string;
@@ -92,6 +93,7 @@ const EditProfile: React.FC = () => {
         setValue("zip", userData.zip || "");
       } catch (error: any) {
         console.error("Error fetching user:", error);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
         setError(error.message);
       } finally {
         setIsLoading(false);
@@ -104,11 +106,15 @@ const EditProfile: React.FC = () => {
   const onSubmit = async (values: FormValues) => {
     try {
       setError("");
+      if (!currentUser?.email) {
+        throw new Error("Not loggined in");
+      }
+      if (!values.email) {
+        throw new Error("Email not found");
+      }
       const token = await currentUser?.getIdToken();
-
       const firstName = values.name?.split(" ")[0];
       const lastName = values.name?.split(" ")[1];
-
       const user = {
         firstName,
         lastName,
@@ -117,19 +123,18 @@ const EditProfile: React.FC = () => {
         address: values.address,
         city: values.city,
         zip: parseInt(values.zip ?? "00000"),
+        currentUser: currentUser.email,
       };
-
-      if (!values.email) {
-        throw new Error("Email not found");
-      }
 
       const response = await updateUser(values.email, user, token);
       if (!response.ok) {
         throw new Error("Error updating user");
       } else {
+        updateLocalUserData(user);
         navigate("/home/profile");
       }
     } catch (err: any) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
       setError(err.message);
     } finally {
       setIsLoading(false);

@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Button, Modal, Box } from "@mui/material";
+import {
+  Button,
+  Modal,
+  Box,
+  Dialog,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  DialogTitle,
+} from "@mui/material";
 import {
   DataGrid,
   GridColDef,
@@ -16,7 +25,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { PAGE_SIZE } from "../lib/constants";
-import { getDonations } from "../lib/services";
+import { getDonations, deleteDonation } from "../lib/services";
 import AddDonationModal from "../components/donations/AddDontaionModal";
 import DonationDetailsIncoming from "../components/donations/DonationDetailsIncoming";
 import DonationDetailsOutgoing from "../components/donations/DonationDetailsOutgoing";
@@ -30,6 +39,7 @@ import {
   DonationDashboardResponse,
   ResponseDonation,
 } from "~/types/DonationTypes";
+import Calendar from "../components/Calendar";
 
 const modalStyle = {
   backgroundColor: "#fefefe",
@@ -62,16 +72,19 @@ const DonationsPage: React.FC = () => {
     null
   );
   const [error, setError] = useState<string | null>(null);
-
   const isAnyFilterValueUndefined = () => {
     return filterModel?.items.some((item) => item.value === undefined);
   };
-
   const handleSubmissionSuccess = () => {
     setShowSuccessAlert(true);
+    queryClient.invalidateQueries({ queryKey: ["inventory"] });
   };
-
+  const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
+  const [deletingDonationId, setDeletingDonationId] = useState<number | null>(
+    null
+  );
   const handleAddDonation = () => setAddDonationModalOpen(true);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (selectedDonation) {
@@ -118,7 +131,7 @@ const DonationsPage: React.FC = () => {
         .catch((err: any) => {
           console.log(err);
         }),
-    enabled: !filterModel,
+    enabled: !isAnyFilterValueUndefined(),
   });
 
   const handleFilterModelChange = (model: GridFilterModel) => {
@@ -140,6 +153,7 @@ const DonationsPage: React.FC = () => {
       headerName: "Date",
       type: "date",
       flex: 3,
+      filterable: false,
       valueGetter: (params: GridValueGetterParams) => new Date(params.row.date),
     },
     { field: "organization", headerName: "Organization", flex: 4 },
@@ -176,20 +190,42 @@ const DonationsPage: React.FC = () => {
         <GridActionsCellItem
           icon={<img src={editIcon} />}
           onClick={() => {
-            handleOpenEdit(params.row);
+            handleOpenEdit(params);
           }}
           label="Edit"
         />,
         <GridActionsCellItem
           icon={<img src={deleteIcon} />}
           onClick={() => {
-            // TODO once API is finished
+            const donationId = params.row.id;
+            openDeleteConfirmation(donationId);
           }}
           label="Delete"
         />,
       ],
     },
   ];
+
+  const openDeleteConfirmation = (donationId: number) => {
+    setDeletingDonationId(donationId);
+    setDeleteConfirmationOpen(true);
+  };
+
+  const closeDeleteConfirmation = () => {
+    setDeleteConfirmationOpen(false);
+    setDeletingDonationId(null);
+  };
+
+  const handleDeleteDonation = (donationId: number) => {
+    deleteDonation(donationId)
+      .then(() => {
+        queryClient.invalidateQueries({ queryKey: ["donation"] });
+        setShowSuccessAlert(true);
+      })
+      .catch((error) => {
+        setError("Failed to delete donation");
+      });
+  };
 
   return (
     <Box>
@@ -200,13 +236,21 @@ const DonationsPage: React.FC = () => {
         />
       )}
       {error && <ErrorMessage error={error} setError={setError} />}
-      <Button
-        onClick={handleAddDonation}
-        className="table-add-button"
-        endIcon={<AddIcon />}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+        }}
       >
-        Add
-      </Button>
+        <Calendar setFilterModel={setFilterModel} />
+        <Button
+          onClick={handleAddDonation}
+          className="table-add-button"
+          endIcon={<AddIcon />}
+        >
+          Add
+        </Button>
+      </div>
       <div className="grid-container">
         <DataGrid
           rowHeight={40}
@@ -250,6 +294,29 @@ const DonationsPage: React.FC = () => {
           />
         </Box>
       </Modal>
+      <Box>
+        <Dialog open={deleteConfirmationOpen} onClose={closeDeleteConfirmation}>
+          <DialogTitle>Confirm Save</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Are you sure you want to delete this donation?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={() => {
+                if (deletingDonationId !== null) {
+                  handleDeleteDonation(deletingDonationId);
+                  closeDeleteConfirmation();
+                }
+              }}
+            >
+              Delete
+            </Button>
+            <Button onClick={closeDeleteConfirmation}>Cancel</Button>
+          </DialogActions>
+        </Dialog>
+      </Box>
     </Box>
   );
 };

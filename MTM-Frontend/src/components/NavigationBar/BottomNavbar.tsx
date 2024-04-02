@@ -10,16 +10,15 @@ import { USER_TYPE } from "../../lib/constants";
 import homeIcon from "../../pages/assets/home-icon.png";
 import profileIcon from "../../pages/assets/profile-icon.png";
 import formIcon from "../../pages/assets/form-icon.png";
-
 import "./Navbar.css";
 import { useLocation, useNavigate } from "react-router-dom";
-import type { UserTypeProps } from "~/pages/HomeLayout";
 
-export const Navbar: React.FC<UserTypeProps> = ({ savedUserType }) => {
+export const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm")); // Change breakpoint as needed
+  const savedUserType = localStorage.getItem("userType");
 
   const getParentRoute = (pathname: string) => {
     if (pathname.startsWith("/home/profile")) {

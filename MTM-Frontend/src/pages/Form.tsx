@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Typography, Stack, Button } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ReviewSection from "../components/Form/ReviewSection/ReviewSection";
 import DemographicSection from "../components/Form/DemographicSection/DemographicSection";
 import GeneralSection from "../components/Form/GeneralSection";
@@ -47,8 +47,11 @@ const Form: React.FC = () => {
       };
 
       const response = await createOutgoingDonation(token, request);
-      if (!response.ok) {
-        throw new Error("Error submitting form. Please try again");
+      if (response.status === 500) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const message = await response.json();
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        throw new Error(message.message as string);
       }
       // reset form
       setDemographicDetails({
@@ -164,8 +167,6 @@ const Form: React.FC = () => {
           <Button
             onClick={onSubmit}
             type="submit"
-            component={Link}
-            to="/home/form/success"
             variant="outlined"
             sx={{
               fontFamily: "Interit, sans-serif",

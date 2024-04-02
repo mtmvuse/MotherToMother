@@ -32,6 +32,7 @@ model User {
   role           String?
   household      String?
   userType       String
+  status         String
   donation       Donation[]
   Organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
@@ -111,6 +112,7 @@ view user_dashboard {
   phone        String
   address      String @db.Text
   type         String
+  status       String
   organization String
 }
 

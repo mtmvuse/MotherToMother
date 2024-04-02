@@ -8,7 +8,11 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import ItemField from "./ItemField";
+<<<<<<< HEAD
 import { IconButton, TextField, Typography, Autocomplete } from "@mui/material";
+=======
+import { IconButton, TextField, Typography, Grid } from "@mui/material";
+>>>>>>> c667d140193bbc6d5ea5e37a2ac7e7d43e092e9b
 import {
   createOutgoingDonation,
   getOrganizations,
@@ -316,8 +320,8 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
   };
 
   return (
-    <div className="add-modal">
-      <Box p={2} sx={{ overflowY: "auto" }}>
+    <Box p={2} sx={{ overflowY: "auto" }}>
+      <div className="add-modal">
         <Typography
           fontFamily="Raleway, sans-serif"
           fontSize={14}
@@ -336,28 +340,14 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
             padding: "25px",
           }}
         >
-          <div
-            style={{ display: "flex", alignItems: "center", marginTop: "20px" }}
-          >
-            <Typography
-              fontFamily="Raleway, sans-serif"
-              fontSize={20}
-              color="navy"
-            >
-              Donor
-            </Typography>
-
-            <div
-              style={{
-                width: "100%",
-                display: "flex",
-                justifyContent: "flex-end",
-              }}
-            >
-              <FormControl
-                variant="standard"
-                sx={{ width: 300, marginRight: "200px" }}
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <Typography
+                fontFamily="Raleway, sans-serif"
+                fontSize={20}
+                color="navy"
               >
+<<<<<<< HEAD
                 <Autocomplete
                   disablePortal
                   id="donor-select"
@@ -374,32 +364,28 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
                     />
                   )}
                 />
+=======
+                Donor
+              </Typography>
+              <FormControl variant="standard" fullWidth sx={{ width: "75%" }}>
+                <Select id="donor-select" onChange={handleTypeChange}>
+                  <MenuItem value={"Incoming"}>Incoming</MenuItem>
+                  <MenuItem value={"Outgoing"}>Outgoing</MenuItem>
+                </Select>
+>>>>>>> c667d140193bbc6d5ea5e37a2ac7e7d43e092e9b
               </FormControl>
-            </div>
-          </div>
-
-          <div
-            style={{ display: "flex", alignItems: "center", marginTop: "20px" }}
-          >
-            <Typography
-              fontFamily="Raleway, sans-serif"
-              fontSize={20}
-              color="navy"
-            >
-              Organization
-            </Typography>
-
-            <div
-              style={{
-                width: "100%",
-                display: "flex",
-                justifyContent: "flex-end",
-              }}
-            >
+            </Grid>
+            <Grid item xs={12}>
+              <Typography
+                fontFamily="Raleway, sans-serif"
+                fontSize={20}
+                color="navy"
+              >
+                Organization
+              </Typography>
               <FormControl
-                fullWidth
                 variant="standard"
-                sx={{ width: 300, marginRight: "200px" }}
+                sx={{ width: "75%" }}
                 disabled={!showDonor}
               >
                 <Autocomplete
@@ -420,40 +406,33 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
                   )}
                 />
               </FormControl>
-            </div>
-          </div>
-
-          <div
-            style={{ display: "flex", alignItems: "center", marginTop: "20px" }}
-          >
-            <Typography
-              fontFamily="Raleway, sans-serif"
-              fontSize={20}
-              color="navy"
-            >
-              User
-            </Typography>
-
-            <div
-              style={{
-                width: "100%",
-                display: "flex",
-                justifyContent: "flex-end",
-              }}
-            >
+            </Grid>
+            <Grid item xs={12}>
+              <Typography
+                fontFamily="Raleway, sans-serif"
+                fontSize={20}
+                color="navy"
+              >
+                User
+              </Typography>
               <FormControl
                 disabled={!showUser || userList.length === 0}
                 fullWidth
                 variant="standard"
-                sx={{ width: 300, marginRight: "200px" }}
+                sx={{ width: "75%" }}
               >
                 {selectedOrg && userList.length === 0 && (
                   <Typography fontSize={13}>
                     No users available for the selected organization.
                   </Typography>
                 )}
+<<<<<<< HEAD
                 <Autocomplete
                   disablePortal
+=======
+                <Select
+                  labelId="user-select-label"
+>>>>>>> c667d140193bbc6d5ea5e37a2ac7e7d43e092e9b
                   id="user-select"
                   value={selectedUser}
                   onChange={handleUserChange}
@@ -473,6 +452,7 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
                   )}
                 />
               </FormControl>
+<<<<<<< HEAD
             </div>
           </div>
 
@@ -509,6 +489,38 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
               </LocalizationProvider>
             </div>
           </div>
+=======
+            </Grid>
+            <Grid item xs={12}>
+              <Typography
+                fontFamily="Raleway, sans-serif"
+                fontSize={20}
+                color="navy"
+              >
+                Date
+              </Typography>
+              <div
+                className="date-picker"
+                style={{
+                  width: "100%",
+                }}
+              >
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DemoContainer
+                    components={["DatePicker"]}
+                    sx={{ width: "100%" }}
+                  >
+                    <DatePicker
+                      disabled={!showCalendar}
+                      onChange={handleDateChange}
+                      value={selectedDate}
+                    />
+                  </DemoContainer>
+                </LocalizationProvider>
+              </div>
+            </Grid>
+          </Grid>
+>>>>>>> c667d140193bbc6d5ea5e37a2ac7e7d43e092e9b
         </div>
         <IconButton onClick={addItemField} sx={{ mt: 2, mb: 1 }}>
           <img
@@ -663,8 +675,8 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
             </div>
           </div>
         )}
-      </Box>
-    </div>
+      </div>
+    </Box>
   );
 };
 

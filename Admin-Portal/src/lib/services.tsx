@@ -73,7 +73,7 @@ export const deleteInventoryItem = async (
 };
 
 export const getAdminByEmail = async (email: string) => {
-  const url = `${backendUrl}/admins/v1/?email=${email}`;
+  const url = `${backendUrl}/admin/v1?email=${email}`;
   return await fetch(url, {
     method: "GET",
     headers: {
@@ -255,7 +255,7 @@ export const createIncomingDonation = async (
 export const createOutgoingDonation = async (
   outgoingDonationData: AddOutgoingDonationType
 ) => {
-  return await fetch(`${backendUrl}/donation/v1/outgoing`, {
+  return await fetch(`${backendUrl}/donation/v1/outgoing/ap`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(outgoingDonationData),
@@ -347,6 +347,13 @@ export const editIncomingDonation = async (
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(donationData),
+  });
+};
+
+export const deleteDonation = async (donationId: number) => {
+  return await fetch(`${backendUrl}/donation/v1/delete/${donationId}`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
   });
 };
 

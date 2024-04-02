@@ -48,7 +48,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Save the email to local storage
       localStorage.setItem("emailForSignIn", email);
       console.log("Login link sent!");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error sending login link:", error.message);
     }
   };
@@ -61,7 +61,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         await signInWithEmailLink(auth, email, window.location.href);
         window.localStorage.removeItem("emailForSignIn");
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error signing in with email link:", error.message);
       }
     }

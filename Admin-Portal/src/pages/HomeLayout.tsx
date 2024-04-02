@@ -1,6 +1,6 @@
 import React from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import { Box, Tab, Tabs, Typography, Button, Avatar } from "@mui/material";
+import { Box, Tab, Tabs, Typography, Button } from "@mui/material";
 import { CAPTIONS } from "../lib/constants";
 import { useAuth } from "../lib/contexts";
 import "./styles/datagrid.css";
@@ -12,8 +12,6 @@ import CorporateFareOutlinedIcon from "@mui/icons-material/CorporateFareOutlined
 import LocalAtmOutlinedIcon from "@mui/icons-material/LocalAtmOutlined";
 import AssessmentOutlinedIcon from "@mui/icons-material/AssessmentOutlined";
 import StyledEngineProvider from "@mui/material/StyledEngineProvider";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import favicon from "../assets/favicon.ico";
 
 interface LinkTabProps {
   label: string;
@@ -81,16 +79,6 @@ const HomeLayout: React.FC = () => {
   return (
     <StyledEngineProvider injectFirst>
       <Box className="root-container">
-        <Box className="topbar-container">
-          <Box className="topbar-profile">
-            <Avatar src={favicon} sx={{ borderRadius: 0 }} alt="Favicon" />
-            <Typography variant="h5" className="text">
-              Name
-            </Typography>
-            <ExpandMoreIcon />
-          </Box>
-        </Box>
-
         <Box sx={{ display: "flex" }}>
           <Box
             sx={{
@@ -127,7 +115,7 @@ const HomeLayout: React.FC = () => {
             </Box>
           </Box>
           <Box sx={{ flex: 1, p: 3 }} className="page-container">
-            <Typography variant="h4" className="page-title">
+            <Typography variant="h5" className="page-title">
               {CAPTIONS[curPage]}
             </Typography>
             {<Outlet />}
