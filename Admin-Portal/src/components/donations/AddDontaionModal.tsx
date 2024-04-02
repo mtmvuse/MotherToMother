@@ -8,7 +8,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import ItemField from "./ItemField";
-import { IconButton, TextField, Typography } from "@mui/material";
+import { IconButton, TextField, Typography, Autocomplete } from "@mui/material";
 import {
   createOutgoingDonation,
   getOrganizations,
@@ -31,6 +31,8 @@ interface DonationItem {
   totalValue: number;
 }
 
+const options = ["Incoming", "Outgoing"];
+
 interface AddDonationsModalProps {
   handleCloseModal: () => void;
   handleSubmissionSuccess: () => void;
@@ -44,15 +46,16 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
 }) => {
   const [organizationList, setOrganizationList] = useState<Organization[]>([]);
   const [userList, setUserList] = useState<ResponseUser[]>([]);
-  const [selectedOrg, setSelectedOrg] = useState<Organization | undefined>(
-    undefined
+  const [selectedOrg, setSelectedOrg] = React.useState<Organization | null>(
+    null
   );
-  const [selectedUser, setSelectedUser] = useState<ResponseUser | undefined>(
-    undefined
+  const [selectedUser, setSelectedUser] = React.useState<ResponseUser | null>(
+    null
   );
-  const [showDonor, setShowDonor] = useState<boolean>(false);
-  const [showUser, setShowUser] = useState<boolean>(false);
-  const [donationType, setDonationType] = useState<string>("");
+
+  const [showDonor, setShowDonor] = React.useState(false);
+  const [showUser, setShowUser] = React.useState<boolean>(false);
+  const [donationType, setDonationType] = React.useState("");
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [showCalendar, setShowCalendar] = useState<boolean>(false);
   const [showAddButton, setShowAddButton] = useState<boolean>(false);
@@ -70,29 +73,31 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
   });
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
-  const handleUserChange = (event: SelectChangeEvent<string>) => {
-    const selectedUserId = event.target.value;
-    const selectedUser = userList.find(
-      (user) => user.id === parseInt(selectedUserId)
-    );
-    setSelectedUser(selectedUser);
-    setShowCalendar(true);
+  const handleUserChange = (
+    _event: React.SyntheticEvent<Element, Event>,
+    newValue: ResponseUser | null
+  ) => {
+    setSelectedUser(newValue);
+    setShowCalendar(!!newValue);
   };
 
-  const handleOrgChange = (event: SelectChangeEvent<string>) => {
-    const selectedOrgId = event.target.value;
-    const selectedOrg = organizationList.find(
-      (org) => org.id === parseInt(selectedOrgId)
-    );
-    setSelectedOrg(selectedOrg);
-    setShowUser(true);
-    updateUsers(selectedOrg);
-    setSelectedUser(undefined);
+  const handleOrgChange = (
+    event: React.SyntheticEvent<Element, Event>,
+    newValue: Organization | null
+  ) => {
+    setSelectedOrg(newValue);
+    setShowUser(!!newValue);
+    if (newValue) {
+      updateUsers(newValue);
+    }
   };
 
-  const handleTypeChange = (event: SelectChangeEvent<string>) => {
-    setDonationType(event.target.value);
-    setShowDonor(true);
+  const handleTypeChange = (
+    event: React.SyntheticEvent<Element, Event>,
+    newValue: string | null
+  ) => {
+    setDonationType(newValue || "");
+    setShowDonor(!!newValue);
   };
 
   const handleDateChange = (date: Date | null) => {
@@ -353,10 +358,21 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
                 variant="standard"
                 sx={{ width: 300, marginRight: "200px" }}
               >
-                <Select id="donor-select" onChange={handleTypeChange}>
-                  <MenuItem value={"Incoming"}>Incoming</MenuItem>
-                  <MenuItem value={"Outgoing"}>Outgoing</MenuItem>
-                </Select>
+                <Autocomplete
+                  disablePortal
+                  id="donor-select"
+                  value={donationType}
+                  onChange={handleTypeChange}
+                  options={options}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      margin="dense"
+                      label="Donor"
+                      name="Donor"
+                    />
+                  )}
+                />
               </FormControl>
             </div>
           </div>
@@ -385,13 +401,22 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
                 sx={{ width: 300, marginRight: "200px" }}
                 disabled={!showDonor}
               >
-                <Select id="org-select" onChange={handleOrgChange}>
-                  {organizationList.map((org) => (
-                    <MenuItem key={org.id} value={org.id}>
-                      {org.name}
-                    </MenuItem>
-                  ))}
-                </Select>
+                <Autocomplete
+                  disablePortal
+                  id="organization-select"
+                  value={selectedOrg}
+                  onChange={handleOrgChange}
+                  options={organizationList}
+                  getOptionLabel={(org) => org.name}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      margin="dense"
+                      label="Organization"
+                      name="organization"
+                    />
+                  )}
+                />
               </FormControl>
             </div>
           </div>
@@ -425,27 +450,27 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
                     No users available for the selected organization.
                   </Typography>
                 )}
-
-                <Select
-                  labelId="user-select-label"
+                <Autocomplete
+                  disablePortal
                   id="user-select"
+                  value={selectedUser}
                   onChange={handleUserChange}
-                  label="Donor"
-                  MenuProps={{
-                    PaperProps: {
-                      style: {
-                        maxHeight: 200,
-                        overflowY: "auto",
-                      },
-                    },
-                  }}
-                >
-                  {userList.map((user) => (
-                    <MenuItem key={user.id} value={user.id}>
-                      {user.firstName}
-                    </MenuItem>
-                  ))}
-                </Select>
+                  options={userList}
+                  getOptionLabel={(user) => user.firstName}
+                  renderInput={(params: any) => (
+                    <TextField
+                      {...params}
+                      margin="dense"
+                      label="User"
+                      name="user"
+                    />
+                  )}
+                  renderOption={(props, user) => (
+                    <li {...props}>{user.firstName}</li>
+                  )}
+                  fullWidth
+                  style={{ marginBottom: 20 }}
+                />
               </FormControl>
             </div>
           </div>
@@ -484,7 +509,6 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
             </div>
           </div>
         </div>
-
         <IconButton onClick={addItemField} sx={{ mt: 2, mb: 1 }}>
           <img
             className="add-item-icon"
