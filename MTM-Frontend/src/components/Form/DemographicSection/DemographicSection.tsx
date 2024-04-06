@@ -69,7 +69,7 @@ const DemographicSection: React.FC<DemographicSectionProps> = ({
                     sx={{ typography: { xs: "h6" } }}
                     color="var(--mtmGray)"
                   >
-                    Save and Submit{" "}
+                    Submit{" "}
                   </Typography>
                 </Stack>
               </Grid>
