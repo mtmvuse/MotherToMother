@@ -207,6 +207,11 @@ const createOutgoingDonationAP = async (
       );
     }
 
+    // Make sure that donation isn't empty
+    if (donationReqBody.donationDetails.length === 0) {
+      throw new Error("Donation is empty");
+    }
+
     await checkOutgoingItemsAP(donationReqBody);
 
     const newDonation = await DonationService.createDonation(
@@ -250,6 +255,11 @@ const createOutgoingDonationUA = async (
       user.id,
       new Date(),
     );
+
+    // Make sure that donation isn't empty
+    if (donationReqBody.donationDetails.length === 0) {
+      throw new Error("Donation is empty");
+    }
 
     // Get the item id from the item name
     const newDonationDetails = [];
