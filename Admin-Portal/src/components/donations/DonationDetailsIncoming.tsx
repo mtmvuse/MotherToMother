@@ -7,9 +7,9 @@ import {
   DialogContentText,
   DialogTitle,
   FormControl,
-  MenuItem,
   Typography,
   TextField,
+  Autocomplete,
 } from "@mui/material";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import ItemsTable from "./ItemsTable";
@@ -144,15 +144,24 @@ const DonationDetailsIncoming: React.FC<ModalContentProps> = ({
     setOpenConfirmDialog(true);
   };
 
-  const handleItemSelectionChange = (event: SelectChangeEvent<string>) => {
-    const selectedItem = itemList.find(
-      (item) => item.name === event.target.value
-    );
+  const handleItemSelectionChange = (
+    event: React.SyntheticEvent<Element, Event>,
+    newValue: string | null
+  ) => {
+    const selectedItem = itemList.find((item) => item.name === newValue);
     setSelectedItemSelection(selectedItem || null);
   };
 
-  const handleCategorySelectionChange = (event: SelectChangeEvent<string>) => {
-    setSelectedCategorySelection(event.target.value as string);
+  const handleCategorySelectionChange = (
+    event: React.SyntheticEvent<Element, Event>,
+    newValue: string | null
+  ) => {
+    if (newValue !== null) {
+      console.log("SELECTED CATEGORY:", newValue);
+      setSelectedCategorySelection(newValue);
+    } else {
+      console.log("EMPTY SELECTED CATEGORY");
+    }
   };
 
   const handleQuantityNewChange = (
@@ -356,19 +365,18 @@ const DonationDetailsIncoming: React.FC<ModalContentProps> = ({
                 Category
               </Typography>
               <FormControl fullWidth>
-                <Select
-                  id="category"
-                  value={
-                    selectedCategorySelection ? selectedCategorySelection : ""
+                <Autocomplete
+                  id="category-autocomplete"
+                  value={selectedCategorySelection}
+                  onChange={(event, newValue) =>
+                    handleCategorySelectionChange(event, newValue)
                   }
-                  onChange={handleCategorySelectionChange}
-                >
-                  {categoryList.map((category, index) => (
-                    <MenuItem key={index} value={category.toString()}>
-                      {category}
-                    </MenuItem>
-                  ))}
-                </Select>
+                  options={categoryList}
+                  renderInput={(params) => (
+                    <TextField {...params} label="Category" margin="dense" />
+                  )}
+                  fullWidth
+                />
               </FormControl>
             </div>
             <div style={{ display: "flex", marginBottom: "15px" }}>
@@ -376,17 +384,18 @@ const DonationDetailsIncoming: React.FC<ModalContentProps> = ({
                 Item
               </Typography>
               <FormControl fullWidth disabled={!selectedCategorySelection}>
-                <Select
-                  id="item-selection"
-                  value={
-                    selectedItemSelection ? selectedItemSelection.name : ""
+                <Autocomplete
+                  id="item-selection-autocomplete"
+                  value={selectedItemSelection?.name || ""}
+                  onChange={(event, newValue) =>
+                    handleItemSelectionChange(event, newValue)
                   }
-                  onChange={handleItemSelectionChange}
-                >
-                  {filteredItemList.map((item) => (
-                    <MenuItem value={item.name}>{item.name}</MenuItem>
-                  ))}
-                </Select>
+                  options={filteredItemList.map((item) => item.name)}
+                  renderInput={(params) => (
+                    <TextField {...params} label="Item" margin="dense" />
+                  )}
+                  fullWidth
+                />
               </FormControl>
             </div>
             <div

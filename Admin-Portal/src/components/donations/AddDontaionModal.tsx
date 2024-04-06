@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
-import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
 import Box from "@mui/material/Box";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -349,6 +347,9 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
                 fontSize={20}
                 color="navy"
               >
+                Donor
+              </Typography>
+              <FormControl variant="standard" sx={{ width: "75%" }}>
                 <Autocomplete
                   disablePortal
                   id="donor-select"
@@ -365,7 +366,7 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
                     />
                   )}
                 />
-              </Typography>
+              </FormControl>
             </Grid>
             <Grid item xs={12}>
               <Typography

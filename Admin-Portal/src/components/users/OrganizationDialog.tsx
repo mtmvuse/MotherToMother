@@ -1,18 +1,19 @@
 import * as React from "react";
-import {
-  TextField,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  SelectChangeEvent,
-} from "@mui/material";
+import { TextField, FormControl, Autocomplete } from "@mui/material";
 import { ORGANIZATION_TYPE } from "../../lib/constants";
 
 const OrganizationDialog = () => {
   const [type, setType] = React.useState("");
-  const handleTypeChange = (event: SelectChangeEvent) => {
-    setType(event.target.value as string);
+  const handleTypeChange = (
+    event: React.SyntheticEvent<Element, Event>,
+    newValue: string | null
+  ) => {
+    if (newValue !== null) {
+      console.log("ORG TYPE:", newValue);
+      setType(newValue);
+    } else {
+      console.log("EMPTY ORG TYPE");
+    }
   };
 
   return (
@@ -28,21 +29,20 @@ const OrganizationDialog = () => {
         variant="standard"
       />
       <FormControl fullWidth margin="dense">
-        <InputLabel id="org-type">Type</InputLabel>
-        <Select
-          labelId="org-type-label"
-          id="org-type-select"
-          value={type}
-          label="Type"
-          onChange={handleTypeChange}
-          name="type"
-        >
-          {Object.values(ORGANIZATION_TYPE).map((type) => (
-            <MenuItem key={type} value={type}>
-              {type}
-            </MenuItem>
-          ))}
-        </Select>
+        <Autocomplete
+          id="org-type-autocomplete"
+          onChange={(event, newValue) => handleTypeChange(event, newValue)}
+          options={Object.values(ORGANIZATION_TYPE)}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Organization Type"
+              margin="dense"
+              name="type"
+            />
+          )}
+          fullWidth
+        />
       </FormControl>
     </>
   );

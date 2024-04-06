@@ -1,15 +1,7 @@
 import React, { useState, useEffect } from "react";
 import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
 import Box from "@mui/material/Box";
-import {
-  Typography,
-  TextField,
-  IconButton,
-  SelectChangeEvent,
-} from "@mui/material";
+import { Typography, TextField, IconButton, Autocomplete } from "@mui/material";
 import { getModalItems } from "../../lib/services";
 import { ResponseInventoryItem } from "~/types/inventory";
 import deleteIcon from "../../assets/delete-icon.png";
@@ -20,7 +12,7 @@ interface ItemFieldProps {
   onQuantityChange: (
     quantityNew: number,
     quantityUsed: number,
-    totalValue: number,
+    totalValue: number
   ) => void;
   onItemChange: (itemId: number) => void;
 }
@@ -72,33 +64,44 @@ const ItemField: React.FC<ItemFieldProps> = ({
   };
 
   const handleUsedQuantityChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
+    event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const tmpUsedQuantity = Number(event.target.value);
     setQuantityUsed(tmpUsedQuantity);
   };
 
   const handleNewQuantityChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
+    event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const tmpNewQuantity = Number(event.target.value);
     setQuantityNew(tmpNewQuantity);
   };
 
-  const handleItemChange = (event: SelectChangeEvent) => {
-    const selectedItemName = event.target.value as string;
-    const foundItem = itemList.find((item) => item.name === selectedItemName);
-    if (foundItem) {
-      setSelectedItem(foundItem);
-      setValueNew(foundItem.valueNew);
-      setValueUsed(foundItem.valueUsed);
-      onItemChange(foundItem.id);
+  const handleItemChange = (
+    event: React.SyntheticEvent<Element, Event>,
+    newValue: ResponseInventoryItem | null
+  ) => {
+    if (newValue !== null) {
+      console.log("SELECTED ITEM:", newValue);
+      setSelectedItem(newValue);
+      setValueNew(newValue.valueNew);
+      setValueUsed(newValue.valueUsed);
+      onItemChange(newValue.id);
+    } else {
+      console.log("EMPTY SELECTED ITEM");
     }
   };
 
-  const handleItemTypeChange = (event: SelectChangeEvent) => {
-    const selectedItemType = event.target.value;
-    setItemType(selectedItemType);
+  const handleItemTypeChange = (
+    event: React.SyntheticEvent<Element, Event>,
+    newValue: string | null
+  ) => {
+    if (newValue !== null) {
+      console.log("SELECTED ITEM TYPE:", newValue);
+      setItemType(newValue);
+    } else {
+      console.log("EMPTY ITEM TYPE");
+    }
   };
 
   function formatDollar(amount: number): string {
@@ -124,36 +127,30 @@ const ItemField: React.FC<ItemFieldProps> = ({
       marginBottom={1}
       sx={{ backgroundColor: "lightgray" }}
     >
-      <FormControl variant="standard" sx={{ minWidth: 120 }}>
-        <InputLabel id="demo-simple-select-standard-label">Item</InputLabel>
-        <Select
-          labelId="demo-simple-select-standard-label"
-          id="demo-simple-select-standard"
-          label="Item"
-          value={selectedItem ? selectedItem.name : ""}
-          onChange={handleItemChange}
-          error={!!error}
-          sx={{ width: "150px" }}
-        >
-          {itemList.map((item) => (
-            <MenuItem key={item.id} value={item.name}>
-              {item.name}
-            </MenuItem>
-          ))}
-        </Select>
+      <FormControl sx={{ minWidth: 120 }}>
+        <Autocomplete
+          id="item-autocomplete"
+          value={selectedItem}
+          onChange={(event, newValue) => handleItemChange(event, newValue)}
+          options={itemList}
+          getOptionLabel={(option) => option.name}
+          renderInput={(params) => <TextField {...params} label="Item" />}
+          fullWidth
+        />
       </FormControl>
       <>
-        <FormControl variant="standard" sx={{ minWidth: 120 }}>
-          <InputLabel id="demo-simple-select-standard-label">Type</InputLabel>
-          <Select
-            label="ItemType"
-            onChange={handleItemTypeChange}
+        <FormControl sx={{ minWidth: 120 }}>
+          <Autocomplete
+            id="item-type-autocomplete"
             value={itemType}
-            disabled={!selectedItem}
-          >
-            <MenuItem value={"Used"}>Used</MenuItem>
-            <MenuItem value={"New"}>New</MenuItem>
-          </Select>
+            onChange={(event, newValue) =>
+              handleItemTypeChange(event, newValue)
+            }
+            sx={{ width: "150px" }}
+            options={["Used", "New"]}
+            renderInput={(params) => <TextField {...params} label="Type" />}
+            fullWidth
+          />
         </FormControl>
 
         <TextField
@@ -166,8 +163,8 @@ const ItemField: React.FC<ItemFieldProps> = ({
             itemType === "New"
               ? formatDollar(valueNew)
               : itemType === "Used"
-                ? formatDollar(valueUsed)
-                : ""
+              ? formatDollar(valueUsed)
+              : ""
           }
           InputLabelProps={{
             shrink: true,
@@ -190,8 +187,8 @@ const ItemField: React.FC<ItemFieldProps> = ({
             itemType === "New"
               ? handleNewQuantityChange
               : itemType === "Used"
-                ? handleUsedQuantityChange
-                : undefined
+              ? handleUsedQuantityChange
+              : undefined
           }
         />
       </>
