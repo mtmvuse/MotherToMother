@@ -52,7 +52,9 @@ export const getReportCount = async (whereClause: Report): Promise<number> => {
  *  get amount of qualified reports in the db for AP
  * @returns count of amount based on filter
  */
-export const getReportAmount = async (whereClause: Report): Promise<number> => {
+export const getReportQuantity = async (
+  whereClause: Report,
+): Promise<number> => {
   const aggregations = await db.report_dashboard.aggregate({
     _sum: {
       quantity: true,
@@ -70,10 +72,10 @@ export const getReportAmount = async (whereClause: Report): Promise<number> => {
 export const getReportValue = async (whereClause: Report): Promise<number> => {
   const aggregations = await db.report_dashboard.aggregate({
     _sum: {
-      value: true,
+      total: true,
     },
     where: whereClause,
   });
 
-  return aggregations._sum.value || 0;
+  return aggregations._sum.total || 0;
 };
