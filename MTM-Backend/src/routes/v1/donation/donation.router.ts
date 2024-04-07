@@ -331,12 +331,12 @@ const updateOutgoingDonation = async (
     }
     // -------------------------- Item Validation ------------------------------
     for (const donationDetail of donationReqBody.donationDetails) {
-      // if (
-      //   !isNonNegativeInteger(donationDetail.usedQuantity) ||
-      //   !isNonNegativeInteger(donationDetail.newQuantity)
-      // ) {
-      //   throw new Error("Quantity of items must be non-negative integers");
-      // }
+      if (
+        !isNonNegativeInteger(donationDetail.usedQuantity) ||
+        !isNonNegativeInteger(donationDetail.newQuantity)
+      ) {
+        throw new Error("Quantity of items must be non-negative integers");
+      }
 
       if (!donationDetail.item) {
         throw new Error("Missing item name");
@@ -546,12 +546,12 @@ donationRouter.put(
       const donationId = parseInt(donationIdString, 10);
       // -------------------------- Item Validation ------------------------------
       for (const donationDetail of donationReqBody.donationDetails) {
-        // if (
-        //   !isNonNegativeInteger(donationDetail.usedQuantity) ||
-        //   !isNonNegativeInteger(donationDetail.newQuantity)
-        // ) {
-        //   throw new Error("Quantity of items must be non-negative integers");
-        // }
+        if (
+          !isNonNegativeInteger(donationDetail.usedQuantity) ||
+          !isNonNegativeInteger(donationDetail.newQuantity)
+        ) {
+          throw new Error("Quantity of items must be non-negative integers");
+        }
 
         if (!donationDetail.item) {
           throw new Error("Missing item name");

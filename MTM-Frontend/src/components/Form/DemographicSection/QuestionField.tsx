@@ -1,5 +1,4 @@
 import { Grid, Typography } from "@mui/material";
-import { parse } from "path";
 
 interface InputProps {
   question: string;
