@@ -1,4 +1,5 @@
 import { Grid, Typography } from "@mui/material";
+import { parse } from "path";
 
 interface InputProps {
   question: string;
@@ -6,8 +7,14 @@ interface InputProps {
   onInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const preventMinus = (e: React.KeyboardEvent<HTMLInputElement>) => {
-  if (e.key === "-" || e.key === "e" || e.key === "E" || e.key === "+") {
+const preventMinusAndDecimal = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  if (
+    e.key === "-" ||
+    e.key === "e" ||
+    e.key === "E" ||
+    e.key === "+" ||
+    e.key === "."
+  ) {
     e.preventDefault();
   }
 };
@@ -28,13 +35,14 @@ export const QuestionField: React.FC<InputProps> = ({
           {question}
         </Typography>
       </Grid>
+      {/* Input field with only interger value */}
       <Grid item>
         <input
           key={question}
           type="number"
           placeholder={String(value)}
           onChange={onInputChange}
-          onKeyDown={preventMinus}
+          onKeyDown={preventMinusAndDecimal}
           style={{
             width: "4.5rem",
             height: "2rem",
