@@ -12,7 +12,7 @@ import Typography from "@mui/material/Typography";
 import { useForm } from "../../../contexts/FormContext";
 import type { DonationDetailType } from "../../../types/FormTypes";
 import "./SpecificItemsDialog.css";
-import { parse } from "path";
+import { ErrorMessage } from "../../Error";
 
 type SpecificItemsProps = {
   open: boolean;
@@ -29,6 +29,7 @@ export const SpecificItemsDialog = ({
   const { setDonationDetails } = useForm();
   const [tempNewQuantity, setTempNewQuantity] = useState(newQuantity);
   const [tempUsedQuantity, setTempUsedQuantity] = useState(usedQuantity);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!open) {
@@ -39,8 +40,11 @@ export const SpecificItemsDialog = ({
   }, [open, tempNewQuantity, tempUsedQuantity]);
 
   const handleSaveDetails = () => {
+    if (tempNewQuantity === 0 && tempUsedQuantity === 0) {
+      setError("Please enter a quantity for either new or used items.");
+      return;
+    }
     setDonationDetails((prev) => {
-      // Throw an error if both new and used quantities are 0
       const updatedDonationDetails = [...prev];
       const existingItemIndex = updatedDonationDetails.findIndex(
         (detail) => detail.item === item,
@@ -86,6 +90,7 @@ export const SpecificItemsDialog = ({
 
   return (
     <div id="SpecificItems-Dialog">
+      <ErrorMessage error={error} setError={setError} />
       <Dialog
         open={open}
         onClose={handleClose}
@@ -134,14 +139,12 @@ export const SpecificItemsDialog = ({
             </Typography>
             <input
               type="number"
+              value={tempNewQuantity === 0 ? "" : tempNewQuantity}
               onKeyDown={preventMinus}
-              value={tempNewQuantity}
               onChange={(e) => {
                 const value = e.target.value;
                 if (value === "" || !isNaN(parseInt(value))) {
                   setTempNewQuantity(value === "" ? 0 : parseInt(value));
-                } else {
-                  setTempNewQuantity(parseInt(value));
                 }
               }}
               style={{
@@ -174,14 +177,12 @@ export const SpecificItemsDialog = ({
             </Typography>
             <input
               type="number"
+              value={tempUsedQuantity === 0 ? "" : tempUsedQuantity}
               onKeyDown={preventMinus}
-              value={tempUsedQuantity}
               onChange={(e) => {
                 const value = e.target.value;
                 if (value === "" || !isNaN(parseInt(value))) {
                   setTempUsedQuantity(value === "" ? 0 : parseInt(value));
-                } else {
-                  setTempUsedQuantity(parseInt(value));
                 }
               }}
               style={{
@@ -194,6 +195,7 @@ export const SpecificItemsDialog = ({
               }}
             />
           </Stack>
+
           <Grid
             container
             spacing={1}
@@ -236,7 +238,6 @@ export const SpecificItemsDialog = ({
                   height: "32px",
                   width: "87px",
                 }}
-                disabled={tempNewQuantity === 0 && tempUsedQuantity === 0}
               >
                 Save
               </Button>
