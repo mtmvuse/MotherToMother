@@ -12,6 +12,7 @@ import Typography from "@mui/material/Typography";
 import { useForm } from "../../../contexts/FormContext";
 import type { DonationDetailType } from "../../../types/FormTypes";
 import "./SpecificItemsDialog.css";
+import { parse } from "path";
 
 type SpecificItemsProps = {
   open: boolean;
@@ -39,6 +40,7 @@ export const SpecificItemsDialog = ({
 
   const handleSaveDetails = () => {
     setDonationDetails((prev) => {
+      // Throw an error if both new and used quantities are 0
       const updatedDonationDetails = [...prev];
       const existingItemIndex = updatedDonationDetails.findIndex(
         (detail) => detail.item === item,
@@ -132,12 +134,14 @@ export const SpecificItemsDialog = ({
             </Typography>
             <input
               type="number"
-              value={tempNewQuantity === 0 ? "" : tempNewQuantity}
               onKeyDown={preventMinus}
+              value={tempNewQuantity}
               onChange={(e) => {
                 const value = e.target.value;
                 if (value === "" || !isNaN(parseInt(value))) {
                   setTempNewQuantity(value === "" ? 0 : parseInt(value));
+                } else {
+                  setTempNewQuantity(parseInt(value));
                 }
               }}
               style={{
@@ -170,12 +174,14 @@ export const SpecificItemsDialog = ({
             </Typography>
             <input
               type="number"
-              value={tempUsedQuantity === 0 ? "" : tempUsedQuantity}
               onKeyDown={preventMinus}
+              value={tempUsedQuantity}
               onChange={(e) => {
                 const value = e.target.value;
                 if (value === "" || !isNaN(parseInt(value))) {
                   setTempUsedQuantity(value === "" ? 0 : parseInt(value));
+                } else {
+                  setTempUsedQuantity(parseInt(value));
                 }
               }}
               style={{
@@ -230,6 +236,7 @@ export const SpecificItemsDialog = ({
                   height: "32px",
                   width: "87px",
                 }}
+                disabled={tempNewQuantity === 0 && tempUsedQuantity === 0}
               >
                 Save
               </Button>
