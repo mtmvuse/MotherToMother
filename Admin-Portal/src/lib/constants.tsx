@@ -12,6 +12,10 @@ export const USER_TYPE = {
   PUBLIC: "Public Donor",
   CORPORATE: "Corporate Donor",
 };
+export const USER_STATUS = {
+  ACTIVE: "Active",
+  INACTIVE: "Inactive",
+};
 export const ORGANIZATION_TYPE = {
   AGENCY: "Agency",
   PUBLIC: "Public",

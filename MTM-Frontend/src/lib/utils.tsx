@@ -1,4 +1,4 @@
-import { type UserType, type EditUserType } from "~/types/UserTypes";
+import { type UserType, type CacheUser } from "~/types/UserTypes";
 import { getUserData } from "./services";
 
 export const storeLocalUserData = async (
@@ -12,7 +12,7 @@ export const storeLocalUserData = async (
   localStorage.setItem("userFirstName", userData.firstName);
 };
 
-export const updateLocalUserData = (user: EditUserType) => {
+export const updateLocalUserData = (user: CacheUser) => {
   user.email && localStorage.setItem("userEmail", user.email);
   user.firstName && localStorage.setItem("userFirstName", user.firstName);
 };
@@ -21,5 +21,4 @@ export const removeLocalUserData = () => {
   localStorage.removeItem("userType");
   localStorage.removeItem("userEmail");
   localStorage.removeItem("userFirstName");
-  localStorage.removeItem("userId");
 };

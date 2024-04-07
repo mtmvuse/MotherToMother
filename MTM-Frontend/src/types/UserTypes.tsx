@@ -9,6 +9,12 @@ export type UserType = {
   userType: string;
 };
 
+export type CacheUser = {
+  firstName: string;
+  email: string;
+  userType?: string;
+};
+
 export type EditUserType = {
   firstName: string | undefined;
   lastName: string | undefined;

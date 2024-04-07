@@ -8,7 +8,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { getUserData, updateUser } from "../../lib/services";
 import { ErrorMessage } from "../../components/Error";
 import { CircularProgress } from "@mui/material";
-import type { UserType } from "../../types/UserTypes";
+import type { UserType, CacheUser } from "../../types/UserTypes";
 import { updateLocalUserData } from "../../lib/utils";
 
 interface FormValues {
@@ -130,7 +130,11 @@ const EditProfile: React.FC = () => {
       if (!response.ok) {
         throw new Error("Error updating user");
       } else {
-        updateLocalUserData(user);
+        const updateCacheUser = {
+          firstName: firstName ?? "",
+          email: values.email,
+        };
+        updateLocalUserData(updateCacheUser as CacheUser);
         navigate("/home/profile");
       }
     } catch (err: any) {
