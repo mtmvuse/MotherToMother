@@ -9,8 +9,8 @@
 }
 
 .animal-image {
-  position: absolute; 
-  bottom: 0; 
+  position: absolute;
+  bottom: 0;
 }
 
 .login-container .heading {
@@ -128,7 +128,7 @@
   cursor: pointer;
 }
 
-@media (max-height: 750px) {
+@media (max-height: 830px) {
   .animal-image {
     display: none;
   }

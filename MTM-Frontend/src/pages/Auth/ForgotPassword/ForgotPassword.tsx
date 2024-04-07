@@ -9,6 +9,7 @@ import "./ForgotPassword.css";
 import forgotpasswordlogo from "../../assets/forgotpassword-logo.png";
 import paperAirplane from "../../assets/paperPlanelogo.png";
 import ForgotPasswordModal from "../../../components/Auth/ForgotPasswordModal/ForgotPasswordModal";
+import { RegisterTextField } from "../../../components/Auth/RegisterForms/RegisterTextField";
 
 interface FormValues {
   email: string;
@@ -54,7 +55,11 @@ const ForgotPassword: React.FC = () => {
 
   return (
     <div className={"forgot-password-container"}>
-      <img src={forgotpasswordlogo} alt="Image1" className="custom-image" />
+      <img
+        src={forgotpasswordlogo}
+        alt="Image1"
+        className="forgot-logo-image"
+      />
       <Typography className="heading">Forgot your password?</Typography>
       <div className={"forgot-password-form"}>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -81,7 +86,6 @@ const ForgotPassword: React.FC = () => {
             >
               {isSubmitting ? "Submitting" : "RESET PASSWORD"}
             </button>
-            {/* Button to test popup Modal: <button onClick={() => setOpen(true)}>Modal Test</button> */}
           </div>
         </form>
       </div>
