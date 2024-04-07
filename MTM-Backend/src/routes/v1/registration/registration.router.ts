@@ -6,6 +6,7 @@ import express, {
 import type { UserInput } from "../../../types/user";
 import * as UserService from "../user/user.service";
 import Joi from "joi";
+import { USER_STATUS } from "../../../utils/constants";
 
 const registrationRouter = express.Router();
 
@@ -33,6 +34,9 @@ registrationRouter.post(
     });
     try {
       const data = (await schema.validateAsync(req.body)) as UserInput;
+      if (!data.status) {
+        data.status = USER_STATUS.ACTIVE;
+      }
       const user = await UserService.createUser(data);
       return res.status(201).json(user);
     } catch (e) {

@@ -8,16 +8,6 @@ const backendUrl: string =
     ? (import.meta.env.VITE_LOCAL_SERVER_URL as string)
     : (import.meta.env.VITE_PRODUCTION_SERVER_URL as string);
 
-export const setUserType = async (uid: string, userType: string) => {
-  return await fetch(`${backendUrl}/sessions/v1/setUserType`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ uid, userType }),
-  });
-};
-
 export const registerUserOnServer = async (user: UserType) => {
   return await fetch(`${backendUrl}/registration/v1`, {
     method: "POST",

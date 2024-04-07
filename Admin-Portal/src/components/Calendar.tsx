@@ -7,21 +7,18 @@ import 'react-date-range/dist/theme/default.css'; // theme css file
 import { DateRangePicker } from 'react-date-range';
 import type { Range } from 'react-date-range';
 import { GridFilterModel } from '@mui/x-data-grid';
-import { Button, Dialog, DialogContent } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
+import CancelIcon from '@mui/icons-material/Cancel';
+import { Button, Dialog, DialogContent, Typography, Box } from '@mui/material';
 
 interface CalendarProps {
 	handleFilterModelChange: (model: GridFilterModel) => void;
+	setFilterModel: React.Dispatch<React.SetStateAction<GridFilterModel | undefined>>;
 }
 
-const Calendar: React.FC<CalendarProps> = ({ handleFilterModelChange }) => {
+const Calendar: React.FC<CalendarProps> = ({ setFilterModel, handleFilterModelChange }) => {
 	const [openCal, setOpenCal] = useState(false);
-	const [date, setDate] = useState<Range[]>([
-		{
-			startDate: new Date(),
-			endDate: new Date(),
-			key: 'selection',
-		},
-	]);
+	const [date, setDate] = useState<Range[] | null>(null);
 
 	const handleCalendarOpen = () => {
 		setOpenCal(true);
@@ -31,6 +28,10 @@ const Calendar: React.FC<CalendarProps> = ({ handleFilterModelChange }) => {
 		setOpenCal(false);
 	};
 
+	const handleClearDateFilter = () => {
+		setDate(null);
+		setFilterModel(undefined);
+	};
 	const handleDateChange = (ranges: any) => {
 		const filter = [
 			{
@@ -52,23 +53,43 @@ const Calendar: React.FC<CalendarProps> = ({ handleFilterModelChange }) => {
 
 	return (
 		<>
-			<Button className='table-add-calendar-button' onClick={handleCalendarOpen} endIcon={<CalendarIcon />}>
-				Choose Date
-			</Button>
-			<LocalizationProvider dateAdapter={AdapterDayjs}>
-				<Dialog open={openCal} onClose={handleCalendarClose} maxWidth={false}>
-					<DialogContent>
-						<DateRangePicker
-							onChange={handleDateChange}
-							moveRangeOnFirstSelection={false}
-							months={2}
-							ranges={date}
-							direction='horizontal'
-							rangeColors={['#4DAD45']}
-						/>
-					</DialogContent>
-				</Dialog>
-			</LocalizationProvider>
+			<Box className='calendar-container'>
+				<Button className='table-add-calendar-button' onClick={handleCalendarOpen} endIcon={<CalendarIcon />}>
+					Choose Date
+				</Button>
+				<LocalizationProvider dateAdapter={AdapterDayjs}>
+					<Dialog open={openCal} onClose={handleCalendarClose} maxWidth={false}>
+						<DialogContent>
+							<DateRangePicker
+								onChange={handleDateChange}
+								moveRangeOnFirstSelection={false}
+								months={2}
+								ranges={
+									date || [
+										{
+											startDate: new Date(),
+											endDate: new Date(),
+											key: 'selection',
+										},
+									]
+								}
+								direction='horizontal'
+								rangeColors={['#4DAD45']}
+							/>
+						</DialogContent>
+					</Dialog>
+				</LocalizationProvider>
+				{date && (
+					<Box className='calendar-date-range-container'>
+						<Typography className='calendar-date-range-text'>
+							{date[0]?.startDate?.toDateString()} - {date[0]?.endDate?.toDateString()}
+							<IconButton onClick={handleClearDateFilter} aria-label='clear-date-filter' style={{ color: 'lightgray' }}>
+								<CancelIcon />
+							</IconButton>
+						</Typography>
+					</Box>
+				)}
+			</Box>
 		</>
 	);
 };
