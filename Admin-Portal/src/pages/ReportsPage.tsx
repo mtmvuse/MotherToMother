@@ -7,6 +7,7 @@ import {
 	GridSortModel,
 	GridValueGetterParams,
 	GridFilterItem,
+	getGridNumericOperators,
 } from '@mui/x-data-grid';
 import { keepPreviousData, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ErrorMessage } from '../components/ErrorMessage';
@@ -21,6 +22,7 @@ import ExportButton from '../components/ExportButton';
 import { saveAs } from 'file-saver';
 import Papa from 'papaparse';
 import Calendar from '../components/Calendar';
+import FiltersOptions from '../components/report/FiltersOptions';
 
 const ReportsPage: React.FC = () => {
 	const [page, setPage] = useState(0);
@@ -177,6 +179,7 @@ const ReportsPage: React.FC = () => {
 			align: 'left',
 			headerAlign: 'left',
 			editable: false,
+			filterOperators: getGridNumericOperators().filter((operator) => operator.value === '='),
 		},
 		{
 			field: 'value',
@@ -186,6 +189,7 @@ const ReportsPage: React.FC = () => {
 			align: 'left',
 			headerAlign: 'left',
 			editable: false,
+			filterOperators: getGridNumericOperators().filter((operator) => operator.value === '='),
 		},
 		{
 			field: 'total',
@@ -194,6 +198,7 @@ const ReportsPage: React.FC = () => {
 			align: 'left',
 			headerAlign: 'left',
 			editable: false,
+			filterOperators: getGridNumericOperators().filter((operator) => operator.value === '='),
 		},
 		{
 			field: 'status',
@@ -225,7 +230,18 @@ const ReportsPage: React.FC = () => {
 					justifyContent: 'space-between',
 				}}
 			>
-				<Calendar setFilterModel={setFilterModel} handleFilterModelChange={handleFilterModelChange} />
+				<Calendar
+					filterModel={filterModel}
+					setFilterModel={setFilterModel}
+					handleFilterModelChange={handleFilterModelChange}
+				/>
+				{filterModel &&
+					filterModel.items.map((filter) =>
+						filter.field != 'date' ? (
+							<FiltersOptions filter={filter} filterModel={filterModel} setFilterModel={setFilterModel} />
+						) : null
+					)}
+
 				<ExportButton handleExport={handleExport} />
 			</div>
 
@@ -247,6 +263,7 @@ const ReportsPage: React.FC = () => {
 					onSortModelChange={handleSortModelChange}
 					sx={{ width: '100%', height: '68vh' }}
 					ref={dataGridRef}
+					filterMode='server' // server mode so we can prevent default filtering behavior
 				/>
 			</div>
 		</>

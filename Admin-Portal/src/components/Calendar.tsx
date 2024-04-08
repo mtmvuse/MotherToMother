@@ -6,7 +6,7 @@ import 'react-date-range/dist/styles.css'; // main css file
 import 'react-date-range/dist/theme/default.css'; // theme css file
 import { DateRangePicker } from 'react-date-range';
 import type { Range } from 'react-date-range';
-import { GridFilterModel } from '@mui/x-data-grid';
+import { GridFilterModel, GridFilterItem } from '@mui/x-data-grid';
 import IconButton from '@mui/material/IconButton';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { Button, Dialog, DialogContent, Typography, Box } from '@mui/material';
@@ -14,9 +14,10 @@ import { Button, Dialog, DialogContent, Typography, Box } from '@mui/material';
 interface CalendarProps {
 	handleFilterModelChange: (model: GridFilterModel) => void;
 	setFilterModel: React.Dispatch<React.SetStateAction<GridFilterModel | undefined>>;
+	filterModel: GridFilterModel | undefined;
 }
 
-const Calendar: React.FC<CalendarProps> = ({ setFilterModel, handleFilterModelChange }) => {
+const Calendar: React.FC<CalendarProps> = ({ filterModel, setFilterModel, handleFilterModelChange }) => {
 	const [openCal, setOpenCal] = useState(false);
 	const [date, setDate] = useState<Range[] | null>(null);
 
@@ -29,9 +30,21 @@ const Calendar: React.FC<CalendarProps> = ({ setFilterModel, handleFilterModelCh
 	};
 
 	const handleClearDateFilter = () => {
+		let currFilterArray = filterModel?.items;
+		let newFilterArray: GridFilterItem[] = [];
+
+		if (currFilterArray) {
+			newFilterArray = currFilterArray.filter((item) => item?.field !== 'date');
+		}
+
+		if (newFilterArray.length === 0) {
+			setFilterModel(undefined);
+		} else {
+			setFilterModel({ items: newFilterArray });
+		}
 		setDate(null);
-		setFilterModel(undefined);
 	};
+
 	const handleDateChange = (ranges: any) => {
 		const filter = [
 			{
