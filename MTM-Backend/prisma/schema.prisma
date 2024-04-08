@@ -137,7 +137,7 @@ view donation_detail {
 
 /// View for report dashboard for admin portal
 view report_dashboard {
-  id       Int   @id @default(0)
+  id       Int      @id @default(0)
   agency   String
   date     DateTime @default(dbgenerated("'0000-00-00 00:00:00.000'"))
   item     String

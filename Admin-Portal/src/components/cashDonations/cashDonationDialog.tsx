@@ -1,12 +1,5 @@
-import React, { useEffect, useState } from "react";
-import {
-  TextField,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  SelectChangeEvent,
-} from "@mui/material";
+import React, { useState } from "react";
+import { TextField, Autocomplete } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -23,10 +16,7 @@ interface CashDialogProps {
 
 const CashDonationsDialog: React.FC<CashDialogProps> = (props) => {
   const { organizations, selectedDate, onDateChange, editRow } = props;
-
   const [total, setTotal] = useState(editRow?.total || "");
-
-  const [organization, setOrganization] = useState(editRow?.organization || "");
 
   const handleDateChange = (date: Date | null) => {
     onDateChange(date);
@@ -37,30 +27,23 @@ const CashDonationsDialog: React.FC<CashDialogProps> = (props) => {
     setTotal(input);
   };
 
-  const handleOrganizationChange = (event: SelectChangeEvent) => {
-    setOrganization(event.target.value as string);
-  };
-
   return (
     <>
-      <FormControl fullWidth margin="dense">
-        <InputLabel id="Donor">Donor</InputLabel>
-        <Select
-          required={true}
-          labelId="organization-label"
-          id="organization-select"
-          value={organization}
-          label="Donor"
-          onChange={handleOrganizationChange}
-          name="organization"
-        >
-          {organizations?.map((org) => (
-            <MenuItem key={org.id} value={org.name}>
-              {org.name}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+      <Autocomplete
+        disablePortal
+        id="combo-box-demo"
+        options={organizations?.map((org) => org.name) || []}
+        defaultValue={editRow?.organization}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            margin="dense"
+            label="Organization"
+            name="organization"
+          />
+        )}
+      />
+
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DemoContainer components={["DatePicker"]}>
           <DatePicker
