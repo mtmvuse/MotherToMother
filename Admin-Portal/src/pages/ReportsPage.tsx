@@ -6,6 +6,8 @@ import {
   GridFilterModel,
   GridSortModel,
   GridValueGetterParams,
+  GridFilterItem,
+  getGridNumericOperators,
 } from "@mui/x-data-grid";
 import {
   keepPreviousData,
@@ -24,6 +26,7 @@ import ExportButton from "../components/ExportButton";
 import { saveAs } from "file-saver";
 import Papa from "papaparse";
 import Calendar from "../components/Calendar";
+import FiltersOptions from "../components/report/FiltersOptions";
 
 const ReportsPage: React.FC = () => {
   const [page, setPage] = useState(0);
@@ -62,8 +65,20 @@ const ReportsPage: React.FC = () => {
   }, [dataGridRef.current, totalQuantity, totalValue]);
 
   const handleFilterModelChange = (model: GridFilterModel) => {
-    console.log(filterModel);
-    setFilterModel(model);
+    let currFilterArray = filterModel?.items;
+    let newFilterArray = model?.items;
+
+    if (currFilterArray && newFilterArray) {
+      let searchField = newFilterArray[0]?.field;
+
+      let addFilterArray = currFilterArray.filter(
+        (item) => item?.field !== searchField
+      );
+
+      newFilterArray = [...newFilterArray, ...addFilterArray];
+    }
+
+    setFilterModel({ items: newFilterArray });
   };
 
   const handleSortModelChange = (model: GridSortModel) => {
@@ -199,6 +214,9 @@ const ReportsPage: React.FC = () => {
       align: "left",
       headerAlign: "left",
       editable: false,
+      filterOperators: getGridNumericOperators().filter(
+        (operator) => operator.value === "="
+      ),
     },
     {
       field: "value",
@@ -208,6 +226,9 @@ const ReportsPage: React.FC = () => {
       align: "left",
       headerAlign: "left",
       editable: false,
+      filterOperators: getGridNumericOperators().filter(
+        (operator) => operator.value === "="
+      ),
     },
     {
       field: "total",
@@ -216,6 +237,9 @@ const ReportsPage: React.FC = () => {
       align: "left",
       headerAlign: "left",
       editable: false,
+      filterOperators: getGridNumericOperators().filter(
+        (operator) => operator.value === "="
+      ),
     },
     {
       field: "status",
@@ -247,7 +271,22 @@ const ReportsPage: React.FC = () => {
           justifyContent: "space-between",
         }}
       >
-        <Calendar setFilterModel={setFilterModel} />
+        <Calendar
+          filterModel={filterModel}
+          setFilterModel={setFilterModel}
+          handleFilterModelChange={handleFilterModelChange}
+        />
+        {filterModel &&
+          filterModel.items.map((filter) =>
+            filter.field != "date" ? (
+              <FiltersOptions
+                filter={filter}
+                filterModel={filterModel}
+                setFilterModel={setFilterModel}
+              />
+            ) : null
+          )}
+
         <ExportButton handleExport={handleExport} />
       </div>
 
@@ -269,6 +308,7 @@ const ReportsPage: React.FC = () => {
           onSortModelChange={handleSortModelChange}
           sx={{ width: "100%", height: "68vh" }}
           ref={dataGridRef}
+          filterMode="server" // server mode so we can prevent default filtering behavior
         />
       </div>
     </>

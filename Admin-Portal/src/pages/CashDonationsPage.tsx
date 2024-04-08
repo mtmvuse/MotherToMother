@@ -321,7 +321,11 @@ const CashDonationsPage: React.FC = () => {
       {error && <ErrorMessage error={error} setError={setError} />}
       {success && <SuccessMessage success={success} setSuccess={setSuccess} />}
       <div style={{ display: "flex " }}>
-        <Calendar setFilterModel={setFilterModel} />
+        <Calendar
+          filterModel={filterModel}
+          setFilterModel={setFilterModel}
+          handleFilterModelChange={handleFilterModelChange}
+        />
         <Button
           className="table-add-button"
           onClick={handleOpenAddCashDonation}
