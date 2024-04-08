@@ -242,7 +242,7 @@ const DonationsPage: React.FC = () => {
           justifyContent: "space-between",
         }}
       >
-        <Calendar setFilterModel={setFilterModel} filterModel={filterModel} />
+        <Calendar setFilterModel={setFilterModel} />
         <Button
           onClick={handleAddDonation}
           className="table-add-button"
