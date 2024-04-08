@@ -247,7 +247,7 @@ const ReportsPage: React.FC = () => {
           justifyContent: "space-between",
         }}
       >
-        <Calendar filterModel={filterModel} setFilterModel={setFilterModel} />
+        <Calendar setFilterModel={setFilterModel} />
         <ExportButton handleExport={handleExport} />
       </div>
 
