@@ -2,12 +2,12 @@ import React from "react";
 import { Typography, Box } from "@mui/material";
 
 interface FooterSummaryProps {
-  totalAmount: number;
+  totalQuantity: number;
   totalValue: number;
 }
 
 const FooterSummary: React.FC<FooterSummaryProps> = ({
-  totalAmount,
+  totalQuantity,
   totalValue,
 }) => {
   return (
@@ -18,8 +18,8 @@ const FooterSummary: React.FC<FooterSummaryProps> = ({
         justifyContent="justify-between"
       >
         <Box className="footer-summary-header" paddingLeft={3} marginTop="5px">
-          <Typography>Total Amount</Typography>
-          <Typography color="black">{totalAmount}</Typography>
+          <Typography>Total Quantity</Typography>
+          <Typography color="black">{totalQuantity}</Typography>
         </Box>
         <Box className="footer-summary-header" paddingRight={3} marginTop="5px">
           <Typography>Total Value</Typography>
