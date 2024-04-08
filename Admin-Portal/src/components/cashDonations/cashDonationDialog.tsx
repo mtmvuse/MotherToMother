@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { TextField, Autocomplete } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
@@ -16,10 +16,7 @@ interface CashDialogProps {
 
 const CashDonationsDialog: React.FC<CashDialogProps> = (props) => {
   const { organizations, selectedDate, onDateChange, editRow } = props;
-
   const [total, setTotal] = useState(editRow?.total || "");
-
-  const [organization, setOrganization] = useState(editRow?.organization || "");
 
   const handleDateChange = (date: Date | null) => {
     onDateChange(date);
@@ -36,13 +33,13 @@ const CashDonationsDialog: React.FC<CashDialogProps> = (props) => {
         disablePortal
         id="combo-box-demo"
         options={organizations?.map((org) => org.name) || []}
+        defaultValue={editRow?.organization}
         renderInput={(params) => (
           <TextField
             {...params}
             margin="dense"
             label="Organization"
             name="organization"
-            defaultValue={editRow?.organization}
           />
         )}
       />

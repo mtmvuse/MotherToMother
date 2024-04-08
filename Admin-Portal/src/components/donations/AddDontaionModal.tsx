@@ -356,13 +356,13 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
                   value={donationType}
                   onChange={handleTypeChange}
                   options={options}
-                  sx={{ marginLeft: "20px" }}
                   renderInput={(params) => (
                     <TextField
                       {...params}
                       margin="dense"
                       label="Donor"
                       name="Donor"
+                      variant="standard"
                     />
                   )}
                 />
@@ -387,7 +387,6 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
                   value={selectedOrg}
                   onChange={handleOrgChange}
                   options={organizationList}
-                  sx={{ marginLeft: "20px" }}
                   getOptionLabel={(org) => org.name}
                   renderInput={(params) => (
                     <TextField
@@ -395,6 +394,7 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
                       margin="dense"
                       label="Organization"
                       name="organization"
+                      variant="standard"
                     />
                   )}
                 />
@@ -415,7 +415,7 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
                 sx={{ width: "75%" }}
               >
                 {selectedOrg && userList.length === 0 && (
-                  <Typography fontSize={13}>
+                  <Typography fontSize={13} color="red">
                     No users available for the selected organization.
                   </Typography>
                 )}
@@ -425,7 +425,6 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
                   value={selectedUser}
                   onChange={handleUserChange}
                   options={userList}
-                  sx={{ marginLeft: "20px" }}
                   getOptionLabel={(user) => user.firstName}
                   renderInput={(params: any) => (
                     <TextField
@@ -433,6 +432,7 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
                       margin="dense"
                       label="User"
                       name="user"
+                      variant="standard"
                     />
                   )}
                   renderOption={(props, user) => (
