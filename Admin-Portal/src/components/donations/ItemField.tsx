@@ -113,7 +113,8 @@ const ItemField: React.FC<ItemFieldProps> = ({
   return (
     <Box
       display="flex"
-      flexDirection={{ xs: "column", md: "row" }}
+      // flexDirection={{ xs: "column", md: "row" }}
+      flexDirection="row"
       alignItems="center"
       justifyContent="space-between"
       borderRadius={"10px"}
@@ -121,71 +122,71 @@ const ItemField: React.FC<ItemFieldProps> = ({
       marginBottom={1}
       sx={{ backgroundColor: "lightgray" }}
     >
-      <FormControl sx={{ minWidth: 120 }}>
+      <FormControl sx={{ minWidth: 200 }}>
         <Autocomplete
           id="item-autocomplete"
           value={selectedItem}
           onChange={(event, newValue) => handleItemChange(event, newValue)}
           options={itemList}
           getOptionLabel={(option) => option.name}
-          renderInput={(params) => <TextField {...params} label="Item" />}
+          renderInput={(params) => (
+            <TextField {...params} label="Item" variant="standard" />
+          )}
+          sx={{ width: "200px", paddingRight: "100px" }}
           fullWidth
         />
       </FormControl>
-      <>
-        <FormControl sx={{ minWidth: 120 }}>
-          <Autocomplete
-            id="item-type-autocomplete"
-            value={itemType}
-            onChange={(event, newValue) =>
-              handleItemTypeChange(event, newValue)
-            }
-            sx={{ width: "150px" }}
-            options={["Used", "New"]}
-            renderInput={(params) => <TextField {...params} label="Type" />}
-            fullWidth
-          />
-        </FormControl>
-
-        <TextField
-          variant="standard"
-          id="outlined-number"
-          label="Value"
-          type="string"
-          disabled
-          value={
-            itemType === "New"
-              ? formatDollar(valueNew)
-              : itemType === "Used"
-              ? formatDollar(valueUsed)
-              : ""
-          }
-          InputLabelProps={{
-            shrink: true,
-          }}
-          sx={{ width: "100px" }}
+      <FormControl>
+        <Autocomplete
+          id="item-type-autocomplete"
+          value={itemType}
+          onChange={(event, newValue) => handleItemTypeChange(event, newValue)}
+          sx={{ width: "100px", marginRight: "30px" }}
+          options={["Used", "New"]}
+          renderInput={(params) => (
+            <TextField {...params} label="Type" variant="standard" />
+          )}
+          fullWidth
         />
-        <TextField
-          error={isSubmitted && totalValue === 0}
-          variant="standard"
-          label="Quantity"
-          type="number"
-          value={itemType === "New" ? quantityNew : quantityUsed}
-          disabled={!itemType}
-          InputLabelProps={{
-            shrink: true,
-          }}
-          onKeyDown={preventMinus}
-          sx={{ width: "100px" }}
-          onChange={
-            itemType === "New"
-              ? handleNewQuantityChange
-              : itemType === "Used"
-              ? handleUsedQuantityChange
-              : undefined
-          }
-        />
-      </>
+      </FormControl>
+      <TextField
+        variant="standard"
+        id="outlined-number"
+        label="Value"
+        type="string"
+        disabled
+        value={
+          itemType === "New"
+            ? formatDollar(valueNew)
+            : itemType === "Used"
+            ? formatDollar(valueUsed)
+            : ""
+        }
+        InputLabelProps={{
+          shrink: true,
+        }}
+        sx={{ width: "80px" }}
+      />
+      <TextField
+        error={isSubmitted && totalValue === 0}
+        variant="standard"
+        label="Quantity"
+        type="number"
+        value={itemType === "New" ? quantityNew : quantityUsed}
+        disabled={!itemType}
+        InputLabelProps={{
+          shrink: true,
+        }}
+        onKeyDown={preventMinus}
+        sx={{ width: "100px" }}
+        onChange={
+          itemType === "New"
+            ? handleNewQuantityChange
+            : itemType === "Used"
+            ? handleUsedQuantityChange
+            : undefined
+        }
+      />
       <Box sx={{ minWidth: "150px", flexWrap: "wrap" }}>
         <Typography
           fontFamily={"raleway, sans-sherif"}
