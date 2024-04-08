@@ -9,10 +9,7 @@ const OrganizationDialog = () => {
     newValue: string | null
   ) => {
     if (newValue !== null) {
-      console.log("ORG TYPE:", newValue);
       setType(newValue);
-    } else {
-      console.log("EMPTY ORG TYPE");
     }
   };
 

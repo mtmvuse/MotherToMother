@@ -82,13 +82,10 @@ const ItemField: React.FC<ItemFieldProps> = ({
     newValue: ResponseInventoryItem | null
   ) => {
     if (newValue !== null) {
-      console.log("SELECTED ITEM:", newValue);
       setSelectedItem(newValue);
       setValueNew(newValue.valueNew);
       setValueUsed(newValue.valueUsed);
       onItemChange(newValue.id);
-    } else {
-      console.log("EMPTY SELECTED ITEM");
     }
   };
 
@@ -97,10 +94,7 @@ const ItemField: React.FC<ItemFieldProps> = ({
     newValue: string | null
   ) => {
     if (newValue !== null) {
-      console.log("SELECTED ITEM TYPE:", newValue);
       setItemType(newValue);
-    } else {
-      console.log("EMPTY ITEM TYPE");
     }
   };
 

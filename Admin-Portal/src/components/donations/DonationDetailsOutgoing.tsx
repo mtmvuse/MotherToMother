@@ -188,10 +188,7 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
     newValue: string | null
   ) => {
     if (newValue !== null) {
-      console.log("SELECTED CATEGORY:", newValue);
       setSelectedCategorySelection(newValue);
-    } else {
-      console.log("EMPTY SELECTED CATEGORY");
     }
   };
 
