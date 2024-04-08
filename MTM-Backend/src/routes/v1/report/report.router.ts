@@ -46,12 +46,12 @@ reportRouter.get(
         );
       }
       const count = await ReportService.getReportCount(whereClause);
-      const amount = await ReportService.getReportAmount(whereClause);
+      const quantity = await ReportService.getReportQuantity(whereClause);
       const value = await ReportService.getReportValue(whereClause);
       return res.status(200).json({
         report,
         totalNumber: count,
-        totalAmount: amount,
+        totalQuantity: quantity,
         totalValue: value,
       });
     } catch (e) {

@@ -14,6 +14,7 @@ import {
   Select,
   MenuItem,
   InputLabel,
+  Divider,
 } from "@mui/material";
 import { registerUserOnServer, getOrganizations } from "../../lib/services";
 import type {
@@ -512,27 +513,36 @@ const Register: React.FC = () => {
             </Button>
           </Box>
         </form>
-      </Box>
 
-      <Box mt={2}>
-        <Typography>
-          <Link
-            to="/"
-            style={{
-              color: "gray",
-              textDecoration: "none",
-              fontFamily: "Raleway, sans-serif",
-            }}
-          >
-            <span
+        <Box mt={2}>
+          <Typography style={{ textAlign: "center" }}>
+            <Link
+              to="/"
               style={{
-                fontWeight: "normal",
+                color: "gray",
+                textDecoration: "none",
+                fontFamily: "Raleway, sans-serif",
               }}
             >
-              Already have an account?
-            </span>
-            <span style={{ fontWeight: "bold" }}> Log in</span>
-          </Link>
+              <span
+                style={{
+                  fontWeight: "normal",
+                }}
+              >
+                Already have an account?
+              </span>
+              <span style={{ fontWeight: "bold" }}> Log in</span>
+            </Link>
+          </Typography>
+        </Box>
+
+        <Divider style={{ width: "100%", marginTop: 20 }} />
+
+        <Typography style={{ margin: 10, textAlign: "center", opacity: 0.7 }}>
+          By signing up, you hereby agree to allow us to use your email address
+          to send occasional updates and donation invites. We guarantee the
+          confidentiality of your personal information and ensure it will not be
+          shared with any third parties.
         </Typography>
       </Box>
     </Box>
