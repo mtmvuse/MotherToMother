@@ -12,6 +12,6 @@ export interface Report {
 export interface ReportResponse {
   report: Report[];
   totalNumber: number;
-  totalAmount: number;
+  totalQuantity: number;
   totalValue: number;
 }

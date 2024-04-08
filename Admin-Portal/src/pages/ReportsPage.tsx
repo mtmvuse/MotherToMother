@@ -29,8 +29,8 @@ const ReportsPage: React.FC = () => {
 	const [sortModel, setSortModel] = useState<GridSortModel | undefined>();
 	const [totalNumber, setTotalNumber] = useState(0);
 
-	const [amount, setAmount] = useState<number>(0);
-	const [total, setTotal] = useState<number>(0);
+	const [totalQuantity, setTotalQuantity] = useState<number>(0);
+	const [totalValue, setTotalValue] = useState<number>(0);
 	const [error, setError] = useState<string | null>(null);
 
 	const dataGridRef = useRef(null);
@@ -50,9 +50,9 @@ const ReportsPage: React.FC = () => {
 		}
 
 		if (rootRef.current) {
-			rootRef.current.render(<FooterSummary totalAmount={total} totalValue={amount} />);
+			rootRef.current.render(<FooterSummary totalQuantity={totalQuantity} totalValue={totalValue} />);
 		}
-	}, [dataGridRef.current, total, amount]);
+	}, [dataGridRef.current, totalQuantity, totalValue]);
 
 	const handleFilterModelChange = (model: GridFilterModel) => {
 		let currFilterArray = filterModel?.items;
@@ -94,8 +94,8 @@ const ReportsPage: React.FC = () => {
 					}));
 
 					setTotalNumber(data.totalNumber);
-					setAmount(data.totalAmount);
-					setTotal(data.totalValue);
+					setTotalQuantity(data.totalQuantity);
+					setTotalValue(data.totalValue);
 
 					return renderReport;
 				}),
