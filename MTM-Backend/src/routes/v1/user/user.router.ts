@@ -20,8 +20,9 @@ import type { Prisma } from "@prisma/client";
 const userRouter = express.Router();
 
 interface UAQueryType {
-  email: string;
-  organization: string;
+  email?: string;
+  organization?: string;
+  organizationName?: string;
 }
 
 /**
@@ -46,21 +47,42 @@ userRouter.get(
   ) => {
     const email = req.query.email;
     const organizationType = req.query.organization;
+    const organizationName = req.query.organizationName;
     try {
-      if (email == undefined && organizationType == undefined) {
+      if (
+        email == undefined &&
+        organizationType == undefined &&
+        organizationName == undefined
+      ) {
         const users = await UserService.getUsers();
         return res.status(200).json(users);
-      } else if (organizationType == undefined) {
+      } else if (
+        email &&
+        organizationType == undefined &&
+        organizationName == undefined
+      ) {
         const user = await UserService.getUserByEmail(email);
         if (user) {
           return res.status(200).json(user);
         } else {
           return res.status(404).json({ message: "User not found" });
         }
-      } else if (email == undefined) {
-        const users = await UserService.getUserByOrganization(organizationType);
+      } else if (
+        organizationType &&
+        email == undefined &&
+        organizationName == undefined
+      ) {
+        const users =
+          await UserService.getUserByOrganizationType(organizationType);
         return res.status(200).json(users);
-      } else {
+      } else if (
+        organizationName &&
+        email == undefined &&
+        organizationType == undefined
+      ) {
+        const users = await UserService.getUserByOrganization(organizationName);
+        return res.status(200).json(users);
+      } else if (email && organizationType) {
         const user = await UserService.getUserByOrganizationAndEmail(
           organizationType,
           email,

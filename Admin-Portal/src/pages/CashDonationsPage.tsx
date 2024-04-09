@@ -159,25 +159,17 @@ const CashDonationsPage: React.FC = () => {
     setSortModel(model);
   };
 
-  const findOrganizationId = (organizationName: string) => {
-    return organizationsQueryResponse.data?.find(
-      (organization) => organization.name === organizationName
-    )?.id;
-  };
-
   const handleAddCashDonation = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const formJson = Object.fromEntries((formData as any).entries());
-    const { organization, ...rest } = formJson;
-    const cashDonationData = {
+    const { user, organization, ...rest } = formJson;
+    const data = {
       ...rest,
-      organizationId: findOrganizationId(formJson.organization),
       total: Number(formJson.total),
       date: selectedDate,
     } as AddCashDonationType;
-
-    addMutation.mutate(cashDonationData);
+    addMutation.mutate(data);
   };
 
   const organizationsQueryResponse = useQuery({
@@ -216,12 +208,11 @@ const CashDonationsPage: React.FC = () => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const formJson = Object.fromEntries((formData as any).entries());
-    const { organization, ...rest } = formJson;
+    const { user, organization, ...rest } = formJson;
     const data = {
       id: editRow.id,
       cashData: {
         ...rest,
-        organizationId: findOrganizationId(formJson.organization),
         total: Number(formJson.total),
         date: selectedDate,
       } as EditCashArgs["cashData"],
@@ -251,7 +242,7 @@ const CashDonationsPage: React.FC = () => {
     {
       field: "id",
       headerName: "ID",
-      flex: 2,
+      flex: 1.5,
       type: "number",
       align: "left",
       headerAlign: "left",
@@ -268,6 +259,30 @@ const CashDonationsPage: React.FC = () => {
         return new Date(params.value).toLocaleDateString();
       },
       valueGetter: (params: GridValueGetterParams) => new Date(params.value),
+    },
+    {
+      field: "userId",
+      headerName: "User ID",
+      flex: 1.5,
+      type: "number",
+      align: "left",
+      headerAlign: "left",
+    },
+    {
+      field: "firstName",
+      headerName: "First Name",
+      flex: 2,
+      type: "text",
+      align: "left",
+      headerAlign: "left",
+    },
+    {
+      field: "lastName",
+      headerName: "Last Name",
+      flex: 2,
+      type: "text",
+      align: "left",
+      headerAlign: "left",
     },
     {
       field: "organization",
