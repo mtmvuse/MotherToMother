@@ -218,6 +218,16 @@ export const getModalUsers = async (query?: string | undefined) => {
   });
 };
 
+export const getUsersByOrganizationName = async (organizationName: string) => {
+  const fetchURL = `${backendUrl}/users/v1?organizationName=${organizationName}`;
+  return await fetch(fetchURL, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+};
+
 export const getModalItems = async () => {
   const fetchURL = `${backendUrl}/items/v1`;
   return await fetch(fetchURL, {

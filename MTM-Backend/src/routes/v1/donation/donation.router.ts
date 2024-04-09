@@ -147,6 +147,30 @@ const checkOutgoingItemsUA = async (
 };
 
 /**
+ * Check if the donation is empty
+ * @param donationReqBody
+ * @returns
+ */
+const checkEmptyDonation = (
+  donationReqBody: OutgoingDonationRequestBodyType | UADonationRequestBodyType,
+) => {
+  if (donationReqBody.donationDetails.length === 0) {
+    throw new Error("Donation is empty");
+  }
+
+  let allZero = true;
+  donationReqBody.donationDetails.forEach((donationDetail) => {
+    if (donationDetail.usedQuantity !== 0 || donationDetail.newQuantity !== 0) {
+      allZero = false;
+    }
+  });
+
+  if (allZero) {
+    throw new Error("All donation items are 0. Empty donation.");
+  }
+};
+
+/**
  * Create the outgoing donation in the database
  * @param donationReqBody
  * @returns
@@ -207,6 +231,8 @@ const createOutgoingDonationAP = async (
       );
     }
 
+    checkEmptyDonation(donationReqBody);
+
     await checkOutgoingItemsAP(donationReqBody);
 
     const newDonation = await DonationService.createDonation(
@@ -250,6 +276,8 @@ const createOutgoingDonationUA = async (
       user.id,
       new Date(),
     );
+
+    checkEmptyDonation(donationReqBody);
 
     // Get the item id from the item name
     const newDonationDetails = [];

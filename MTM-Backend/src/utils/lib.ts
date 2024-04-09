@@ -43,7 +43,6 @@ export const translateFilterToPrisma = (filters: any) => {
         break;
       case "gt":
         where[field] = { gt: Number(value) };
-
         break;
       case "lt":
         where[field] = { lt: Number(value) };
@@ -53,6 +52,9 @@ export const translateFilterToPrisma = (filters: any) => {
         break;
       case "lte":
         where[field] = { lte: Number(value) };
+        break;
+      case "equals":
+        where[field] = { equals: Number(value) };
         break;
       default:
         where[field] = { equals: value };

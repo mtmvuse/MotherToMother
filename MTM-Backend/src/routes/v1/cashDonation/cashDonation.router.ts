@@ -69,7 +69,7 @@ cashDonationRouter.post(
   "/v1",
   async (req: Request, res: Response, next: NextFunction) => {
     const schema = Joi.object({
-      organizationId: Joi.number().integer().positive(),
+      userId: Joi.number().integer().positive(),
       date: Joi.date().iso().required(),
       total: Joi.number().positive().required(),
     });
@@ -92,7 +92,7 @@ cashDonationRouter.put(
   "/v1/update/id/:id",
   async (req: Request, res: Response, next: NextFunction) => {
     const schema = Joi.object({
-      organizationId: Joi.number().integer().positive(),
+      userId: Joi.number().integer().positive(),
       date: Joi.date().iso().required(),
       total: Joi.number().positive().required(),
     });

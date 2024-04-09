@@ -159,26 +159,17 @@ const CashDonationsPage: React.FC = () => {
     setSortModel(model);
   };
 
-  const findOrganizationId = (organizationName: string) => {
-    return organizationsQueryResponse.data?.find(
-      (organization) => organization.name === organizationName
-    )?.id;
-  };
-
   const handleAddCashDonation = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const formJson = Object.fromEntries((formData as any).entries());
-    console.log(formJson);
-    // const { organization, ...rest } = formJson;
-    // const cashDonationData = {
-    //   ...rest,
-    //   organizationId: findOrganizationId(formJson.organization),
-    //   total: Number(formJson.total),
-    //   date: selectedDate,
-    // } as AddCashDonationType;
-
-    // addMutation.mutate(cashDonationData);
+    const { user, organization, ...rest } = formJson;
+    const data = {
+      ...rest,
+      total: Number(formJson.total),
+      date: selectedDate,
+    } as AddCashDonationType;
+    addMutation.mutate(data);
   };
 
   const organizationsQueryResponse = useQuery({
@@ -217,19 +208,17 @@ const CashDonationsPage: React.FC = () => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const formJson = Object.fromEntries((formData as any).entries());
-    console.log(formJson);
-    // const { organization, ...rest } = formJson;
-    // const data = {
-    //   id: editRow.id,
-    //   cashData: {
-    //     ...rest,
-    //     organizationId: findOrganizationId(formJson.organization),
-    //     total: Number(formJson.total),
-    //     date: selectedDate,
-    //   } as EditCashArgs["cashData"],
-    //   token: "token",
-    // };
-    // editMutation.mutate(data);
+    const { user, organization, ...rest } = formJson;
+    const data = {
+      id: editRow.id,
+      cashData: {
+        ...rest,
+        total: Number(formJson.total),
+        date: selectedDate,
+      } as EditCashArgs["cashData"],
+      token: "token",
+    };
+    editMutation.mutate(data);
   };
 
   if (cdQueryResponse.isLoading) return <div>Loading...</div>;
@@ -347,7 +336,11 @@ const CashDonationsPage: React.FC = () => {
       {error && <ErrorMessage error={error} setError={setError} />}
       {success && <SuccessMessage success={success} setSuccess={setSuccess} />}
       <div style={{ display: "flex " }}>
-        <Calendar setFilterModel={setFilterModel} />
+        <Calendar
+          filterModel={filterModel}
+          setFilterModel={setFilterModel}
+          handleFilterModelChange={handleFilterModelChange}
+        />
         <Button
           className="table-add-button"
           onClick={handleOpenAddCashDonation}

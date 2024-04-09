@@ -31,3 +31,9 @@ export interface cdDashboardResponse {
   totalNumber: number;
   cashDonation: CashDonationRow[];
 }
+
+export interface CDUser {
+  id: number;
+  firstName: string;
+  lastName: string;
+}
