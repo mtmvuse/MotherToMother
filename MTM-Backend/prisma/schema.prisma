@@ -34,7 +34,7 @@ model User {
   status         String
   cashDonation   CashDonation[]
   donation       Donation[]
-  Organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  Organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@index([organizationId], map: "User_organizationId_fkey")
 }
@@ -43,7 +43,7 @@ model Donation {
   id                    Int                    @id @default(autoincrement())
   userId                Int
   date                  DateTime               @default(now())
-  user                  User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                  User                   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   DonationDetail        DonationDetail[]
   OutgoingDonationStats OutgoingDonationStats?
 
@@ -56,8 +56,8 @@ model DonationDetail {
   itemId       Int
   usedQuantity Int
   newQuantity  Int
-  donation     Donation @relation(fields: [donationId], references: [id], onDelete: Cascade)
-  item         Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  donation     Donation @relation(fields: [donationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  item         Item     @relation(fields: [itemId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@unique([donationId, itemId])
   @@index([itemId], map: "DonationDetail_itemId_fkey")
@@ -73,7 +73,7 @@ model OutgoingDonationStats {
   nativeNum    Int
   asianNum     Int
   otherNum     Int
-  donation     Donation @relation(fields: [donationId], references: [id], onDelete: Cascade)
+  donation     Donation @relation(fields: [donationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Item {
