@@ -45,15 +45,15 @@ async function main() {
       },
     });
 
-    // Create 3 cash donations for each user
-    for (let i = 0; i < 3; ++i) {
+    // Create 2 cash donations for each user
+    for (let i = 0; i < 2; ++i) {
       const date = new Date();
       date.setDate(date.getDate() - 2 * i);
       await db.cashDonation.create({
         data: {
-          organizationId: user.organizationId,
+          userId: user.id,
           date: date,
-          total: Math.floor(Math.random() * 1000), // Generate a random total amount
+          total: Math.floor(Math.random() * 1000),
         },
       });
     }

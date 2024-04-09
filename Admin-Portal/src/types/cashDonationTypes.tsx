@@ -1,5 +1,5 @@
 export interface AddCashDonationType {
-  organizationId: number;
+  userId: number;
   date: Date;
   total: number;
 }
@@ -8,6 +8,9 @@ export type CashDonationRow = {
   id: number;
   date: Date;
   total: number;
+  firstName: string;
+  lastName: string;
+  userId: number;
   organization: string;
 };
 
@@ -15,7 +18,7 @@ export type EditCashType = {
   id: number;
   date?: Date;
   total?: number;
-  organizationId?: number;
+  userId?: number;
 };
 
 export type EditCashArgs = {

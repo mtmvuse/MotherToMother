@@ -169,15 +169,16 @@ const CashDonationsPage: React.FC = () => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const formJson = Object.fromEntries((formData as any).entries());
-    const { organization, ...rest } = formJson;
-    const cashDonationData = {
-      ...rest,
-      organizationId: findOrganizationId(formJson.organization),
-      total: Number(formJson.total),
-      date: selectedDate,
-    } as AddCashDonationType;
+    console.log(formJson);
+    // const { organization, ...rest } = formJson;
+    // const cashDonationData = {
+    //   ...rest,
+    //   organizationId: findOrganizationId(formJson.organization),
+    //   total: Number(formJson.total),
+    //   date: selectedDate,
+    // } as AddCashDonationType;
 
-    addMutation.mutate(cashDonationData);
+    // addMutation.mutate(cashDonationData);
   };
 
   const organizationsQueryResponse = useQuery({
@@ -216,18 +217,19 @@ const CashDonationsPage: React.FC = () => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const formJson = Object.fromEntries((formData as any).entries());
-    const { organization, ...rest } = formJson;
-    const data = {
-      id: editRow.id,
-      cashData: {
-        ...rest,
-        organizationId: findOrganizationId(formJson.organization),
-        total: Number(formJson.total),
-        date: selectedDate,
-      } as EditCashArgs["cashData"],
-      token: "token",
-    };
-    editMutation.mutate(data);
+    console.log(formJson);
+    // const { organization, ...rest } = formJson;
+    // const data = {
+    //   id: editRow.id,
+    //   cashData: {
+    //     ...rest,
+    //     organizationId: findOrganizationId(formJson.organization),
+    //     total: Number(formJson.total),
+    //     date: selectedDate,
+    //   } as EditCashArgs["cashData"],
+    //   token: "token",
+    // };
+    // editMutation.mutate(data);
   };
 
   if (cdQueryResponse.isLoading) return <div>Loading...</div>;
@@ -251,7 +253,7 @@ const CashDonationsPage: React.FC = () => {
     {
       field: "id",
       headerName: "ID",
-      flex: 2,
+      flex: 1.5,
       type: "number",
       align: "left",
       headerAlign: "left",
@@ -268,6 +270,30 @@ const CashDonationsPage: React.FC = () => {
         return new Date(params.value).toLocaleDateString();
       },
       valueGetter: (params: GridValueGetterParams) => new Date(params.value),
+    },
+    {
+      field: "userId",
+      headerName: "User ID",
+      flex: 1.5,
+      type: "number",
+      align: "left",
+      headerAlign: "left",
+    },
+    {
+      field: "firstName",
+      headerName: "First Name",
+      flex: 2,
+      type: "text",
+      align: "left",
+      headerAlign: "left",
+    },
+    {
+      field: "lastName",
+      headerName: "Last Name",
+      flex: 2,
+      type: "text",
+      align: "left",
+      headerAlign: "left",
     },
     {
       field: "organization",
