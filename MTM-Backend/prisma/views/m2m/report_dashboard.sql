@@ -26,51 +26,51 @@ FROM
   (
     (
       SELECT
-        `mtm`.`DonationDetail`.`id` AS `id`,
-        `mtm`.`DonationDetail`.`usedQuantity` AS `quantity`,
+        `m2m`.`DonationDetail`.`id` AS `id`,
+        `m2m`.`DonationDetail`.`usedQuantity` AS `quantity`,
         'Used' AS `status`
       FROM
-        `mtm`.`DonationDetail`
+        `m2m`.`DonationDetail`
       UNION
       ALL
       SELECT
-        `mtm`.`DonationDetail`.`id` AS `id`,
-        `mtm`.`DonationDetail`.`newQuantity` AS `quantity`,
+        `m2m`.`DonationDetail`.`id` AS `id`,
+        `m2m`.`DonationDetail`.`newQuantity` AS `quantity`,
         'New' AS `status`
       FROM
-        `mtm`.`DonationDetail`
+        `m2m`.`DonationDetail`
     ) `t1`
     JOIN (
       SELECT
-        `mtm`.`DonationDetail`.`id` AS `id`,
-        `mtm`.`Organization`.`name` AS `agency`,
-        `mtm`.`Donation`.`date` AS `date`,
-        `mtm`.`Item`.`name` AS `item`,
-        `mtm`.`Item`.`valueUsed` AS `valueUsed`,
-        `mtm`.`Item`.`valueNew` AS `valueNew`
+        `m2m`.`DonationDetail`.`id` AS `id`,
+        `m2m`.`Organization`.`name` AS `agency`,
+        `m2m`.`Donation`.`date` AS `date`,
+        `m2m`.`Item`.`name` AS `item`,
+        `m2m`.`Item`.`valueUsed` AS `valueUsed`,
+        `m2m`.`Item`.`valueNew` AS `valueNew`
       FROM
         (
           (
             (
               (
-                `mtm`.`User`
-                JOIN `mtm`.`Organization` ON(
+                `m2m`.`User`
+                JOIN `m2m`.`Organization` ON(
                   (
-                    `mtm`.`User`.`organizationId` = `mtm`.`Organization`.`id`
+                    `m2m`.`User`.`organizationId` = `m2m`.`Organization`.`id`
                   )
                 )
               )
-              JOIN `mtm`.`Donation` ON((`mtm`.`User`.`id` = `mtm`.`Donation`.`userId`))
+              JOIN `m2m`.`Donation` ON((`m2m`.`User`.`id` = `m2m`.`Donation`.`userId`))
             )
-            JOIN `mtm`.`DonationDetail` ON(
+            JOIN `m2m`.`DonationDetail` ON(
               (
-                `mtm`.`Donation`.`id` = `mtm`.`DonationDetail`.`donationId`
+                `m2m`.`Donation`.`id` = `m2m`.`DonationDetail`.`donationId`
               )
             )
           )
-          JOIN `mtm`.`Item` ON(
+          JOIN `m2m`.`Item` ON(
             (
-              `mtm`.`DonationDetail`.`itemId` = `mtm`.`Item`.`id`
+              `m2m`.`DonationDetail`.`itemId` = `m2m`.`Item`.`id`
             )
           )
         )
