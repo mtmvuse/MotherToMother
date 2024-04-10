@@ -15,7 +15,7 @@ interface AuthContextData {
   login: (email: string, password: string) => Promise<UserCredential>;
   logout: () => Promise<void>;
   getUser: () => User | null;
-  loginWithEmailLink: () => Promise<void>;
+  loginWithEmailLink: () => Promise<UserCredential | null>;
   sendLoginEmail: (email: string) => Promise<void>;
 }
 
@@ -47,7 +47,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await sendSignInLinkToEmail(auth, email, actionCodeSettings);
       // Save the email to local storage
       localStorage.setItem("emailForSignIn", email);
-      console.log("Login link sent!");
     } catch (error: any) {
       console.error("Error sending login link:", error.message);
     }
@@ -59,12 +58,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       window.prompt("No email found");
     } else {
       try {
-        await signInWithEmailLink(auth, email, window.location.href);
+        const user = await signInWithEmailLink(
+          auth,
+          email,
+          window.location.href
+        );
         window.localStorage.removeItem("emailForSignIn");
+        return user;
       } catch (error: any) {
         console.error("Error signing in with email link:", error.message);
       }
     }
+    return null;
   };
 
   useEffect(() => {

@@ -42,6 +42,7 @@ import ExportButton from "../components/ExportButton";
 import editIcon from "../assets/edit-icon.png";
 import deleteIcon from "../assets/delete-icon.png";
 import AddIcon from "@mui/icons-material/Add";
+import { useAuth } from "../lib/contexts";
 import "./styles/datagrid.css";
 
 const UsersPage: React.FC = () => {
@@ -59,6 +60,7 @@ const UsersPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean | null>(null);
   const queryClient = useQueryClient();
+  const { currentUser } = useAuth();
 
   const handleOpenAddUser = () => {
     setOpenAddUser(true);
@@ -110,7 +112,11 @@ const UsersPage: React.FC = () => {
     queryKey: ["users", page, pageSize, filterModel, sortModel],
     placeholderData: keepPreviousData,
     queryFn: () =>
-      getUsers("token", page, pageSize, filterModel, sortModel)
+      currentUser
+        ?.getIdToken()
+        .then((token) =>
+          getUsers(token, page, pageSize, filterModel, sortModel)
+        )
         .then((res: Response) => res.json())
         .then((data: UserDashboardResponse) => {
           setTotalNumber(data.totalNumber);
@@ -131,7 +137,10 @@ const UsersPage: React.FC = () => {
   });
 
   const addMutation = useMutation({
-    mutationFn: (data: AddUserType) => addUser(data),
+    mutationFn: (data: AddUserType) =>
+      currentUser
+        ?.getIdToken()
+        .then((token) => addUser(data, token)) as Promise<Response>,
     onSuccess: (result: Response) => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
       if (result.status === 400 || result.status === 500) {
@@ -147,7 +156,10 @@ const UsersPage: React.FC = () => {
   });
 
   const addOrganizationMutation = useMutation({
-    mutationFn: (data: Organization) => addOrganization(data, "token"),
+    mutationFn: (data: Organization) =>
+      currentUser
+        ?.getIdToken()
+        .then((token) => addOrganization(data, token)) as Promise<Response>,
     onSuccess: (result: Response) => {
       queryClient.invalidateQueries({ queryKey: ["organizations"] });
       if (result.status === 400 || result.status === 500) {
@@ -164,7 +176,11 @@ const UsersPage: React.FC = () => {
 
   const editMutation = useMutation({
     mutationFn: (data: EditUserArgs) =>
-      updateUser(data.id, data.userData, "token"),
+      currentUser
+        ?.getIdToken()
+        .then((token) =>
+          updateUser(data.id, data.userData, token)
+        ) as Promise<Response>,
     onSuccess: (result: Response) => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
       if (result.status === 400 || result.status === 500) {

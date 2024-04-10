@@ -12,25 +12,36 @@ interface UserDialogProps {
 const UserDialog: React.FC<UserDialogProps> = (props) => {
   const { organizations, editRow } = props;
   const [userType, setUserType] = React.useState(editRow?.type || "");
+  const [organization, setOrganization] = React.useState(
+    editRow?.organization || ""
+  );
   const [status, setStatus] = React.useState(editRow?.status || "");
 
   const handleUserTypeChange = (
-    event: React.SyntheticEvent<Element, Event>,
+    _event: React.SyntheticEvent<Element, Event>,
     newValue: string | null
   ) => {
     if (newValue !== null) {
       setUserType(newValue);
-    } else {
+      setOrganization("");
+    }
+  };
+
+  const handleOrganizationChange = (
+    _event: React.SyntheticEvent<Element, Event>,
+    newValue: string | null
+  ) => {
+    if (newValue !== null) {
+      setOrganization(newValue);
     }
   };
 
   const handleStatusChange = (
-    event: React.SyntheticEvent<Element, Event>,
+    _event: React.SyntheticEvent<Element, Event>,
     newValue: string | null
   ) => {
     if (newValue !== null) {
       setStatus(newValue);
-    } else {
     }
   };
 
@@ -181,6 +192,8 @@ const UserDialog: React.FC<UserDialogProps> = (props) => {
             ?.map((org) => org.name) || []
         }
         defaultValue={editRow?.organization || ""}
+        value={organization}
+        onChange={handleOrganizationChange}
         renderInput={(params) => (
           <TextField
             {...params}

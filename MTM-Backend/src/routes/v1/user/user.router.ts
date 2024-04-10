@@ -217,10 +217,12 @@ userRouter.put(
       zip: Joi.number().integer().positive(),
       userType: Joi.string(),
       status: Joi.string(),
+      currentUser: Joi.string(),
     });
     const id = Number(req.params.id);
     try {
-      const userData = (await schema.validateAsync(req.body)) as UserInput;
+      const userData = (await schema.validateAsync(req.body)) as RawUserInput;
+      delete userData.currentUser;
       const user = await UserService.updateUserById(userData, id);
       return res.status(201).json(user);
     } catch (e) {

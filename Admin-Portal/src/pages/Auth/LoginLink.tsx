@@ -6,9 +6,12 @@ const LoginLink: React.FC = () => {
   const [loginStatus, setLogInStatus] = useState("Authenticating...");
 
   useEffect(() => {
-    loginWithEmailLink().then(() => {
+    const user = loginWithEmailLink();
+    if (!user) {
+      setLogInStatus("Error logging in. Please contact support.");
+    } else {
       setLogInStatus("Logged in, you can close the window now!");
-    });
+    }
   }, []);
   return (
     <>
