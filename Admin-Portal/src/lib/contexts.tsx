@@ -72,10 +72,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return null;
   };
 
-  const getToken = async () => {
-    return currentUser ? await currentUser.getIdToken() : null;
-  };
-
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);

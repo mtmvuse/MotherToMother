@@ -3,7 +3,6 @@ import { Box, TextField, FormControl, Autocomplete } from "@mui/material";
 import { USER_TYPE, USER_STATUS } from "../../lib/constants";
 import type { Organization } from "~/types/organization";
 import type { UserRow } from "~/types/user";
-import { set } from "date-fns";
 
 interface UserDialogProps {
   organizations: void | Organization[] | undefined;
