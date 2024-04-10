@@ -39,7 +39,7 @@ export interface UserInput {
 }
 
 export interface RawUserInput extends UserInput {
-  currentUser: string;
+  currentUser?: string;
 }
 
 export interface PasswordCombo {
