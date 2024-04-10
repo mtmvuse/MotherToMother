@@ -20,8 +20,9 @@ export const analytics = getAnalytics(app);
 // Initialize Firebase Authentication and get a reference to the service
 export const auth = getAuth(app);
 
-// TODO For Sign-in with email link, url to change
+// For Sign-in with email link, url to change
 export const actionCodeSettings = {
-  url: "http://localhost:5175/loginLink",
+  // url: "http://localhost:5175/loginLink",
+  url: import.meta.env.VITE_LOGIN_LINK_URL,
   handleCodeInApp: true,
 };

@@ -274,6 +274,7 @@ export const updateUserById = async (
   user: UserInput,
   id: number,
 ): Promise<ResponseUser> => {
+  // const { organizationId, ...userInfo } = user;
   return db.user.update({
     where: {
       id: id,

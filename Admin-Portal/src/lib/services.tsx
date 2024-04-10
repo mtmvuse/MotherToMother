@@ -178,10 +178,13 @@ export const deleteCashDonation = async (id: number, token: string) => {
   });
 };
 
-export const addUser = async (user: AddUserType) => {
+export const addUser = async (user: AddUserType, token: string) => {
   return await fetch(`${backendUrl}/registration/v1`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify(user),
   });
 };
