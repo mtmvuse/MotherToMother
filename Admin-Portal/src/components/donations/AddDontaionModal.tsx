@@ -266,6 +266,13 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
       }
     }
 
+    const itemNames = items.map((item) => item.itemId);
+    const uniqueItemNames = new Set(itemNames);
+    if (uniqueItemNames.size !== itemNames.length) {
+      setError("Duplicate item name detected");
+      return;
+    }
+
     if (donationType == "Outgoing") {
       const outgoingDonationData: AddOutgoingDonationType = {
         userId: selectedUser.id,
@@ -360,7 +367,6 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
                     <TextField
                       {...params}
                       margin="dense"
-                      label="Donor"
                       name="Donor"
                       variant="standard"
                     />
@@ -392,7 +398,6 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
                     <TextField
                       {...params}
                       margin="dense"
-                      label="Organization"
                       name="organization"
                       variant="standard"
                     />
@@ -430,7 +435,6 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
                     <TextField
                       {...params}
                       margin="dense"
-                      label="User"
                       name="user"
                       variant="standard"
                     />
@@ -443,9 +447,7 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
             </Grid>
           </Grid>
 
-          <div
-            style={{ display: "flex", alignItems: "center", marginTop: "20px" }}
-          >
+          <div style={{ alignItems: "center", marginTop: "20px" }}>
             <Typography
               fontFamily="Raleway, sans-serif"
               fontSize={20}
@@ -458,8 +460,6 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
               className="date-picker"
               style={{
                 width: "100%",
-                display: "flex",
-                justifyContent: "flex-end",
               }}
             >
               <LocalizationProvider dateAdapter={AdapterDayjs}>
