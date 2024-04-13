@@ -43,7 +43,7 @@ app.use("/registration", registrationRouter);
 
 app.use("/organization", organizationRouter);
 
-app.use("/donation", donationRouter);
+app.use("/donation", verifyToken, donationRouter);
 
 // app.use("/inventory", verifyToken, inventoryRouter);
 app.use("/inventory", inventoryRouter);
