@@ -14,39 +14,39 @@ import {
   Autocomplete,
 } from "@mui/material";
 import {
-	createOutgoingDonation,
-	getOrganizations,
-	getModalUsers,
-	createIncomingDonation,
+  createOutgoingDonation,
+  getOrganizations,
+  getModalUsers,
+  createIncomingDonation,
 } from "../../lib/services";
 import { Organization } from "~/types/organization";
 import { ResponseUser } from "~/types/user";
 import {
-	AddIncomingDonationType,
-	AddOutgoingDonationType,
+  AddIncomingDonationType,
+  AddOutgoingDonationType,
 } from "~/types/DonationTypes";
 import "./styles/AddDonation.css";
 import addItemIcon from "../../assets/add-item-icon.png";
 
 interface DonationItem {
-	itemId: number;
-	quantityNew: number;
-	quantityUsed: number;
-	totalValue: number;
+  itemId: number;
+  quantityNew: number;
+  quantityUsed: number;
+  totalValue: number;
 }
 
 const options = ["Incoming", "Outgoing"];
 
 interface AddDonationsModalProps {
-	handleCloseModal: () => void;
-	handleSubmissionSuccess: () => void;
-	setError: React.Dispatch<React.SetStateAction<string | null>>;
+  handleCloseModal: () => void;
+  handleSubmissionSuccess: () => void;
+  setError: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
-	handleCloseModal,
-	handleSubmissionSuccess,
-	setError,
+  handleCloseModal,
+  handleSubmissionSuccess,
+  setError,
 }) => {
   const [organizationList, setOrganizationList] = useState<Organization[]>([]);
   const [userList, setUserList] = useState<ResponseUser[]>([]);
@@ -113,220 +113,220 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
     setShowDonor(!!newValue);
   };
 
-	const handleDateChange = (date: Date | null) => {
-		setSelectedDate(date);
-		setShowAddButton(!!date);
-	};
+  const handleDateChange = (date: Date | null) => {
+    setSelectedDate(date);
+    setShowAddButton(!!date);
+  };
 
-	const handleChangeDemographicData =
-		(field: keyof typeof demographicData) =>
-		(event: React.ChangeEvent<HTMLInputElement>) => {
-			const value = parseInt(event.target.value) || 0;
-			setDemographicData((prevData) => ({
-				...prevData,
-				[field]: value,
-				numberServed: calculateNumberServed({ ...prevData, [field]: value }),
-			}));
-		};
+  const handleChangeDemographicData =
+    (field: keyof typeof demographicData) =>
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const value = parseInt(event.target.value) || 0;
+      setDemographicData((prevData) => ({
+        ...prevData,
+        [field]: value,
+        numberServed: calculateNumberServed({ ...prevData, [field]: value }),
+      }));
+    };
 
-	const calculateNumberServed = (data: typeof demographicData) => {
-		const { whiteNum, latinoNum, blackNum, nativeNum, asianNum, otherNum } =
-			data;
-		return whiteNum + latinoNum + blackNum + nativeNum + asianNum + otherNum;
-	};
+  const calculateNumberServed = (data: typeof demographicData) => {
+    const { whiteNum, latinoNum, blackNum, nativeNum, asianNum, otherNum } =
+      data;
+    return whiteNum + latinoNum + blackNum + nativeNum + asianNum + otherNum;
+  };
 
-	const addItemField = () => {
-		if (!selectedDate) {
-			setError("Fill in all fields");
-			return;
-		}
+  const addItemField = () => {
+    if (!selectedDate) {
+      setError("Fill in all fields");
+      return;
+    }
 
-		if (items.some((item) => item.totalValue <= 0)) {
-			setError("Fill in all items");
-			return;
-		}
+    if (items.some((item) => item.totalValue <= 0)) {
+      setError("Fill in all items");
+      return;
+    }
 
-		const newItem: DonationItem = {
-			itemId: 0,
-			quantityNew: 0,
-			quantityUsed: 0,
-			totalValue: 0,
-		};
-		setItems([...items, newItem]);
-		setIsSubmitted(false);
-	};
+    const newItem: DonationItem = {
+      itemId: 0,
+      quantityNew: 0,
+      quantityUsed: 0,
+      totalValue: 0,
+    };
+    setItems([...items, newItem]);
+    setIsSubmitted(false);
+  };
 
-	const removeItemField = (index: number) => {
-		const updatedItems = [...items];
-		updatedItems.splice(index, 1);
-		setItems(updatedItems);
-	};
+  const removeItemField = (index: number) => {
+    const updatedItems = [...items];
+    updatedItems.splice(index, 1);
+    setItems(updatedItems);
+  };
 
-	useEffect(() => {
-		let newTotalQuantity = 0;
-		let newTotalCost = 0;
+  useEffect(() => {
+    let newTotalQuantity = 0;
+    let newTotalCost = 0;
 
-		items.forEach((item) => {
-			newTotalQuantity += item.quantityUsed + item.quantityNew;
-			newTotalCost += item.totalValue;
-		});
+    items.forEach((item) => {
+      newTotalQuantity += item.quantityUsed + item.quantityNew;
+      newTotalCost += item.totalValue;
+    });
 
-		setTotalQuantity(newTotalQuantity);
-		setTotalCost(newTotalCost);
-	}, [items]);
+    setTotalQuantity(newTotalQuantity);
+    setTotalCost(newTotalCost);
+  }, [items]);
 
-	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				const response = await getOrganizations();
-				if (!response.ok) {
-					setError("Failed to fetch organizations");
-					return;
-				}
-				const orgList = await response.json();
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getOrganizations();
+        if (!response.ok) {
+          setError("Failed to fetch organizations");
+          return;
+        }
+        const orgList = await response.json();
 
-				const filteredOrgList = orgList.filter((org: Organization) => {
-					if (donationType === "Incoming") {
-						return org.type === "Public" || org.type == "Corporate";
-					} else if (donationType === "Outgoing") {
-						return org.type === "Agency";
-					}
-					return true;
-				});
+        const filteredOrgList = orgList.filter((org: Organization) => {
+          if (donationType === "Incoming") {
+            return org.type === "Public" || org.type == "Corporate";
+          } else if (donationType === "Outgoing") {
+            return org.type === "Agency";
+          }
+          return true;
+        });
 
-				setOrganizationList(filteredOrgList);
-			} catch (error) {
-				setError("Error fetching organizations");
-			}
-		};
+        setOrganizationList(filteredOrgList);
+      } catch (error) {
+        setError("Error fetching organizations");
+      }
+    };
 
-		fetchData();
-	}, [donationType]);
+    fetchData();
+  }, [donationType]);
 
-	const updateUsers = async (selectedOrg: Organization | undefined) => {
-		try {
-			const response = await getModalUsers();
-			if (!response.ok) {
-				throw new Error("Failed to fetch users");
-			}
-			const fullUserList = await response.json();
-			if (selectedOrg) {
-				const filteredUserList = fullUserList.filter(
-					(user: ResponseUser) => user.Organization.name === selectedOrg.name
-				);
-				setUserList(filteredUserList);
-			}
-		} catch (error) {
-			setError("Error fetching users:");
-		}
-	};
+  const updateUsers = async (selectedOrg: Organization | undefined) => {
+    try {
+      const response = await getModalUsers();
+      if (!response.ok) {
+        throw new Error("Failed to fetch users");
+      }
+      const fullUserList = await response.json();
+      if (selectedOrg) {
+        const filteredUserList = fullUserList.filter(
+          (user: ResponseUser) => user.Organization.name === selectedOrg.name
+        );
+        setUserList(filteredUserList);
+      }
+    } catch (error) {
+      setError("Error fetching users:");
+    }
+  };
 
-	const handleQuantityChange = (
-		index: number,
-		quantityNew: number,
-		quantityUsed: number,
-		totalValue: number
-	) => {
-		const updatedItems = [...items];
-		const currentItem = updatedItems[index] as DonationItem;
-		const { itemId = 0 } = currentItem;
-		updatedItems[index] = {
-			...currentItem,
-			itemId,
-			quantityNew,
-			quantityUsed,
-			totalValue,
-		};
-		setItems(updatedItems);
-	};
+  const handleQuantityChange = (
+    index: number,
+    quantityNew: number,
+    quantityUsed: number,
+    totalValue: number
+  ) => {
+    const updatedItems = [...items];
+    const currentItem = updatedItems[index] as DonationItem;
+    const { itemId = 0 } = currentItem;
+    updatedItems[index] = {
+      ...currentItem,
+      itemId,
+      quantityNew,
+      quantityUsed,
+      totalValue,
+    };
+    setItems(updatedItems);
+  };
 
-	const handleItemChange = (index: number, itemId: number) => {
-		setItems((prevItems) =>
-			prevItems.map((item, i) => (i === index ? { ...item, itemId } : item))
-		);
-	};
+  const handleItemChange = (index: number, itemId: number) => {
+    setItems((prevItems) =>
+      prevItems.map((item, i) => (i === index ? { ...item, itemId } : item))
+    );
+  };
 
-	const handleSubmit = async () => {
-		setIsSubmitted(true);
-		if (!selectedUser) {
-			setError("User not selected.");
-			return;
-		}
+  const handleSubmit = async () => {
+    setIsSubmitted(true);
+    if (!selectedUser) {
+      setError("User not selected.");
+      return;
+    }
 
-		if (!selectedOrg) {
-			setError("Organization not selected.");
-			return;
-		}
+    if (!selectedOrg) {
+      setError("Organization not selected.");
+      return;
+    }
 
-		if (!selectedDate) {
-			setError("Date not selected.");
-			return;
-		}
+    if (!selectedDate) {
+      setError("Date not selected.");
+      return;
+    }
 
-		if (items.some((item) => item.totalValue === 0)) {
-			setError("Please fill all item fields.");
-			return;
-		}
+    if (items.some((item) => item.totalValue === 0)) {
+      setError("Please fill all item fields.");
+      return;
+    }
 
-		if (donationType === "Outgoing") {
-			if (calculateNumberServed(demographicData) === 0) {
-				setError("Please fill in at least one demographic field.");
-				return;
-			}
-		}
+    if (donationType === "Outgoing") {
+      if (calculateNumberServed(demographicData) === 0) {
+        setError("Please fill in at least one demographic field.");
+        return;
+      }
+    }
 
-		if (donationType == "Outgoing") {
-			const outgoingDonationData: AddOutgoingDonationType = {
-				userId: selectedUser.id,
-				donationDetails: items.map((item) => ({
-					itemId: item.itemId,
-					usedQuantity: item.quantityUsed,
-					newQuantity: item.quantityNew,
-				})),
-				date: selectedDate,
-				numberServed: demographicData.numberServed,
-				whiteNum: demographicData.whiteNum,
-				latinoNum: demographicData.latinoNum,
-				blackNum: demographicData.blackNum,
-				nativeNum: demographicData.nativeNum,
-				asianNum: demographicData.asianNum,
-				otherNum: demographicData.otherNum,
-			};
-			const response = await createOutgoingDonation(outgoingDonationData);
+    if (donationType == "Outgoing") {
+      const outgoingDonationData: AddOutgoingDonationType = {
+        userId: selectedUser.id,
+        donationDetails: items.map((item) => ({
+          itemId: item.itemId,
+          usedQuantity: item.quantityUsed,
+          newQuantity: item.quantityNew,
+        })),
+        date: selectedDate,
+        numberServed: demographicData.numberServed,
+        whiteNum: demographicData.whiteNum,
+        latinoNum: demographicData.latinoNum,
+        blackNum: demographicData.blackNum,
+        nativeNum: demographicData.nativeNum,
+        asianNum: demographicData.asianNum,
+        otherNum: demographicData.otherNum,
+      };
+      const response = await createOutgoingDonation(outgoingDonationData);
 
-			if (response.ok) {
-				handleCloseModal();
-				handleSubmissionSuccess();
-			} else if (response.status === 500) {
-				const message = await response.json();
-				setError(message.message);
-			} else {
-				setError("Error Creating Donation");
-			}
-		} else if (donationType == "Incoming") {
-			const incomingDonationData: AddIncomingDonationType = {
-				userId: selectedUser.id,
-				donationDetails: items.map((item) => ({
-					itemId: item.itemId,
-					usedQuantity: item.quantityUsed,
-					newQuantity: item.quantityNew,
-				})),
-			};
-			const response = await createIncomingDonation(incomingDonationData);
+      if (response.ok) {
+        handleCloseModal();
+        handleSubmissionSuccess();
+      } else if (response.status === 500) {
+        const message = await response.json();
+        setError(message.message);
+      } else {
+        setError("Error Creating Donation");
+      }
+    } else if (donationType == "Incoming") {
+      const incomingDonationData: AddIncomingDonationType = {
+        userId: selectedUser.id,
+        donationDetails: items.map((item) => ({
+          itemId: item.itemId,
+          usedQuantity: item.quantityUsed,
+          newQuantity: item.quantityNew,
+        })),
+      };
+      const response = await createIncomingDonation(incomingDonationData);
 
-			if (response.status === 200) {
-				handleCloseModal();
-				handleSubmissionSuccess();
-			} else if (response.status === 500) {
-				const messages = await response.json();
-				setError(messages.error);
-			} else {
-				setError("Error Creating Donation");
-			}
-		} else {
-			setError("Invalid donation type");
-		}
-	};
+      if (response.status === 200) {
+        handleCloseModal();
+        handleSubmissionSuccess();
+      } else if (response.status === 500) {
+        const messages = await response.json();
+        setError(messages.error);
+      } else {
+        setError("Error Creating Donation");
+      }
+    } else {
+      setError("Invalid donation type");
+    }
+  };
 
   return (
     <Box p={2} sx={{ overflowY: "auto" }}>
@@ -452,16 +452,16 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
             </Grid>
           </Grid>
 
-					<div
-						style={{ display: "flex", alignItems: "center", marginTop: "20px" }}
-					>
-						<Typography
-							fontFamily="Raleway, sans-serif"
-							fontSize={20}
-							color="navy"
-						>
-							Date
-						</Typography>
+          <div
+            style={{ display: "flex", alignItems: "center", marginTop: "20px" }}
+          >
+            <Typography
+              fontFamily="Raleway, sans-serif"
+              fontSize={20}
+              color="navy"
+            >
+              Date
+            </Typography>
 
             <div
               className="date-picker"
