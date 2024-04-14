@@ -41,6 +41,7 @@ import { PAGE_SIZE } from "../lib/constants";
 import { ErrorMessage } from "../components/ErrorMessage";
 import { SuccessMessage } from "../components/SuccessMessage";
 import Calendar from "../components/Calendar";
+import { useAuth } from "../lib/contexts";
 
 const CashDonationsPage: React.FC = () => {
   const [filterModel, setFilterModel] = useState<GridFilterModel | undefined>();
@@ -53,6 +54,7 @@ const CashDonationsPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean | null>(null);
   const queryClient = useQueryClient();
+  const { currentUser } = useAuth();
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
@@ -88,7 +90,10 @@ const CashDonationsPage: React.FC = () => {
   };
 
   const addMutation = useMutation({
-    mutationFn: (data: AddCashDonationType) => addCashDonation(data),
+    mutationFn: (data: AddCashDonationType) =>
+      currentUser
+        ?.getIdToken()
+        .then(() => addCashDonation(data)) as Promise<Response>,
     onSuccess: (result: Response) => {
       queryClient.invalidateQueries({ queryKey: ["cashDonation"] });
       if (result.status === 400 || result.status === 500) {
@@ -110,7 +115,11 @@ const CashDonationsPage: React.FC = () => {
 
   const editMutation = useMutation({
     mutationFn: (data: EditCashArgs) =>
-      updateCashDonation(data.id, data.cashData, "token"),
+      currentUser
+        ?.getIdToken()
+        .then((token) =>
+          updateCashDonation(data.id, data.cashData, token)
+        ) as Promise<Response>,
     onSuccess: (result: Response) => {
       queryClient.invalidateQueries({ queryKey: ["cashDonation"] });
       if (result.status === 400 || result.status === 500) {
@@ -191,7 +200,11 @@ const CashDonationsPage: React.FC = () => {
     queryKey: ["cashDonation", page, pageSize, filterModel, sortModel],
     placeholderData: keepPreviousData,
     queryFn: () =>
-      getCashDonations("token", page, pageSize, filterModel, sortModel)
+      currentUser
+        ?.getIdToken()
+        .then((token) =>
+          getCashDonations(token, page, pageSize, filterModel, sortModel)
+        )
         .then((res: Response) => res.json())
         .then((data: cdDashboardResponse) => {
           setTotalNumber(data.totalNumber);
