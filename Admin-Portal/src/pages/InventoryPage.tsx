@@ -32,6 +32,7 @@ import AddIcon from "@mui/icons-material/Add";
 import "./styles/datagrid.css";
 import { ErrorMessage } from "../components/ErrorMessage";
 import { SuccessMessage } from "../components/SuccessMessage";
+import { useAuth } from "../lib/contexts";
 
 // TODO: make this into a constant in the constants file
 const categoryOptions: string[] = ["Books", "Clothes"];
@@ -50,6 +51,7 @@ const InventoryPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean | null>(null);
   const queryClient = useQueryClient();
+  const { currentUser } = useAuth();
 
   const handleOpenAddInventory = () => {
     setOpenAddInventory(true);
@@ -90,7 +92,11 @@ const InventoryPage: React.FC = () => {
     queryKey: ["inventory", page, pageSize, filterModel, sortModel],
     placeholderData: keepPreviousData,
     queryFn: () =>
-      getInventoryRows("token", page, pageSize, filterModel, sortModel)
+      currentUser
+        ?.getIdToken()
+        .then((token) =>
+          getInventoryRows(token, page, pageSize, filterModel, sortModel)
+        )
         .then((response: Response) => response.json())
         .then((data) => {
           setTotalNumber(data.totalNumber);
@@ -117,7 +123,10 @@ const InventoryPage: React.FC = () => {
   });
 
   const addMutation = useMutation({
-    mutationFn: (data: any) => addIventoryItem(data),
+    mutationFn: (data: any) =>
+      currentUser
+        ?.getIdToken()
+        .then((token) => addIventoryItem(token, data)) as Promise<Response>,
     onSuccess: (result: Response) => {
       queryClient.invalidateQueries({ queryKey: ["inventory"] });
       if (result.status === 400 || result.status === 500) {
@@ -132,7 +141,10 @@ const InventoryPage: React.FC = () => {
   });
 
   const editMutation = useMutation({
-    mutationFn: (data: any) => editInventoryItem(data),
+    mutationFn: (data: any) =>
+      currentUser
+        ?.getIdToken()
+        .then((token) => editInventoryItem(token, data)) as Promise<Response>,
     onSuccess: (result: Response) => {
       queryClient.invalidateQueries({ queryKey: ["inventory"] });
       if (result.status === 400 || result.status === 500) {
@@ -147,7 +159,10 @@ const InventoryPage: React.FC = () => {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: number) => deleteInventoryItem(id, "token"),
+    mutationFn: (id: number) =>
+      currentUser
+        ?.getIdToken()
+        .then((token) => deleteInventoryItem(token, id)) as Promise<Response>,
     onSuccess: (result: Response) => {
       queryClient.invalidateQueries({ queryKey: ["inventory"] });
       if (result.status === 400 || result.status === 500) {

@@ -41,27 +41,39 @@ export const getInventoryRows = async (
   });
 };
 
-export const addIventoryItem = async (inventoryItem: AddInventoryItemType) => {
+export const addIventoryItem = async (
+  token: string | undefined,
+  inventoryItem: AddInventoryItemType
+) => {
   return await fetch(`${backendUrl}/inventory/v1`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify(inventoryItem),
   });
 };
 
-export const editInventoryItem = async (editInfo: EditInventoryItemType) => {
+export const editInventoryItem = async (
+  token: string | undefined,
+  editInfo: EditInventoryItemType
+) => {
   const inventoryItem = editInfo.data;
   const id = editInfo.id;
   return await fetch(`${backendUrl}/inventory/v1/id/${id}`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify(inventoryItem),
   });
 };
 
 export const deleteInventoryItem = async (
-  inventoryId: number,
-  token: string
+  token: string | undefined,
+  inventoryId: number
 ) => {
   return await fetch(`${backendUrl}/inventory/v1/delete/id/${inventoryId}`, {
     method: "DELETE",
