@@ -75,7 +75,16 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
     asianNum: 0,
     otherNum: 0,
   });
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (selectedDate && selectedDate > new Date()) {
+      setErrorMessage("Cannot select date in the future.");
+    } else {
+      setErrorMessage(null);
+    }
+  }, [selectedDate]);
 
   const handleUserChange = (
     _event: React.SyntheticEvent<Element, Event>,
@@ -629,6 +638,11 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
               </button>
             </div>
           </div>
+        )}
+        {errorMessage && (
+          <Typography variant="body2" color="error">
+            {errorMessage}
+          </Typography>
         )}
       </div>
     </Box>

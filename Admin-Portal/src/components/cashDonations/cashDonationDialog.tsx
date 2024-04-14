@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { TextField, Autocomplete } from "@mui/material";
+import { TextField, Autocomplete, Typography } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -33,6 +33,8 @@ const CashDonationsDialog: React.FC<CashDialogProps> = (props) => {
       } as CDUser)) ||
       null
   );
+  const [errorMessage, setErrorMessage] = useState("");
+  const [showError, setShowError] = useState(false);
 
   useEffect(() => {
     if (selectedOrganization) {
@@ -58,7 +60,13 @@ const CashDonationsDialog: React.FC<CashDialogProps> = (props) => {
       setSelectedUser(null);
     }
   };
+
   const handleDateChange = (date: Date | null) => {
+    if (date && date > new Date()) {
+      setErrorMessage("Cannot select date in the future.");
+      setShowError(true);
+      return;
+    }
     onDateChange(date);
   };
 
@@ -70,6 +78,16 @@ const CashDonationsDialog: React.FC<CashDialogProps> = (props) => {
     const input = event.target.value;
     setTotal(input);
   };
+
+  useEffect(() => {
+    if (showError) {
+      const timer = setTimeout(() => {
+        setShowError(false);
+        setErrorMessage("");
+      }, 10000); 
+      return () => clearTimeout(timer);
+    }
+  }, [showError]);
 
   return (
     <>
@@ -129,6 +147,13 @@ const CashDonationsDialog: React.FC<CashDialogProps> = (props) => {
           />
         </DemoContainer>
       </LocalizationProvider>
+
+      {showError && (
+        <Typography variant="body2" color="error">
+          {errorMessage}
+        </Typography>
+      )}
+
       <TextField
         autoFocus
         required={true}
