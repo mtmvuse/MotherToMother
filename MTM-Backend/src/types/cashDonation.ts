@@ -10,6 +10,7 @@ export interface CashDonationInput {
   date: Date;
   total: number;
   userId: number;
+  currentUser?: string;
 }
 
 export interface APQueryType {

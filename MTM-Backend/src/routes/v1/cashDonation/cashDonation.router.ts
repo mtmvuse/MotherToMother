@@ -95,12 +95,14 @@ cashDonationRouter.put(
       userId: Joi.number().integer().positive(),
       date: Joi.date().iso().required(),
       total: Joi.number().positive().required(),
+      currentUser: Joi.string(),
     });
     const id = Number(req.params.id);
     try {
       const cashData = (await schema.validateAsync(
         req.body,
       )) as CashDonationInput;
+      delete cashData.currentUser;
       const cash = await CashDonationService.updateCashById(cashData, id);
       return res.status(201).json(cash);
     } catch (e) {
