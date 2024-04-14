@@ -56,8 +56,6 @@ const CashDonationsPage: React.FC = () => {
   const queryClient = useQueryClient();
   const { currentUser } = useAuth();
 
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-
   const [editRow, setEditRow] = useState<CashDonationRow | undefined>();
   const [openEditCashDonation, setOpenEditCashDonation] = React.useState(false);
 
@@ -66,10 +64,6 @@ const CashDonationsPage: React.FC = () => {
   const [deleteRow, setDeleteRow] = React.useState<
     CashDonationRow | undefined
   >();
-
-  const handleDateChange = (date: Date | null) => {
-    setSelectedDate(date);
-  };
 
   const handleOpenAddCashDonation = () => {
     setOpenAddCashDonation(true);
@@ -93,7 +87,7 @@ const CashDonationsPage: React.FC = () => {
     mutationFn: (data: AddCashDonationType) =>
       currentUser
         ?.getIdToken()
-        .then(() => addCashDonation(data)) as Promise<Response>,
+        .then((token) => addCashDonation(data, token)) as Promise<Response>,
     onSuccess: (result: Response) => {
       queryClient.invalidateQueries({ queryKey: ["cashDonation"] });
       if (result.status === 400 || result.status === 500) {
@@ -135,7 +129,10 @@ const CashDonationsPage: React.FC = () => {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: number) => deleteCashDonation(id, "token"),
+    mutationFn: (id: number) =>
+      currentUser
+        ?.getIdToken()
+        .then((token) => deleteCashDonation(id, token)) as Promise<Response>,
     onSuccess: (result: Response) => {
       queryClient.invalidateQueries({ queryKey: ["cashDonation"] });
       if (result.status === 400 || result.status === 500) {
@@ -175,8 +172,8 @@ const CashDonationsPage: React.FC = () => {
     const { user, organization, ...rest } = formJson;
     const data = {
       ...rest,
+      date: new Date(formJson.date),
       total: Number(formJson.total),
-      date: selectedDate,
     } as AddCashDonationType;
     addMutation.mutate(data);
   };
@@ -226,11 +223,12 @@ const CashDonationsPage: React.FC = () => {
       id: editRow.id,
       cashData: {
         ...rest,
+        date: new Date(formJson.date),
         total: Number(formJson.total),
-        date: selectedDate,
       } as EditCashArgs["cashData"],
       token: "token",
     };
+    console.log(data);
     editMutation.mutate(data);
   };
 
@@ -388,11 +386,7 @@ const CashDonationsPage: React.FC = () => {
         open={openAddCashDonation}
         handleSubmit={handleAddCashDonation}
       >
-        <CashDonationsDialog
-          organizations={organizationsQueryResponse.data}
-          selectedDate={selectedDate}
-          onDateChange={handleDateChange}
-        />
+        <CashDonationsDialog organizations={organizationsQueryResponse.data} />
       </FormDialog>
       <FormDialog
         title={"EDIT A DONATION"}
@@ -402,8 +396,6 @@ const CashDonationsPage: React.FC = () => {
       >
         <CashDonationsDialog
           organizations={organizationsQueryResponse.data}
-          selectedDate={selectedDate}
-          onDateChange={handleDateChange}
           editRow={editRow}
         />
       </FormDialog>

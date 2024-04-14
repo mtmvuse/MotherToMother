@@ -72,12 +72,13 @@ cashDonationRouter.post(
       userId: Joi.number().integer().positive(),
       date: Joi.date().iso().required(),
       total: Joi.number().positive().required(),
+      currentUser: Joi.string(),
     });
     try {
       const validatedData = (await schema.validateAsync(
         req.body,
       )) as CashDonationInput;
-
+      delete validatedData.currentUser;
       const result =
         await CashDonationService.createCashDonation(validatedData);
 
