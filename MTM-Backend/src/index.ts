@@ -49,7 +49,7 @@ app.use("/donation", donationRouter);
 app.use("/inventory", inventoryRouter);
 
 app.use("/report", reportRouter);
-app.use("/cashDonation", cashDonationRouter);
+app.use("/cashDonation", verifyToken, cashDonationRouter);
 
 // Default route: Unprotected
 app.get("/", (_req: Request, res: Response) => {
