@@ -13,11 +13,12 @@
 }
 
 .MuiButton-root.table-add-button {
-  background-color: #f3f3f3;
+  background-color: #f7f7f7;
   border: none;
   color: #6d6d6d;
+  font-size: 18px;
+  text-transform: capitalize;
   text-decoration: none;
-  font-size: 12px;
   cursor: pointer;
   border-radius: 20px;
   height: 40px;
@@ -29,11 +30,12 @@
 }
 
 .MuiButton-root.table-add-org-button {
-  background-color: #f3f3f3;
+  background-color: #f7f7f7;
   border: none;
   color: #6d6d6d;
   text-decoration: none;
-  font-size: 10px;
+  font-size: 12px;
+  text-transform: capitalize;
   cursor: pointer;
   border-radius: 20px;
   height: 40px;
@@ -45,11 +47,12 @@
 }
 
 .MuiButton-root.table-add-button-second {
-  background-color: #f3f3f3;
+  background-color: #f7f7f7;
   border: none;
   color: #6d6d6d;
   text-decoration: none;
-  font-size: 12px;
+  font-size: 18px;
+  text-transform: capitalize;
   cursor: pointer;
   border-radius: 20px;
   height: 40px;
@@ -61,7 +64,7 @@
   justify-content: centter;
 }
 
-.css-a1ywpm-MuiButtonBase-root-MuiButton-root {
+.MuiButton-root.table-add-export-button {
   background-color: #f3f3f3 !important;
   border: none;
   color: #6d6d6d !important;
@@ -77,10 +80,99 @@
 }
 
 .grid-container {
-  background-color: #f3f3f3;
+  background-color: #f7f7f7;
   margin-top: 10px;
   padding: 20px 20px 0 20px;
   border-radius: 20px;
+}
+
+.css-1iyq7zh-MuiDataGrid-columnHeaders {
+  color: #004a7c;
+  background-color: #d8d8d8;
+  border-radius: 50px;
+  border-top-left-radius: 50px !important;
+  border-top-right-radius: 50px !important;
+  margin-top: 10px;
+  min-height: 35px !important;
+  max-height: 35px !important;
+}
+
+.css-1psby5b-MuiDataGrid-root .MuiDataGrid-row-row {
+  min-height: 10px !important;
+}
+
+.mtm-datagrid .MuiDataGrid-columnSeparator {
+  display: none !important;
+}
+
+.MuiDataGrid-root {
+  border-width: 0px !important;
+  font-family: Inter, sans-serif !important;
+  font-size: 14px;
+  color: black !important;
+}
+
+.mtm-datagrid .MuiDataGrid-columnHeader {
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+}
+
+.mtm-datagrid .super-app-theme--cell {
+  color: #004a7c;
+  font-weight: 600;
+  align-items: center !important;
+  font-family: poppins, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.type-style .MuiDataGrid-cellContent {
+  text-align: center;
+  width: 75%;
+  background-color: lightgray;
+  border-radius: 20px;
+}
+
+.page-title {
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 25px;
+  color: #004a7c;
+}
+
+.MuiButton-root.table-add-calendar-button {
+  background-color: #f3f3f3;
+  border: none;
+  color: #6d6d6d;
+  text-decoration: none;
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 20px;
+  height: 40px;
+  width: 140px;
+  margin: auto 10px 10px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-summary {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  color: #004a7c;
+  background-color: #d8d8d8;
+  border-radius: 50px;
+  border-top-left-radius: 50px !important;
+  border-top-right-radius: 50px !important;
+  min-height: 35px !important;
+  max-height: 35px !important;
+}
+
+.footer-summary-header {
+  display: flex;
+  text-transform: uppercase;
+  width: min(200px, 20%);
+  justify-content: space-between;
 }
 
 .grid-container .css-1iyq7zh-MuiDataGrid-columnHeaders {
@@ -121,4 +213,29 @@
   font-family: poppins, sans-serif;
   font-size: 16px;
   font-weight: 400;
+}
+
+.calendar-container {
+  display: flex;
+}
+
+.calendar-date-range-text {
+  display: flex;
+  align-items: center;
+}
+
+.calendar-date-range-container {
+  display: flex;
+  margin: 0 10px 10px 0;
+}
+
+.filterOption-container {
+  display: flex;
+  margin: 0 10px 10px 0;
+}
+
+.filterOption-text {
+  display: flex;
+  align-items: center;
+  text-transform: capitalize;
 }

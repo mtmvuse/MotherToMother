@@ -14,6 +14,7 @@ import {
   Select,
   MenuItem,
   InputLabel,
+  Divider,
 } from "@mui/material";
 import { registerUserOnServer, getOrganizations } from "../../lib/services";
 import type {
@@ -27,7 +28,6 @@ import { RegisterTextFieldPassword } from "../../components/Auth/RegisterForms/R
 import { RegisterTextFieldPhone } from "../../components/Auth/RegisterForms/RegisterTextFieldPhone";
 import { feedback } from "../../components/Auth/RegisterForms/RegisterFeedback";
 import { USER_TYPE } from "../../lib/constants";
-import type { SharedStates } from "../../App";
 
 const schema = Yup.object().shape({
   name: Yup.string()
@@ -63,11 +63,11 @@ const schema = Yup.object().shape({
   }),
 });
 
-const Register: React.FC<SharedStates> = ({ setSavedUserType }) => {
+const Register: React.FC = () => {
   const [userType, setUserType] = useState<string>("");
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [error, setError] = useState<string>("");
-  const { registerUser, currentUser } = useAuth();
+  const { registerUser, login, currentUser } = useAuth();
   const navigate = useNavigate();
 
   //how to handle the logic of failing to register on the database
@@ -84,12 +84,20 @@ const Register: React.FC<SharedStates> = ({ setSavedUserType }) => {
 
     const queryOrganizations = async (query: string | undefined) => {
       try {
-        const organization = await getOrganizations(query);
-        setOrganizations(organization);
+        const response = await getOrganizations(query);
+        if (!response.ok) {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          const message = await response.json();
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
+          throw new Error(message.message);
+        }
+        const organizations = (await response.json()) as Organization[];
+        setOrganizations(organizations);
       } catch (err: any) {
         if (err instanceof TypeError) {
           setError("Network error: Failed to get organizations");
         } else {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
           setError(err.message);
         }
       }
@@ -136,8 +144,7 @@ const Register: React.FC<SharedStates> = ({ setSavedUserType }) => {
           `Failed to save registered user data to database: ${response.status}`,
         );
       }
-      localStorage.setItem("userType", values.userType);
-      setSavedUserType(values.userType);
+      await login(values.email, values.password);
       navigate("/home");
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
@@ -506,27 +513,36 @@ const Register: React.FC<SharedStates> = ({ setSavedUserType }) => {
             </Button>
           </Box>
         </form>
-      </Box>
 
-      <Box mt={2}>
-        <Typography>
-          <Link
-            to="/"
-            style={{
-              color: "gray",
-              textDecoration: "none",
-              fontFamily: "Raleway, sans-serif",
-            }}
-          >
-            <span
+        <Box mt={2}>
+          <Typography style={{ textAlign: "center" }}>
+            <Link
+              to="/"
               style={{
-                fontWeight: "normal",
+                color: "gray",
+                textDecoration: "none",
+                fontFamily: "Raleway, sans-serif",
               }}
             >
-              Already have an account?
-            </span>
-            <span style={{ fontWeight: "bold" }}> Log in</span>
-          </Link>
+              <span
+                style={{
+                  fontWeight: "normal",
+                }}
+              >
+                Already have an account?
+              </span>
+              <span style={{ fontWeight: "bold" }}> Log in</span>
+            </Link>
+          </Typography>
+        </Box>
+
+        <Divider style={{ width: "100%", marginTop: 20 }} />
+
+        <Typography style={{ margin: 10, textAlign: "center", opacity: 0.7 }}>
+          By signing up, you hereby agree to allow us to use your email address
+          to send occasional updates and donation invites. We guarantee the
+          confidentiality of your personal information and ensure it will not be
+          shared with any third parties.
         </Typography>
       </Box>
     </Box>

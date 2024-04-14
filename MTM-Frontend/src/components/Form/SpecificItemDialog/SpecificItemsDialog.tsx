@@ -3,15 +3,13 @@ import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import Button from "@mui/material/Button";
-import IconButton from "@mui/material/IconButton";
-import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
 import Stack from "@mui/material/Stack";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { useForm } from "../../../contexts/FormContext";
 import type { DonationDetailType } from "../../../types/FormTypes";
 import "./SpecificItemsDialog.css";
+import { ErrorMessage } from "../../Error";
 
 type SpecificItemsProps = {
   open: boolean;
@@ -28,6 +26,7 @@ export const SpecificItemsDialog = ({
   const { setDonationDetails } = useForm();
   const [tempNewQuantity, setTempNewQuantity] = useState(newQuantity);
   const [tempUsedQuantity, setTempUsedQuantity] = useState(usedQuantity);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!open) {
@@ -38,6 +37,10 @@ export const SpecificItemsDialog = ({
   }, [open, tempNewQuantity, tempUsedQuantity]);
 
   const handleSaveDetails = () => {
+    if (tempNewQuantity === 0 && tempUsedQuantity === 0) {
+      setError("Please enter a quantity for either new or used items.");
+      return;
+    }
     setDonationDetails((prev) => {
       const updatedDonationDetails = [...prev];
       const existingItemIndex = updatedDonationDetails.findIndex(
@@ -76,8 +79,15 @@ export const SpecificItemsDialog = ({
     if (onClose) onClose();
   };
 
+  const preventMinus = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "-" || e.key === "e" || e.key === "E" || e.key === "+") {
+      e.preventDefault();
+    }
+  };
+
   return (
     <div id="SpecificItems-Dialog">
+      <ErrorMessage error={error} setError={setError} />
       <Dialog
         open={open}
         onClose={handleClose}
@@ -127,6 +137,7 @@ export const SpecificItemsDialog = ({
             <input
               type="number"
               value={tempNewQuantity === 0 ? "" : tempNewQuantity}
+              onKeyDown={preventMinus}
               onChange={(e) => {
                 const value = e.target.value;
                 if (value === "" || !isNaN(parseInt(value))) {
@@ -164,6 +175,7 @@ export const SpecificItemsDialog = ({
             <input
               type="number"
               value={tempUsedQuantity === 0 ? "" : tempUsedQuantity}
+              onKeyDown={preventMinus}
               onChange={(e) => {
                 const value = e.target.value;
                 if (value === "" || !isNaN(parseInt(value))) {
@@ -180,6 +192,7 @@ export const SpecificItemsDialog = ({
               }}
             />
           </Stack>
+
           <Grid
             container
             spacing={1}

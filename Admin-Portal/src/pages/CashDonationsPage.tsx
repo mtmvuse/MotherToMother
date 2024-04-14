@@ -40,6 +40,8 @@ import type {
 import { PAGE_SIZE } from "../lib/constants";
 import { ErrorMessage } from "../components/ErrorMessage";
 import { SuccessMessage } from "../components/SuccessMessage";
+import Calendar from "../components/Calendar";
+import { useAuth } from "../lib/contexts";
 
 const CashDonationsPage: React.FC = () => {
   const [filterModel, setFilterModel] = useState<GridFilterModel | undefined>();
@@ -52,6 +54,7 @@ const CashDonationsPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean | null>(null);
   const queryClient = useQueryClient();
+  const { currentUser } = useAuth();
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
@@ -87,7 +90,10 @@ const CashDonationsPage: React.FC = () => {
   };
 
   const addMutation = useMutation({
-    mutationFn: (data: AddCashDonationType) => addCashDonation(data),
+    mutationFn: (data: AddCashDonationType) =>
+      currentUser
+        ?.getIdToken()
+        .then(() => addCashDonation(data)) as Promise<Response>,
     onSuccess: (result: Response) => {
       queryClient.invalidateQueries({ queryKey: ["cashDonation"] });
       if (result.status === 400 || result.status === 500) {
@@ -109,7 +115,11 @@ const CashDonationsPage: React.FC = () => {
 
   const editMutation = useMutation({
     mutationFn: (data: EditCashArgs) =>
-      updateCashDonation(data.id, data.cashData, "token"),
+      currentUser
+        ?.getIdToken()
+        .then((token) =>
+          updateCashDonation(data.id, data.cashData, token)
+        ) as Promise<Response>,
     onSuccess: (result: Response) => {
       queryClient.invalidateQueries({ queryKey: ["cashDonation"] });
       if (result.status === 400 || result.status === 500) {
@@ -158,25 +168,17 @@ const CashDonationsPage: React.FC = () => {
     setSortModel(model);
   };
 
-  const findOrganizationId = (organizationName: string) => {
-    return organizationsQueryResponse.data?.find(
-      (organization) => organization.name === organizationName
-    )?.id;
-  };
-
   const handleAddCashDonation = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const formJson = Object.fromEntries((formData as any).entries());
-    const { organization, ...rest } = formJson;
-    const cashDonationData = {
+    const { user, organization, ...rest } = formJson;
+    const data = {
       ...rest,
-      organizationId: findOrganizationId(formJson.organization),
       total: Number(formJson.total),
       date: selectedDate,
     } as AddCashDonationType;
-
-    addMutation.mutate(cashDonationData);
+    addMutation.mutate(data);
   };
 
   const organizationsQueryResponse = useQuery({
@@ -198,7 +200,11 @@ const CashDonationsPage: React.FC = () => {
     queryKey: ["cashDonation", page, pageSize, filterModel, sortModel],
     placeholderData: keepPreviousData,
     queryFn: () =>
-      getCashDonations("token", page, pageSize, filterModel, sortModel)
+      currentUser
+        ?.getIdToken()
+        .then((token) =>
+          getCashDonations(token, page, pageSize, filterModel, sortModel)
+        )
         .then((res: Response) => res.json())
         .then((data: cdDashboardResponse) => {
           setTotalNumber(data.totalNumber);
@@ -215,12 +221,11 @@ const CashDonationsPage: React.FC = () => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const formJson = Object.fromEntries((formData as any).entries());
-    const { organization, ...rest } = formJson;
+    const { user, organization, ...rest } = formJson;
     const data = {
       id: editRow.id,
       cashData: {
         ...rest,
-        organizationId: findOrganizationId(formJson.organization),
         total: Number(formJson.total),
         date: selectedDate,
       } as EditCashArgs["cashData"],
@@ -250,7 +255,7 @@ const CashDonationsPage: React.FC = () => {
     {
       field: "id",
       headerName: "ID",
-      flex: 2,
+      flex: 1.5,
       type: "number",
       align: "left",
       headerAlign: "left",
@@ -262,10 +267,35 @@ const CashDonationsPage: React.FC = () => {
       align: "left",
       headerAlign: "left",
       type: "date",
+      filterable: false,
       valueFormatter: (params: GridValueFormatterParams) => {
         return new Date(params.value).toLocaleDateString();
       },
       valueGetter: (params: GridValueGetterParams) => new Date(params.value),
+    },
+    {
+      field: "userId",
+      headerName: "User ID",
+      flex: 1.5,
+      type: "number",
+      align: "left",
+      headerAlign: "left",
+    },
+    {
+      field: "firstName",
+      headerName: "First Name",
+      flex: 2,
+      type: "text",
+      align: "left",
+      headerAlign: "left",
+    },
+    {
+      field: "lastName",
+      headerName: "Last Name",
+      flex: 2,
+      type: "text",
+      align: "left",
+      headerAlign: "left",
     },
     {
       field: "organization",
@@ -319,6 +349,11 @@ const CashDonationsPage: React.FC = () => {
       {error && <ErrorMessage error={error} setError={setError} />}
       {success && <SuccessMessage success={success} setSuccess={setSuccess} />}
       <div style={{ display: "flex " }}>
+        <Calendar
+          filterModel={filterModel}
+          setFilterModel={setFilterModel}
+          handleFilterModelChange={handleFilterModelChange}
+        />
         <Button
           className="table-add-button"
           onClick={handleOpenAddCashDonation}

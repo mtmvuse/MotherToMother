@@ -5,6 +5,7 @@ import express, {
 } from "express";
 import * as DonationService from "./donation.service";
 import { updateItem, getItemsName, getItemFromID } from "../item/item.service";
+import { getUserByEmail } from "../user/user.service";
 import type {
   OutgoingDonationRequestBodyType,
   DonationDetailType,
@@ -12,8 +13,9 @@ import type {
   DonationQueryType,
   DonationsDashboardDisplay,
   PUTOutgoingDonationRequestBodyType,
-  PUTDonationRequestBodyType,
   DonationRequestBodyType,
+  UADonationRequestBodyType,
+  DonationType,
 } from "../../../types/donation";
 import {
   translateFilterToPrisma,
@@ -66,9 +68,156 @@ const isNonNegativeInteger = (value: number) => {
 };
 
 /**
- * Create an outgoing donation
+ *  Validate the demographic numbers
+ * @param donationReqBody
+ * @returns
  */
-const createOutgoingDonation = async (
+const validDemographics = (
+  donationReqBody: OutgoingDonationRequestBodyType | UADonationRequestBodyType,
+) => {
+  return (
+    isNonNegativeInteger(donationReqBody.numberServed) &&
+    isNonNegativeInteger(donationReqBody.whiteNum) &&
+    isNonNegativeInteger(donationReqBody.latinoNum) &&
+    isNonNegativeInteger(donationReqBody.blackNum) &&
+    isNonNegativeInteger(donationReqBody.nativeNum) &&
+    isNonNegativeInteger(donationReqBody.asianNum) &&
+    isNonNegativeInteger(donationReqBody.otherNum)
+  );
+};
+
+/**
+ * Check the quantity of the items in an outgoing donation by item ids
+ * @param donationReqBody
+ */
+const checkOutgoingItemsAP = async (
+  donationReqBody: OutgoingDonationRequestBodyType,
+) => {
+  await Promise.all(
+    donationReqBody.donationDetails.map(async (itemDetail) => {
+      const item = await getItemFromID(itemDetail.itemId);
+
+      if (!item) {
+        throw new Error(`No item with the given id: ${itemDetail.itemId}`);
+      }
+
+      if (item.quantityNew < itemDetail.newQuantity) {
+        throw new Error(
+          `Not enough stock for the new item: ${item.name}. Stock: ${item.quantityNew}`,
+        );
+      }
+
+      if (item.quantityUsed < itemDetail.usedQuantity) {
+        throw new Error(
+          `Not enough stock for the used item: ${item.name}. Stock: ${item.quantityUsed}`,
+        );
+      }
+    }),
+  );
+};
+
+/**
+ * Check the quantity of the items in an outgoing donation by item names
+ * @param donationReqBody
+ */
+const checkOutgoingItemsUA = async (
+  donationReqBody: UADonationRequestBodyType,
+) => {
+  await Promise.all(
+    donationReqBody.donationDetails.map(async (itemDetail) => {
+      const items = await getItemsName(itemDetail.item!);
+
+      if (!items || items.length === 0) {
+        throw new Error(`No item with the given id: ${itemDetail.itemId}`);
+      }
+
+      if (items[0].quantityNew < itemDetail.newQuantity) {
+        throw new Error(
+          `Not enough stock for the new item: ${items[0].name}. Stock: ${items[0].quantityNew}`,
+        );
+      }
+
+      if (items[0].quantityUsed < itemDetail.usedQuantity) {
+        throw new Error(
+          `Not enough stock for the used item: ${items[0].name}. Stock: ${items[0].quantityUsed}`,
+        );
+      }
+    }),
+  );
+};
+
+/**
+ * Check if the donation is empty
+ * @param donationReqBody
+ * @returns
+ */
+const checkEmptyDonation = (
+  donationReqBody: OutgoingDonationRequestBodyType | UADonationRequestBodyType,
+) => {
+  if (donationReqBody.donationDetails.length === 0) {
+    throw new Error("Donation is empty");
+  }
+
+  let allZero = true;
+  donationReqBody.donationDetails.forEach((donationDetail) => {
+    if (donationDetail.usedQuantity !== 0 || donationDetail.newQuantity !== 0) {
+      allZero = false;
+    }
+  });
+
+  if (allZero) {
+    throw new Error("All donation items are 0. Empty donation.");
+  }
+};
+
+/**
+ * Create the outgoing donation in the database
+ * @param donationReqBody
+ * @returns
+ */
+const createOutgoingDonationDatabase = async (
+  donationReqBody: OutgoingDonationRequestBodyType | UADonationRequestBodyType,
+  newDonation: DonationType,
+) => {
+  donationReqBody.donationDetails.forEach(
+    async (donationDetail: DonationDetailType) => {
+      await DonationService.createDonationDetails(
+        newDonation.id,
+        donationDetail,
+      );
+    },
+  );
+
+  const newOutgoingDonationStats: OutgoingDonationStatsType =
+    await DonationService.createOutgoingDonationStats(
+      newDonation.id,
+      donationReqBody.numberServed,
+      donationReqBody.whiteNum,
+      donationReqBody.latinoNum,
+      donationReqBody.blackNum,
+      donationReqBody.nativeNum,
+      donationReqBody.asianNum,
+      donationReqBody.otherNum,
+    );
+
+  // Update the quantity of each item
+  await Promise.all(
+    donationReqBody.donationDetails.map(async (itemDetail) => {
+      await updateItem(
+        itemDetail.itemId,
+        -itemDetail.usedQuantity,
+        -itemDetail.newQuantity,
+      );
+    }),
+  );
+
+  return newOutgoingDonationStats;
+};
+
+/**
+ * Create an outgoing donation on the Admin Portal
+ */
+const createOutgoingDonationAP = async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -76,81 +225,72 @@ const createOutgoingDonation = async (
   try {
     const donationReqBody = req.body as OutgoingDonationRequestBodyType;
     // Validate the numberServed and demographic numbers
-    if (
-      !isNonNegativeInteger(donationReqBody.numberServed) ||
-      !isNonNegativeInteger(donationReqBody.whiteNum) ||
-      !isNonNegativeInteger(donationReqBody.latinoNum) ||
-      !isNonNegativeInteger(donationReqBody.blackNum) ||
-      !isNonNegativeInteger(donationReqBody.nativeNum) ||
-      !isNonNegativeInteger(donationReqBody.asianNum) ||
-      !isNonNegativeInteger(donationReqBody.otherNum)
-    ) {
+    if (!validDemographics(donationReqBody)) {
       throw new Error(
         "NumberServed and demographic numbers must be non-negative integers",
       );
     }
 
-    await Promise.all(
-      donationReqBody.donationDetails.map(async (itemDetail) => {
-        const item = await getItemFromID(itemDetail.itemId);
+    checkEmptyDonation(donationReqBody);
 
-        if (!item) {
-          throw new Error(`No item with the given id: ${itemDetail.itemId}`);
-        }
+    await checkOutgoingItemsAP(donationReqBody);
 
-        if (item.quantityNew < itemDetail.newQuantity) {
-          throw new Error(
-            `Not enough stock for the new item: ${item.name}. Stock: ${item.quantityNew}`,
-          );
-        }
-
-        if (item.quantityUsed < itemDetail.usedQuantity) {
-          throw new Error(
-            `Not enough stock for the used item: ${item.name}. Stock: ${item.quantityUsed}`,
-          );
-        }
-      }),
-    );
-
-    // ----------------------- Here, it start updating the database -------------------------------
     const newDonation = await DonationService.createDonation(
       donationReqBody.userId,
       donationReqBody.date,
     );
 
-    donationReqBody.donationDetails.forEach(
-      async (donationDetail: DonationDetailType) => {
-        await DonationService.createDonationDetails(
-          newDonation.id,
-          donationDetail,
-        );
-      },
-    );
+    await createOutgoingDonationDatabase(donationReqBody, newDonation);
 
-    const newOutgoingDonationStats: OutgoingDonationStatsType =
-      await DonationService.createOutgoingDonationStats(
-        newDonation.id,
-        donationReqBody.numberServed,
-        donationReqBody.whiteNum,
-        donationReqBody.latinoNum,
-        donationReqBody.blackNum,
-        donationReqBody.nativeNum,
-        donationReqBody.asianNum,
-        donationReqBody.otherNum,
+    return res.status(200).json();
+  } catch (e) {
+    next(e);
+  }
+};
+
+/**
+ * Create an outgoing donation for user app
+ */
+const createOutgoingDonationUA = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const donationReqBody = req.body as UADonationRequestBodyType;
+    // Validate the numberServed and demographic numbers
+    if (!validDemographics(donationReqBody)) {
+      throw new Error(
+        "NumberServed and demographic numbers must be non-negative integers",
       );
+    }
 
-    // Update the quantity of each item
-    await Promise.all(
-      donationReqBody.donationDetails.map(async (itemDetail) => {
-        await updateItem(
-          itemDetail.itemId,
-          -itemDetail.usedQuantity,
-          -itemDetail.newQuantity,
-        );
-      }),
+    await checkOutgoingItemsUA(donationReqBody);
+
+    const user = await getUserByEmail(donationReqBody.email);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const newDonation = await DonationService.createDonation(
+      user.id,
+      new Date(),
     );
 
-    return res.status(200).json(newOutgoingDonationStats);
+    checkEmptyDonation(donationReqBody);
+
+    // Get the item id from the item name
+    const newDonationDetails = [];
+    for (const donationDetail of donationReqBody.donationDetails) {
+      const item = await getItemsName(donationDetail.item!);
+      donationDetail.itemId = item![0].id;
+      newDonationDetails.push(donationDetail);
+    }
+    donationReqBody.donationDetails = newDonationDetails;
+
+    await createOutgoingDonationDatabase(donationReqBody, newDonation);
+
+    return res.status(200).json();
   } catch (e) {
     next(e);
   }
@@ -391,7 +531,7 @@ donationRouter.post(
  * Update an incoming donation
  */
 donationRouter.put(
-  "/v1/incoming",
+  "/v1/incoming/:donationId",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const donationReqBody = req.body as DonationRequestBodyType;
@@ -485,7 +625,7 @@ donationRouter.put(
       };
 
       await updatedDeletedItems();
-      return res.status(200).json({ message: "Outgoing Donation Updated" });
+      return res.status(200).json({ message: "Incoming Donation Updated" });
     } catch (e) {
       next(e);
     }
@@ -567,5 +707,6 @@ donationRouter.get(
 
 export { donationRouter };
 
-donationRouter.post("/v1/outgoing", createOutgoingDonation);
+donationRouter.post("/v1/outgoing/ap", createOutgoingDonationAP);
+donationRouter.post("/v1/outgoing/ua", createOutgoingDonationUA);
 donationRouter.put("/v1/outgoing/:donationId", updateOutgoingDonation);

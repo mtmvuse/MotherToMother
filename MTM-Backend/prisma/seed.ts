@@ -45,30 +45,30 @@ async function main() {
       },
     });
 
-    // Create 3 cash donations for each user
-    for (let i = 0; i < 3; ++i) {
+    // Create 2 cash donations for each user
+    for (let i = 0; i < 2; ++i) {
       const date = new Date();
       date.setDate(date.getDate() - 2 * i);
       await db.cashDonation.create({
         data: {
-          organizationId: user.organizationId,
+          userId: user.id,
           date: date,
-          total: Math.floor(Math.random() * 1000), // Generate a random total amount
+          total: Math.floor(Math.random() * 1000),
         },
       });
     }
 
-    // Create 3 donations for each user
-    for (let i = 0; i < 3; ++i) {
+    // Create 10 donations for each user
+    for (let i = 0; i < 10; ++i) {
       const newDonation = await db.donation.create({
         data: {
           userId: user.id,
-          date: new Date(),
+          date: new Date(new Date().setDate(new Date().getDate() + i)),
         },
       });
 
-      // Create 5 donation details for each donation
-      for (let j = 0; j < 5; ++j) {
+      // Create 2 donation details for each donation
+      for (let j = 0; j < 2; ++j) {
         await db.donationDetail.create({
           data: {
             donationId: newDonation.id,

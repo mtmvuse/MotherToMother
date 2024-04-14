@@ -35,10 +35,11 @@ export interface UserInput {
   role: string;
   household: string;
   userType: string;
+  status: string;
 }
 
 export interface RawUserInput extends UserInput {
-  currentUser: string;
+  currentUser?: string;
 }
 
 export interface PasswordCombo {
@@ -68,4 +69,5 @@ export interface UserDashboardDisplay {
   phone: string;
   address: string;
   type: string;
+  //status: string;
 }

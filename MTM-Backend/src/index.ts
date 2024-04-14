@@ -12,6 +12,7 @@ import { registrationRouter } from "./routes/v1/registration/registration.router
 import { organizationRouter } from "./routes/v1/organization/organization.router";
 import { adminsRouter } from "./routes/v1/admin/admin.router";
 import { inventoryRouter } from "./routes/v1/inventory/inventory.router";
+import { reportRouter } from "./routes/v1/report/report.router";
 import { cashDonationRouter } from "./routes/v1/cashDonation/cashDonation.router";
 
 dotenv.config();
@@ -31,7 +32,7 @@ app.use(helmet());
  * Use the verifyToken to protect all the routes that require authentication
  */
 
-app.use("/users", userRouter);
+app.use("/users", verifyToken, userRouter);
 
 app.use("/admin", adminsRouter);
 
@@ -39,7 +40,6 @@ app.use("/items", itemsRouter);
 
 // registration and organization routes are unprotected intentionally
 app.use("/registration", registrationRouter);
-
 app.use("/organization", organizationRouter);
 
 app.use("/donation", donationRouter);
@@ -47,7 +47,8 @@ app.use("/donation", donationRouter);
 // app.use("/inventory", verifyToken, inventoryRouter);
 app.use("/inventory", inventoryRouter);
 
-app.use("/cashDonation", cashDonationRouter);
+app.use("/report", verifyToken, reportRouter);
+app.use("/cashDonation", verifyToken, cashDonationRouter);
 
 // Default route: Unprotected
 app.get("/", (_req: Request, res: Response) => {

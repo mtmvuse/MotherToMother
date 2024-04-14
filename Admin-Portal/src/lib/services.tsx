@@ -73,7 +73,7 @@ export const deleteInventoryItem = async (
 };
 
 export const getAdminByEmail = async (email: string) => {
-  const url = `${backendUrl}/admins/v1/?email=${email}`;
+  const url = `${backendUrl}/admin/v1?email=${email}`;
   return await fetch(url, {
     method: "GET",
     headers: {
@@ -178,10 +178,13 @@ export const deleteCashDonation = async (id: number, token: string) => {
   });
 };
 
-export const addUser = async (user: AddUserType) => {
+export const addUser = async (user: AddUserType, token: string) => {
   return await fetch(`${backendUrl}/registration/v1`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify(user),
   });
 };
@@ -218,8 +221,8 @@ export const getModalUsers = async (query?: string | undefined) => {
   });
 };
 
-export const getModalItems = async () => {
-  const fetchURL = `${backendUrl}/items/v1`;
+export const getUsersByOrganizationName = async (organizationName: string) => {
+  const fetchURL = `${backendUrl}/users/v1?organizationName=${organizationName}`;
   return await fetch(fetchURL, {
     method: "GET",
     headers: {
@@ -228,23 +231,13 @@ export const getModalItems = async () => {
   });
 };
 
-export const createOutgoingDonation = async (
-  outgoingDonationData: AddOutgoingDonationType
-) => {
-  return await fetch(`${backendUrl}/donation/v1/outgoing`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(outgoingDonationData),
-  });
-};
-
-export const createIncomingDonation = async (
-  incomingDonationData: AddIncomingDonationType
-) => {
-  return await fetch(`${backendUrl}/donation/v1/incoming`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(incomingDonationData),
+export const getModalItems = async () => {
+  const fetchURL = `${backendUrl}/items/v1`;
+  return await fetch(fetchURL, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
 };
 
@@ -259,6 +252,49 @@ export const addOrganization = async (
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(organization),
+  });
+};
+
+export const createIncomingDonation = async (
+  incomingDonationData: AddIncomingDonationType
+) => {
+  return await fetch(`${backendUrl}/donation/v1/incoming`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(incomingDonationData),
+  });
+};
+
+export const createOutgoingDonation = async (
+  outgoingDonationData: AddOutgoingDonationType
+) => {
+  return await fetch(`${backendUrl}/donation/v1/outgoing/ap`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(outgoingDonationData),
+  });
+};
+
+export const getReports = async (
+  token: string | undefined,
+  page: number,
+  pageSize: number,
+  filterModel?: GridFilterModel,
+  sortModel?: GridSortModel
+) => {
+  let url = `${backendUrl}/report/v1/?page=${page}&pageSize=${pageSize}`;
+  if (filterModel) {
+    url += `&${filterModelToApiQuery(filterModel)}`;
+  }
+  if (sortModel) {
+    url += `&${sortModelToApiQuery(sortModel)}`;
+  }
+  return await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
   });
 };
 
@@ -324,6 +360,13 @@ export const editIncomingDonation = async (
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(donationData),
+  });
+};
+
+export const deleteDonation = async (donationId: number) => {
+  return await fetch(`${backendUrl}/donation/v1/delete/${donationId}`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
   });
 };
 

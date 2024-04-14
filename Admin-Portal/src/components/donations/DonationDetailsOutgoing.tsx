@@ -7,8 +7,9 @@ import {
   DialogContentText,
   DialogTitle,
   FormControl,
-  MenuItem,
   Typography,
+  TextField,
+  Autocomplete,
 } from "@mui/material";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import ItemsTable from "./ItemsTable";
@@ -27,6 +28,7 @@ import {
 } from "../../lib/services";
 import { ErrorMessage } from "../../components/ErrorMessage";
 import { SuccessMessage } from "../../components/SuccessMessage";
+import "./styles/AddDonation.css";
 
 interface ModalContentProps {
   selectedDonation: ResponseDonation;
@@ -57,6 +59,8 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
   >();
   const [selectedItemSelection, setSelectedItemSelection] =
     useState<ItemSelection | null>(null);
+  const [dialogUsedQuantity, setDialogUsedQuantity] = useState<number>();
+  const [dialogNewQuantity, setDialogNewQuantity] = useState<number>();
 
   useEffect(() => {
     if (itemRows.length > 0) {
@@ -171,15 +175,35 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
     setOpenConfirmDialog(true);
   };
 
-  const handleItemSelectionChange = (event: SelectChangeEvent<string>) => {
-    const selectedItem = itemList.find(
-      (item) => item.name === event.target.value
-    );
+  const handleItemSelectionChange = (
+    event: React.SyntheticEvent<Element, Event>,
+    newValue: string | null
+  ) => {
+    const selectedItem = itemList.find((item) => item.name === newValue);
     setSelectedItemSelection(selectedItem || null);
   };
 
-  const handleCategorySelectionChange = (event: SelectChangeEvent<string>) => {
-    setSelectedCategorySelection(event.target.value as string);
+  const handleCategorySelectionChange = (
+    event: React.SyntheticEvent<Element, Event>,
+    newValue: string | null
+  ) => {
+    if (newValue !== null) {
+      setSelectedCategorySelection(newValue);
+    }
+  };
+
+  const handleQuantityNewChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const tmp = Number(event.target.value);
+    setDialogNewQuantity(tmp);
+  };
+
+  const handleQuantityUsedChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const tmp = Number(event.target.value);
+    setDialogUsedQuantity(tmp);
   };
 
   const totalQuantity = demographicRows
@@ -262,27 +286,39 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
       return;
     }
 
-    setItemRows((prevRows) => [
-      ...prevRows,
-      {
-        id: idItemCounter + 1,
-        name: selectedItemSelection.name,
-        valueNew: selectedItemSelection.valueNew || 0,
-        valueUsed: selectedItemSelection.valueUsed || 0,
-        quantityNew: 0,
-        quantityUsed: 0,
-      },
-    ]);
-    setIdItemCounter(idItemCounter + 1);
-    setOpenAddItemDialog(false);
-    setSelectedCategorySelection("");
-    setSelectedItemSelection(null);
+    if (dialogNewQuantity === 0 && dialogUsedQuantity === 0) {
+      setError("Please Add Quantities");
+    } else {
+      setItemRows((prevRows) => [
+        ...prevRows,
+        {
+          id: idItemCounter + 1,
+          name: selectedItemSelection.name,
+          valueNew: selectedItemSelection.valueNew || 0,
+          valueUsed: selectedItemSelection.valueUsed || 0,
+          quantityNew: dialogNewQuantity || 0,
+          quantityUsed: dialogUsedQuantity || 0,
+        },
+      ]);
+      setIdItemCounter(idItemCounter + 1);
+      setOpenAddItemDialog(false);
+      setSelectedCategorySelection("");
+      setSelectedItemSelection(null);
+      setDialogNewQuantity(0);
+      setDialogUsedQuantity(0);
+    }
   };
 
   const handleCloseAddDialog = () => {
     setSelectedCategorySelection("");
     setSelectedItemSelection(null);
     setOpenAddItemDialog(false);
+  };
+
+  const preventMinus = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "-" || e.key === "e" || e.key === "E" || e.key === "+") {
+      e.preventDefault();
+    }
   };
 
   return (
@@ -385,51 +421,83 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
           onClose={handleCloseAddDialog}
           maxWidth="lg"
         >
+          {error && <ErrorMessage error={error} setError={setError} />}
+
           <DialogTitle fontFamily={"raleway, sans-sherif"}>
             Add Item
           </DialogTitle>
           <DialogContent>
-            <div style={{ display: "flex" }}>
-              <Typography
-                fontFamily={"raleway, sans-sherif"}
-                marginRight={2}
-                marginBottom={2}
-              >
+            <div style={{ display: "flex", marginBottom: "15px" }}>
+              <Typography fontFamily={"raleway, sans-sherif"} mr={7}>
                 Category
               </Typography>
               <FormControl fullWidth>
-                <Select
-                  id="category"
-                  value={
-                    selectedCategorySelection ? selectedCategorySelection : ""
+                <Autocomplete
+                  id="category-autocomplete"
+                  value={selectedCategorySelection}
+                  onChange={(event, newValue) =>
+                    handleCategorySelectionChange(event, newValue)
                   }
-                  onChange={handleCategorySelectionChange}
-                >
-                  {categoryList.map((category, index) => (
-                    <MenuItem key={index} value={category.toString()}>
-                      {category}
-                    </MenuItem>
-                  ))}
-                </Select>
+                  options={categoryList}
+                  renderInput={(params) => (
+                    <TextField {...params} label="Category" margin="dense" />
+                  )}
+                  fullWidth
+                />
               </FormControl>
             </div>
-            <div style={{ display: "flex" }}>
-              <Typography fontFamily={"raleway, sans-sherif"} marginRight={6.4}>
+            <div style={{ display: "flex", marginBottom: "15px" }}>
+              <Typography fontFamily={"raleway, sans-sherif"} mr={11.3}>
                 Item
               </Typography>
               <FormControl fullWidth disabled={!selectedCategorySelection}>
-                <Select
-                  id="item-selection"
-                  value={
-                    selectedItemSelection ? selectedItemSelection.name : ""
+                <Autocomplete
+                  id="item-selection-autocomplete"
+                  value={selectedItemSelection?.name || ""}
+                  onChange={(event, newValue) =>
+                    handleItemSelectionChange(event, newValue)
                   }
-                  onChange={handleItemSelectionChange}
-                >
-                  {filteredItemList.map((item) => (
-                    <MenuItem value={item.name}>{item.name}</MenuItem>
-                  ))}
-                </Select>
+                  options={filteredItemList.map((item) => item.name)}
+                  renderInput={(params) => (
+                    <TextField {...params} label="Item" margin="dense" />
+                  )}
+                  fullWidth
+                />
               </FormControl>
+            </div>
+            <div
+              style={{ display: "flex", marginBottom: "15px" }}
+              className="add-modal"
+            >
+              <Typography fontFamily={"raleway, sans-sherif"} mr={2.2}>
+                Quantity Used
+              </Typography>
+              <TextField
+                variant="standard"
+                type="number"
+                disabled={!selectedItemSelection}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                onKeyDown={preventMinus}
+                onChange={handleQuantityUsedChange}
+              ></TextField>
+            </div>
+
+            <div style={{ display: "flex" }} className="add-modal">
+              <Typography fontFamily={"raleway, sans-sherif"} mr={2.7}>
+                Quantity New
+              </Typography>
+              <TextField
+                variant="standard"
+                type="number"
+                disabled={!selectedItemSelection}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                onKeyDown={preventMinus}
+                onChange={handleQuantityNewChange}
+              ></TextField>
             </div>
           </DialogContent>
           <DialogActions>

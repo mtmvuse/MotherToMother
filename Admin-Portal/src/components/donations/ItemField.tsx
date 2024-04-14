@@ -1,19 +1,10 @@
 import React, { useState, useEffect } from "react";
 import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
 import Box from "@mui/material/Box";
-import {
-  Typography,
-  TextField,
-  IconButton,
-  SelectChangeEvent,
-} from "@mui/material";
+import { Typography, TextField, IconButton, Autocomplete } from "@mui/material";
 import { getModalItems } from "../../lib/services";
 import { ResponseInventoryItem } from "~/types/inventory";
 import deleteIcon from "../../assets/delete-icon.png";
-import { focusManager } from "@tanstack/react-query";
 
 interface ItemFieldProps {
   onDelete: () => void;
@@ -66,6 +57,11 @@ const ItemField: React.FC<ItemFieldProps> = ({
       console.error("Error fetching inventory items:", error);
     }
   };
+  const preventMinus = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "-" || e.key === "e" || e.key === "E" || e.key === "+") {
+      e.preventDefault();
+    }
+  };
 
   const handleUsedQuantityChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -81,20 +77,25 @@ const ItemField: React.FC<ItemFieldProps> = ({
     setQuantityNew(tmpNewQuantity);
   };
 
-  const handleItemChange = (event: SelectChangeEvent) => {
-    const selectedItemName = event.target.value as string;
-    const foundItem = itemList.find((item) => item.name === selectedItemName);
-    if (foundItem) {
-      setSelectedItem(foundItem);
-      setValueNew(foundItem.valueNew);
-      setValueUsed(foundItem.valueUsed);
-      onItemChange(foundItem.id);
+  const handleItemChange = (
+    event: React.SyntheticEvent<Element, Event>,
+    newValue: ResponseInventoryItem | null
+  ) => {
+    if (newValue !== null) {
+      setSelectedItem(newValue);
+      setValueNew(newValue.valueNew);
+      setValueUsed(newValue.valueUsed);
+      onItemChange(newValue.id);
     }
   };
 
-  const handleItemTypeChange = (event: SelectChangeEvent) => {
-    const selectedItemType = event.target.value;
-    setItemType(selectedItemType);
+  const handleItemTypeChange = (
+    event: React.SyntheticEvent<Element, Event>,
+    newValue: string | null
+  ) => {
+    if (newValue !== null) {
+      setItemType(newValue);
+    }
   };
 
   function formatDollar(amount: number): string {
@@ -112,6 +113,7 @@ const ItemField: React.FC<ItemFieldProps> = ({
   return (
     <Box
       display="flex"
+      // flexDirection={{ xs: "column", md: "row" }}
       flexDirection="row"
       alignItems="center"
       justifyContent="space-between"
@@ -120,77 +122,81 @@ const ItemField: React.FC<ItemFieldProps> = ({
       marginBottom={1}
       sx={{ backgroundColor: "lightgray" }}
     >
-      <FormControl variant="standard" sx={{ minWidth: 120 }}>
-        <InputLabel id="demo-simple-select-standard-label">Item</InputLabel>
-        <Select
-          labelId="demo-simple-select-standard-label"
-          id="demo-simple-select-standard"
-          label="Item"
-          value={selectedItem ? selectedItem.name : ""}
-          onChange={handleItemChange}
-          error={!!error}
-          sx={{ width: "150px" }}
-        >
-          {itemList.map((item) => (
-            <MenuItem key={item.id} value={item.name}>
-              {item.name}
-            </MenuItem>
-          ))}
-        </Select>
+      <FormControl sx={{ minWidth: 200 }}>
+        <Autocomplete
+          id="item-autocomplete"
+          value={selectedItem}
+          onChange={(event, newValue) => handleItemChange(event, newValue)}
+          options={itemList}
+          getOptionLabel={(option) => option.name}
+          renderInput={(params) => (
+            <TextField {...params} label="Item" variant="standard" />
+          )}
+          sx={{ width: "200px", paddingRight: "100px" }}
+          fullWidth
+        />
       </FormControl>
-      <>
-        <FormControl variant="standard" sx={{ minWidth: 120 }}>
-          <InputLabel id="demo-simple-select-standard-label">Type</InputLabel>
-          <Select
-            label="ItemType"
-            onChange={handleItemTypeChange}
-            value={itemType}
-            disabled={!selectedItem}
-          >
-            <MenuItem value={"Used"}>Used</MenuItem>
-            <MenuItem value={"New"}>New</MenuItem>
-          </Select>
-        </FormControl>
-
-        <TextField
-          variant="standard"
-          id="outlined-number"
-          label="Value"
-          type="string"
-          disabled
-          value={
-            itemType === "New"
-              ? formatDollar(valueNew)
-              : itemType === "Used"
-              ? formatDollar(valueUsed)
-              : ""
-          }
-          InputLabelProps={{
-            shrink: true,
-          }}
-          sx={{ width: "100px" }}
+      <FormControl>
+        <Autocomplete
+          id="item-type-autocomplete"
+          value={itemType}
+          onChange={(event, newValue) => handleItemTypeChange(event, newValue)}
+          sx={{ width: "100px", marginRight: "30px" }}
+          options={["Used", "New"]}
+          renderInput={(params) => (
+            <TextField {...params} label="Type" variant="standard" />
+          )}
+          fullWidth
         />
-        <TextField
-          error={isSubmitted && totalValue === 0}
-          variant="standard"
-          label="Quantity"
-          type="number"
-          disabled={!itemType}
-          InputLabelProps={{
-            shrink: true,
-          }}
-          sx={{ width: "100px" }}
-          onChange={
-            itemType === "New"
-              ? handleNewQuantityChange
-              : itemType === "Used"
-              ? handleUsedQuantityChange
-              : undefined
-          }
-        />
-      </>
+      </FormControl>
+      <TextField
+        variant="standard"
+        id="outlined-number"
+        label="Value"
+        type="string"
+        disabled
+        value={
+          itemType === "New"
+            ? formatDollar(valueNew)
+            : itemType === "Used"
+            ? formatDollar(valueUsed)
+            : ""
+        }
+        InputLabelProps={{
+          shrink: true,
+        }}
+        sx={{ width: "80px" }}
+      />
+      <TextField
+        error={isSubmitted && totalValue === 0}
+        variant="standard"
+        label="Quantity"
+        type="number"
+        value={itemType === "New" ? quantityNew : quantityUsed}
+        disabled={!itemType}
+        InputLabelProps={{
+          shrink: true,
+        }}
+        onKeyDown={preventMinus}
+        sx={{ width: "100px" }}
+        onChange={
+          itemType === "New"
+            ? handleNewQuantityChange
+            : itemType === "Used"
+            ? handleUsedQuantityChange
+            : undefined
+        }
+      />
       <Box sx={{ minWidth: "150px", flexWrap: "wrap" }}>
-        <Typography fontFamily={"raleway, sans-sherif"} fontWeight={"bold"}>
+        <Typography
+          fontFamily={"raleway, sans-sherif"}
+          fontWeight={"bold"}
+          sx={{
+            minWidth: "150px",
+            maxWidth: "150px",
+            overflowWrap: "break-word",
+          }}
+        >
           Total: ${totalValue}
         </Typography>
       </Box>

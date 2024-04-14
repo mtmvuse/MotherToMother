@@ -28,6 +28,8 @@ export const filterModelToApiQuery = (filterModel: GridFilterModel) => {
         queryParam.push(`${field}=_isNotEmpty`);
         break;
       case "=":
+        queryParam.push(`${field}_equals=${encodeURIComponent(value)}`);
+        break;
       case "equals":
       case "is":
       case "isAnyOf":

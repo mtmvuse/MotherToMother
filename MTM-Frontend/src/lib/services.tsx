@@ -8,16 +8,6 @@ const backendUrl: string =
     ? (import.meta.env.VITE_LOCAL_SERVER_URL as string)
     : (import.meta.env.VITE_PRODUCTION_SERVER_URL as string);
 
-export const setUserType = async (uid: string, userType: string) => {
-  return await fetch(`${backendUrl}/sessions/v1/setUserType`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ uid, userType }),
-  });
-};
-
 export const registerUserOnServer = async (user: UserType) => {
   return await fetch(`${backendUrl}/registration/v1`, {
     method: "POST",
@@ -31,16 +21,12 @@ export const getOrganizations = async (query?: string | undefined) => {
   if (query === undefined) fetchURL = `${backendUrl}/organization/v1`;
   else fetchURL = `${backendUrl}/organization/v1?type=${query}`;
 
-  const response = await fetch(fetchURL, {
+  return await fetch(fetchURL, {
     method: "GET",
     headers: {
       "Control-Cache": "no-cache",
     },
   });
-  if (!response.ok) {
-    throw new Error(`Failed to get organizations: ${response.status}`);
-  }
-  return await response.json();
 };
 
 export const getUserData = async (email: string, token: string | undefined) => {
@@ -58,7 +44,7 @@ export const updateUser = async (
   userData: EditUserType,
   token: string | undefined,
 ) => {
-  return await fetch(`${backendUrl}/users/v1/update/${email}`, {
+  return await fetch(`${backendUrl}/users/v1/update/email/${email}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -97,7 +83,7 @@ export const createOutgoingDonation = async (
   token: string,
   request: OutgoingDonationRequestType,
 ) => {
-  const fullUrl = `${backendUrl}/donation/v1/outgoing`;
+  const fullUrl = `${backendUrl}/donation/v1/outgoing/ua`;
 
   return await fetch(fullUrl, {
     method: "POST",

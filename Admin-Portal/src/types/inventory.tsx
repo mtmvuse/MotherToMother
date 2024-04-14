@@ -24,10 +24,10 @@ export interface AddInventoryItemType {
 
 export interface inventoryRow {
   id: number;
-  itemName: String;
+  name: String;
   category: String;
-  newStock: number;
-  newValue: number;
-  usedStock: number;
-  usedValue: number;
+  quantityNew: number;
+  valueNew: number;
+  quantityUsed: number;
+  valueUsed: number;
 }

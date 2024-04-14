@@ -10,3 +10,4 @@ MTM-Backend/prisma/migrations
 MTM-Frontend/tsconfig.tsbuildinfo
 */dist/
 */dev-dist/
+*/pnpm*

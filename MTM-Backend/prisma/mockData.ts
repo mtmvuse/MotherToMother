@@ -14,8 +14,8 @@ export const userDataMock = [
     city: "Anytown",
     state: "Anystate",
     zip: 12345,
-
     household: "abc",
+    status: "Active",
   },
   {
     firstName: "NEW",
@@ -29,7 +29,7 @@ export const userDataMock = [
     city: "Anytown",
     state: "Anystate",
     zip: 12345,
-
+    status: "Active",
     household: "abc",
   },
   {
@@ -45,7 +45,7 @@ export const userDataMock = [
     city: "Anytown",
     state: "Anystate",
     zip: 12348,
-
+    status: "Active",
     household: "abc3",
   },
   {
@@ -61,7 +61,7 @@ export const userDataMock = [
     city: "Anytown",
     state: "Anystate",
     zip: 12349,
-
+    status: "Inactive",
     household: "abc4",
   },
   {
@@ -77,7 +77,7 @@ export const userDataMock = [
     city: "Anytown",
     state: "Anystate",
     zip: 12350,
-
+    status: "Inactive",
     household: "abc5",
   },
   {
@@ -93,7 +93,7 @@ export const userDataMock = [
     city: "Anytown",
     state: "Anystate",
     zip: 12351,
-
+    status: "Inactive",
     household: "abc6",
   },
   {
@@ -109,7 +109,7 @@ export const userDataMock = [
     city: "Anytown",
     state: "Anystate",
     zip: 12352,
-
+    status: "Inactive",
     household: "abc7",
   },
   {
@@ -125,7 +125,7 @@ export const userDataMock = [
     city: "Anytown",
     state: "Anystate",
     zip: 12353,
-
+    status: "Active",
     household: "abc8",
   },
   {
@@ -141,7 +141,7 @@ export const userDataMock = [
     city: "Anytown",
     state: "Anystate",
     zip: 12353,
-
+    status: "Active",
     household: "abc9",
   },
   {
@@ -157,7 +157,7 @@ export const userDataMock = [
     city: "Anytown",
     state: "Anystate",
     zip: 12345,
-
+    status: "Active",
     household: "abc10",
   },
   {
@@ -173,7 +173,7 @@ export const userDataMock = [
     city: "Anytown",
     state: "Anystate",
     zip: 12345,
-
+    status: "Active",
     household: "abc11",
   },
   {
@@ -189,7 +189,7 @@ export const userDataMock = [
     city: "Anytown",
     state: "Anystate",
     zip: 12345,
-
+    status: "Active",
     household: "abc12",
   },
   {
@@ -205,7 +205,7 @@ export const userDataMock = [
     city: "Anytown",
     state: "Anystate",
     zip: 12345,
-
+    status: "Active",
     household: "abc13",
   },
   {
@@ -221,7 +221,7 @@ export const userDataMock = [
     city: "Anytown",
     state: "Anystate",
     zip: 12345,
-
+    status: "Active",
     household: "abc14",
   },
   {
@@ -237,7 +237,7 @@ export const userDataMock = [
     city: "Anytown",
     state: "Anystate",
     zip: 12345,
-
+    status: "Active",
     household: "abc15",
   },
   {
@@ -253,7 +253,7 @@ export const userDataMock = [
     city: "Anytown",
     state: "Anystate",
     zip: 12345,
-
+    status: "Inactive",
     household: "abc16",
   },
 ];

@@ -20,8 +20,9 @@ import type { Prisma } from "@prisma/client";
 const userRouter = express.Router();
 
 interface UAQueryType {
-  email: string;
-  organization: string;
+  email?: string;
+  organization?: string;
+  organizationName?: string;
 }
 
 /**
@@ -46,21 +47,42 @@ userRouter.get(
   ) => {
     const email = req.query.email;
     const organizationType = req.query.organization;
+    const organizationName = req.query.organizationName;
     try {
-      if (email == undefined && organizationType == undefined) {
+      if (
+        email == undefined &&
+        organizationType == undefined &&
+        organizationName == undefined
+      ) {
         const users = await UserService.getUsers();
         return res.status(200).json(users);
-      } else if (organizationType == undefined) {
+      } else if (
+        email &&
+        organizationType == undefined &&
+        organizationName == undefined
+      ) {
         const user = await UserService.getUserByEmail(email);
         if (user) {
           return res.status(200).json(user);
         } else {
           return res.status(404).json({ message: "User not found" });
         }
-      } else if (email == undefined) {
-        const users = await UserService.getUserByOrganization(organizationType);
+      } else if (
+        organizationType &&
+        email == undefined &&
+        organizationName == undefined
+      ) {
+        const users =
+          await UserService.getUserByOrganizationType(organizationType);
         return res.status(200).json(users);
-      } else {
+      } else if (
+        organizationName &&
+        email == undefined &&
+        organizationType == undefined
+      ) {
+        const users = await UserService.getUserByOrganization(organizationName);
+        return res.status(200).json(users);
+      } else if (email && organizationType) {
         const user = await UserService.getUserByOrganizationAndEmail(
           organizationType,
           email,
@@ -144,10 +166,10 @@ userRouter.put(
 );
 
 /**
- * Update User by email from user app
+ * Update User by email from User App
  */
 userRouter.put(
-  "/v1/update/:email",
+  "/v1/update/email/:email",
   async (req: Request, res: Response, next: NextFunction) => {
     const schema = Joi.object({
       organizationId: Joi.number(),
@@ -159,19 +181,17 @@ userRouter.put(
       city: Joi.string(),
       state: Joi.string(),
       zip: Joi.number().integer().positive(),
-      role: Joi.string(),
-      household: Joi.string(),
       userType: Joi.string(),
       currentUser: Joi.string(),
     });
-    const userEmail = req.params.email;
     try {
-      const data = (await schema.validateAsync(req.body)) as RawUserInput;
-      const { currentUser, ...userData } = data;
-      if (userEmail != currentUser) {
-        return res.status(401).json({ message: "Unauthorized" });
+      const email = req.params.email;
+      const body = (await schema.validateAsync(req.body)) as RawUserInput;
+      const { currentUser, ...userData } = body;
+      if (currentUser !== email) {
+        return res.status(403).json({ message: "Unauthorized" });
       }
-      const user = await UserService.updateUserByEmail(userData, userEmail);
+      const user = await UserService.updateUserByEmail(userData, email);
       return res.status(201).json(user);
     } catch (e) {
       next(e);
@@ -196,10 +216,13 @@ userRouter.put(
       state: Joi.string(),
       zip: Joi.number().integer().positive(),
       userType: Joi.string(),
+      status: Joi.string(),
+      currentUser: Joi.string(),
     });
     const id = Number(req.params.id);
     try {
-      const userData = (await schema.validateAsync(req.body)) as UserInput;
+      const userData = (await schema.validateAsync(req.body)) as RawUserInput;
+      delete userData.currentUser;
       const user = await UserService.updateUserById(userData, id);
       return res.status(201).json(user);
     } catch (e) {

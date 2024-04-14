@@ -6,6 +6,18 @@ interface InputProps {
   onInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
+const preventMinusAndDecimal = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  if (
+    e.key === "-" ||
+    e.key === "e" ||
+    e.key === "E" ||
+    e.key === "+" ||
+    e.key === "."
+  ) {
+    e.preventDefault();
+  }
+};
+
 export const QuestionField: React.FC<InputProps> = ({
   question,
   value,
@@ -22,12 +34,14 @@ export const QuestionField: React.FC<InputProps> = ({
           {question}
         </Typography>
       </Grid>
+      {/* Input field with only interger value */}
       <Grid item>
         <input
           key={question}
           type="number"
           placeholder={String(value)}
           onChange={onInputChange}
+          onKeyDown={preventMinusAndDecimal}
           style={{
             width: "4.5rem",
             height: "2rem",
