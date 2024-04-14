@@ -132,7 +132,7 @@ const ItemField: React.FC<ItemFieldProps> = ({
           renderInput={(params) => (
             <TextField {...params} label="Item" variant="standard" />
           )}
-          sx={{ width: "200px", paddingRight: "100px" }}
+          sx={{ width: "200px", marginRight: "80px" }}
           fullWidth
         />
       </FormControl>
@@ -141,7 +141,7 @@ const ItemField: React.FC<ItemFieldProps> = ({
           id="item-type-autocomplete"
           value={itemType}
           onChange={(event, newValue) => handleItemTypeChange(event, newValue)}
-          sx={{ width: "100px", marginRight: "30px" }}
+          sx={{ width: "100px", marginRight: "40px" }}
           options={["Used", "New"]}
           renderInput={(params) => (
             <TextField {...params} label="Type" variant="standard" />
@@ -165,20 +165,21 @@ const ItemField: React.FC<ItemFieldProps> = ({
         InputLabelProps={{
           shrink: true,
         }}
-        sx={{ width: "80px" }}
+        sx={{ width: "80px", marginRight: "10px" }}
       />
       <TextField
         error={isSubmitted && totalValue === 0}
         variant="standard"
         label="Quantity"
-        type="number"
+        type="Number"
         value={itemType === "New" ? quantityNew : quantityUsed}
         disabled={!itemType}
         InputLabelProps={{
           shrink: true,
         }}
+        InputProps={{ inputProps: { min: 0, max: 10 } }}
         onKeyDown={preventMinus}
-        sx={{ width: "100px" }}
+        sx={{ width: "100px", marginRight: "20px" }}
         onChange={
           itemType === "New"
             ? handleNewQuantityChange
@@ -187,19 +188,27 @@ const ItemField: React.FC<ItemFieldProps> = ({
             : undefined
         }
       />
-      <Box sx={{ minWidth: "150px", flexWrap: "wrap" }}>
+      <Box sx={{ display: "flex", alignItems: "center" }}>
         <Typography
-          fontFamily={"raleway, sans-sherif"}
+          fontFamily={"raleway, sans-serif"}
           fontWeight={"bold"}
-          sx={{
-            minWidth: "150px",
-            maxWidth: "150px",
+          style={{ minWidth: "60px" }}
+        >
+          Total: $
+        </Typography>
+        <Typography
+          fontFamily={"raleway, sans-serif"}
+          fontWeight={"bold"}
+          style={{
+            minWidth: "70px",
+            maxWidth: "70px",
             overflowWrap: "break-word",
           }}
         >
-          Total: ${totalValue}
+          {totalValue}
         </Typography>
       </Box>
+
       <IconButton onClick={onDelete} style={{ marginRight: "200" }}>
         <img
           className="delete-item-icon"

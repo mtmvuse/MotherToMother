@@ -1,101 +1,92 @@
-/* .add-modal .MuiInputBase-input {
+.add-modal .MuiAutocomplete-input {
   border-radius: 10px;
   position: relative;
   background-color: white;
   border: 1px solid #a4a4a4;
   font-size: 16px;
-  padding: 5px 26px 15px 12px;
   transition:
     border-color 0.15s ease-in-out,
     box-shadow 0.15s ease-in-out;
-} */
+}
 
-/* .add-modal .MuiInputBase-input:focus {
+.add-modal .MuiInputBase-input {
   border-radius: 10px;
+  position: relative;
   background-color: white;
-} */
+  border: 1px solid #a4a4a4;
+  font-size: 16px;
+  transition:
+    border-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out;
+}
 
-.add-modal .css-n70jm4-MuiInputBase-root-MuiInput-root-MuiSelect-root::before {
+.css-1eed5fa-MuiInputBase-root-MuiInput-root::before {
   border-bottom: none;
 }
 
-.add-modal .css-n70jm4-MuiInputBase-root-MuiInput-root-MuiSelect-root::after {
+.css-1eed5fa-MuiInputBase-root-MuiInput-root.Mui-disabled:before {
   border-bottom: none;
 }
 
-.add-modal .css-n70jm4-MuiInputBase-root-MuiInput-root-MuiSelect-root::during {
+.css-1eed5fa-MuiInputBase-root-MuiInput-root::after {
   border-bottom: none;
 }
 
-@media (hover) {
-  .add-modal
-    .css-n70jm4-MuiInputBase-root-MuiInput-root-MuiSelect-root:hover:not(
-      .Mui-disabled,
-      .Mui-error
-    ):before {
-    border-bottom: none;
-  }
+.css-1eed5fa-MuiInputBase-root-MuiInput-root:hover:not(
+    .Mui-disabled,
+    .Mui-error
+  ):before {
+  border-bottom: none;
 }
 
-.add-modal
-  .css-n70jm4-MuiInputBase-root-MuiInput-root-MuiSelect-root.Mui-disabled:before {
-  border: none;
+.MuiAutocomplete-hasPopupIcon.MuiAutocomplete-hasClearIcon.css-1h51icj-MuiAutocomplete-root
+  .MuiAutocomplete-inputRoot {
+  padding-right: 0;
+}
+.MuiAutocomplete-hasPopupIcon.css-1h51icj-MuiAutocomplete-root
+  .MuiAutocomplete-inputRoot,
+.MuiAutocomplete-hasClearIcon.css-1h51icj-MuiAutocomplete-root
+  .MuiAutocomplete-inputRoot {
+  padding-right: 0;
+}
+.css-1h51icj-MuiAutocomplete-root .MuiInput-root {
+  padding-bottom: 0;
 }
 
-.add-modal .css-1p7b3mx-MuiInputBase-root-MuiInput-root-MuiSelect-root::before {
-  border: none;
+.css-953pxc-MuiInputBase-root-MuiInput-root::after {
+  border-bottom: none;
 }
 
-.add-modal .css-1p7b3mx-MuiInputBase-root-MuiInput-root-MuiSelect-root::after {
-  border: none;
+.css-953pxc-MuiInputBase-root-MuiInput-root::before {
+  border-bottom: none;
 }
 
-@media (hover) {
-  .add-modal
-    .css-1p7b3mx-MuiInputBase-root-MuiInput-root-MuiSelect-root:hover:not(
-      .Mui-disabled,
-      .Mui-error
-    ):before {
-    border-bottom: none;
-  }
+.css-953pxc-MuiInputBase-root-MuiInput-root:hover:not(
+    .Mui-disabled,
+    .Mui-error
+  ):before {
+  border-bottom: none;
 }
 
-.add-modal .css-1eed5fa-MuiInputBase-root-MuiInput-root.Mui-disabled:before {
-  border: none;
+.MuiAutocomplete-hasPopupIcon.css-55cpma-MuiAutocomplete-root
+  .MuiAutocomplete-inputRoot,
+.MuiAutocomplete-hasClearIcon.css-55cpma-MuiAutocomplete-root
+  .MuiAutocomplete-inputRoot {
+  padding-right: 0;
 }
 
-.add-modal .css-1eed5fa-MuiInputBase-root-MuiInput-root.Mui-disabled {
-  color: blue;
+.MuiAutocomplete-hasPopupIcon.MuiAutocomplete-hasClearIcon.MuiAutocomplete-root
+  .MuiAutocomplete-inputRoot {
+  padding-right: 0;
 }
 
-.add-modal .css-1x51dt5-MuiInputBase-input-MuiInput-input.Mui-disabled {
-  -webkit-text-fill-color: black;
+.MuiAutocomplete-root .MuiInput-root .MuiInput-input {
+  padding: 4px 50px 4px 10px;
 }
 
 .add-modal .date-picker .MuiInputBase-input {
   height: 8px;
   padding: 20px 26px 24px 12px;
-}
-
-.add-modal .css-1x51dt5-MuiInputBase-input-MuiInput-input {
-  /* height: 25px; */
-  padding: 10px 1px 10px 5px;
-}
-
-.add-modal .css-1eed5fa-MuiInputBase-root-MuiInput-root::before {
-  border: none;
-}
-
-.add-modal
-  .css-1eed5fa-MuiInputBase-root-MuiInput-root:hover:not(
-    .Mui-disabled,
-    .Mui-error
-  ):before {
-  border: none;
-}
-
-.add-modal .css-1eed5fa-MuiInputBase-root-MuiInput-root::after {
-  border: none;
 }
 
 .add-modal .add-item-icon {
@@ -123,5 +114,17 @@
 }
 
 .add-modal .css-1ae42j0 {
-  min-width: 0;
+  min-width: 150px;
+}
+
+.css-1x51dt5-MuiInputBase-input-MuiInput-input {
+  padding: 4px 4px 4px 6px;
+}
+
+.css-1c2i806-MuiFormLabel-root-MuiInputLabel-root.Mui-disabled {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.css-1x51dt5-MuiInputBase-input-MuiInput-input.Mui-disabled {
+  -webkit-text-fill-color: black;
 }

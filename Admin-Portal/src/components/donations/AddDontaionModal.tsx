@@ -27,6 +27,7 @@ import {
 } from "~/types/DonationTypes";
 import "./styles/AddDonation.css";
 import addItemIcon from "../../assets/add-item-icon.png";
+import { useAuth } from "../../lib/contexts";
 
 interface DonationItem {
   itemId: number;
@@ -77,6 +78,7 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
   });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+  const { currentUser } = useAuth();
 
   useEffect(() => {
     if (selectedDate && selectedDate > new Date()) {
@@ -205,7 +207,11 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
 
   const updateUsers = async (selectedOrg: Organization | undefined) => {
     try {
-      const response = await getModalUsers();
+      const token = await currentUser?.getIdToken();
+      if (!token) {
+        throw new Error("Failed to get token");
+      }
+      const response = await getModalUsers(token);
       if (!response.ok) {
         throw new Error("Failed to fetch users");
       }
@@ -217,7 +223,7 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
         setUserList(filteredUserList);
       }
     } catch (error) {
-      setError("Error fetching users:");
+      setError("Error fetching users");
     }
   };
 
@@ -275,6 +281,13 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
       }
     }
 
+    const itemNames = items.map((item) => item.itemId);
+    const uniqueItemNames = new Set(itemNames);
+    if (uniqueItemNames.size !== itemNames.length) {
+      setError("Duplicate item name detected");
+      return;
+    }
+
     if (donationType == "Outgoing") {
       const outgoingDonationData: AddOutgoingDonationType = {
         userId: selectedUser.id,
@@ -292,7 +305,15 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
         asianNum: demographicData.asianNum,
         otherNum: demographicData.otherNum,
       };
-      const response = await createOutgoingDonation(outgoingDonationData);
+
+      const token = await currentUser?.getIdToken();
+      if (!token) {
+        throw new Error("Failed to get token");
+      }
+      const response = await createOutgoingDonation(
+        token,
+        outgoingDonationData
+      );
 
       if (response.ok) {
         handleCloseModal();
@@ -312,7 +333,16 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
           newQuantity: item.quantityNew,
         })),
       };
-      const response = await createIncomingDonation(incomingDonationData);
+
+      const token = await currentUser?.getIdToken();
+      if (!token) {
+        throw new Error("Failed to get token");
+      }
+
+      const response = await createIncomingDonation(
+        token,
+        incomingDonationData
+      );
 
       if (response.status === 200) {
         handleCloseModal();
@@ -369,7 +399,6 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
                     <TextField
                       {...params}
                       margin="dense"
-                      label="Donor"
                       name="Donor"
                       variant="standard"
                     />
@@ -401,7 +430,6 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
                     <TextField
                       {...params}
                       margin="dense"
-                      label="Organization"
                       name="organization"
                       variant="standard"
                     />
@@ -439,7 +467,6 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
                     <TextField
                       {...params}
                       margin="dense"
-                      label="User"
                       name="user"
                       variant="standard"
                     />
@@ -452,9 +479,7 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
             </Grid>
           </Grid>
 
-          <div
-            style={{ display: "flex", alignItems: "center", marginTop: "20px" }}
-          >
+          <div style={{ alignItems: "center", marginTop: "20px" }}>
             <Typography
               fontFamily="Raleway, sans-serif"
               fontSize={20}
@@ -467,8 +492,6 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
               className="date-picker"
               style={{
                 width: "100%",
-                display: "flex",
-                justifyContent: "flex-end",
               }}
             >
               <LocalizationProvider dateAdapter={AdapterDayjs}>
