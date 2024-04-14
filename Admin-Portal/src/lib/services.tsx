@@ -189,10 +189,16 @@ export const addUser = async (user: AddUserType, token: string) => {
   });
 };
 
-export const addCashDonation = async (CashDonation: AddCashDonationType) => {
+export const addCashDonation = async (
+  CashDonation: AddCashDonationType,
+  token: string | undefined
+) => {
   return await fetch(`${backendUrl}/cashDonation/v1`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify(CashDonation),
   });
 };
@@ -221,12 +227,16 @@ export const getModalUsers = async (query?: string | undefined) => {
   });
 };
 
-export const getUsersByOrganizationName = async (organizationName: string) => {
+export const getUsersByOrganizationName = async (
+  organizationName: string,
+  token: string | undefined
+) => {
   const fetchURL = `${backendUrl}/users/v1?organizationName=${organizationName}`;
   return await fetch(fetchURL, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
   });
 };

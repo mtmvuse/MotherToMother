@@ -9,16 +9,15 @@ import type { CDUser } from "~/types/cashDonationTypes";
 import type { ResponseUser } from "~/types/user";
 import { CashDonationRow } from "~/types/cashDonationTypes";
 import { getUsersByOrganizationName } from "../../lib/services";
+import { useAuth } from "../../lib/contexts";
 
 interface CashDialogProps {
   organizations: void | Organization[] | undefined;
-  selectedDate: Date | null;
-  onDateChange: (date: Date | null) => void;
   editRow?: CashDonationRow;
 }
 
 const CashDonationsDialog: React.FC<CashDialogProps> = (props) => {
-  const { organizations, selectedDate, onDateChange, editRow } = props;
+  const { organizations, editRow } = props;
   const [total, setTotal] = useState(editRow?.total || "");
   const [selectedOrganization, setSelectedOrganization] = useState<
     string | null
@@ -35,11 +34,17 @@ const CashDonationsDialog: React.FC<CashDialogProps> = (props) => {
   );
   const [errorMessage, setErrorMessage] = useState("");
   const [showError, setShowError] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const { currentUser } = useAuth();
 
   useEffect(() => {
     if (selectedOrganization) {
       const fetchUsers = async () => {
-        const response = await getUsersByOrganizationName(selectedOrganization);
+        const token = await currentUser?.getIdToken();
+        const response = await getUsersByOrganizationName(
+          selectedOrganization,
+          token
+        );
         const users = await response?.json();
         const CDUsers = users.map((user: ResponseUser) => {
           return {
@@ -65,9 +70,10 @@ const CashDonationsDialog: React.FC<CashDialogProps> = (props) => {
     if (date && date > new Date()) {
       setErrorMessage("Cannot select date in the future.");
       setShowError(true);
+      setSelectedDate(null);
       return;
     }
-    onDateChange(date);
+    setSelectedDate(date);
   };
 
   const handleUserChange = (_event: any, newValue: CDUser | null) => {
@@ -84,7 +90,7 @@ const CashDonationsDialog: React.FC<CashDialogProps> = (props) => {
       const timer = setTimeout(() => {
         setShowError(false);
         setErrorMessage("");
-      }, 10000); 
+      }, 10000);
       return () => clearTimeout(timer);
     }
   }, [showError]);
