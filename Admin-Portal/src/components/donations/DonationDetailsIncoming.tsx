@@ -25,6 +25,7 @@ import {
 } from "../../lib/services";
 import { ErrorMessage } from "../../components/ErrorMessage";
 import { SuccessMessage } from "../../components/SuccessMessage";
+import { useAuth } from "../../lib/contexts";
 import "./styles/AddDonation.css";
 
 interface ModalContentProps {
@@ -52,6 +53,7 @@ const DonationDetailsIncoming: React.FC<ModalContentProps> = ({
     useState<ItemSelection | null>(null);
   const [dialogUsedQuantity, setDialogUsedQuantity] = useState<number>();
   const [dialogNewQuantity, setDialogNewQuantity] = useState<number>();
+  const { currentUser } = useAuth();
 
   useEffect(() => {
     if (itemRows.length > 0) {
@@ -62,7 +64,11 @@ const DonationDetailsIncoming: React.FC<ModalContentProps> = ({
   useEffect(() => {
     const fetchItemRows = async () => {
       try {
-        const response = await getDonationDetails(selectedDonation.id);
+        const token = await currentUser?.getIdToken();
+        if (!token) {
+          throw new Error("Failed to get token");
+        }
+        const response = await getDonationDetails(token, selectedDonation.id);
         if (response.ok) {
           const data = await response.json();
           const fetchedData: ItemDetails[] = data.map(
@@ -185,7 +191,12 @@ const DonationDetailsIncoming: React.FC<ModalContentProps> = ({
       return;
     }
 
-    const response = await editIncomingDonation(selectedDonation.id, {
+    const token = await currentUser?.getIdToken();
+    if (!token) {
+      throw new Error("Failed to get token");
+    }
+
+    const response = await editIncomingDonation(token, selectedDonation.id, {
       donationDetails: itemRows.map((item) => ({
         item: item.name,
         usedQuantity: item.quantityNew,

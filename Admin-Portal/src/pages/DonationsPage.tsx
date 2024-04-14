@@ -218,15 +218,18 @@ const DonationsPage: React.FC = () => {
     setDeletingDonationId(null);
   };
 
-  const handleDeleteDonation = (donationId: number) => {
-    deleteDonation(donationId)
-      .then(() => {
-        queryClient.invalidateQueries({ queryKey: ["donation"] });
-        setShowSuccessAlert(true);
-      })
-      .catch((error) => {
-        setError("Failed to delete donation");
-      });
+  const handleDeleteDonation = async (donationId: number) => {
+    try {
+      const token = await currentUser?.getIdToken();
+      if (!token) {
+        throw new Error("Failed to get token");
+      }
+      await deleteDonation(token, donationId);
+      queryClient.invalidateQueries({ queryKey: ["donation"] });
+      setShowSuccessAlert(true);
+    } catch (error) {
+      setError("Failed to delete donation");
+    }
   };
 
   return (

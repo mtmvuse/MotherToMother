@@ -27,6 +27,7 @@ import {
 } from "~/types/DonationTypes";
 import "./styles/AddDonation.css";
 import addItemIcon from "../../assets/add-item-icon.png";
+import { useAuth } from "../../lib/contexts";
 
 interface DonationItem {
   itemId: number;
@@ -76,6 +77,7 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
     otherNum: 0,
   });
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+  const { currentUser } = useAuth();
 
   const handleUserChange = (
     _event: React.SyntheticEvent<Element, Event>,
@@ -196,7 +198,11 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
 
   const updateUsers = async (selectedOrg: Organization | undefined) => {
     try {
-      const response = await getModalUsers();
+      const token = await currentUser?.getIdToken();
+      if (!token) {
+        throw new Error("Failed to get token");
+      }
+      const response = await getModalUsers(token);
       if (!response.ok) {
         throw new Error("Failed to fetch users");
       }
@@ -208,7 +214,7 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
         setUserList(filteredUserList);
       }
     } catch (error) {
-      setError("Error fetching users:");
+      setError("Error fetching users");
     }
   };
 
@@ -290,7 +296,15 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
         asianNum: demographicData.asianNum,
         otherNum: demographicData.otherNum,
       };
-      const response = await createOutgoingDonation(outgoingDonationData);
+
+      const token = await currentUser?.getIdToken();
+      if (!token) {
+        throw new Error("Failed to get token");
+      }
+      const response = await createOutgoingDonation(
+        token,
+        outgoingDonationData
+      );
 
       if (response.ok) {
         handleCloseModal();
@@ -310,7 +324,16 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
           newQuantity: item.quantityNew,
         })),
       };
-      const response = await createIncomingDonation(incomingDonationData);
+
+      const token = await currentUser?.getIdToken();
+      if (!token) {
+        throw new Error("Failed to get token");
+      }
+
+      const response = await createIncomingDonation(
+        token,
+        incomingDonationData
+      );
 
       if (response.status === 200) {
         handleCloseModal();
