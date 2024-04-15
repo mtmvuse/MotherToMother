@@ -62,6 +62,7 @@ inventoryRouter.post(
       quantityNew: Joi.number().required(),
       valueNew: Joi.number().required(),
       valueUsed: Joi.number().required(),
+      currentUser: Joi.string(),
     });
     try {
       const data = (await schema.validateAsync(req.body)) as InventoryInputType;
@@ -96,6 +97,7 @@ inventoryRouter.put(
       quantityNew: Joi.number().required(),
       valueNew: Joi.number().required(),
       valueUsed: Joi.number().required(),
+      currentUser: Joi.string(),
     });
     const id = Number(req.params.id);
     try {
