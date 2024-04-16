@@ -33,5 +33,4 @@ export type EditAdminType = {
 export type EditAdminArgs = {
   id: number;
   adminData: EditAdminType;
-  token: string;
 };

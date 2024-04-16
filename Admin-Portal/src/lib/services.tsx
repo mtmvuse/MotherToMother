@@ -370,7 +370,6 @@ export const getDonationDetails = (
 
 export const getDonationDemographics = (
   token: string | undefined,
-
   donationId: number
 ): Promise<Response> => {
   return fetch(`${backendUrl}/donation/v1/demographics/${donationId}`, {
@@ -451,7 +450,7 @@ export const getAdmin = async (
 export const updateAdmin = async (
   id: number,
   adminData: EditAdminType,
-  token: string
+  token: string | undefined
 ) => {
   return await fetch(`${backendUrl}/admin/v1/update/id/${id}`, {
     method: "PUT",
@@ -463,7 +462,7 @@ export const updateAdmin = async (
   });
 };
 
-export const deleteAdmin = async (id: number, token: string) => {
+export const deleteAdmin = async (id: number, token: string | undefined) => {
   return await fetch(`${backendUrl}/admin/v1/delete/id/${id}`, {
     method: "DELETE",
     headers: {
@@ -473,10 +472,16 @@ export const deleteAdmin = async (id: number, token: string) => {
   });
 };
 
-export const addAdmin = async (admin: AddAdminType) => {
+export const addAdmin = async (
+  admin: AddAdminType,
+  token: string | undefined
+) => {
   return await fetch(`${backendUrl}/admin/v1`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify(admin),
   });
 };

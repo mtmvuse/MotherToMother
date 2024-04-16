@@ -29,6 +29,7 @@ import AdminDialog from "../components/admin/adminDialog";
 import AddIcon from "@mui/icons-material/Add";
 import { ErrorMessage } from "../components/ErrorMessage";
 import { SuccessMessage } from "../components/SuccessMessage";
+import { useAuth } from "../lib/contexts";
 
 const AdminsPage: React.FC = () => {
   const [page, setPage] = useState(0);
@@ -44,6 +45,7 @@ const AdminsPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean | null>(null);
   const queryClient = useQueryClient();
+  const { currentUser } = useAuth();
 
   const handleOpenAddAdmin = () => {
     setOpenAddAdmin(true);
@@ -81,7 +83,11 @@ const AdminsPage: React.FC = () => {
     queryKey: ["admin", page, pageSize, filterModel, sortModel],
     placeholderData: keepPreviousData,
     queryFn: () =>
-      getAdmin("token", page, pageSize, filterModel, sortModel)
+      currentUser
+        ?.getIdToken()
+        .then((token) =>
+          getAdmin(token, page, pageSize, filterModel, sortModel)
+        )
         .then((res: Response) => res.json())
         .then((data: AdminDashboardResponse) => {
           setTotalNumber(data.totalNumber);
@@ -94,7 +100,10 @@ const AdminsPage: React.FC = () => {
   });
 
   const addMutation = useMutation({
-    mutationFn: (data: any) => addAdmin(data),
+    mutationFn: (data: any) =>
+      currentUser
+        ?.getIdToken()
+        .then((token) => addAdmin(data, token)) as Promise<Response>,
     onSuccess: (result: Response) => {
       queryClient.invalidateQueries({ queryKey: ["admin"] });
       if (result.status === 400 || result.status === 500) {
@@ -111,7 +120,11 @@ const AdminsPage: React.FC = () => {
 
   const editMutation = useMutation({
     mutationFn: (data: EditAdminArgs) =>
-      updateAdmin(data.id, data.adminData, "token"),
+      currentUser
+        ?.getIdToken()
+        .then((token) =>
+          updateAdmin(data.id, data.adminData, token)
+        ) as Promise<Response>,
     onSuccess: (result: Response) => {
       queryClient.invalidateQueries({ queryKey: ["admin"] });
       if (result.status === 400 || result.status === 500) {
@@ -127,7 +140,10 @@ const AdminsPage: React.FC = () => {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: number) => deleteAdmin(id, "token"),
+    mutationFn: (id: number) =>
+      currentUser
+        ?.getIdToken()
+        .then((token) => deleteAdmin(id, token)) as Promise<Response>,
     onSuccess: (result: Response) => {
       queryClient.invalidateQueries({ queryKey: ["admin"] });
       if (result.status === 400 || result.status === 500) {
@@ -158,7 +174,6 @@ const AdminsPage: React.FC = () => {
     const data = {
       id: editRow.id,
       adminData: formJson as EditAdminArgs["adminData"],
-      token: "token",
     };
     editMutation.mutate(data);
     handleCloseEditAdmin();
@@ -180,12 +195,12 @@ const AdminsPage: React.FC = () => {
 
   if (adminQueryResponse.isLoading) return <div>Loading...</div>;
   if (adminQueryResponse.error)
-  return (
-    <ErrorMessage
-      error={adminQueryResponse.error.message}
-      setError={setError}
-    />
-  );
+    return (
+      <ErrorMessage
+        error={adminQueryResponse.error.message}
+        setError={setError}
+      />
+    );
 
   const columns: GridColDef[] = [
     {

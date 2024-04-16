@@ -59,6 +59,7 @@ adminsRouter.post(
       name: Joi.string().required(),
       email: Joi.string().required(),
       role: Joi.string().required(),
+      currentUser: Joi.string(),
     });
     try {
       const data = (await schema.validateAsync(req.body)) as AdminInputNoID;
@@ -86,13 +87,12 @@ adminsRouter.put(
       name: Joi.string().required(),
       role: Joi.string().required(),
       email: Joi.string().required(),
+      currentUser: Joi.string(),
     });
     const id = Number(req.params.id);
     try {
       const data = (await schema.validateAsync(req.body)) as AdminInputNoID;
       await AdminService.updateAdmin(data, id);
-      console.log(data);
-
       res.status(200).send("Admin type updated successfully");
     } catch (e) {
       next(e);
