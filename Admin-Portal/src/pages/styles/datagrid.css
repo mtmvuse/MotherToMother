@@ -228,3 +228,14 @@
   display: flex;
   margin: 0 10px 10px 0;
 }
+
+.filterOption-container {
+  display: flex;
+  margin: 0 10px 10px 0;
+}
+
+.filterOption-text {
+  display: flex;
+  align-items: center;
+  text-transform: capitalize;
+}

@@ -1,14 +1,5 @@
 import * as React from "react";
-import {
-  Box,
-  TextField,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  SelectChangeEvent,
-  Autocomplete,
-} from "@mui/material";
+import { Box, TextField, FormControl, Autocomplete } from "@mui/material";
 import { USER_TYPE, USER_STATUS } from "../../lib/constants";
 import type { Organization } from "~/types/organization";
 import type { UserRow } from "~/types/user";
@@ -21,13 +12,39 @@ interface UserDialogProps {
 const UserDialog: React.FC<UserDialogProps> = (props) => {
   const { organizations, editRow } = props;
   const [userType, setUserType] = React.useState(editRow?.type || "");
+  const [organization, setOrganization] = React.useState(
+    editRow?.organization || ""
+  );
   const [status, setStatus] = React.useState(editRow?.status || "");
-  const handleUserTypeChange = (event: SelectChangeEvent) => {
-    setUserType(event.target.value as string);
+
+  const handleUserTypeChange = (
+    _event: React.SyntheticEvent<Element, Event>,
+    newValue: string | null
+  ) => {
+    if (newValue !== null) {
+      setUserType(newValue);
+      setOrganization("");
+    }
   };
-  const handleStatusChange = (event: SelectChangeEvent) => {
-    setStatus(event.target.value as string);
+
+  const handleOrganizationChange = (
+    _event: React.SyntheticEvent<Element, Event>,
+    newValue: string | null
+  ) => {
+    if (newValue !== null) {
+      setOrganization(newValue);
+    }
   };
+
+  const handleStatusChange = (
+    _event: React.SyntheticEvent<Element, Event>,
+    newValue: string | null
+  ) => {
+    if (newValue !== null) {
+      setStatus(newValue);
+    }
+  };
+
   const [firstName, lastName] = editRow?.name.split(" ") || [];
   const [address, city, state, zip] = editRow?.address.split(", ") || [];
   return (
@@ -130,42 +147,40 @@ const UserDialog: React.FC<UserDialogProps> = (props) => {
       />
       <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
         <FormControl>
-          <InputLabel id="user-type">User Type</InputLabel>
-          <Select
-            labelId="user-type-label"
-            id="user-type-select"
-            value={userType}
-            label="User Type"
-            onChange={handleUserTypeChange}
-            name="userType"
+          <Autocomplete
+            id="user-type-autocomplete"
+            onChange={(event, newValue) =>
+              handleUserTypeChange(event, newValue)
+            }
+            options={Object.values(USER_TYPE)}
+            defaultValue={editRow?.type || ""}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="User Type"
+                margin="dense"
+                name="userType"
+              />
+            )}
             fullWidth
-            margin="dense"
-          >
-            {Object.values(USER_TYPE).map((type) => (
-              <MenuItem key={type} value={type}>
-                {type}
-              </MenuItem>
-            ))}
-          </Select>
+          />
         </FormControl>
         <FormControl>
-          <InputLabel id="status">Status</InputLabel>
-          <Select
-            labelId="status-label"
-            id="status-select"
-            value={status}
-            label="Status"
-            onChange={handleStatusChange}
-            name="status"
+          <Autocomplete
+            id="status-autocomplete"
+            onChange={(event, newValue) => handleStatusChange(event, newValue)}
+            options={Object.values(USER_STATUS)}
+            defaultValue={editRow?.status || ""}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Status"
+                margin="dense"
+                name="status"
+              />
+            )}
             fullWidth
-            margin="dense"
-          >
-            {Object.values(USER_STATUS).map((status) => (
-              <MenuItem key={status} value={status}>
-                {status}
-              </MenuItem>
-            ))}
-          </Select>
+          />
         </FormControl>
       </div>
       <Autocomplete
@@ -177,6 +192,8 @@ const UserDialog: React.FC<UserDialogProps> = (props) => {
             ?.map((org) => org.name) || []
         }
         defaultValue={editRow?.organization || ""}
+        value={organization}
+        onChange={handleOrganizationChange}
         renderInput={(params) => (
           <TextField
             {...params}

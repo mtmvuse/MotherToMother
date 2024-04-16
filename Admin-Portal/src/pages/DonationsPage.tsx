@@ -20,7 +20,6 @@ import {
 } from "@mui/x-data-grid";
 import {
   keepPreviousData,
-  useMutation,
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
@@ -35,11 +34,9 @@ import editIcon from "../assets/edit-icon.png";
 import deleteIcon from "../assets/delete-icon.png";
 import AddIcon from "@mui/icons-material/Add";
 import "./styles/datagrid.css";
-import {
-  DonationDashboardResponse,
-  ResponseDonation,
-} from "~/types/DonationTypes";
+import { ResponseDonation } from "~/types/DonationTypes";
 import Calendar from "../components/Calendar";
+import { useAuth } from "../lib/contexts";
 
 const modalStyle = {
   backgroundColor: "#fefefe",
@@ -85,6 +82,7 @@ const DonationsPage: React.FC = () => {
   );
   const handleAddDonation = () => setAddDonationModalOpen(true);
   const queryClient = useQueryClient();
+  const { currentUser } = useAuth();
 
   useEffect(() => {
     if (selectedDonation) {
@@ -112,7 +110,11 @@ const DonationsPage: React.FC = () => {
     placeholderData: keepPreviousData,
     //define type
     queryFn: () =>
-      getDonations("token", page, pageSize, filterModel, sortModel)
+      currentUser
+        ?.getIdToken()
+        .then((token) =>
+          getDonations(token, page, pageSize, filterModel, sortModel)
+        )
         .then((response: Response) => response.json())
         .then((data) => {
           setTotalNumber(data.totalNumber);
@@ -216,15 +218,18 @@ const DonationsPage: React.FC = () => {
     setDeletingDonationId(null);
   };
 
-  const handleDeleteDonation = (donationId: number) => {
-    deleteDonation(donationId)
-      .then(() => {
-        queryClient.invalidateQueries({ queryKey: ["donation"] });
-        setShowSuccessAlert(true);
-      })
-      .catch((error) => {
-        setError("Failed to delete donation");
-      });
+  const handleDeleteDonation = async (donationId: number) => {
+    try {
+      const token = await currentUser?.getIdToken();
+      if (!token) {
+        throw new Error("Failed to get token");
+      }
+      await deleteDonation(token, donationId);
+      queryClient.invalidateQueries({ queryKey: ["donation"] });
+      setShowSuccessAlert(true);
+    } catch (error) {
+      setError("Failed to delete donation");
+    }
   };
 
   return (
@@ -242,7 +247,11 @@ const DonationsPage: React.FC = () => {
           justifyContent: "space-between",
         }}
       >
-        <Calendar setFilterModel={setFilterModel} />
+        <Calendar
+          filterModel={filterModel}
+          setFilterModel={setFilterModel}
+          handleFilterModelChange={handleFilterModelChange}
+        />
         <Button
           onClick={handleAddDonation}
           className="table-add-button"

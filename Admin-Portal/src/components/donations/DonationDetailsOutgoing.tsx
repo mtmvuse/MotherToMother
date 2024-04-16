@@ -7,9 +7,9 @@ import {
   DialogContentText,
   DialogTitle,
   FormControl,
-  MenuItem,
   Typography,
   TextField,
+  Autocomplete,
 } from "@mui/material";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import ItemsTable from "./ItemsTable";
@@ -28,6 +28,7 @@ import {
 } from "../../lib/services";
 import { ErrorMessage } from "../../components/ErrorMessage";
 import { SuccessMessage } from "../../components/SuccessMessage";
+import { useAuth } from "../../lib/contexts";
 import "./styles/AddDonation.css";
 
 interface ModalContentProps {
@@ -61,6 +62,7 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
     useState<ItemSelection | null>(null);
   const [dialogUsedQuantity, setDialogUsedQuantity] = useState<number>();
   const [dialogNewQuantity, setDialogNewQuantity] = useState<number>();
+  const { currentUser } = useAuth();
 
   useEffect(() => {
     if (itemRows.length > 0) {
@@ -71,7 +73,11 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
   useEffect(() => {
     const fetchItemRows = async () => {
       try {
-        const response = await getDonationDetails(selectedDonation.id);
+        const token = await currentUser?.getIdToken();
+        if (!token) {
+          throw new Error("Failed to get token");
+        }
+        const response = await getDonationDetails(token, selectedDonation.id);
         if (response.ok) {
           const data = await response.json();
           const fetchedData: ItemDetails[] = data.map(
@@ -95,7 +101,14 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
     };
 
     const fetchDemographicRows = async () => {
-      const response = await getDonationDemographics(selectedDonation.id);
+      const token = await currentUser?.getIdToken();
+      if (!token) {
+        throw new Error("Failed to get token");
+      }
+      const response = await getDonationDemographics(
+        token,
+        selectedDonation.id
+      );
       if (response.ok) {
         const data = await response.json();
         const fetchedData: DemographicDetails[] = [
@@ -175,15 +188,21 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
     setOpenConfirmDialog(true);
   };
 
-  const handleItemSelectionChange = (event: SelectChangeEvent<string>) => {
-    const selectedItem = itemList.find(
-      (item) => item.name === event.target.value
-    );
+  const handleItemSelectionChange = (
+    event: React.SyntheticEvent<Element, Event>,
+    newValue: string | null
+  ) => {
+    const selectedItem = itemList.find((item) => item.name === newValue);
     setSelectedItemSelection(selectedItem || null);
   };
 
-  const handleCategorySelectionChange = (event: SelectChangeEvent<string>) => {
-    setSelectedCategorySelection(event.target.value as string);
+  const handleCategorySelectionChange = (
+    event: React.SyntheticEvent<Element, Event>,
+    newValue: string | null
+  ) => {
+    if (newValue !== null) {
+      setSelectedCategorySelection(newValue);
+    }
   };
 
   const handleQuantityNewChange = (
@@ -221,7 +240,11 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
       return;
     }
 
-    const response = await editOutgoingDonation(selectedDonation.id, {
+    const token = await currentUser?.getIdToken();
+    if (!token) {
+      throw new Error("Failed to get token");
+    }
+    const response = await editOutgoingDonation(token, selectedDonation.id, {
       numberServed: totalQuantity,
 
       whiteNum:
@@ -426,19 +449,18 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
                 Category
               </Typography>
               <FormControl fullWidth>
-                <Select
-                  id="category"
-                  value={
-                    selectedCategorySelection ? selectedCategorySelection : ""
+                <Autocomplete
+                  id="category-autocomplete"
+                  value={selectedCategorySelection}
+                  onChange={(event, newValue) =>
+                    handleCategorySelectionChange(event, newValue)
                   }
-                  onChange={handleCategorySelectionChange}
-                >
-                  {categoryList.map((category, index) => (
-                    <MenuItem key={index} value={category.toString()}>
-                      {category}
-                    </MenuItem>
-                  ))}
-                </Select>
+                  options={categoryList}
+                  renderInput={(params) => (
+                    <TextField {...params} label="Category" margin="dense" />
+                  )}
+                  fullWidth
+                />
               </FormControl>
             </div>
             <div style={{ display: "flex", marginBottom: "15px" }}>
@@ -446,17 +468,18 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
                 Item
               </Typography>
               <FormControl fullWidth disabled={!selectedCategorySelection}>
-                <Select
-                  id="item-selection"
-                  value={
-                    selectedItemSelection ? selectedItemSelection.name : ""
+                <Autocomplete
+                  id="item-selection-autocomplete"
+                  value={selectedItemSelection?.name || ""}
+                  onChange={(event, newValue) =>
+                    handleItemSelectionChange(event, newValue)
                   }
-                  onChange={handleItemSelectionChange}
-                >
-                  {filteredItemList.map((item) => (
-                    <MenuItem value={item.name}>{item.name}</MenuItem>
-                  ))}
-                </Select>
+                  options={filteredItemList.map((item) => item.name)}
+                  renderInput={(params) => (
+                    <TextField {...params} label="Item" margin="dense" />
+                  )}
+                  fullWidth
+                />
               </FormControl>
             </div>
             <div

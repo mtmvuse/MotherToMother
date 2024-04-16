@@ -181,21 +181,6 @@ const Form: React.FC = () => {
           >
             SUBMIT
           </Button>
-          <Button
-            type="button"
-            variant="outlined"
-            sx={{
-              fontFamily: "Interit, sans-serif",
-              fontSize: "15px",
-              fontWeight: "800",
-              border: "var(--mtmNavy) 1px solid",
-              color: "var(--mtmNavy)",
-              height: "32px",
-              width: "87px",
-            }}
-          >
-            Save
-          </Button>
         </Stack>
       </Stack>
     </Stack>

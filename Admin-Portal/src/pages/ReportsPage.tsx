@@ -6,6 +6,8 @@ import {
   GridFilterModel,
   GridSortModel,
   GridValueGetterParams,
+  GridFilterItem,
+  getGridNumericOperators,
 } from "@mui/x-data-grid";
 import {
   keepPreviousData,
@@ -24,6 +26,8 @@ import ExportButton from "../components/ExportButton";
 import { saveAs } from "file-saver";
 import Papa from "papaparse";
 import Calendar from "../components/Calendar";
+import FiltersOptions from "../components/report/FiltersOptions";
+import { useAuth } from "../lib/contexts";
 
 const ReportsPage: React.FC = () => {
   const [page, setPage] = useState(0);
@@ -32,9 +36,10 @@ const ReportsPage: React.FC = () => {
   const [sortModel, setSortModel] = useState<GridSortModel | undefined>();
   const [totalNumber, setTotalNumber] = useState(0);
 
-  const [amount, setAmount] = useState<number>(0);
-  const [total, setTotal] = useState<number>(0);
+  const [totalQuantity, setTotalQuantity] = useState<number>(0);
+  const [totalValue, setTotalValue] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
+  const { currentUser } = useAuth();
 
   const dataGridRef = useRef(null);
   const hasInsertedDivRef = useRef(false);
@@ -56,13 +61,26 @@ const ReportsPage: React.FC = () => {
 
     if (rootRef.current) {
       rootRef.current.render(
-        <FooterSummary totalAmount={total} totalValue={amount} />
+        <FooterSummary totalQuantity={totalQuantity} totalValue={totalValue} />
       );
     }
-  }, [dataGridRef.current, total, amount]);
+  }, [dataGridRef.current, totalQuantity, totalValue]);
 
   const handleFilterModelChange = (model: GridFilterModel) => {
-    setFilterModel(model);
+    let currFilterArray = filterModel?.items;
+    let newFilterArray = model?.items;
+
+    if (currFilterArray && newFilterArray) {
+      let searchField = newFilterArray[0]?.field;
+
+      let addFilterArray = currFilterArray.filter(
+        (item) => item?.field !== searchField
+      );
+
+      newFilterArray = [...newFilterArray, ...addFilterArray];
+    }
+
+    setFilterModel({ items: newFilterArray });
   };
 
   const handleSortModelChange = (model: GridSortModel) => {
@@ -77,7 +95,11 @@ const ReportsPage: React.FC = () => {
     queryKey: ["report", page, pageSize, filterModel, sortModel],
     placeholderData: keepPreviousData,
     queryFn: () =>
-      getReports("token", page, pageSize, filterModel, sortModel)
+      currentUser
+        ?.getIdToken()
+        .then((token) =>
+          getReports(token, page, pageSize, filterModel, sortModel)
+        )
         .then((res: Response) => res.json())
         .then((data: ReportResponse) => {
           if (data === undefined) {
@@ -90,8 +112,8 @@ const ReportsPage: React.FC = () => {
           }));
 
           setTotalNumber(data.totalNumber);
-          setAmount(data.totalAmount);
-          setTotal(data.totalValue);
+          setTotalQuantity(data.totalQuantity);
+          setTotalValue(data.totalValue);
 
           return renderReport;
         }),
@@ -101,7 +123,9 @@ const ReportsPage: React.FC = () => {
   const organizationsQueryResponse = useQuery({
     queryKey: ["organizations"],
     queryFn: () =>
-      getOrganizations()
+      currentUser
+        ?.getIdToken()
+        .then((token) => getOrganizations())
         .then((res: Response) => res.json())
         .then((data: Organization[]) => data),
   });
@@ -109,24 +133,31 @@ const ReportsPage: React.FC = () => {
   const itemsQueryResponse = useQuery({
     queryKey: ["items"],
     queryFn: () =>
-      getModalItems()
+      currentUser
+        ?.getIdToken()
+        .then((token) => getModalItems())
         .then((res: Response) => res.json())
         .then((data: Organization[]) => data),
   });
 
   const handleExport = async () => {
     try {
-      const response = await getReports(
-        "token",
-        -1,
-        -1,
-        filterModel,
-        sortModel
-      );
-      const data = await response.json();
-      const csv = Papa.unparse(data.report);
-      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-      saveAs(blob, "MTM report.csv");
+      const token = await currentUser?.getIdToken();
+      if (token) {
+        const response = await getReports(
+          token,
+          -1,
+          -1,
+          filterModel,
+          sortModel
+        );
+        const data = await response.json();
+        const csv = Papa.unparse(data.report);
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+        saveAs(blob, "MTM report.csv");
+      } else {
+        throw new Error("Failed to get token");
+      }
     } catch (error: any) {
       setError(`Export failed with error: ${error.message}`);
     }
@@ -198,6 +229,9 @@ const ReportsPage: React.FC = () => {
       align: "left",
       headerAlign: "left",
       editable: false,
+      filterOperators: getGridNumericOperators().filter(
+        (operator) => operator.value === "="
+      ),
     },
     {
       field: "value",
@@ -207,6 +241,9 @@ const ReportsPage: React.FC = () => {
       align: "left",
       headerAlign: "left",
       editable: false,
+      filterOperators: getGridNumericOperators().filter(
+        (operator) => operator.value === "="
+      ),
     },
     {
       field: "total",
@@ -215,6 +252,9 @@ const ReportsPage: React.FC = () => {
       align: "left",
       headerAlign: "left",
       editable: false,
+      filterOperators: getGridNumericOperators().filter(
+        (operator) => operator.value === "="
+      ),
     },
     {
       field: "status",
@@ -246,7 +286,22 @@ const ReportsPage: React.FC = () => {
           justifyContent: "space-between",
         }}
       >
-        <Calendar setFilterModel={setFilterModel} />
+        <Calendar
+          filterModel={filterModel}
+          setFilterModel={setFilterModel}
+          handleFilterModelChange={handleFilterModelChange}
+        />
+        {filterModel &&
+          filterModel.items.map((filter) =>
+            filter.field != "date" ? (
+              <FiltersOptions
+                filter={filter}
+                filterModel={filterModel}
+                setFilterModel={setFilterModel}
+              />
+            ) : null
+          )}
+
         <ExportButton handleExport={handleExport} />
       </div>
 
@@ -268,6 +323,7 @@ const ReportsPage: React.FC = () => {
           onSortModelChange={handleSortModelChange}
           sx={{ width: "100%", height: "68vh" }}
           ref={dataGridRef}
+          filterMode="server" // server mode so we can prevent default filtering behavior
         />
       </div>
     </>

@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from "react";
-import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
 import Box from "@mui/material/Box";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import ItemField from "./ItemField";
-import { IconButton, TextField, Typography, Grid } from "@mui/material";
+import {
+  IconButton,
+  TextField,
+  Typography,
+  Grid,
+  Autocomplete,
+} from "@mui/material";
 import {
   createOutgoingDonation,
   getOrganizations,
@@ -23,6 +27,7 @@ import {
 } from "~/types/DonationTypes";
 import "./styles/AddDonation.css";
 import addItemIcon from "../../assets/add-item-icon.png";
+import { useAuth } from "../../lib/contexts";
 
 interface DonationItem {
   itemId: number;
@@ -30,6 +35,8 @@ interface DonationItem {
   quantityUsed: number;
   totalValue: number;
 }
+
+const options = ["Incoming", "Outgoing"];
 
 interface AddDonationsModalProps {
   handleCloseModal: () => void;
@@ -44,15 +51,16 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
 }) => {
   const [organizationList, setOrganizationList] = useState<Organization[]>([]);
   const [userList, setUserList] = useState<ResponseUser[]>([]);
-  const [selectedOrg, setSelectedOrg] = useState<Organization | undefined>(
-    undefined
+  const [selectedOrg, setSelectedOrg] = React.useState<Organization | null>(
+    null
   );
-  const [selectedUser, setSelectedUser] = useState<ResponseUser | undefined>(
-    undefined
+  const [selectedUser, setSelectedUser] = React.useState<ResponseUser | null>(
+    null
   );
-  const [showDonor, setShowDonor] = useState<boolean>(false);
-  const [showUser, setShowUser] = useState<boolean>(false);
-  const [donationType, setDonationType] = useState<string>("");
+
+  const [showDonor, setShowDonor] = React.useState(false);
+  const [showUser, setShowUser] = React.useState<boolean>(false);
+  const [donationType, setDonationType] = React.useState("");
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [showCalendar, setShowCalendar] = useState<boolean>(false);
   const [showAddButton, setShowAddButton] = useState<boolean>(false);
@@ -68,31 +76,43 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
     asianNum: 0,
     otherNum: 0,
   });
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+  const { currentUser } = useAuth();
 
-  const handleUserChange = (event: SelectChangeEvent<string>) => {
-    const selectedUserId = event.target.value;
-    const selectedUser = userList.find(
-      (user) => user.id === parseInt(selectedUserId)
-    );
-    setSelectedUser(selectedUser);
-    setShowCalendar(true);
+  useEffect(() => {
+    if (selectedDate && selectedDate > new Date()) {
+      setErrorMessage("Cannot select date in the future.");
+    } else {
+      setErrorMessage(null);
+    }
+  }, [selectedDate]);
+
+  const handleUserChange = (
+    _event: React.SyntheticEvent<Element, Event>,
+    newValue: ResponseUser | null
+  ) => {
+    setSelectedUser(newValue);
+    setShowCalendar(!!newValue);
   };
 
-  const handleOrgChange = (event: SelectChangeEvent<string>) => {
-    const selectedOrgId = event.target.value;
-    const selectedOrg = organizationList.find(
-      (org) => org.id === parseInt(selectedOrgId)
-    );
-    setSelectedOrg(selectedOrg);
-    setShowUser(true);
-    updateUsers(selectedOrg);
-    setSelectedUser(undefined);
+  const handleOrgChange = (
+    event: React.SyntheticEvent<Element, Event>,
+    newValue: Organization | null
+  ) => {
+    setSelectedOrg(newValue);
+    setShowUser(!!newValue);
+    if (newValue) {
+      updateUsers(newValue);
+    }
   };
 
-  const handleTypeChange = (event: SelectChangeEvent<string>) => {
-    setDonationType(event.target.value);
-    setShowDonor(true);
+  const handleTypeChange = (
+    event: React.SyntheticEvent<Element, Event>,
+    newValue: string | null
+  ) => {
+    setDonationType(newValue || "");
+    setShowDonor(!!newValue);
   };
 
   const handleDateChange = (date: Date | null) => {
@@ -187,7 +207,11 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
 
   const updateUsers = async (selectedOrg: Organization | undefined) => {
     try {
-      const response = await getModalUsers();
+      const token = await currentUser?.getIdToken();
+      if (!token) {
+        throw new Error("Failed to get token");
+      }
+      const response = await getModalUsers(token);
       if (!response.ok) {
         throw new Error("Failed to fetch users");
       }
@@ -199,7 +223,7 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
         setUserList(filteredUserList);
       }
     } catch (error) {
-      setError("Error fetching users:");
+      setError("Error fetching users");
     }
   };
 
@@ -257,6 +281,13 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
       }
     }
 
+    const itemNames = items.map((item) => item.itemId);
+    const uniqueItemNames = new Set(itemNames);
+    if (uniqueItemNames.size !== itemNames.length) {
+      setError("Duplicate item name detected");
+      return;
+    }
+
     if (donationType == "Outgoing") {
       const outgoingDonationData: AddOutgoingDonationType = {
         userId: selectedUser.id,
@@ -274,7 +305,15 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
         asianNum: demographicData.asianNum,
         otherNum: demographicData.otherNum,
       };
-      const response = await createOutgoingDonation(outgoingDonationData);
+
+      const token = await currentUser?.getIdToken();
+      if (!token) {
+        throw new Error("Failed to get token");
+      }
+      const response = await createOutgoingDonation(
+        token,
+        outgoingDonationData
+      );
 
       if (response.ok) {
         handleCloseModal();
@@ -294,7 +333,16 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
           newQuantity: item.quantityNew,
         })),
       };
-      const response = await createIncomingDonation(incomingDonationData);
+
+      const token = await currentUser?.getIdToken();
+      if (!token) {
+        throw new Error("Failed to get token");
+      }
+
+      const response = await createIncomingDonation(
+        token,
+        incomingDonationData
+      );
 
       if (response.status === 200) {
         handleCloseModal();
@@ -340,11 +388,22 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
               >
                 Donor
               </Typography>
-              <FormControl variant="standard" fullWidth sx={{ width: "75%" }}>
-                <Select id="donor-select" onChange={handleTypeChange}>
-                  <MenuItem value={"Incoming"}>Incoming</MenuItem>
-                  <MenuItem value={"Outgoing"}>Outgoing</MenuItem>
-                </Select>
+              <FormControl variant="standard" sx={{ width: "75%" }}>
+                <Autocomplete
+                  disablePortal
+                  id="donor-select"
+                  value={donationType}
+                  onChange={handleTypeChange}
+                  options={options}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      margin="dense"
+                      name="Donor"
+                      variant="standard"
+                    />
+                  )}
+                />
               </FormControl>
             </Grid>
             <Grid item xs={12}>
@@ -360,13 +419,22 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
                 sx={{ width: "75%" }}
                 disabled={!showDonor}
               >
-                <Select id="org-select" onChange={handleOrgChange}>
-                  {organizationList.map((org) => (
-                    <MenuItem key={org.id} value={org.id}>
-                      {org.name}
-                    </MenuItem>
-                  ))}
-                </Select>
+                <Autocomplete
+                  disablePortal
+                  id="organization-select"
+                  value={selectedOrg}
+                  onChange={handleOrgChange}
+                  options={organizationList}
+                  getOptionLabel={(org) => org.name}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      margin="dense"
+                      name="organization"
+                      variant="standard"
+                    />
+                  )}
+                />
               </FormControl>
             </Grid>
             <Grid item xs={12}>
@@ -384,63 +452,63 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
                 sx={{ width: "75%" }}
               >
                 {selectedOrg && userList.length === 0 && (
-                  <Typography fontSize={13}>
+                  <Typography fontSize={13} color="red">
                     No users available for the selected organization.
                   </Typography>
                 )}
-                <Select
-                  labelId="user-select-label"
+                <Autocomplete
+                  disablePortal
                   id="user-select"
+                  value={selectedUser}
                   onChange={handleUserChange}
-                  label="Donor"
-                  MenuProps={{
-                    PaperProps: {
-                      style: {
-                        maxHeight: 200,
-                        overflowY: "auto",
-                      },
-                    },
-                  }}
-                >
-                  {userList.map((user) => (
-                    <MenuItem key={user.id} value={user.id}>
-                      {user.firstName}
-                    </MenuItem>
-                  ))}
-                </Select>
+                  options={userList}
+                  getOptionLabel={(user) => user.firstName}
+                  renderInput={(params: any) => (
+                    <TextField
+                      {...params}
+                      margin="dense"
+                      name="user"
+                      variant="standard"
+                    />
+                  )}
+                  renderOption={(props, user) => (
+                    <li {...props}>{user.firstName}</li>
+                  )}
+                />
               </FormControl>
             </Grid>
-            <Grid item xs={12}>
-              <Typography
-                fontFamily="Raleway, sans-serif"
-                fontSize={20}
-                color="navy"
-              >
-                Date
-              </Typography>
-              <div
-                className="date-picker"
-                style={{
-                  width: "100%",
-                }}
-              >
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DemoContainer
-                    components={["DatePicker"]}
-                    sx={{ width: "100%" }}
-                  >
-                    <DatePicker
-                      disabled={!showCalendar}
-                      onChange={handleDateChange}
-                      value={selectedDate}
-                    />
-                  </DemoContainer>
-                </LocalizationProvider>
-              </div>
-            </Grid>
           </Grid>
-        </div>
 
+          <div style={{ alignItems: "center", marginTop: "20px" }}>
+            <Typography
+              fontFamily="Raleway, sans-serif"
+              fontSize={20}
+              color="navy"
+            >
+              Date
+            </Typography>
+
+            <div
+              className="date-picker"
+              style={{
+                width: "100%",
+              }}
+            >
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DemoContainer
+                  components={["DatePicker"]}
+                  sx={{ width: 300, marginRight: "180px" }}
+                >
+                  <DatePicker
+                    disabled={!showCalendar}
+                    onChange={handleDateChange}
+                    value={selectedDate}
+                  />
+                </DemoContainer>
+              </LocalizationProvider>
+            </div>
+          </div>
+        </div>
         <IconButton onClick={addItemField} sx={{ mt: 2, mb: 1 }}>
           <img
             className="add-item-icon"
@@ -593,6 +661,11 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
               </button>
             </div>
           </div>
+        )}
+        {errorMessage && (
+          <Typography variant="body2" color="error">
+            {errorMessage}
+          </Typography>
         )}
       </div>
     </Box>

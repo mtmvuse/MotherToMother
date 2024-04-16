@@ -178,18 +178,27 @@ export const deleteCashDonation = async (id: number, token: string) => {
   });
 };
 
-export const addUser = async (user: AddUserType) => {
+export const addUser = async (user: AddUserType, token: string) => {
   return await fetch(`${backendUrl}/registration/v1`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify(user),
   });
 };
 
-export const addCashDonation = async (CashDonation: AddCashDonationType) => {
+export const addCashDonation = async (
+  CashDonation: AddCashDonationType,
+  token: string | undefined
+) => {
   return await fetch(`${backendUrl}/cashDonation/v1`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify(CashDonation),
   });
 };
@@ -206,7 +215,10 @@ export const getOrganizations = async (query?: string | undefined) => {
   });
 };
 
-export const getModalUsers = async (query?: string | undefined) => {
+export const getModalUsers = async (
+  token: string | undefined,
+  query?: string | undefined
+) => {
   const fetchURL = query
     ? `${backendUrl}/users/v1?type=${query}`
     : `${backendUrl}/users/v1`;
@@ -214,6 +226,21 @@ export const getModalUsers = async (query?: string | undefined) => {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+export const getUsersByOrganizationName = async (
+  organizationName: string,
+  token: string | undefined
+) => {
+  const fetchURL = `${backendUrl}/users/v1?organizationName=${organizationName}`;
+  return await fetch(fetchURL, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
   });
 };
@@ -243,21 +270,29 @@ export const addOrganization = async (
 };
 
 export const createIncomingDonation = async (
+  token: string | undefined,
   incomingDonationData: AddIncomingDonationType
 ) => {
   return await fetch(`${backendUrl}/donation/v1/incoming`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify(incomingDonationData),
   });
 };
 
 export const createOutgoingDonation = async (
+  token: string | undefined,
   outgoingDonationData: AddOutgoingDonationType
 ) => {
   return await fetch(`${backendUrl}/donation/v1/outgoing/ap`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify(outgoingDonationData),
   });
 };
@@ -308,52 +343,73 @@ export const getDonations = async (
   });
 };
 
-export const getDonationDetails = (donationId: number): Promise<Response> => {
+export const getDonationDetails = (
+  token: string | undefined,
+  donationId: number
+): Promise<Response> => {
   return fetch(`${backendUrl}/donation/v1/details/${donationId}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
   });
 };
 
 export const getDonationDemographics = (
+  token: string | undefined,
+
   donationId: number
 ): Promise<Response> => {
   return fetch(`${backendUrl}/donation/v1/demographics/${donationId}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
   });
 };
 
 export const editOutgoingDonation = async (
+  token: string | undefined,
   donationId: number,
   outgoingDonationData: UpdateOutgoingDonationType
 ) => {
   return await fetch(`${backendUrl}/donation/v1/outgoing/${donationId}`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify(outgoingDonationData),
   });
 };
 
 export const editIncomingDonation = async (
+  token: string | undefined,
   donationId: number,
   donationData: UpdateDonationType
 ) => {
   return await fetch(`${backendUrl}/donation/v1/incoming/${donationId}`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify(donationData),
   });
 };
 
-export const deleteDonation = async (donationId: number) => {
+export const deleteDonation = async (
+  token: string | undefined,
+  donationId: number
+) => {
   return await fetch(`${backendUrl}/donation/v1/delete/${donationId}`, {
     method: "DELETE",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
   });
 };
 

@@ -2,20 +2,20 @@ export interface ResponseCashDonation {
   id: number;
   date?: Date;
   total?: number;
-  organization?: string;
+  userId?: number;
 }
 
 export interface CashDonationInput {
   id: number;
   date: Date;
   total: number;
-  organizationId: number;
+  userId: number;
+  currentUser?: string;
 }
 
 export interface APQueryType {
   page: number;
   pageSize: number;
-  organization: string;
   id: number;
   sort: string;
   order: string;
@@ -25,6 +25,8 @@ export interface APQueryType {
 
 export interface cdDashboardDisplay {
   id: number;
+  firstName: string;
+  lastName: string;
   organization: string;
   date: Date;
   total: number;

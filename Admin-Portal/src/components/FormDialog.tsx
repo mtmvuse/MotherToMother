@@ -1,12 +1,14 @@
 import * as React from "react";
 import {
+  Typography,
   Dialog,
   Button,
   DialogActions,
   DialogTitle,
   DialogContent,
+  IconButton,
 } from "@mui/material";
-
+import CloseIcon from "@mui/icons-material/Close";
 interface FormDialogProps {
   children: React.ReactNode;
   title: string;
@@ -27,11 +29,64 @@ const FormDialog: React.FC<FormDialogProps> = (props) => {
         onSubmit: handleSubmit,
       }}
     >
-      <DialogTitle>{title}</DialogTitle>
-      <DialogContent>{children}</DialogContent>
-      <DialogActions>
-        <Button onClick={handleClose}>Cancel</Button>
-        <Button type="submit">Submit</Button>
+      <IconButton
+        onClick={handleClose}
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          width: "100%",
+        }}
+      >
+        <CloseIcon />
+      </IconButton>
+      <DialogTitle>
+        <Typography
+          fontFamily="Raleway, sans-serif"
+          fontSize={14}
+          color="navy"
+          mb={1}
+          mt={2}
+          style={{ letterSpacing: "2px" }}
+          textAlign="left"
+        >
+          {title}
+        </Typography>
+      </DialogTitle>
+
+      <DialogContent
+        sx={{
+          backgroundColor: "#F3F3F3",
+          borderRadius: "10px",
+          padding: "25px",
+          m: "10px",
+        }}
+      >
+        {children}
+      </DialogContent>
+      <DialogActions
+        style={{
+          display: "flex",
+          alignContent: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Button
+          type="submit"
+          variant="contained"
+          style={{
+            display: "flex",
+            width: "fit-content",
+            backgroundColor: "#A4A4A4",
+          }}
+        >
+          <Typography
+            fontFamily="Raleway, sans-serif"
+            fontSize={15}
+            color="white"
+          >
+            Submit
+          </Typography>
+        </Button>
       </DialogActions>
     </Dialog>
   );

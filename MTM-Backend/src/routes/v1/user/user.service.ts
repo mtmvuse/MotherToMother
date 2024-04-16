@@ -126,11 +126,39 @@ export const getUserByEmail = async (
 };
 
 /**
- * Get a list of user by organization type
- * @param email
+ * Get a list of user by organization
+ * @param organization
  * @returns a user given id or null if not found
  */
 export const getUserByOrganization = async (
+  organization: string,
+): Promise<ResponseUser[] | null> => {
+  return db.user.findMany({
+    where: {
+      Organization: {
+        name: organization,
+      },
+    },
+    select: {
+      id: true,
+      email: true,
+      userType: true,
+      phone: true,
+      address: true,
+      city: true,
+      zip: true,
+      firstName: true,
+      lastName: true,
+    },
+  });
+};
+
+/**
+ * Get a list of user by organization type
+ * @param organizationTye
+ * @returns a user given id or null if not found
+ */
+export const getUserByOrganizationType = async (
   organizationType: string,
 ): Promise<ResponseUser[] | null> => {
   return db.user.findMany({

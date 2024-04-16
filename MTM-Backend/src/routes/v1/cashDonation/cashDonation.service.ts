@@ -31,21 +31,7 @@ export const updateCashById = async (
       id: true,
       date: true,
       total: true,
-    },
-  });
-};
-
-export const getCashDonations = async (): Promise<ResponseCashDonation[]> => {
-  return db.cashDonation.findMany({
-    select: {
-      id: true,
-      date: true,
-      total: true,
-      Organization: {
-        select: {
-          name: true,
-        },
-      },
+      userId: true,
     },
   });
 };
@@ -56,7 +42,7 @@ export const createCashDonation = async (
   try {
     const newDonation = await db.cashDonation.create({
       data: {
-        organizationId: input.organizationId,
+        userId: input.userId,
         date: input.date,
         total: input.total,
       },
@@ -68,7 +54,6 @@ export const createCashDonation = async (
       total: newDonation.total,
     };
   } catch (error) {
-    console.error(error);
     throw new Error("Failed to create cash donation");
   }
 };

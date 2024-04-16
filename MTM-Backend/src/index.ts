@@ -32,7 +32,7 @@ app.use(helmet());
  * Use the verifyToken to protect all the routes that require authentication
  */
 
-app.use("/users", userRouter);
+app.use("/users", verifyToken, userRouter);
 
 app.use("/admin", adminsRouter);
 
@@ -40,16 +40,15 @@ app.use("/items", itemsRouter);
 
 // registration and organization routes are unprotected intentionally
 app.use("/registration", registrationRouter);
-
 app.use("/organization", organizationRouter);
 
-app.use("/donation", donationRouter);
+app.use("/donation", verifyToken, donationRouter);
 
 // app.use("/inventory", verifyToken, inventoryRouter);
 app.use("/inventory", inventoryRouter);
 
-app.use("/report", reportRouter);
-app.use("/cashDonation", cashDonationRouter);
+app.use("/report", verifyToken, reportRouter);
+app.use("/cashDonation", verifyToken, cashDonationRouter);
 
 // Default route: Unprotected
 app.get("/", (_req: Request, res: Response) => {

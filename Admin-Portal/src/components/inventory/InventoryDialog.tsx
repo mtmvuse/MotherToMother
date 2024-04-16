@@ -2,17 +2,17 @@ import {
   TextField,
   Box,
   MenuItem,
-  SelectChangeEvent,
   Select,
   FormControl,
   InputLabel,
+  SelectChangeEvent,
+  Autocomplete,
 } from "@mui/material";
-import * as React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { inventoryRow } from "~/types/inventory";
 
 interface InventoryDialogProps {
-  categories: void | string[] | undefined;
+  categories: string[];
   editRow?: inventoryRow;
 }
 
@@ -25,8 +25,8 @@ const AddInventoryDialog: React.FC<InventoryDialogProps> = ({
   );
   const [open, setOpen] = useState<boolean>(false);
 
-  const changeCategrory = (event: SelectChangeEvent) => {
-    setCategory(event.target.value as string);
+  const changeCategory = (newValue: string | null) => {
+    setCategory(newValue || "");
   };
 
   const handleClose = () => {
@@ -49,31 +49,35 @@ const AddInventoryDialog: React.FC<InventoryDialogProps> = ({
           label="Item Name"
           type="text"
           variant="standard"
-          defaultValue={editRow?.name}
+          defaultValue={editRow?.name || ""}
         />
         <FormControl fullWidth margin="dense">
-          <InputLabel id="inventory-category">Inventory Category</InputLabel>
-          <Select
-            autoFocus
-            required
-            margin="dense"
-            id="category"
-            name="category"
-            labelId="inventory-category"
-            open={open}
-            onClose={handleClose}
-            onOpen={handleOpen}
+          <Autocomplete
+            id="category-autocomplete"
+            options={categories}
             value={category}
-            label="Category"
-            variant="standard"
-            onChange={changeCategrory}
-          >
-            {categories?.map((category) => (
-              <MenuItem key={category} value={category}>
-                {category}
-              </MenuItem>
-            ))}
-          </Select>
+            onChange={(
+              event: React.ChangeEvent<{}>,
+              newValue: string | null
+            ) => {
+              changeCategory(newValue);
+            }}
+            open={open}
+            onOpen={handleOpen}
+            onClose={handleClose}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                autoFocus
+                required
+                margin="dense"
+                id="category"
+                name="category"
+                label="Inventory Category"
+                variant="standard"
+              />
+            )}
+          />
         </FormControl>
       </div>
       <div>
@@ -86,7 +90,7 @@ const AddInventoryDialog: React.FC<InventoryDialogProps> = ({
           label="New Stock"
           type="number"
           variant="standard"
-          defaultValue={editRow?.quantityNew}
+          defaultValue={editRow?.quantityNew || ""}
         />
         <TextField
           autoFocus
@@ -97,7 +101,7 @@ const AddInventoryDialog: React.FC<InventoryDialogProps> = ({
           label="New Value"
           type="number"
           variant="standard"
-          defaultValue={editRow?.valueNew}
+          defaultValue={editRow?.valueNew || ""}
         />
       </div>
       <div>
@@ -110,7 +114,7 @@ const AddInventoryDialog: React.FC<InventoryDialogProps> = ({
           label="Used Stock"
           type="number"
           variant="standard"
-          defaultValue={editRow?.quantityUsed}
+          defaultValue={editRow?.quantityUsed || ""}
         />
         <TextField
           autoFocus
@@ -121,7 +125,7 @@ const AddInventoryDialog: React.FC<InventoryDialogProps> = ({
           label="Used Value"
           type="number"
           variant="standard"
-          defaultValue={editRow?.valueUsed}
+          defaultValue={editRow?.valueUsed || ""}
         />
       </div>
     </Box>
