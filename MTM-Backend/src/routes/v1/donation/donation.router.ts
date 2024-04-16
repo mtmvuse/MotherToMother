@@ -101,17 +101,17 @@ const checkOutgoingItemsAP = async (
         throw new Error(`No item with the given id: ${itemDetail.itemId}`);
       }
 
-      if (item.quantityNew < itemDetail.newQuantity) {
-        throw new Error(
-          `Not enough stock for the new item: ${item.name}. Stock: ${item.quantityNew}`,
-        );
-      }
+      // if (item.quantityNew < itemDetail.newQuantity) {
+      //   throw new Error(
+      //     `Not enough stock for the new item: ${item.name}. Stock: ${item.quantityNew}`,
+      //   );
+      // }
 
-      if (item.quantityUsed < itemDetail.usedQuantity) {
-        throw new Error(
-          `Not enough stock for the used item: ${item.name}. Stock: ${item.quantityUsed}`,
-        );
-      }
+      // if (item.quantityUsed < itemDetail.usedQuantity) {
+      //   throw new Error(
+      //     `Not enough stock for the used item: ${item.name}. Stock: ${item.quantityUsed}`,
+      //   );
+      // }
     }),
   );
 };
@@ -131,17 +131,17 @@ const checkOutgoingItemsUA = async (
         throw new Error(`No item with the given id: ${itemDetail.itemId}`);
       }
 
-      if (items[0].quantityNew < itemDetail.newQuantity) {
-        throw new Error(
-          `Not enough stock for the new item: ${items[0].name}. Stock: ${items[0].quantityNew}`,
-        );
-      }
+      // if (items[0].quantityNew < itemDetail.newQuantity) {
+      //   throw new Error(
+      //     `Not enough stock for the new item: ${items[0].name}. Stock: ${items[0].quantityNew}`,
+      //   );
+      // }
 
-      if (items[0].quantityUsed < itemDetail.usedQuantity) {
-        throw new Error(
-          `Not enough stock for the used item: ${items[0].name}. Stock: ${items[0].quantityUsed}`,
-        );
-      }
+      // if (items[0].quantityUsed < itemDetail.usedQuantity) {
+      //   throw new Error(
+      //     `Not enough stock for the used item: ${items[0].name}. Stock: ${items[0].quantityUsed}`,
+      //   );
+      // }
     }),
   );
 };
@@ -364,43 +364,43 @@ const updateOutgoingDonation = async (
 
         if (!prevDonationDetail) {
           // If it is new item not in the donation
-          if (item[0].quantityNew < donationDetail.newQuantity) {
-            throw new Error(
-              `Not enough stock for the new item: ${donationDetail.item}. Stock: ${item[0].quantityNew}`,
-            );
-          }
-
-          if (item[0].quantityUsed < donationDetail.usedQuantity) {
-            throw new Error(
-              `Not enough stock for the used item: ${donationDetail.item}. Stock: ${item[0].quantityUsed}`,
-            );
-          }
+          // if (item[0].quantityNew < donationDetail.newQuantity) {
+          //   throw new Error(
+          //     `Not enough stock for the new item: ${donationDetail.item}. Stock: ${item[0].quantityNew}`,
+          //   );
+          // }
+          //
+          // if (item[0].quantityUsed < donationDetail.usedQuantity) {
+          //   throw new Error(
+          //     `Not enough stock for the used item: ${donationDetail.item}. Stock: ${item[0].quantityUsed}`,
+          //   );
+          // }
         } else {
           // If it is an existing item in the donation, update by the difference
           if (
             item[0].quantityNew + prevDonationDetail.newQuantity <
             donationDetail.newQuantity
           ) {
-            throw new Error(
-              `Not enough stock for the new item: ${
-                donationDetail.item
-              }. Stock: ${
-                item[0].quantityNew + prevDonationDetail.newQuantity
-              }`,
-            );
+            // throw new Error(
+            //   `Not enough stock for the new item: ${
+            //     donationDetail.item
+            //   }. Stock: ${
+            //     item[0].quantityNew + prevDonationDetail.newQuantity
+            //   }`,
+            // );
           }
 
           if (
             item[0].quantityUsed + prevDonationDetail.usedQuantity <
             donationDetail.usedQuantity
           ) {
-            throw new Error(
-              `Not enough stock for the used item: ${
-                donationDetail.item
-              }. Stock: ${
-                item[0].quantityUsed + prevDonationDetail.usedQuantity
-              }`,
-            );
+            // throw new Error(
+            //   `Not enough stock for the used item: ${
+            //     donationDetail.item
+            //   }. Stock: ${
+            //     item[0].quantityUsed + prevDonationDetail.usedQuantity
+            //   }`,
+            // );
           }
         }
       }),

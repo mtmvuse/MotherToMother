@@ -87,7 +87,7 @@ export const SpecificItemsDialog = ({
 
   return (
     <div id="SpecificItems-Dialog">
-      <ErrorMessage error={error} setError={setError} />
+      {error && <ErrorMessage error={error} setError={setError} />}
       <Dialog
         open={open}
         onClose={handleClose}
