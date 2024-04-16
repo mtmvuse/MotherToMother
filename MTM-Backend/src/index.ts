@@ -34,7 +34,7 @@ app.use(helmet());
 
 app.use("/users", verifyToken, userRouter);
 
-app.use("/admin", adminsRouter);
+app.use("/admin", verifyToken, adminsRouter);
 
 app.use("/items", itemsRouter);
 
@@ -45,9 +45,9 @@ app.use("/organization", organizationRouter);
 app.use("/donation", verifyToken, donationRouter);
 
 app.use("/inventory", verifyToken, inventoryRouter);
-// app.use("/inventory", inventoryRouter);
 
 app.use("/report", verifyToken, reportRouter);
+
 app.use("/cashDonation", verifyToken, cashDonationRouter);
 
 // Default route: Unprotected
