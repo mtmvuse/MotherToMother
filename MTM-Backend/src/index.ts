@@ -44,8 +44,8 @@ app.use("/organization", organizationRouter);
 
 app.use("/donation", verifyToken, donationRouter);
 
-// app.use("/inventory", verifyToken, inventoryRouter);
-app.use("/inventory", inventoryRouter);
+app.use("/inventory", verifyToken, inventoryRouter);
+// app.use("/inventory", inventoryRouter);
 
 app.use("/report", verifyToken, reportRouter);
 app.use("/cashDonation", verifyToken, cashDonationRouter);
