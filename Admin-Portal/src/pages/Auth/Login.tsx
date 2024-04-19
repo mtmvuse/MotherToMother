@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { useAuth } from "../../lib/contexts";
-import { Box, TextField, Button, Snackbar, Alert } from "@mui/material";
+import { Box, TextField, Button } from "@mui/material";
 import { DEFAULT_PAGE } from "../../lib/constants";
 import { getAdminByEmail } from "../../lib/services";
 import { ErrorMessage } from "../../components/ErrorMessage";
@@ -21,7 +21,7 @@ const schema = Yup.object().shape({
 });
 
 const Login: React.FC = () => {
-  const { currentUser, sendLoginEmail } = useAuth();
+  const { currentUser, authError, sendLoginEmail } = useAuth();
   const navigate = useNavigate();
 
   const {
@@ -48,13 +48,21 @@ const Login: React.FC = () => {
       const response = await getAdminByEmail(values.email);
       const adminStatus = await response.status;
       if (adminStatus == 200) {
-        await sendLoginEmail(values.email);
+        const res = await sendLoginEmail(values.email);
+        if (!res) {
+          setError(
+            authError ?? "Error sending login email. Please try again later. "
+          );
+          return;
+        }
         setSuccess(true);
         setTimeout(() => {
           navigate(DEFAULT_PAGE);
         }, 5000);
-      } else {
+      } else if (adminStatus == 404) {
         setError("Email is not found in admin database");
+      } else {
+        setError("Internal error. Please try again later.");
       }
     } catch (err: any) {
       setError(err.message);
@@ -70,8 +78,14 @@ const Login: React.FC = () => {
         height: "100vh",
       }}
     >
-      {error && (<ErrorMessage error={error} setError={setError} />)}
-      {success && (<SuccessMessage message={"Login email sent. Please check your inbox to login."} success={success} setSuccess={setSuccess} />)}
+      {error && <ErrorMessage error={error} setError={setError} />}
+      {success && (
+        <SuccessMessage
+          message={"Login email sent. Please check your inbox to login."}
+          success={success}
+          setSuccess={setSuccess}
+        />
+      )}
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
           <TextField
