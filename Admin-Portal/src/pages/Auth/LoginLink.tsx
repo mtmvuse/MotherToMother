@@ -6,12 +6,17 @@ const LoginLink: React.FC = () => {
   const [loginStatus, setLogInStatus] = useState("Authenticating...");
 
   useEffect(() => {
-    const user = loginWithEmailLink();
-    if (!user) {
-      setLogInStatus(authError ?? "Error logging in. Please contact support.");
-    } else {
-      setLogInStatus("Logged in, you can close the window now!");
-    }
+    const login = async () => {
+      const res = await loginWithEmailLink();
+      if (!res) {
+        setLogInStatus(
+          authError ?? "Error authenticating. Please try again later. "
+        );
+        return;
+      }
+      setLogInStatus("Login success! Please close the window.");
+    };
+    login();
   }, []);
   return (
     <>

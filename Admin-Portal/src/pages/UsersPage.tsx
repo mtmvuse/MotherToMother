@@ -213,7 +213,8 @@ const UsersPage: React.FC = () => {
 
   const handleExport = async () => {
     try {
-      const response = await getUsers("token", -1, -1, filterModel, sortModel);
+      const token = await currentUser?.getIdToken();
+      const response = await getUsers(token, -1, -1, filterModel, sortModel);
       const data = await response.json();
       const csv = Papa.unparse(data.users);
       const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
