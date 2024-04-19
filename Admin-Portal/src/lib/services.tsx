@@ -85,7 +85,7 @@ export const deleteInventoryItem = async (
 };
 
 export const getAdminByEmail = async (email: string) => {
-  const url = `${backendUrl}/admin/v1?email=${email}`;
+  const url = `${backendUrl}/adminFetch/v1?email=${email}`;
   return await fetch(url, {
     method: "GET",
     headers: {
@@ -431,7 +431,7 @@ export const getAdmin = async (
   filterModel?: GridFilterModel,
   sortModel?: GridSortModel
 ) => {
-  let url = `${backendUrl}/admin/v1?page=${page}&pageSize=${pageSize}`;
+  let url = `${backendUrl}/adminFetch/v1?page=${page}&pageSize=${pageSize}`;
   if (filterModel) {
     url += `&${filterModelToApiQuery(filterModel)}`;
   }

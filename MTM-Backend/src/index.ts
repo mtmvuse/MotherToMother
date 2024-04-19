@@ -14,6 +14,7 @@ import { adminsRouter } from "./routes/v1/admin/admin.router";
 import { inventoryRouter } from "./routes/v1/inventory/inventory.router";
 import { reportRouter } from "./routes/v1/report/report.router";
 import { cashDonationRouter } from "./routes/v1/cashDonation/cashDonation.router";
+import { adminsFetchRouter } from "./routes/v1/admin/adminFetch.router";
 
 dotenv.config();
 
@@ -35,6 +36,7 @@ app.use(helmet());
 app.use("/users", verifyToken, userRouter);
 
 app.use("/admin", verifyToken, adminsRouter);
+app.use("/adminFetch", adminsFetchRouter);
 
 app.use("/items", itemsRouter);
 
