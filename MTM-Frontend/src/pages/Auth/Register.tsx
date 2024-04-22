@@ -126,7 +126,7 @@ const Register: React.FC = () => {
         address: values.address ? values.address : "Not Provided",
         city: values.city ? values.city : "Not Provided",
         state: values.state ? values.state : "Not Provided",
-        zip: values.zip ? parseInt(values.zip, 10) : parseInt("00000", 10),
+        zip: values.zip ? parseInt(values.zip, 10) : 0,
         userType: values.userType,
         organizationId: values.affiliation
           ? parseInt(values.affiliation, 10)
