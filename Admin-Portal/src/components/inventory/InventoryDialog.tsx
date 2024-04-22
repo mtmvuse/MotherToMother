@@ -91,6 +91,7 @@ const AddInventoryDialog: React.FC<InventoryDialogProps> = ({
           name="newValue"
           label="New Value"
           type="number"
+          inputProps={{ step: 0.01 }}
           variant="standard"
           defaultValue={editRow?.valueNew || ""}
         />
@@ -115,6 +116,7 @@ const AddInventoryDialog: React.FC<InventoryDialogProps> = ({
           name="usedValue"
           label="Used Value"
           type="number"
+          inputProps={{ step: 0.01 }}
           variant="standard"
           defaultValue={editRow?.valueUsed || ""}
         />
