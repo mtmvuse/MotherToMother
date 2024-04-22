@@ -26,10 +26,10 @@ export interface RegisterFormValues {
   password: string;
   confirmPassword: string;
   userType: string;
-
-  phone: string;
-  address: string;
-  zip: string;
-  city: string;
+  phone?: string;
+  address?: string;
+  zip?: string;
+  city?: string;
+  state?: string;
   affiliation?: string;
 }

@@ -180,7 +180,7 @@ userRouter.put(
       address: Joi.string(),
       city: Joi.string(),
       state: Joi.string(),
-      zip: Joi.number().integer().positive(),
+      zip: Joi.number().integer(),
       userType: Joi.string(),
       currentUser: Joi.string(),
     });
@@ -214,7 +214,7 @@ userRouter.put(
       address: Joi.string(),
       city: Joi.string(),
       state: Joi.string(),
-      zip: Joi.number().integer().positive(),
+      zip: Joi.number().integer(),
       userType: Joi.string(),
       status: Joi.string(),
       currentUser: Joi.string(),

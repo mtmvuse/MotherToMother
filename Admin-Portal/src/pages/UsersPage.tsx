@@ -196,7 +196,10 @@ const UsersPage: React.FC = () => {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: number) => deleteUser(id, "token"),
+    mutationFn: (id: number) =>
+      currentUser
+        ?.getIdToken()
+        .then((token) => deleteUser(id, token)) as Promise<Response>,
     onSuccess: (result: Response) => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
       if (result.status === 400 || result.status === 500) {

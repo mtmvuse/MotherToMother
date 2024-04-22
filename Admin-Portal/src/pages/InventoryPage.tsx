@@ -15,7 +15,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { PAGE_SIZE } from "../lib/constants";
+import { PAGE_SIZE, CATEGORY_OPTIONS } from "../lib/constants";
 import {
   addIventoryItem,
   deleteInventoryItem,
@@ -33,9 +33,6 @@ import "./styles/datagrid.css";
 import { ErrorMessage } from "../components/ErrorMessage";
 import { SuccessMessage } from "../components/SuccessMessage";
 import { useAuth } from "../lib/contexts";
-
-// TODO: make this into a constant in the constants file
-const categoryOptions: string[] = ["Books", "Clothes"];
 
 const InventoryPage: React.FC = () => {
   const [page, setPage] = useState(0);
@@ -246,7 +243,7 @@ const InventoryPage: React.FC = () => {
       headerName: "CATEGORY",
       flex: 3,
       type: "singleSelect",
-      valueOptions: categoryOptions,
+      valueOptions: CATEGORY_OPTIONS,
       align: "left",
       headerAlign: "left",
     },
@@ -355,7 +352,7 @@ const InventoryPage: React.FC = () => {
         open={openAddInventory}
         handleSubmit={handleAddRow}
       >
-        <InventoryDialog categories={categoryOptions} />
+        <InventoryDialog categories={CATEGORY_OPTIONS} />
       </FormDialog>
       <FormDialog
         title={"EDIT A INVENTORY ENTRY"}
@@ -363,7 +360,7 @@ const InventoryPage: React.FC = () => {
         open={openEditInventory}
         handleSubmit={handleEditRow}
       >
-        <InventoryDialog categories={categoryOptions} editRow={editRow} />
+        <InventoryDialog categories={CATEGORY_OPTIONS} editRow={editRow} />
       </FormDialog>
       <DeleteAlertModal
         scenario={"Inventory Entry"}

@@ -1,13 +1,4 @@
-import {
-  TextField,
-  Box,
-  MenuItem,
-  Select,
-  FormControl,
-  InputLabel,
-  SelectChangeEvent,
-  Autocomplete,
-} from "@mui/material";
+import { TextField, Box, FormControl, Autocomplete } from "@mui/material";
 import React, { useState } from "react";
 import { inventoryRow } from "~/types/inventory";
 

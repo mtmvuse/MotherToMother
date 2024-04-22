@@ -27,4 +27,15 @@ export const CASHDONATION_TYPE = {
   CORPORATE: "Corporate Donor",
 };
 
+export const CATEGORY_OPTIONS: string[] = [
+  "Sleep",
+  "Travel",
+  "Bath and Changing",
+  "Clothing",
+  "Feeding",
+  "Safety",
+  "Play and Entertainment",
+  "Other",
+];
+
 export const PAGE_SIZE = 10;

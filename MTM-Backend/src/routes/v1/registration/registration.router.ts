@@ -25,7 +25,7 @@ registrationRouter.post(
       address: Joi.string(),
       city: Joi.string(),
       state: Joi.string(),
-      zip: Joi.number().integer().positive(),
+      zip: Joi.number().integer(),
       role: Joi.string(),
       household: Joi.string(),
       userType: Joi.string(),

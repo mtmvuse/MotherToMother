@@ -8,6 +8,7 @@ export interface FeedbackType {
   address: string;
   zip: string;
   city: string;
+  state: string;
   affiliation: string;
 }
 
@@ -17,10 +18,6 @@ export const feedback = {
   password: "Please enter your password",
   userType: "Please select your account type",
   confirmPassword: "Please confirm your password",
-  phone: "Please enter your phone number",
-  address: "Please enter your address: ",
-  zip: "Please enter your zip code",
-  city: "Please enter your city",
   affiliation: "affiliation is required",
 };
 
