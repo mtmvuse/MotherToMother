@@ -25,7 +25,7 @@ import type {
 // Register components
 import { RegisterTextField } from "../../components/Auth/RegisterForms/RegisterTextField";
 import { RegisterTextFieldPassword } from "../../components/Auth/RegisterForms/RegisterTextFieldPassword";
-import { RegisterTextFieldPhone } from "../../components/Auth/RegisterForms/RegisterTextFieldPhone";
+// import { RegisterTextFieldPhone } from "../../components/Auth/RegisterForms/RegisterTextFieldPhone";
 import { feedback } from "../../components/Auth/RegisterForms/RegisterFeedback";
 import { USER_TYPE } from "../../lib/constants";
 
@@ -43,18 +43,13 @@ const schema = Yup.object().shape({
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password")], feedback.confirmPassword)
     .required(feedback.confirmPassword),
-  phone: Yup.string()
-    .matches(
-      /^((\+\d{1,3}(-| )?\(?\d\)?(-| )?\d{1,3})|(\(?\d{2,3}\)?))(-| )?(\d{3,4})(-| )?(\d{4})(( x| ext)\d{1,5}){0,1}$/,
-      feedback.phone,
-    )
-    .required(feedback.phone),
-
-  address: Yup.string().required(feedback.address),
-  zip: Yup.string()
-    .matches(/^\d{5}(-\d{4})?$/, feedback.zip)
-    .required(feedback.zip),
-  city: Yup.string().required(feedback.city),
+  phone: Yup.string().matches(
+    /^((\+\d{1,3}(-| )?\(?\d\)?(-| )?\d{1,3})|(\(?\d{2,3}\)?))(-| )?(\d{3,4})(-| )?(\d{4})(( x| ext)\d{1,5}){0,1}$/,
+  ),
+  address: Yup.string(),
+  zip: Yup.string().matches(/^\d{5}(-\d{4})?$/),
+  city: Yup.string(),
+  state: Yup.string(),
   affiliation: Yup.string().when("userType", ([userType], s) => {
     if (userType !== USER_TYPE.PUBLIC && userType !== "") {
       return s.required(feedback.affiliation);
@@ -127,11 +122,11 @@ const Register: React.FC = () => {
         firstName: values.name.split(" ")[0],
         lastName: values.name.split(" ")[1],
         email: values.email,
-        phone: values.phone,
-        address: values.address,
-        city: values.city,
-        state: "state",
-        zip: parseInt(values.zip, 10),
+        phone: values.phone ? values.phone : "Not Provided",
+        address: values.address ? values.address : "Not Provided",
+        city: values.city ? values.city : "Not Provided",
+        state: values.state ? values.state : "Not Provided",
+        zip: values.zip ? parseInt(values.zip, 10) : parseInt("00000", 10),
         userType: values.userType,
         organizationId: values.affiliation
           ? parseInt(values.affiliation, 10)
@@ -139,7 +134,7 @@ const Register: React.FC = () => {
       } as UserType;
 
       const response = await registerUserOnServer(user);
-      if (!response.ok) {
+      if (!response.ok || response.status !== 201) {
         throw new Error(
           `Failed to save registered user data to database: ${response.status}`,
         );
@@ -226,7 +221,6 @@ const Register: React.FC = () => {
               />
             </Box>
           </Box>
-
           <Box>
             <Typography
               variant="body1"
@@ -234,9 +228,9 @@ const Register: React.FC = () => {
                 fontFamily: "Raleway, sans-serif",
               }}
             >
-              Contact<span style={{ color: "#EF4444" }}>*</span>
+              Email <span style={{ color: "#EF4444" }}>*</span>
             </Typography>
-            <Box mt={-2}>
+            <Box mt={-2} mb={2}>
               <RegisterTextField
                 name="email"
                 placeHolder="Email address"
@@ -244,8 +238,16 @@ const Register: React.FC = () => {
                 errors={errors.email}
               />
             </Box>
-            <Box mt={-1.5} mb={2}>
-              <RegisterTextFieldPhone
+            <Typography
+              variant="body1"
+              style={{
+                fontFamily: "Raleway, sans-serif",
+              }}
+            >
+              Phone
+            </Typography>
+            <Box mt={-2} mb={2}>
+              <RegisterTextField
                 name="phone"
                 placeHolder="Phone number"
                 control={control}
@@ -289,7 +291,7 @@ const Register: React.FC = () => {
                 fontFamily: "Raleway, sans-serif",
               }}
             >
-              Address<span style={{ color: "#EF4444" }}>*</span>
+              Address
             </Typography>
             <Box mt={-2} mb={1.5}>
               <RegisterTextField
@@ -315,7 +317,14 @@ const Register: React.FC = () => {
                   errors={errors.city}
                 />
               </Box>
-
+              <Box width="100%">
+                <RegisterTextField
+                  name="state"
+                  placeHolder="State"
+                  control={control}
+                  errors={errors.state}
+                />
+              </Box>
               <Box width="100%">
                 <RegisterTextField
                   name="zip"
@@ -336,7 +345,7 @@ const Register: React.FC = () => {
             >
               Account Type<span style={{ color: "#EF4444" }}>*</span>
             </Typography>
-            <Typography
+            {/* <Typography
               variant="body1"
               color="var(--mtmNavy)"
               style={{
@@ -347,7 +356,7 @@ const Register: React.FC = () => {
             >
               Choose the account type that most aligns with your needs and
               interactions
-            </Typography>
+            </Typography> */}
 
             <Controller
               name="userType"
@@ -424,7 +433,7 @@ const Register: React.FC = () => {
               <Typography variant="body1">
                 Affiliation<span style={{ color: "#EF4444" }}>*</span>
               </Typography>
-              <Typography
+              {/* <Typography
                 variant="body1"
                 style={{
                   color: "black",
@@ -434,7 +443,7 @@ const Register: React.FC = () => {
                 }}
               >
                 Organizational Affiliation (optional)
-              </Typography>
+              </Typography> */}
 
               <Controller
                 name="affiliation"
