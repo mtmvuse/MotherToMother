@@ -10,8 +10,8 @@ interface ItemFieldProps {
   onDelete: () => void;
   isSubmitted: boolean;
   onQuantityChange: (
-    quantityNew: number,
-    quantityUsed: number,
+    type: string,
+    quantity: number,
     totalValue: number
   ) => void;
   onItemChange: (itemId: number) => void;
@@ -26,24 +26,21 @@ const ItemField: React.FC<ItemFieldProps> = ({
   const [itemList, setItemList] = useState<ResponseInventoryItem[]>([]);
   const [selectedItem, setSelectedItem] =
     useState<ResponseInventoryItem | null>(null);
-  const [quantityUsed, setQuantityUsed] = useState<number>(0);
-  const [quantityNew, setQuantityNew] = useState<number>(0);
-  const [valueUsed, setValueUsed] = useState<number>(0);
-  const [valueNew, setValueNew] = useState<number>(0);
+  const [quantity, setQuantity] = useState<number>(0);
+  const [value, setValue] = useState<number>(0);
   const [totalValue, setTotalValue] = useState<number>(0);
-  const [itemType, setItemType] = useState<string>("");
-  const [error, setError] = useState<string | null>(null);
+  const [itemType, setItemType] = useState<string | null>(null);
 
   useEffect(() => {
     setOptions();
   }, []);
 
   useEffect(() => {
-    if (selectedItem) {
-      setTotalValue(quantityUsed * valueUsed + quantityNew * valueNew);
-      onQuantityChange(quantityNew, quantityUsed, totalValue);
+    if (selectedItem && itemType && quantity >= 0) {
+      setTotalValue(quantity * value);
+      onQuantityChange(itemType, quantity, totalValue);
     }
-  }, [quantityUsed, quantityNew, selectedItem, totalValue, onQuantityChange]);
+  }, [quantity, selectedItem, totalValue, onQuantityChange]);
 
   const setOptions = async () => {
     try {
@@ -63,38 +60,35 @@ const ItemField: React.FC<ItemFieldProps> = ({
     }
   };
 
-  const handleUsedQuantityChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const tmpUsedQuantity = Number(event.target.value);
-    setQuantityUsed(tmpUsedQuantity);
-  };
-
-  const handleNewQuantityChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const tmpNewQuantity = Number(event.target.value);
-    setQuantityNew(tmpNewQuantity);
+  const handleQuantityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const tmpQuantity = Number(event.target.value);
+    setQuantity(tmpQuantity);
   };
 
   const handleItemChange = (
-    event: React.SyntheticEvent<Element, Event>,
+    _event: React.SyntheticEvent<Element, Event>,
     newValue: ResponseInventoryItem | null
   ) => {
     if (newValue !== null) {
       setSelectedItem(newValue);
-      setValueNew(newValue.valueNew);
-      setValueUsed(newValue.valueUsed);
       onItemChange(newValue.id);
     }
   };
 
   const handleItemTypeChange = (
-    event: React.SyntheticEvent<Element, Event>,
+    _event: React.SyntheticEvent<Element, Event>,
     newValue: string | null
   ) => {
+    if (!selectedItem) {
+      return;
+    }
     if (newValue !== null) {
       setItemType(newValue);
+      if (newValue === "New") {
+        setValue(selectedItem.valueNew);
+      } else if (newValue === "Used") {
+        setValue(selectedItem.valueUsed);
+      }
     }
   };
 
@@ -102,18 +96,9 @@ const ItemField: React.FC<ItemFieldProps> = ({
     return "$" + amount.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,");
   }
 
-  useEffect(() => {
-    if (isSubmitted && !selectedItem) {
-      setError("Please select a donation.");
-    } else {
-      setError(null);
-    }
-  }, [isSubmitted, selectedItem]);
-
   return (
     <Box
       display="flex"
-      // flexDirection={{ xs: "column", md: "row" }}
       flexDirection="row"
       alignItems="center"
       justifyContent="space-between"
@@ -155,13 +140,7 @@ const ItemField: React.FC<ItemFieldProps> = ({
         label="Value"
         type="string"
         disabled
-        value={
-          itemType === "New"
-            ? formatDollar(valueNew)
-            : itemType === "Used"
-            ? formatDollar(valueUsed)
-            : ""
-        }
+        value={formatDollar(value)}
         InputLabelProps={{
           shrink: true,
         }}
@@ -172,7 +151,7 @@ const ItemField: React.FC<ItemFieldProps> = ({
         variant="standard"
         label="Quantity"
         type="Number"
-        value={itemType === "New" ? quantityNew : quantityUsed}
+        value={quantity}
         disabled={!itemType}
         InputLabelProps={{
           shrink: true,
@@ -180,13 +159,7 @@ const ItemField: React.FC<ItemFieldProps> = ({
         InputProps={{ inputProps: { min: 0, max: 10 } }}
         onKeyDown={preventMinus}
         sx={{ width: "100px", marginRight: "20px" }}
-        onChange={
-          itemType === "New"
-            ? handleNewQuantityChange
-            : itemType === "Used"
-            ? handleUsedQuantityChange
-            : undefined
-        }
+        onChange={handleQuantityChange}
       />
       <Box sx={{ display: "flex", alignItems: "center" }}>
         <Typography

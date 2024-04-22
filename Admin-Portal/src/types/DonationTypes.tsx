@@ -46,6 +46,7 @@ export interface AddOutgoingDonationType {
 
 export interface AddIncomingDonationType {
   userId: number;
+  date: Date;
   donationDetails: {
     itemId: number;
     usedQuantity: number;

@@ -31,8 +31,15 @@ import { useAuth } from "../../lib/contexts";
 
 interface DonationItem {
   itemId: number;
-  quantityNew: number;
+  type: string;
+  quantity: number;
+  totalValue: number;
+}
+
+interface MergedDonationItem {
+  itemId: number;
   quantityUsed: number;
+  quantityNew: number;
   totalValue: number;
 }
 
@@ -51,19 +58,13 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
 }) => {
   const [organizationList, setOrganizationList] = useState<Organization[]>([]);
   const [userList, setUserList] = useState<ResponseUser[]>([]);
-  const [selectedOrg, setSelectedOrg] = React.useState<Organization | null>(
-    null
-  );
-  const [selectedUser, setSelectedUser] = React.useState<ResponseUser | null>(
-    null
-  );
-
-  const [showDonor, setShowDonor] = React.useState(false);
-  const [showUser, setShowUser] = React.useState<boolean>(false);
-  const [donationType, setDonationType] = React.useState("");
+  const [selectedOrg, setSelectedOrg] = useState<Organization | null>(null);
+  const [selectedUser, setSelectedUser] = useState<ResponseUser | null>(null);
+  const [showDonor, setShowDonor] = useState(false);
+  const [showUser, setShowUser] = useState<boolean>(false);
+  const [donationType, setDonationType] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [showCalendar, setShowCalendar] = useState<boolean>(false);
-  const [showAddButton, setShowAddButton] = useState<boolean>(false);
   const [items, setItems] = useState<DonationItem[]>([]);
   const [totalQuantity, setTotalQuantity] = useState<number>(0);
   const [totalCost, setTotalCost] = useState<number>(0);
@@ -97,18 +98,19 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
   };
 
   const handleOrgChange = (
-    event: React.SyntheticEvent<Element, Event>,
+    _event: React.SyntheticEvent<Element, Event>,
     newValue: Organization | null
   ) => {
-    setSelectedOrg(newValue);
-    setShowUser(!!newValue);
     if (newValue) {
+      setSelectedOrg(newValue);
+      setSelectedUser(null);
+      setShowUser(!!newValue);
       updateUsers(newValue);
     }
   };
 
   const handleTypeChange = (
-    event: React.SyntheticEvent<Element, Event>,
+    _event: React.SyntheticEvent<Element, Event>,
     newValue: string | null
   ) => {
     setDonationType(newValue || "");
@@ -117,7 +119,6 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
 
   const handleDateChange = (date: Date | null) => {
     setSelectedDate(date);
-    setShowAddButton(!!date);
   };
 
   const handleChangeDemographicData =
@@ -150,8 +151,8 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
 
     const newItem: DonationItem = {
       itemId: 0,
-      quantityNew: 0,
-      quantityUsed: 0,
+      type: "",
+      quantity: 0,
       totalValue: 0,
     };
     setItems([...items, newItem]);
@@ -169,7 +170,7 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
     let newTotalCost = 0;
 
     items.forEach((item) => {
-      newTotalQuantity += item.quantityUsed + item.quantityNew;
+      newTotalQuantity += item.quantity;
       newTotalCost += item.totalValue;
     });
 
@@ -229,8 +230,8 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
 
   const handleQuantityChange = (
     index: number,
-    quantityNew: number,
-    quantityUsed: number,
+    type: string,
+    quantity: number,
     totalValue: number
   ) => {
     const updatedItems = [...items];
@@ -239,8 +240,8 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
     updatedItems[index] = {
       ...currentItem,
       itemId,
-      quantityNew,
-      quantityUsed,
+      type,
+      quantity,
       totalValue,
     };
     setItems(updatedItems);
@@ -281,17 +282,35 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
       }
     }
 
-    const itemNames = items.map((item) => item.itemId);
-    const uniqueItemNames = new Set(itemNames);
-    if (uniqueItemNames.size !== itemNames.length) {
-      setError("Duplicate item name detected");
-      return;
-    }
+    const mergeItems = (items: DonationItem[]): MergedDonationItem[] => {
+      const aggregation: { [key: number]: MergedDonationItem } = {};
+
+      for (const item of items) {
+        if (!aggregation[item.itemId]) {
+          aggregation[item.itemId] = {
+            itemId: item.itemId,
+            quantityNew: 0,
+            quantityUsed: 0,
+            totalValue: 0,
+          };
+        }
+
+        if (item.type === "New") {
+          aggregation[item.itemId]!.quantityNew += item.quantity;
+        } else if (item.type === "Used") {
+          aggregation[item.itemId]!.quantityUsed += item.quantity;
+        }
+        aggregation[item.itemId]!.totalValue += item.totalValue;
+      }
+
+      return Object.values(aggregation);
+    };
+    const mergedItems = mergeItems(items);
 
     if (donationType == "Outgoing") {
       const outgoingDonationData: AddOutgoingDonationType = {
         userId: selectedUser.id,
-        donationDetails: items.map((item) => ({
+        donationDetails: mergedItems.map((item) => ({
           itemId: item.itemId,
           usedQuantity: item.quantityUsed,
           newQuantity: item.quantityNew,
@@ -327,7 +346,8 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
     } else if (donationType == "Incoming") {
       const incomingDonationData: AddIncomingDonationType = {
         userId: selectedUser.id,
-        donationDetails: items.map((item) => ({
+        date: selectedDate,
+        donationDetails: mergedItems.map((item) => ({
           itemId: item.itemId,
           usedQuantity: item.quantityUsed,
           newQuantity: item.quantityNew,
@@ -395,6 +415,7 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
                   value={donationType}
                   onChange={handleTypeChange}
                   options={options}
+                  isOptionEqualToValue={(option, value) => option === value}
                   renderInput={(params) => (
                     <TextField
                       {...params}
@@ -425,6 +446,9 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
                   value={selectedOrg}
                   onChange={handleOrgChange}
                   options={organizationList}
+                  isOptionEqualToValue={(option, value) =>
+                    option.id === value.id
+                  }
                   getOptionLabel={(org) => org.name}
                   renderInput={(params) => (
                     <TextField
@@ -462,6 +486,9 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
                   value={selectedUser}
                   onChange={handleUserChange}
                   options={userList}
+                  isOptionEqualToValue={(option, value) =>
+                    option.id === value.id
+                  }
                   getOptionLabel={(user) => user.firstName}
                   renderInput={(params: any) => (
                     <TextField
@@ -522,8 +549,8 @@ const AddDonationsModal: React.FC<AddDonationsModalProps> = ({
             key={index}
             isSubmitted={isSubmitted}
             onDelete={() => removeItemField(index)}
-            onQuantityChange={(quantityNew, quantityUsed, totalValue) =>
-              handleQuantityChange(index, quantityNew, quantityUsed, totalValue)
+            onQuantityChange={(type, quantity, totalValue) =>
+              handleQuantityChange(index, type, quantity, totalValue)
             }
             onItemChange={(itemId) => handleItemChange(index, itemId)}
           />
