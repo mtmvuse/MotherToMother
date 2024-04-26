@@ -29,6 +29,7 @@ export const RegisterTextField: React.FC<InputProps> = ({
   return (
     <Controller
       name={name}
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       control={control}
       render={({ field: { onBlur, ...restField } }) => (
         <TextField
@@ -55,8 +56,10 @@ export const RegisterTextField: React.FC<InputProps> = ({
           }}
           error={!!errors}
           helperText={
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             errors
-              ? errors.message
+              ? // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                errors.message
               : isFocused
               ? feedback[name as keyof FeedbackType]
               : ""
