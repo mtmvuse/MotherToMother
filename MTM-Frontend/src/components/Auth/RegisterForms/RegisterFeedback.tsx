@@ -15,10 +15,15 @@ export interface FeedbackType {
 export const feedback = {
   name: "Please enter your name in format: First Last",
   email: "Please enter email in format: yourname@example.com",
+  phone: "Please enter phone number",
   password: "Please enter your password",
   userType: "Please select your account type",
   confirmPassword: "Please confirm your password",
   affiliation: "affiliation is required",
+  address: "Please enter your address",
+  zip: "Please enter your zip code",
+  city: "Please enter your city",
+  state: "Please enter your state",
 };
 
 export interface PasswordRequirementsType {
