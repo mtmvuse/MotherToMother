@@ -20,7 +20,7 @@ export const feedback = {
   userType: "Please select your account type",
   confirmPassword: "Please confirm your password",
   affiliation: "affiliation is required",
-  address: "Please enter your address",
+  address: "Please enter your street address",
   zip: "Please enter your zip code",
   city: "Please enter your city",
   state: "Please enter your state",
