@@ -1,5 +1,3 @@
-import NumberInCircle from "../ReviewSection/NumberInCircle";
-import { NorthSharp } from "@mui/icons-material";
 import {
   Typography,
   ThemeProvider,
@@ -13,6 +11,7 @@ import { PrimaryMainTheme } from "../Theme";
 import { question } from "./Questionaire";
 import { QuestionField } from "./QuestionField";
 import { useForm } from "../../../contexts/FormContext";
+import FormHeader from "../FormHeader";
 
 interface DemographicSectionProps {
   currPanel: string;
@@ -57,28 +56,7 @@ const DemographicSection: React.FC<DemographicSectionProps> = ({
         <Box width="100%">
           <Box width="100%" onClick={handlePanelChange}>
             {/* Header of Demographic Section */}
-            <Grid container spacing={2}>
-              <Grid item xs={10}>
-                <Stack direction="row" spacing={1}>
-                  <NumberInCircle
-                    num={3}
-                    borderRaduis="50%"
-                    color="var(--mtmGray)"
-                  />
-                  <Typography
-                    sx={{ typography: { xs: "h6" } }}
-                    color="var(--mtmGray)"
-                  >
-                    Submit
-                  </Typography>
-                </Stack>
-              </Grid>
-              <Grid item xs={2}>
-                <Stack direction="row" spacing={1} justifyContent="flex-end">
-                  <NorthSharp sx={{ fontSize: 30 }} color="primary" />
-                </Stack>
-              </Grid>
-            </Grid>
+            <FormHeader number={3} header="Demographic Details" />
           </Box>
           {/* Main Content of Demographic Section */}
           {currPanel === "DemographicSection" && (
