@@ -12,7 +12,6 @@ import { ReviewSectionCategory } from "./ReviewSectionCategory";
 import NumberInCircle from "./NumberInCircle";
 import FormHeader from "../FormHeader";
 import { useForm } from "../../../contexts/FormContext";
-import { BorderClear } from "@mui/icons-material";
 
 interface ReviewSectionProps {
   step: number;

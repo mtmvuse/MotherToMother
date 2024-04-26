@@ -38,6 +38,12 @@ const Form: React.FC = () => {
         throw new Error("Unable to fetch User");
       }
 
+      if (demographicDetails.numberServed === 0) {
+        throw new Error(
+          "Please enter demographic details this donation serves.",
+        );
+      }
+
       const token = await currentUser.getIdToken();
 
       const request = {
