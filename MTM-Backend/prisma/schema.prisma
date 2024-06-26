@@ -148,4 +148,5 @@ view report_dashboard {
   value    Float?
   total    Float?
   status   String   @default("") @db.VarChar(4)
+  type     String   @default("") @db.VarChar(8)
 }

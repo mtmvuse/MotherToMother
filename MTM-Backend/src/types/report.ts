@@ -7,6 +7,7 @@ export interface Report {
   value: number | null;
   total: number | null;
   status: string;
+  type: string;
 }
 
 export interface ReportResponse {
