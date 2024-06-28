@@ -47,7 +47,7 @@ const ReportsPage: React.FC = () => {
 
   useEffect(() => {
     const dataGridElement = document.querySelector(
-      ".MuiDataGrid-footerContainer"
+      ".MuiDataGrid-footerContainer",
     );
 
     if (dataGridElement && dataGridElement.parentNode) {
@@ -61,7 +61,7 @@ const ReportsPage: React.FC = () => {
 
     if (rootRef.current) {
       rootRef.current.render(
-        <FooterSummary totalQuantity={totalQuantity} totalValue={totalValue} />
+        <FooterSummary totalQuantity={totalQuantity} totalValue={totalValue} />,
       );
     }
   }, [dataGridRef.current, totalQuantity, totalValue]);
@@ -74,7 +74,7 @@ const ReportsPage: React.FC = () => {
       let searchField = newFilterArray[0]?.field;
 
       let addFilterArray = currFilterArray.filter(
-        (item) => item?.field !== searchField
+        (item) => item?.field !== searchField,
       );
 
       newFilterArray = [...newFilterArray, ...addFilterArray];
@@ -98,7 +98,7 @@ const ReportsPage: React.FC = () => {
       currentUser
         ?.getIdToken()
         .then((token) =>
-          getReports(token, page, pageSize, filterModel, sortModel)
+          getReports(token, page, pageSize, filterModel, sortModel),
         )
         .then((res: Response) => res.json())
         .then((data: ReportResponse) => {
@@ -106,11 +106,9 @@ const ReportsPage: React.FC = () => {
             throw new Error("No data: Internal Server Error");
           }
 
-          const renderReport = data.report.map((item: Report) => ({
+          const renderReport = data.report?.map((item: Report) => ({
             ...item,
-            type: "Incoming",
           }));
-
           setTotalNumber(data.totalNumber);
           setTotalQuantity(data.totalQuantity);
           setTotalValue(data.totalValue);
@@ -149,7 +147,7 @@ const ReportsPage: React.FC = () => {
           -1,
           -1,
           filterModel,
-          sortModel
+          sortModel,
         );
         const data = await response.json();
         const csv = Papa.unparse(data.report);
@@ -196,7 +194,7 @@ const ReportsPage: React.FC = () => {
       align: "left",
       type: "singleSelect",
       valueOptions: organizationsQueryResponse.data?.map(
-        (organization) => organization.name
+        (organization) => organization.name,
       ),
       headerAlign: "left",
     },
@@ -230,7 +228,7 @@ const ReportsPage: React.FC = () => {
       headerAlign: "left",
       editable: false,
       filterOperators: getGridNumericOperators().filter(
-        (operator) => operator.value === "="
+        (operator) => operator.value === "=",
       ),
     },
     {
@@ -242,7 +240,7 @@ const ReportsPage: React.FC = () => {
       headerAlign: "left",
       editable: false,
       filterOperators: getGridNumericOperators().filter(
-        (operator) => operator.value === "="
+        (operator) => operator.value === "=",
       ),
     },
     {
@@ -253,7 +251,7 @@ const ReportsPage: React.FC = () => {
       headerAlign: "left",
       editable: false,
       filterOperators: getGridNumericOperators().filter(
-        (operator) => operator.value === "="
+        (operator) => operator.value === "=",
       ),
     },
     {
@@ -299,22 +297,22 @@ const ReportsPage: React.FC = () => {
                 filterModel={filterModel}
                 setFilterModel={setFilterModel}
               />
-            ) : null
+            ) : null,
           )}
 
         <ExportButton handleExport={handleExport} />
       </div>
 
-      <div className="grid-container">
+      <div className='grid-container'>
         <DataGrid
-          className="report"
+          className='report'
           rowHeight={40}
           rows={reportQueryResponse.data || []}
           columns={columns}
           pagination
           autoPageSize
           rowCount={totalNumber}
-          paginationMode="server"
+          paginationMode='server'
           onPaginationModelChange={(params) => {
             setPage(params.page);
             setPageSize(params.pageSize);
@@ -323,7 +321,7 @@ const ReportsPage: React.FC = () => {
           onSortModelChange={handleSortModelChange}
           sx={{ width: "100%", height: "68vh" }}
           ref={dataGridRef}
-          filterMode="server" // server mode so we can prevent default filtering behavior
+          filterMode='server' // server mode so we can prevent default filtering behavior
         />
       </div>
     </>
