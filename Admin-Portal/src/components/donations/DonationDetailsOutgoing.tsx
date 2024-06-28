@@ -44,7 +44,7 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
     DemographicDetails[]
   >([]);
   const [demographicRows, setDemographicRows] = useState<DemographicDetails[]>(
-    []
+    [],
   );
   const [itemList, setItemList] = useState<ItemSelection[]>([]);
   const [filteredItemList, setFilteredItemList] = useState<ItemSelection[]>([]);
@@ -88,7 +88,7 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
               quantityUsed: itemData.quantityUsed,
               valueNew: itemData.valueNew,
               valueUsed: itemData.valueUsed,
-            })
+            }),
           );
           setItemRows(fetchedData);
           setInitialItemRows(fetchedData);
@@ -107,7 +107,7 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
       }
       const response = await getDonationDemographics(
         token,
-        selectedDonation.id
+        selectedDonation.id,
       );
       if (response.ok) {
         const data = await response.json();
@@ -135,16 +135,17 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
       const response = await getModalItems();
       if (response.ok) {
         const data = await response.json();
+        console.log(data);
         const fetchedItems: ItemSelection[] = data.map(
           (items: ItemSelection) => ({
             name: items.name,
             category: items.category,
             valueNew: items.valueNew,
             valueUsed: items.valueUsed,
-          })
+          }),
         );
         const fetchedCategories: string[] = Array.from(
-          new Set(data.map((items: ItemSelection) => items.category))
+          new Set(data.map((items: ItemSelection) => items.category)),
         );
         setItemList(fetchedItems);
         setCategoryList(fetchedCategories);
@@ -158,7 +159,7 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
   useEffect(() => {
     if (selectedCategorySelection) {
       const filteredItems = itemList.filter(
-        (item) => item.category === selectedCategorySelection
+        (item) => item.category === selectedCategorySelection,
       );
       setFilteredItemList(filteredItems);
     } else {
@@ -190,7 +191,7 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
 
   const handleItemSelectionChange = (
     event: React.SyntheticEvent<Element, Event>,
-    newValue: string | null
+    newValue: string | null,
   ) => {
     const selectedItem = itemList.find((item) => item.name === newValue);
     setSelectedItemSelection(selectedItem || null);
@@ -198,7 +199,7 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
 
   const handleCategorySelectionChange = (
     event: React.SyntheticEvent<Element, Event>,
-    newValue: string | null
+    newValue: string | null,
   ) => {
     if (newValue !== null) {
       setSelectedCategorySelection(newValue);
@@ -206,14 +207,14 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
   };
 
   const handleQuantityNewChange = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const tmp = Number(event.target.value);
     setDialogNewQuantity(tmp);
   };
 
   const handleQuantityUsedChange = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const tmp = Number(event.target.value);
     setDialogUsedQuantity(tmp);
@@ -224,7 +225,7 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
     .reduce((total, row) => total + row.quantity, 0);
 
   const hasEmptyFields = itemRows.some(
-    (row) => row.quantityNew === 0 && row.quantityUsed === 0
+    (row) => row.quantityNew === 0 && row.quantityUsed === 0,
   );
 
   const handleConfirmSave = async () => {
@@ -267,8 +268,8 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
           ?.quantity || 0,
       donationDetails: itemRows.map((item) => ({
         item: item.name,
-        usedQuantity: item.quantityNew,
-        newQuantity: item.quantityUsed,
+        usedQuantity: item.quantityUsed,
+        newQuantity: item.quantityNew,
       })),
     });
 
@@ -291,7 +292,7 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
   const handleAddItemButtonClick = () => {
     if (hasEmptyFields) {
       setError(
-        "Please fill all fields in the current rows before adding a new row."
+        "Please fill all fields in the current rows before adding a new row.",
       );
     } else {
       setOpenAddItemDialog(true);
@@ -343,9 +344,9 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
       {error && <ErrorMessage error={error} setError={setError} />}
       {success && <SuccessMessage success={success} setSuccess={setSuccess} />}
       <Typography
-        fontFamily="Raleway, sans-serif"
+        fontFamily='Raleway, sans-serif'
         fontSize={13}
-        color="navy"
+        color='navy'
         mb={1}
         style={{ letterSpacing: "2px" }}
       >
@@ -353,10 +354,10 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
       </Typography>
       <div style={{ display: "flex" }}>
         <Typography
-          fontFamily="Raleway, sans-serif"
+          fontFamily='Raleway, sans-serif'
           fontSize={30}
-          fontWeight="bold"
-          color="navy"
+          fontWeight='bold'
+          color='navy'
         >
           #{selectedDonation.id}
         </Typography>
@@ -377,9 +378,9 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
       </div>
 
       <Typography
-        fontFamily="Raleway, sans-serif"
+        fontFamily='Raleway, sans-serif'
         fontSize={15}
-        color="#6D6D6D"
+        color='#6D6D6D'
         mb={2}
         style={{ display: "inline-block" }}
       >
@@ -391,26 +392,26 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
 
       <Box>
         {!editable && (
-          <button className="edit-button" onClick={handleEditButtonClick}>
+          <button className='edit-button' onClick={handleEditButtonClick}>
             Edit
           </button>
         )}
         {editable && (
           <>
             <button
-              className="inner-edit-button"
+              className='inner-edit-button'
               onClick={handleSaveButtonClick}
             >
               Save
             </button>
             <button
-              className="inner-edit-button"
+              className='inner-edit-button'
               onClick={handleCancelButtonClick}
             >
               Cancel
             </button>
             <button
-              className="inner-edit-button"
+              className='inner-edit-button'
               onClick={handleAddItemButtonClick}
             >
               Add Item
@@ -432,11 +433,11 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
           editable={editable}
         />
       </div>
-      <div className="add-item">
+      <div className='add-item'>
         <Dialog
           open={openAddItemDialog}
           onClose={handleCloseAddDialog}
-          maxWidth="lg"
+          maxWidth='lg'
         >
           {error && <ErrorMessage error={error} setError={setError} />}
 
@@ -450,14 +451,14 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
               </Typography>
               <FormControl fullWidth>
                 <Autocomplete
-                  id="category-autocomplete"
+                  id='category-autocomplete'
                   value={selectedCategorySelection}
                   onChange={(event, newValue) =>
                     handleCategorySelectionChange(event, newValue)
                   }
                   options={categoryList}
                   renderInput={(params) => (
-                    <TextField {...params} label="Category" margin="dense" />
+                    <TextField {...params} label='Category' margin='dense' />
                   )}
                   fullWidth
                 />
@@ -469,14 +470,14 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
               </Typography>
               <FormControl fullWidth disabled={!selectedCategorySelection}>
                 <Autocomplete
-                  id="item-selection-autocomplete"
+                  id='item-selection-autocomplete'
                   value={selectedItemSelection?.name || ""}
                   onChange={(event, newValue) =>
                     handleItemSelectionChange(event, newValue)
                   }
                   options={filteredItemList.map((item) => item.name)}
                   renderInput={(params) => (
-                    <TextField {...params} label="Item" margin="dense" />
+                    <TextField {...params} label='Item' margin='dense' />
                   )}
                   fullWidth
                 />
@@ -484,14 +485,14 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
             </div>
             <div
               style={{ display: "flex", marginBottom: "15px" }}
-              className="add-modal"
+              className='add-modal'
             >
               <Typography fontFamily={"raleway, sans-sherif"} mr={2.2}>
                 Quantity Used
               </Typography>
               <TextField
-                variant="standard"
-                type="number"
+                variant='standard'
+                type='number'
                 disabled={!selectedItemSelection}
                 InputLabelProps={{
                   shrink: true,
@@ -501,13 +502,13 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
               ></TextField>
             </div>
 
-            <div style={{ display: "flex" }} className="add-modal">
+            <div style={{ display: "flex" }} className='add-modal'>
               <Typography fontFamily={"raleway, sans-sherif"} mr={2.7}>
                 Quantity New
               </Typography>
               <TextField
-                variant="standard"
-                type="number"
+                variant='standard'
+                type='number'
                 disabled={!selectedItemSelection}
                 InputLabelProps={{
                   shrink: true,
@@ -518,11 +519,11 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
             </div>
           </DialogContent>
           <DialogActions>
-            <button className="dialog-button" onClick={handleCloseAddDialog}>
+            <button className='dialog-button' onClick={handleCloseAddDialog}>
               Cancel
             </button>
             <button
-              className="dialog-button"
+              className='dialog-button'
               onClick={() => {
                 handleAddDialog();
               }}
@@ -539,10 +540,10 @@ const DonationDetailsOutgoing: React.FC<ModalContentProps> = ({
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <button className="dialog-button" onClick={handleCancelConfirm}>
+            <button className='dialog-button' onClick={handleCancelConfirm}>
               Cancel
             </button>
-            <button className="dialog-button" onClick={handleConfirmSave}>
+            <button className='dialog-button' onClick={handleConfirmSave}>
               Save
             </button>
           </DialogActions>
