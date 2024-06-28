@@ -21,7 +21,16 @@ SELECT
       ELSE NULL
     END
   ) AS `total`,
-  `t1`.`status` AS `status`
+  `t1`.`status` AS `status`,
+  (
+    CASE
+      WHEN (`t2`.`type` = 'Agency') THEN 'Outgoing'
+      WHEN (
+        `t2`.`type` IN ('Public', 'Corporate')
+      ) THEN 'Incoming'
+      ELSE 'unknown'
+    END
+  ) AS `type`
 FROM
   (
     (
@@ -44,6 +53,7 @@ FROM
       SELECT
         `mtm`.`DonationDetail`.`id` AS `id`,
         `mtm`.`Organization`.`name` AS `agency`,
+        `mtm`.`Organization`.`type` AS `type`,
         `mtm`.`Donation`.`date` AS `date`,
         `mtm`.`Item`.`name` AS `item`,
         `mtm`.`Item`.`valueUsed` AS `valueUsed`,
